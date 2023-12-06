@@ -3,26 +3,17 @@ import * as React from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
+import { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { usePathname } from "next/navigation";
-import HomeIcon from "@mui/icons-material/Home";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import AssignmentIcon from "@mui/icons-material/Assignment";
 import { Button } from "@mui/material";
 import Link from "next/link";
 
@@ -44,9 +35,6 @@ const closedMixin = (theme: Theme): CSSObject => ({
   }),
   overflowX: "hidden",
   width: `calc( 104px + 1px)`,
-  // [theme.breakpoints.up("sm")]: {
-  //   width: `calc(${theme.spacing(8)} + 1px)`,
-  // },
 });
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -90,7 +78,7 @@ export default function Sidebar() {
       section: "INICIO",
       icon: "/images/home.svg",
       icon2: "/images/homeSelected.svg",
-      id: "/",
+      id: "/home",
     },
     {
       section: "VENDER",
@@ -100,8 +88,8 @@ export default function Sidebar() {
     },
     {
       section: "CAJA",
-      icon: "/images/caja.svg",
       icon2: "/images/cajaSelected.svg",
+      icon: "/images/caja.svg",
       id: "/TableShipments",
     },
     {
@@ -125,9 +113,6 @@ export default function Sidebar() {
       ],
     },
   ];
-  // style={{
-  //   color: pathname.startsWith("/Shipments") ? "#0A0F37" : "#fff",
-  // }}
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -144,7 +129,9 @@ export default function Sidebar() {
       setSelectedSection(sectionId);
     }
   };
-
+  const validation = (section: string) => {
+    return pathname.startsWith(section)
+  }
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -183,71 +170,38 @@ export default function Sidebar() {
           <Divider />
           {sections.map((section) => (
             <React.Fragment key={section.id}>
-              <Box sx={{ marginY: "30px" }}>
+              <Box sx={{
+                marginY: "30px",
+                background: validation(section.id) ? '#252836' : 'transparent',
+                marginLeft: '12px',
+                padding: '12px',
+                borderRadius: "12px 0 0 12px",
+              }} >
                 <Link
                   href={section.id}
                   style={{ textDecoration: "none", color: "#1F1D2B" }}
                 >
                   <ListItem
                     sx={{
-                      marginLeft: "15px",
-                      background:
-                        selectedSection === section.id ||
-                        (section.submenus &&
-                          section.submenus.some(
-                            (submenu) => selectedSection === submenu.id
-                          ))
-                          ? pathname === "/"
-                            ? "#252836"
-                            : "transparent"
-                          : pathname.startsWith(section.id)
-                          ? "#252836"
-                          : "transparent",
-                      borderRadius:
-                        selectedSection === section.id ||
-                        (section.submenus &&
-                          section.submenus.some(
-                            (submenu) => selectedSection === submenu.id
-                          ))
-                          ? pathname === "/"
-                            ? "0.5rem 0 0 0.5rem"
-                            : "0"
-                          : pathname.startsWith(section.id)
-                          ? "0.5rem 0 0 0.5rem"
-                          : "0",
+                      width: open ? '100%' : '70%',
+                      padding: '5px',
+                      marginLeft: "5px",
+                      borderRadius: "0.5rem",
+                      background: validation(section.id) ? "#69EAE2" : 'auto',
+                      boxShadow: validation(section.id) ? '0px 8px 24px 0px rgba(105, 234, 226, 0.34)' : 'auto'
                     }}
                   >
                     <Box
                       sx={{
-                        padding: "5px 3px 5px 5px",
                         borderRadius: "0.5rem",
-                        background:
-                          selectedSection === section.id ||
-                          (section.submenus &&
-                            section.submenus.some(
-                              (submenu) => selectedSection === submenu.id
-                            ))
-                            ? "#69EAE2"
-                            : "transparent",
-                        boxShadow:
-                          selectedSection === section.id ||
-                          (section.submenus &&
-                            section.submenus.some(
-                              (submenu) => selectedSection === submenu.id
-                            ))
-                            ? pathname === "/"
-                              ? " 0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
-                              : "0"
-                            : pathname.startsWith(section.id)
-                            ? " 0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
-                            : "0",
+                        padding: '0px',
+                        display: 'flex'
                       }}
                       onClick={() => handleSectionClick(section.id)}
                     >
                       <ListItemIcon
                         sx={{
                           minWidth: 0,
-                          mr: section.section === "CAJA" ? "12px" : "20px",
                           justifyContent: "center",
                           paddingLeft: "8px",
                         }}
@@ -265,12 +219,13 @@ export default function Sidebar() {
                     <ListItemText
                       primary={section.section}
                       primaryTypographyProps={{
-                        color: "#69EAE2",
+                        color: !validation(section.id) ? "#69EAE2" : 'auto',
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
                         fontWeight: 700,
                         lineHeight: "normal",
+                        marginLeft: '10px'
                       }}
                       sx={{
                         opacity: open ? 1 : 0,
@@ -278,12 +233,11 @@ export default function Sidebar() {
                     />
                   </ListItem>
                 </Link>
-                {section.submenus && selectedSection === section.id && (
+                {(open && section.submenus && selectedSection === section.id) && (
                   <List
+                    id='subCategory'
                     sx={{
                       marginLeft: "15px",
-                      background: "#1F1D2B",
-                      borderRadius: "0.5rem",
                     }}
                   >
                     {section.submenus.map((submenu) => (
@@ -292,17 +246,11 @@ export default function Sidebar() {
                         key={submenu.id}
                         style={{ textDecoration: "none", color: "#1F1D2B" }}
                       >
-                        <ListItem
-                          sx={{
-                            background: pathname.startsWith(submenu.id)
-                              ? "#252836"
-                              : "transparent",
-                          }}
-                        >
+                        <ListItem>
                           <ListItemText
                             primary={submenu.section}
                             primaryTypographyProps={{
-                              color: "#69EAE2",
+                              color: validation(submenu.id) ? '#69EAE2' : "#fff",
                               fontFamily: "Nunito",
                               fontSize: "0.875rem",
                               fontStyle: "normal",
@@ -321,86 +269,6 @@ export default function Sidebar() {
               </Box>
             </React.Fragment>
           ))}
-          {/* <DrawerHeader></DrawerHeader>
-          <Divider />
-          {sections.map((section: any) => (
-            <Box sx={{ marginY: "30px" }} key={crypto.randomUUID()}>
-              <Link
-                href={section.id}
-                style={{ textDecoration: "none", color: "#1F1D2B" }}
-              >
-                <ListItem
-                  sx={{
-                    marginLeft: "15px",
-                    background:
-                      section.id === "/"
-                        ? pathname === "/"
-                          ? "#252836"
-                          : "transparent"
-                        : pathname.startsWith(section.id)
-                        ? "#252836"
-                        : "transparent",
-                    borderRadius:
-                      section.id === "/"
-                        ? pathname === "/"
-                          ? "0.5rem 0 0 0.5rem"
-                          : "0"
-                        : pathname.startsWith(section.id)
-                        ? "0.5rem 0 0 0.5rem"
-                        : "0",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      padding: "5px 3px 5px 5px",
-                      borderRadius: "0.5rem",
-                      background:
-                        section.id === "/"
-                          ? pathname === "/"
-                            ? "#69EAE2"
-                            : "transparent"
-                          : pathname.startsWith(section.id)
-                          ? "#69EAE2"
-                          : "transparent",
-                      boxShadow:
-                        section.id === "/"
-                          ? pathname === "/"
-                            ? " 0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
-                            : "0"
-                          : pathname.startsWith(section.id)
-                          ? " 0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
-                          : "0",
-                    }}
-                  >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: section.section === "CAJA" ? "12px" : "20px",
-                        justifyContent: "center",
-                        paddingLeft: "8px",
-                      }}
-                    >
-                      <Box component={"img"} src={section.icon} />
-                    </ListItemIcon>
-                  </Box>
-                  <ListItemText
-                    primary={section.section}
-                    primaryTypographyProps={{
-                      color: "#69EAE2",
-                      fontFamily: "Nunito",
-                      fontSize: "0.875rem",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "normal",
-                    }}
-                    sx={{
-                      opacity: open ? 1 : 0,
-                    }}
-                  />
-                </ListItem>
-              </Link>
-            </Box>
-          ))} */}
           <Box
             sx={{
               marginLeft: "15px",
@@ -472,40 +340,4 @@ export default function Sidebar() {
       </Drawer>
     </Box>
   );
-}
-
-{
-  /* {["All mail", "Trash", "Spam"].map((text, index) => (
-          <ListItem key={text} disablePadding sx={{ display: "block" }}>
-            <ListItemButton
-              sx={{
-                minHeight: 48,
-                justifyContent: open ? "initial" : "center",
-                px: 2.5,
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 3 : "auto",
-                  justifyContent: "center",
-                }}
-              >
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText
-                primary={text}
-                sx={{
-                  opacity: open ? 1 : 0,
-                  color: "#69EAE2",
-                  fontFamily: "Nunito",
-                  fontSize: "0.875rem",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "normal",
-                }}
-              />
-            </ListItemButton>
-          </ListItem>
-        ))} */
 }
