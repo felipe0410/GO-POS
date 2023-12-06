@@ -11,6 +11,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import React from "react";
 import StickyHeadTable from "@/components/StickyHeadTable";
+import InventoryCard from "@/components/InventoryCard";
+import ProductCards from "@/components/ProductCards";
 
 const Page = () => {
   return (
@@ -89,7 +91,7 @@ const Page = () => {
                     placeholder='Buscar'
                   />
                 </Paper>
-                <IconButton sx={{ paddingTop: "5px" }}>
+                <IconButton sx={{ paddingTop: "0px", marginBottom: "4px" }}>
                   <Box component={"img"} src={"/images/scan.svg"} />
                 </IconButton>
               </Box>
@@ -140,7 +142,8 @@ const Page = () => {
               </Box>
             </Box>
             <Box sx={{ marginTop: "1.56rem" }}>
-              <StickyHeadTable />
+              {/* <StickyHeadTable /> */}
+              <ProductCards />
             </Box>
           </Box>
         </Paper>
