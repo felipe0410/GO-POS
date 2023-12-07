@@ -1,3 +1,4 @@
+"use client"
 import Header from "@/components/Header";
 import {
   Box,
@@ -9,12 +10,18 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
-import React from "react";
+import React, { useState } from "react";
 import StickyHeadTable from "@/components/StickyHeadTable";
 import InventoryCard from "@/components/InventoryCard";
 import ProductCards from "@/components/ProductCards";
 
 const Page = () => {
+  const [isTable, setIsTable] = useState(false)
+  const styleViewActive = {
+    borderRadius: "0.625rem",
+    background: "#69EAE2",
+    boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+  }
   return (
     <>
       <Header title={"INVENTARIO"} />
@@ -47,7 +54,8 @@ const Page = () => {
           </Typography>
         </Box>
         <Paper
-          sx={{ width: "95%", height: "640px", marginTop: "2rem" }}
+          id={'paper'}
+          sx={{ width: "95%", height: "100%", marginTop: "2rem" }}
           style={{
             borderRadius: "0.625rem",
             background: "#1F1D2B",
@@ -104,15 +112,12 @@ const Page = () => {
                   }}
                 >
                   <Button
-                    sx={{
-                      borderRadius: "0.625rem",
-                      background: "#69EAE2",
-                      boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
+                    onClick={() => setIsTable(true)}
+                    sx={isTable ? { ...styleViewActive } : {}}
                   >
                     <Typography
                       sx={{
-                        color: "#1F1D2B",
+                        color: !isTable ? "#FFF" : '#1F1D2B',
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
@@ -123,10 +128,13 @@ const Page = () => {
                       VISTA EN TABLA
                     </Typography>
                   </Button>
-                  <Button>
+                  <Button
+                    sx={!isTable ? { ...styleViewActive } : {}}
+                    onClick={() => setIsTable(false)}
+                  >
                     <Typography
                       sx={{
-                        color: "#FFF",
+                        color: isTable ? "#FFF" : '#1F1D2B',
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
@@ -142,8 +150,10 @@ const Page = () => {
               </Box>
             </Box>
             <Box sx={{ marginTop: "1.56rem" }}>
-              {/* <StickyHeadTable /> */}
-              <ProductCards />
+              {isTable
+                ? <StickyHeadTable />
+                : <ProductCards />
+              }
             </Box>
           </Box>
         </Paper>
