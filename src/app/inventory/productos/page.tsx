@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Header from "@/components/Header";
 import {
   Box,
@@ -12,16 +12,15 @@ import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import React, { useState } from "react";
 import StickyHeadTable from "@/components/StickyHeadTable";
-import InventoryCard from "@/components/InventoryCard";
 import ProductCards from "@/components/ProductCards";
 
 const Page = () => {
-  const [isTable, setIsTable] = useState(false)
+  const [isTable, setIsTable] = useState(false);
   const styleViewActive = {
     borderRadius: "0.625rem",
     background: "#69EAE2",
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-  }
+  };
   return (
     <>
       <Header title={"INVENTARIO"} />
@@ -54,7 +53,7 @@ const Page = () => {
           </Typography>
         </Box>
         <Paper
-          id={'paper'}
+          id={"paper"}
           sx={{ width: "95%", height: "100%", marginTop: "2rem" }}
           style={{
             borderRadius: "0.625rem",
@@ -117,7 +116,7 @@ const Page = () => {
                   >
                     <Typography
                       sx={{
-                        color: !isTable ? "#FFF" : '#1F1D2B',
+                        color: !isTable ? "#FFF" : "#1F1D2B",
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
@@ -134,7 +133,7 @@ const Page = () => {
                   >
                     <Typography
                       sx={{
-                        color: isTable ? "#FFF" : '#1F1D2B',
+                        color: isTable ? "#FFF" : "#1F1D2B",
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
@@ -150,10 +149,7 @@ const Page = () => {
               </Box>
             </Box>
             <Box sx={{ marginTop: "1.56rem" }}>
-              {isTable
-                ? <StickyHeadTable />
-                : <ProductCards />
-              }
+              {isTable ? <StickyHeadTable /> : <ProductCards />}
             </Box>
           </Box>
         </Paper>

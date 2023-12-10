@@ -16,7 +16,6 @@ const ProductCards = () => {
       }}
     >
       <Box
-
         sx={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
@@ -28,10 +27,10 @@ const ProductCards = () => {
       >
         {miArray.map((product, index) => {
           return (
-            <Box key={index * 2} >
+            <Box key={index * 2}>
               <InventoryCard />
             </Box>
-          )
+          );
         })}
       </Box>
     </Paper>

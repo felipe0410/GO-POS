@@ -84,7 +84,10 @@ const rows = [
 
 export default function StickyHeadTable() {
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden", background: "#1F1D2B" }}>
+    <Paper
+      elevation={0}
+      sx={{ width: "100%", overflow: "hidden", background: "#1F1D2B" }}
+    >
       <TableContainer
         sx={{ maxHeight: 490, background: "#1F1D2B", border: "none" }}
       >
