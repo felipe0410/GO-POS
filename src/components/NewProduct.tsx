@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormLabel,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -12,12 +13,21 @@ import {
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState, RefObject } from "react";
 import { inputs } from "@/data/inputs";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { NumericFormat } from "react-number-format";
 import { Input as BaseInput, InputProps } from "@mui/base/Input";
-import { createProduct, getProductsData } from "@/firebase";
+import {
+  createProduct,
+  getAllCategoriesData,
+  getAllMeasurementsData,
+  getProductsData,
+} from "@/firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import { storage } from "@/firebase";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import Image from "next/image";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -80,7 +90,84 @@ export default function NewProduct() {
     image: "",
   });
 
-  console.log(data);
+  const [loading, setLoading] = useState(false);
+  const [upload, setUpload] = useState(false);
+  const [imageBase64, setImageBase64] = useState("");
+  const [category, setCategory] = useState<[]>([]);
+  const [measure, setMeasure] = useState<[]>([]);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const uploadImage = (fileRef: RefObject<HTMLInputElement>) => {
+    if (fileRef.current?.files?.length) {
+      const file = fileRef.current.files[0];
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64String: any = event?.target?.result;
+        if (base64String) setImageBase64(base64String);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      console.error("No file selected");
+    }
+  };
+
+  const handleAcceptImage = (fileRef: any) => {
+    setLoading(true);
+    if (fileRef.current?.files?.length) {
+      const file = fileRef.current.files[0];
+      const fileName = Date.now() + "_" + file.name;
+      const imgRef = ref(storage, "images/" + fileName);
+      uploadImageToFirebase(imgRef, file);
+      setLoading(false);
+    } else {
+      enqueueSnackbar("No ha seleccionado ninguna imagen", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+      setLoading(false);
+    }
+  };
+
+  const handleCancel = () => {
+    setImageBase64("");
+    setUpload(false);
+    setData((prevState: any) => ({
+      ...prevState,
+      image: "",
+    }));
+  };
+
+  const uploadImageToFirebase = (imgRef: any, file: any) => {
+    const imgUpload = uploadBytesResumable(imgRef, file);
+    imgUpload.on(
+      "state_changed",
+      ({ state }) => {
+        switch (state) {
+          case "paused":
+            console.log("Upload is paused");
+            break;
+          case "running":
+            console.log("Upload is running");
+            break;
+          default:
+            break;
+        }
+      },
+      (err) => {
+        console.error(err);
+      },
+      async () => {
+        const url = await getDownloadURL(imgUpload.snapshot.ref);
+        setData((prevState: any) => ({
+          ...prevState,
+          image: url,
+        }));
+      }
+    );
+  };
 
   const saveToFirebase = async () => {
     try {
@@ -133,6 +220,30 @@ export default function NewProduct() {
   const inputOnChange = (field: string, value: string) => {
     setData({ ...data, [field]: value });
   };
+
+  useEffect(() => {
+    const categoriesData = async () => {
+      try {
+        const categories = await getAllCategoriesData();
+        setCategory(categories);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    categoriesData();
+  }, [category]);
+
+  useEffect(() => {
+    const measurementsData = async () => {
+      try {
+        const measurements = await getAllMeasurementsData();
+        setMeasure(measurements);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    measurementsData();
+  }, [measure]);
 
   return (
     <Box
@@ -194,8 +305,11 @@ export default function NewProduct() {
                     }}
                     style={{ color: "#FFF" }}
                   >
-                    <MenuItem value={"direccion"}>{"direccion"}</MenuItem>
-                    <MenuItem value={"oficina"}>{"oficina"}</MenuItem>
+                    {category.map((tag) => (
+                      <MenuItem key={tag} value={tag}>
+                        {tag}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Box>
               );
@@ -217,8 +331,11 @@ export default function NewProduct() {
                     }}
                     style={{ color: "#FFF" }}
                   >
-                    <MenuItem value={"direccion"}>{"direccion"}</MenuItem>
-                    <MenuItem value={"oficina"}>{"oficina"}</MenuItem>
+                    {measure.map((tag) => (
+                      <MenuItem key={tag} value={tag}>
+                        {tag}
+                      </MenuItem>
+                    ))}
                   </Select>
                 </Box>
               );
@@ -277,19 +394,125 @@ export default function NewProduct() {
               );
 
               const imgInput = (
-                <OutlinedInput
-                  value={data["image"]}
-                  onChange={(e) => inputOnChange("image", e.target.value)}
-                  sx={{
-                    width: "7.25rem",
-                    height: "6.375rem",
-                    borderRadius: "0.625rem",
-                    background: "#2C3248",
-                    boxShadow:
-                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                  style={{ color: "#FFF" }}
-                />
+                <FormControl>
+                  <Box
+                    sx={{
+                      textAlign: "center",
+                      width: "7.25rem",
+                      height: "6.375rem",
+                      borderRadius: "0.625rem",
+                      background: "#2C3248",
+                      display: upload ? "none" : "block",
+                      boxShadow:
+                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    }}
+                  >
+                    <Button sx={{ marginTop: "25px" }}>
+                      <AddOutlinedIcon
+                        sx={{ color: "#FFF" }}
+                        fontSize='large'
+                      />
+                      <input
+                        accept='image/*'
+                        ref={fileRef}
+                        onChange={() => {
+                          setUpload(true);
+                          uploadImage(fileRef);
+                        }}
+                        type='file'
+                      />
+                    </Button>
+                  </Box>
+                  {imageBase64 && (
+                    <Box
+                      id='contianer_img'
+                      sx={{
+                        justifyContent: "center",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                      }}
+                    >
+                      <img
+                        style={{ width: "90%" }}
+                        src={imageBase64}
+                        alt='Preview'
+                      />
+                      <Box
+                        sx={{
+                          width: "90%",
+                          justifyContent: "space-evenly",
+                          marginY: "10px",
+                        }}
+                        display={data.image.length > 0 ? "none" : "flex"}
+                      >
+                        <Button
+                          sx={{
+                            // width: "12.3125rem",
+                            // height: "2.5rem",
+                            borderRadius: "0.625rem",
+                            boxShadow:
+                              "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                            background: "#69EAE2",
+                          }}
+                          onClick={() => handleAcceptImage(fileRef)}
+                        >
+                          <Typography
+                            sx={{
+                              color: "#1F1D2B",
+                              textAlign: "center",
+                              fontFamily: "Nunito",
+                              fontSize: "0.7rem",
+                              fontStyle: "normal",
+                              fontWeight: 700,
+                              lineHeight: "normal",
+                            }}
+                          >
+                            CARGAR
+                          </Typography>
+                        </Button>
+                        <Button
+                          sx={{
+                            // width: "12.3125rem",
+                            // height: "2.5rem",
+                            borderRadius: "0.625rem",
+                            boxShadow:
+                              "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                            background: "#69EAE2",
+                          }}
+                          onClick={() => handleCancel()}
+                        >
+                          <Typography
+                            sx={{
+                              color: "#1F1D2B",
+                              textAlign: "center",
+                              fontFamily: "Nunito",
+                              fontSize: "0.7rem",
+                              fontStyle: "normal",
+                              fontWeight: 700,
+                              lineHeight: "normal",
+                            }}
+                          >
+                            CANCELAR
+                          </Typography>
+                        </Button>
+                      </Box>
+                    </Box>
+                  )}
+                </FormControl>
+                // <OutlinedInput
+                //   value={data["image"]}
+                //   onChange={(e) => inputOnChange("image", e.target.value)}
+                //   sx={{
+                //     width: "7.25rem",
+                //     height: "6.375rem",
+                //     borderRadius: "0.625rem",
+                //     background: "#2C3248",
+                //     boxShadow:
+                //       "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                //   }}
+                //   style={{ color: "#FFF" }}
+                // />
               );
 
               return (
@@ -353,7 +576,7 @@ export default function NewProduct() {
             >
               <Typography
                 sx={{
-                  color: "#FFF",
+                  color: "#1F1D2B",
                   textAlign: "center",
                   fontFamily: "Nunito",
                   fontSize: { xs: "0.58rem", sm: "0.875rem" },
