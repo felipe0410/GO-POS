@@ -130,8 +130,8 @@ export default function Sidebar() {
     }
   };
   const validation = (section: string) => {
-    return pathname.startsWith(section)
-  }
+    return pathname.startsWith(section);
+  };
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -170,34 +170,40 @@ export default function Sidebar() {
           <Divider />
           {sections.map((section) => (
             <React.Fragment key={section.id}>
-              <Box sx={{
-                marginY: "30px",
-                background: validation(section.id) ? '#252836' : 'transparent',
-                marginLeft: '12px',
-                padding: '12px',
-                borderRadius: "12px 0 0 12px",
-              }} >
+              <Box
+                sx={{
+                  marginY: "30px",
+                  background: validation(section.id)
+                    ? "#252836"
+                    : "transparent",
+                  marginLeft: "12px",
+                  padding: "12px",
+                  borderRadius: "12px 0 0 12px",
+                }}
+              >
                 <Link
                   href={section.id}
                   style={{ textDecoration: "none", color: "#1F1D2B" }}
                 >
                   <ListItem
                     sx={{
-                      width: open ? '100%' : '70%',
-                      padding: '5px',
+                      width: open ? "100%" : "70%",
+                      padding: "5px",
                       marginLeft: "5px",
                       borderRadius: "0.5rem",
-                      background: validation(section.id) ? "#69EAE2" : 'auto',
-                      boxShadow: validation(section.id) ? '0px 8px 24px 0px rgba(105, 234, 226, 0.34)' : 'auto'
+                      background: validation(section.id) ? "#69EAE2" : "auto",
+                      boxShadow: validation(section.id)
+                        ? "0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
+                        : "auto",
                     }}
+                    onClick={() => handleSectionClick(section.id)}
                   >
                     <Box
                       sx={{
                         borderRadius: "0.5rem",
-                        padding: '0px',
-                        display: 'flex'
+                        padding: "0px",
+                        display: "flex",
                       }}
-                      onClick={() => handleSectionClick(section.id)}
                     >
                       <ListItemIcon
                         sx={{
@@ -219,13 +225,13 @@ export default function Sidebar() {
                     <ListItemText
                       primary={section.section}
                       primaryTypographyProps={{
-                        color: !validation(section.id) ? "#69EAE2" : 'auto',
+                        color: !validation(section.id) ? "#69EAE2" : "auto",
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
                         fontWeight: 700,
                         lineHeight: "normal",
-                        marginLeft: '10px'
+                        marginLeft: "10px",
                       }}
                       sx={{
                         opacity: open ? 1 : 0,
@@ -233,7 +239,7 @@ export default function Sidebar() {
                     />
                   </ListItem>
                 </Link>
-                {(open && section.submenus && selectedSection === section.id) && (
+                {open && section.submenus && selectedSection === section.id && (
                   <List
                     id='subCategory'
                     sx={{
@@ -250,7 +256,9 @@ export default function Sidebar() {
                           <ListItemText
                             primary={submenu.section}
                             primaryTypographyProps={{
-                              color: validation(submenu.id) ? '#69EAE2' : "#fff",
+                              color: validation(submenu.id)
+                                ? "#69EAE2"
+                                : "#fff",
                               fontFamily: "Nunito",
                               fontSize: "0.875rem",
                               fontStyle: "normal",

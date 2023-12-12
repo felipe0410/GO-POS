@@ -305,7 +305,7 @@ export default function NewProduct() {
                     }}
                     style={{ color: "#FFF" }}
                   >
-                    {category.map((tag) => (
+                    {category?.map((tag) => (
                       <MenuItem key={tag} value={tag}>
                         {tag}
                       </MenuItem>
@@ -331,7 +331,7 @@ export default function NewProduct() {
                     }}
                     style={{ color: "#FFF" }}
                   >
-                    {measure.map((tag) => (
+                    {measure?.map((tag) => (
                       <MenuItem key={tag} value={tag}>
                         {tag}
                       </MenuItem>
@@ -448,8 +448,6 @@ export default function NewProduct() {
                       >
                         <Button
                           sx={{
-                            // width: "12.3125rem",
-                            // height: "2.5rem",
                             borderRadius: "0.625rem",
                             boxShadow:
                               "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -473,8 +471,6 @@ export default function NewProduct() {
                         </Button>
                         <Button
                           sx={{
-                            // width: "12.3125rem",
-                            // height: "2.5rem",
                             borderRadius: "0.625rem",
                             boxShadow:
                               "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -500,19 +496,6 @@ export default function NewProduct() {
                     </Box>
                   )}
                 </FormControl>
-                // <OutlinedInput
-                //   value={data["image"]}
-                //   onChange={(e) => inputOnChange("image", e.target.value)}
-                //   sx={{
-                //     width: "7.25rem",
-                //     height: "6.375rem",
-                //     borderRadius: "0.625rem",
-                //     background: "#2C3248",
-                //     boxShadow:
-                //       "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                //   }}
-                //   style={{ color: "#FFF" }}
-                // />
               );
 
               return (
