@@ -69,7 +69,7 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Sidebar() {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const [selectedSection, setSelectedSection] = React.useState(null);
   const pathname = usePathname();
 
