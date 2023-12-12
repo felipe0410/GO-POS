@@ -245,6 +245,18 @@ export default function NewProduct() {
     measurementsData();
   }, [measure]);
 
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
+
   return (
     <Box
       sx={{
@@ -407,21 +419,43 @@ export default function NewProduct() {
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                   >
-                    <Button sx={{ marginTop: "25px" }}>
-                      <AddOutlinedIcon
-                        sx={{ color: "#FFF" }}
-                        fontSize='large'
-                      />
-                      <input
+
+
+                    {/* <Button component="label" variant="contained" startIcon={<AddOutlinedIcon sx={{ color: "#FFF", marginTop: "25px" }} fontSize='large' />}>
+                      <VisuallyHiddenInput
                         accept='image/*'
                         ref={fileRef}
                         onChange={() => {
                           setUpload(true);
                           uploadImage(fileRef);
                         }}
+
+                        type="file" />
+                    </Button> */}
+                    <Button component="label"  startIcon={<AddOutlinedIcon sx={{ color: "#FFF", marginTop: "25px", }} fontSize='large' />}>
+                      <input
+                        style={{
+                          overflow: 'hidden', 
+                          clip: 'rect(0 0 0 0)',
+                          clipPath: 'inset(50%)',
+                          height: 1,
+                          position: 'absolute',
+                          bottom: 0,
+                          left: 0,
+                          whiteSpace: 'nowrap',
+                          width: 1,
+                        }}
+                        accept='image/*'
+                        ref={fileRef}
+                        onChange={() => {
+                          console.log('entro aqui')
+                          setUpload(true);
+                          uploadImage(fileRef);
+                        }}
                         type='file'
                       />
                     </Button>
+
                   </Box>
                   {imageBase64 && (
                     <Box

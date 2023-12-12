@@ -22,9 +22,9 @@ const Page = () => {
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   };
   return (
-    <>
+    <Box id='page products' sx={{ height: '100%' }}>
       <Header title={"INVENTARIO"} />
-      <Box sx={{ marginTop: "2rem" }}>
+      <Box sx={{ marginTop: "2rem", height: '100%' }}>
         <Box>
           <Typography
             sx={{
@@ -54,14 +54,14 @@ const Page = () => {
         </Box>
         <Paper
           id={"paper"}
-          sx={{ width: "95%", height: "100%", marginTop: "2rem" }}
+          sx={{ width: "95%", height: "90%", marginTop: "2rem" }}
           style={{
             borderRadius: "0.625rem",
             background: "#1F1D2B",
             boxShadow: "0px 1px 100px -50px #69EAE2",
           }}
         >
-          <Box sx={{ padding: "40px 48px" }}>
+          <Box sx={{ padding: "40px 48px", height: '100%' }}>
             <Box
               sx={{
                 display: "flex",
@@ -148,13 +148,13 @@ const Page = () => {
                 <Divider sx={{ background: "#69EAE2", marginTop: "12px" }} />
               </Box>
             </Box>
-            <Box sx={{ marginTop: "1.56rem" }}>
+            <Box sx={{ marginTop: "1.56rem", height: '100%' }}>
               {isTable ? <StickyHeadTable /> : <ProductCards />}
             </Box>
           </Box>
         </Paper>
       </Box>
-    </>
+    </Box>
   );
 };
 
