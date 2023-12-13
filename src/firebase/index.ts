@@ -4,6 +4,7 @@ import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import {
   Firestore,
+  addDoc,
   arrayRemove,
   arrayUnion,
   collection,
@@ -37,13 +38,18 @@ export const storage = getStorage(app);
 
 export const createProduct = async (uid: any, productData: any) => {
   try {
-    const productCollectionRef = collection(db, "productos");
-    const productDocRef = doc(productCollectionRef, uid);
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const productosCollectionRef = collection(
+      establecimientoDocRef,
+      "productos"
+    );
+    const productDocRef = doc(productosCollectionRef, uid);
+
     await setDoc(productDocRef, {
       uid: uid,
+      user: "LocalFelipe",
       ...productData,
     });
-    console.log("Documento guardado con ID: ", uid);
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /productos: ", error);
@@ -53,7 +59,8 @@ export const createProduct = async (uid: any, productData: any) => {
 
 export const getProductsData = async (uid: any) => {
   try {
-    const productCollectionRef = collection(db, "productos");
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
     const docSnapshot = await getDoc(productDocRef);
 
@@ -71,7 +78,11 @@ export const getProductsData = async (uid: any) => {
 
 export const getAllCategoriesData = async () => {
   try {
-    const categoriesCollectionRef = collection(db, "categories");
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const categoriesCollectionRef = collection(
+      establecimientoDocRef,
+      "categories"
+    );
     const categoriesDocRef = doc(categoriesCollectionRef, "categories");
     const docSnapshot = await getDoc(categoriesDocRef);
     if (docSnapshot.exists()) {
@@ -89,13 +100,12 @@ export const getAllCategoriesData = async () => {
 
 export const addCategory = async (newCategory: string) => {
   try {
-    // Obtén la referencia a la colección
-    const categoriesCollectionRef = collection(db, "categories");
-
-    // Obtén el documento dentro de la colección (en este caso, siempre "categories")
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const categoriesCollectionRef = collection(
+      establecimientoDocRef,
+      "categories"
+    );
     const categoriesDocRef = doc(categoriesCollectionRef, "categories");
-
-    // Actualiza el documento para agregar la nueva categoría al array "Categories"
     await updateDoc(categoriesDocRef, {
       Categories: arrayUnion(newCategory),
     });
@@ -106,7 +116,11 @@ export const addCategory = async (newCategory: string) => {
 
 export const removeCategory = async (categoryToRemove: string) => {
   try {
-    const categoriesCollectionRef = collection(db, "categories");
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const categoriesCollectionRef = collection(
+      establecimientoDocRef,
+      "categories"
+    );
     const categoriesDocRef = doc(categoriesCollectionRef, "categories");
     await updateDoc(categoriesDocRef, {
       Categories: arrayRemove(categoryToRemove),
@@ -119,11 +133,15 @@ export const removeCategory = async (categoryToRemove: string) => {
 
 export const getAllMeasurementsData = async () => {
   try {
-    const measurementsCollectionRef = collection(db, "measurements");
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const measurementsCollectionRef = collection(
+      establecimientoDocRef,
+      "measurements"
+    );
     const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
     const docSnapshot = await getDoc(measurementsDocRef);
     if (docSnapshot.exists()) {
-      const measurementsData = docSnapshot.data().measurements;
+      const measurementsData = docSnapshot.data().Measurements;
       return measurementsData;
     } else {
       console.error('El documento "measurements" no existe.');
@@ -137,10 +155,14 @@ export const getAllMeasurementsData = async () => {
 
 export const addMeasurements = async (newMeasure: string) => {
   try {
-    const measurementsCollectionRef = collection(db, "measurements");
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const measurementsCollectionRef = collection(
+      establecimientoDocRef,
+      "measurements"
+    );
     const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
     await updateDoc(measurementsDocRef, {
-      measurements: arrayUnion(newMeasure),
+      Measurements: arrayUnion(newMeasure),
     });
   } catch (error) {
     console.error("Error al agregar nueva categoría: ", error);
@@ -149,10 +171,14 @@ export const addMeasurements = async (newMeasure: string) => {
 
 export const removeMeasurements = async (measureToRemove: string) => {
   try {
-    const measurementsCollectionRef = collection(db, "measurements");
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const measurementsCollectionRef = collection(
+      establecimientoDocRef,
+      "measurements"
+    );
     const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
     await updateDoc(measurementsDocRef, {
-      measurements: arrayRemove(measureToRemove),
+      Measurements: arrayRemove(measureToRemove),
     });
   } catch (error) {
     console.error("Error al eliminar la categoría: ", error);

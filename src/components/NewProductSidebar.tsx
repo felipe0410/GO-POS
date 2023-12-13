@@ -208,13 +208,12 @@ function NewProductSidebar(props: any) {
                       ? setNewCategory(e.target.value)
                       : setNewMeasure(e.target.value)
                   }
-                  name={"input"}
                   placeholder={
                     document === "categories"
                       ? "Agregar nueva categoría"
                       : "Agregar unidad de medida"
                   }
-                  type={"text"}
+                  type='text'
                   sx={{
                     height: "44.9px",
                     width: "300px",

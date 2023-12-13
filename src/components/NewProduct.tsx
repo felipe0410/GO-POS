@@ -27,7 +27,6 @@ import {
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import Image from "next/image";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -194,6 +193,8 @@ export default function NewProduct() {
         },
       });
       setData(DATA_DEFAULT);
+      setImageBase64("");
+      setUpload(false);
     } catch (error) {
       enqueueSnackbar("Error al guardar el producto", {
         variant: "error",
@@ -244,19 +245,6 @@ export default function NewProduct() {
     };
     measurementsData();
   }, [measure]);
-
-  const VisuallyHiddenInput = styled('input')({
-    clip: 'rect(0 0 0 0)',
-    clipPath: 'inset(50%)',
-    height: 1,
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    whiteSpace: 'nowrap',
-    width: 1,
-  });
-
   return (
     <Box
       sx={{
@@ -406,12 +394,12 @@ export default function NewProduct() {
               );
 
               const imgInput = (
-                <FormControl>
+                <>
                   <Box
                     sx={{
                       textAlign: "center",
-                      width: "7.25rem",
-                      height: "6.375rem",
+                      width: "9.25rem",
+                      height: "8.375rem",
                       borderRadius: "0.625rem",
                       background: "#2C3248",
                       display: upload ? "none" : "block",
@@ -419,44 +407,44 @@ export default function NewProduct() {
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                   >
-
-
-                    {/* <Button component="label" variant="contained" startIcon={<AddOutlinedIcon sx={{ color: "#FFF", marginTop: "25px" }} fontSize='large' />}>
-                      <VisuallyHiddenInput
-                        accept='image/*'
-                        ref={fileRef}
-                        onChange={() => {
-                          setUpload(true);
-                          uploadImage(fileRef);
+                    <Button
+                      component='label'
+                      sx={{
+                        marginTop: "12px",
+                        border: "dashed #ffffff47",
+                        width: "7rem",
+                        height: "7rem",
+                      }}
+                    >
+                      <AddOutlinedIcon
+                        sx={{
+                          color: "#FFF",
+                          fontSize: "30px",
                         }}
-
-                        type="file" />
-                    </Button> */}
-                    <Button component="label"  startIcon={<AddOutlinedIcon sx={{ color: "#FFF", marginTop: "25px", }} fontSize='large' />}>
+                      />
                       <input
                         style={{
-                          overflow: 'hidden', 
-                          clip: 'rect(0 0 0 0)',
-                          clipPath: 'inset(50%)',
+                          overflow: "hidden",
+                          clip: "rect(0 0 0 0)",
+                          clipPath: "inset(50%)",
                           height: 1,
-                          position: 'absolute',
+                          position: "absolute",
                           bottom: 0,
                           left: 0,
-                          whiteSpace: 'nowrap',
+                          whiteSpace: "nowrap",
                           width: 1,
                         }}
                         accept='image/*'
                         ref={fileRef}
                         onChange={() => {
-                          console.log('entro aqui')
                           setUpload(true);
                           uploadImage(fileRef);
                         }}
                         type='file'
                       />
                     </Button>
-
                   </Box>
+
                   {imageBase64 && (
                     <Box
                       id='contianer_img'
@@ -465,10 +453,11 @@ export default function NewProduct() {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
+                        width: "200px",
                       }}
                     >
                       <img
-                        style={{ width: "90%" }}
+                        style={{ width: "100%" }}
                         src={imageBase64}
                         alt='Preview'
                       />
@@ -529,7 +518,7 @@ export default function NewProduct() {
                       </Box>
                     </Box>
                   )}
-                </FormControl>
+                </>
               );
 
               return (
