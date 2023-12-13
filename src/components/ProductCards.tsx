@@ -1,15 +1,30 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Paper } from "@mui/material";
 import InventoryCard from "./InventoryCard";
+import { getAllProductsData } from "@/firebase";
 
 const ProductCards = () => {
-  const miArray = new Array(100).fill(1);
+  const [data, setData] = useState<undefined | any[]>(undefined);
+
+  useEffect(() => {
+    const getAllProducts = async () => {
+      try {
+        const allProducts = await getAllProductsData();
+        if (allProducts) {
+          setData(allProducts);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getAllProducts();
+  }, []);
   return (
     <Paper
       id='paper'
       elevation={0}
       style={{
-        height: '90%',
+        height: "90%",
         overflowX: "auto",
         maxWidth: "100%",
         // maxHeight: "100%",
@@ -25,16 +40,10 @@ const ProductCards = () => {
           gridColumnGap: 2, // Espacio entre las columnas
           padding: 2, // Ajusta el relleno según sea necesario
           // maxHeight: "100%", // Evita que el contenedor sobresalga
-          height: '100%'
+          height: "100%",
         }}
       >
-        {miArray.map((product, index) => {
-          return (
-            <Box key={index * 2}>
-              <InventoryCard />
-            </Box>
-          );
-        })}
+        <InventoryCard data={data} />
       </Box>
     </Paper>
   );

@@ -58,20 +58,23 @@ export const createProduct = async (uid: any, productData: any) => {
   }
 };
 
-export const getProductsData = async (uid: any) => {
+export const getAllProductsData = async () => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
     const productCollectionRef = collection(establecimientoDocRef, "productos");
-    const productDocRef = doc(productCollectionRef, uid);
-    const docSnapshot = await getDoc(productDocRef);
-    if (docSnapshot.exists()) {
-      return docSnapshot.data();
-    } else {
-      console.log("El documento no existe.");
-      return null;
-    }
+    const querySnapshot = await getDocs(productCollectionRef);
+
+    const productsData: any[] = [];
+
+    querySnapshot.forEach((doc) => {
+      if (doc.exists()) {
+        productsData.push(doc.data());
+      }
+    });
+
+    return productsData;
   } catch (error) {
-    console.error("Error al obtener información del documento: ", error);
+    console.error("Error al obtener información de los productos: ", error);
     return null;
   }
 };
@@ -94,12 +97,14 @@ export const getProductData = async (uid: any) => {
   }
 };
 
-
-export const getAllCategoriesData = (callback:any) => {
+export const getAllCategoriesData = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, 'establecimientos', 'LocalFelipe');
-    const categoriesCollectionRef = collection(establecimientoDocRef, 'categories');
-    const categoriesDocRef = doc(categoriesCollectionRef, 'categories');
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const categoriesCollectionRef = collection(
+      establecimientoDocRef,
+      "categories"
+    );
+    const categoriesDocRef = doc(categoriesCollectionRef, "categories");
     const unsubscribe = onSnapshot(categoriesDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const categoriesData = docSnapshot.data().Categories;
@@ -113,7 +118,7 @@ export const getAllCategoriesData = (callback:any) => {
     // Devuelve la función unsubscribe para que puedas detener el observador cuando sea necesario
     return unsubscribe;
   } catch (error) {
-    console.error('Error al obtener la información de la colección: ', error);
+    console.error("Error al obtener la información de la colección: ", error);
     return null;
   }
 };
@@ -175,9 +180,12 @@ export const getAllMeasurementsData = async () => {
 
 export const getAllMeasurementsDataa = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, 'establecimientos', 'LocalFelipe');
-    const measurementsCollectionRef = collection(establecimientoDocRef, 'measurements');
-    const measurementsDocRef = doc(measurementsCollectionRef, 'measurements');
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const measurementsCollectionRef = collection(
+      establecimientoDocRef,
+      "measurements"
+    );
+    const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
     const unsubscribe = onSnapshot(measurementsDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const measurementsData = docSnapshot.data().Measurements;
@@ -190,7 +198,7 @@ export const getAllMeasurementsDataa = (callback: any) => {
 
     return unsubscribe;
   } catch (error) {
-    console.error('Error al obtener la información de la colección: ', error);
+    console.error("Error al obtener la información de la colección: ", error);
     return null;
   }
 };
