@@ -78,6 +78,7 @@ export default function NewProduct() {
     barCode: "",
     description: "",
     image: "",
+    cantidad: ""
   };
   const [data, setData] = useState({
     productName: "",
@@ -87,6 +88,7 @@ export default function NewProduct() {
     barCode: "",
     description: "",
     image: "",
+    cantidad: ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -365,6 +367,20 @@ export default function NewProduct() {
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                   />
+                  <Typography sx={{ ...styleTypography, marginTop: '10px' }}>{'CANTIDAD'}</Typography>
+                  <OutlinedInput
+                    value={data["cantidad"]}
+                    onChange={(e) => inputOnChange("cantidad", e.target.value)}
+                    type={"number"}
+                    sx={{
+                      height: "44.9px",
+                      borderRadius: "0.625rem",
+                      background: "#2C3248",
+                      boxShadow:
+                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    }}
+                    style={{ color: "#FFF" }}
+                  />
                   <Box
                     sx={{
                       display: "flex",
@@ -385,6 +401,7 @@ export default function NewProduct() {
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                         background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                        marginTop: '10px'
                       }}
                     >
                       <Typography
