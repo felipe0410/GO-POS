@@ -1,8 +1,8 @@
-import Header from "@/components/Header";
+'use client'
 import NewProduct from "@/components/NewProduct";
 import NewProductSidebar from "@/components/NewProductSidebar";
-import { Box, Divider, Paper, Typography } from "@mui/material";
-import React from "react";
+import { Box, Divider, Typography } from "@mui/material";
+import ComponentModal from "./Modal";
 
 const Page = () => {
   return (
@@ -46,6 +46,13 @@ const Page = () => {
             Completa los campos para añadir nuevos productos a tu inventario.
           </Typography>
         </Box>
+        <Box sx={{
+          display: { xs: 'flex', sm: 'none' },
+          justifyContent: 'flex-end',
+          width: '95%',
+        }}>
+          <ComponentModal />
+        </Box>
         <Box
           sx={{
             width: "95%",
@@ -55,14 +62,14 @@ const Page = () => {
             flexDirection: "row",
           }}
         >
-          <Box sx={{ width: {sm:"65%"} }}>
+          <Box sx={{ width: { sm: "65%" } }}>
             <NewProduct />
           </Box>
           <Box display={{ xs: 'none', sm: 'block' }} sx={{ width: "35%" }}>
             <NewProductSidebar />
           </Box>
         </Box>
-      </Box>
+      </Box >
     </>
   );
 };
