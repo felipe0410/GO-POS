@@ -263,8 +263,12 @@ export default function NewProduct() {
           boxShadow: "0px 1px 100px -50px #69EAE2",
         }}
       >
-        <Box sx={{ padding: "2rem 3.8rem 2rem 3.4rem" }}>
-          <Box id='container-inputs'>
+        <Box sx={{ padding: { xs: '15px', sm: "2rem 3.8rem 2rem 3.4rem" } }}>
+          <Box id='container-inputs' sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+          }} >
             {inputs.map((input, index) => {
               const style = {
                 width: input.width,
@@ -281,7 +285,7 @@ export default function NewProduct() {
               const styleTypography = {
                 color: "#FFF",
                 fontFamily: "Nunito",
-                fontSize: "1rem",
+                fontSize: { xs: '10px', sm: "1rem" },
                 fontStyle: "normal",
                 fontWeight: 700,
                 lineHeight: "normal",
@@ -340,26 +344,65 @@ export default function NewProduct() {
                 </Box>
               );
               const amountInput = (
-                <NumericFormat
-                  onChange={(e: any) => {
-                    setData((prevData) => ({
-                      ...prevData,
-                      price: e.target.value,
-                    }));
-                  }}
-                  value={data.price}
-                  prefix='$ '
-                  thousandSeparator
-                  customInput={OutlinedInput}
-                  style={{ color: "#FFF" }}
-                  sx={{
-                    height: "44.9px",
-                    borderRadius: "0.625rem",
-                    background: "#2C3248",
-                    boxShadow:
-                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                />
+                <>
+                  <NumericFormat
+                    onChange={(e: any) => {
+                      setData((prevData) => ({
+                        ...prevData,
+                        price: e.target.value,
+                      }));
+                    }}
+                    value={data.price}
+                    prefix='$ '
+                    thousandSeparator
+                    customInput={OutlinedInput}
+                    style={{ color: "#FFF" }}
+                    sx={{
+                      height: "44.9px",
+                      borderRadius: "0.625rem",
+                      background: "#2C3248",
+                      boxShadow:
+                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      marginBottom: "2%",
+                      marginLeft: 'auto',
+                      width: { sm: '50%' },
+                      marginTop: 'auto',
+                    }}
+                  >
+                    <Button
+                      onClick={() => saveToFirebase()}
+                      disabled={!isNotEmpty(data)}
+                      sx={{
+                        width: '100%',
+                        height: "2.5rem",
+                        borderRadius: "0.625rem",
+                        boxShadow:
+                          "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                        background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          color: "#1F1D2B",
+                          textAlign: "center",
+                          fontFamily: "Nunito",
+                          fontSize: { xs: "0.58rem", sm: "0.875rem" },
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "normal",
+                        }}
+                      >
+                        GUARDAR
+                      </Typography>
+                    </Button>
+                  </Box>
+                </>
               );
               const descriptionInput = (
                 <Input
@@ -560,40 +603,7 @@ export default function NewProduct() {
                 </React.Fragment>
               );
             })}
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: "2%",
-            }}
-          >
-            <Button
-              onClick={() => saveToFirebase()}
-              disabled={!isNotEmpty(data)}
-              sx={{
-                width: "12.3125rem",
-                height: "2.5rem",
-                borderRadius: "0.625rem",
-                boxShadow:
-                  "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                background: !isNotEmpty(data) ? "gray" : "#69EAE2",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#1F1D2B",
-                  textAlign: "center",
-                  fontFamily: "Nunito",
-                  fontSize: { xs: "0.58rem", sm: "0.875rem" },
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "normal",
-                }}
-              >
-                GUARDAR
-              </Typography>
-            </Button>
+
           </Box>
         </Box>
       </Paper>

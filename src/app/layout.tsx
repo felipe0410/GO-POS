@@ -59,7 +59,7 @@ export default function RootLayout({
           sx={{
             height: "100%",
             marginTop: "64px",
-            marginLeft: "244px",
+            marginLeft: { xs: '20px', sm: "244px" },
           }}
         >
           {children}

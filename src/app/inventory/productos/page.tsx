@@ -23,7 +23,18 @@ const Page = () => {
   };
   return (
     <Box id='page products' sx={{ height: '100%' }}>
-      <Header title={"INVENTARIO"} />
+      <Typography
+        id='title'
+        sx={{
+          color: '#69EAE2',
+          fontFamily: 'Nunito',
+          fontSize: { xs: '24px', sm: '40px' },
+          fontStyle: 'normal',
+          fontWeight: 700,
+          lineHeight: 'normal',
+        }}>
+        INVENTARIO
+      </Typography>
       <Box sx={{ marginTop: "2rem", height: '100%' }}>
         <Box>
           <Typography

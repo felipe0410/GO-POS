@@ -1,32 +1,42 @@
 import Header from "@/components/Header";
 import NewProduct from "@/components/NewProduct";
 import NewProductSidebar from "@/components/NewProductSidebar";
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Divider, Paper, Typography } from "@mui/material";
 import React from "react";
 
 const Page = () => {
   return (
     <>
-      <Header title={"INVENTARIO"} />
+      <Typography
+        id='title'
+        sx={{
+          color: '#69EAE2',
+          fontFamily: 'Nunito',
+          fontSize: { xs: '24px', sm: '40px' },
+          fontStyle: 'normal',
+          fontWeight: 700,
+          lineHeight: 'normal',
+        }}>
+        INVENTARIO
+      </Typography>
+      <Divider sx={{ background: '#69EAE2', width: '95%' }} />
       <Box sx={{ marginTop: "2rem" }}>
         <Box>
-          <Typography
-            sx={{
-              color: "#FFF",
-              fontFamily: "Nunito Sans",
-              fontSize: "2rem",
-              fontStyle: "normal",
-              fontWeight: 700,
-              lineHeight: "normal",
-            }}
-          >
+          <Typography sx={{
+            color: '#FFF',
+            fontFamily: 'Nunito Sans',
+            fontSize: { xs: '16px', sm: '32px' },
+            fontStyle: 'normal',
+            fontWeight: 700,
+            lineHeight: 'normal',
+          }}>
             AGREGAR NUEVO PRODUCTO
           </Typography>
           <Typography
             sx={{
               color: "#FFF",
               fontFamily: "Nunito",
-              fontSize: "1rem",
+              fontSize: { xs: "12px", sm: '16px' },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "normal",
@@ -45,10 +55,10 @@ const Page = () => {
             flexDirection: "row",
           }}
         >
-          <Box sx={{ width: "65%" }}>
+          <Box sx={{ width: {sm:"65%"} }}>
             <NewProduct />
           </Box>
-          <Box sx={{ width: "35%" }}>
+          <Box display={{ xs: 'none', sm: 'block' }} sx={{ width: "35%" }}>
             <NewProductSidebar />
           </Box>
         </Box>

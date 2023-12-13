@@ -14,8 +14,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { usePathname } from "next/navigation";
-import { Button } from "@mui/material";
+import { Button, SwipeableDrawer, useMediaQuery } from "@mui/material";
 import Link from "next/link";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+
 
 const drawerWidth = 196;
 
@@ -68,10 +70,11 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Sidebar() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(true);
   const [selectedSection, setSelectedSection] = React.useState(null);
   const pathname = usePathname();
+  const theme = useTheme();
+  const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
 
   const sections = [
     {
@@ -135,9 +138,16 @@ export default function Sidebar() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <Drawer
-        variant='permanent'
+      <Button sx={{ paddingTop: "20px" }} onClick={() => setOpen(true)}>
+        <MenuRoundedIcon sx={{ color: "#69EAE2", fontSize: "35px" }} />
+      </Button>
+      <SwipeableDrawer
+        id='Drawer'
+        variant={matchesSM ? undefined : "permanent"}
+        anchor='left'
         open={open}
+        onClose={() => setOpen(false)}
+        onOpen={() => setOpen(true)}
         PaperProps={{
           style: {
             background: "transparent",
@@ -345,7 +355,7 @@ export default function Sidebar() {
             </Button>
           </Box>
         </List>
-      </Drawer>
+      </SwipeableDrawer>
     </Box>
   );
 }
