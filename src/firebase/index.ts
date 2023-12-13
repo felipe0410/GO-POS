@@ -12,6 +12,7 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  onSnapshot,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -63,7 +64,6 @@ export const getProductsData = async (uid: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
     const docSnapshot = await getDoc(productDocRef);
-
     if (docSnapshot.exists()) {
       return docSnapshot.data();
     } else {
@@ -76,24 +76,44 @@ export const getProductsData = async (uid: any) => {
   }
 };
 
-export const getAllCategoriesData = async () => {
+export const getProductData = async (uid: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
-    const categoriesCollectionRef = collection(
-      establecimientoDocRef,
-      "categories"
-    );
-    const categoriesDocRef = doc(categoriesCollectionRef, "categories");
-    const docSnapshot = await getDoc(categoriesDocRef);
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const productDocRef = doc(productCollectionRef, uid);
+    const docSnapshot = await getDoc(productDocRef);
     if (docSnapshot.exists()) {
-      const categoriesData = docSnapshot.data().Categories;
-      return categoriesData;
+      return docSnapshot.data();
     } else {
-      console.error('El documento "categories" no existe.');
+      console.log("El documento no existe.");
       return null;
     }
   } catch (error) {
-    console.error("Error al obtener la información de la colección: ", error);
+    console.error("Error al obtener información del documento: ", error);
+    return null;
+  }
+};
+
+
+export const getAllCategoriesData = (callback:any) => {
+  try {
+    const establecimientoDocRef = doc(db, 'establecimientos', 'LocalFelipe');
+    const categoriesCollectionRef = collection(establecimientoDocRef, 'categories');
+    const categoriesDocRef = doc(categoriesCollectionRef, 'categories');
+    const unsubscribe = onSnapshot(categoriesDocRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const categoriesData = docSnapshot.data().Categories;
+        callback(categoriesData);
+      } else {
+        console.error('El documento "categories" no existe.');
+        callback(null);
+      }
+    });
+
+    // Devuelve la función unsubscribe para que puedas detener el observador cuando sea necesario
+    return unsubscribe;
+  } catch (error) {
+    console.error('Error al obtener la información de la colección: ', error);
     return null;
   }
 };
@@ -149,6 +169,28 @@ export const getAllMeasurementsData = async () => {
     }
   } catch (error) {
     console.error("Error al obtener la información de la colección: ", error);
+    return null;
+  }
+};
+
+export const getAllMeasurementsDataa = (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(db, 'establecimientos', 'LocalFelipe');
+    const measurementsCollectionRef = collection(establecimientoDocRef, 'measurements');
+    const measurementsDocRef = doc(measurementsCollectionRef, 'measurements');
+    const unsubscribe = onSnapshot(measurementsDocRef, (docSnapshot) => {
+      if (docSnapshot.exists()) {
+        const measurementsData = docSnapshot.data().Measurements;
+        callback(measurementsData);
+      } else {
+        console.error('El documento "measurements" no existe.');
+        callback(null);
+      }
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    console.error('Error al obtener la información de la colección: ', error);
     return null;
   }
 };

@@ -21,8 +21,8 @@ import { Input as BaseInput, InputProps } from "@mui/base/Input";
 import {
   createProduct,
   getAllCategoriesData,
-  getAllMeasurementsData,
-  getProductsData,
+  getAllMeasurementsDataa,
+  getProductData,
 } from "@/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase";
@@ -96,6 +96,7 @@ export default function NewProduct() {
   const [imageBase64, setImageBase64] = useState("");
   const [category, setCategory] = useState<[]>([]);
   const [measure, setMeasure] = useState<[]>([]);
+  const [productExist, setProductExist] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null);
 
   const uploadImage = (fileRef: RefObject<HTMLInputElement>) => {
@@ -142,6 +143,7 @@ export default function NewProduct() {
   };
 
   const uploadImageToFirebase = (imgRef: any, file: any) => {
+    console.log('entro a upload')
     const imgUpload = uploadBytesResumable(imgRef, file);
     imgUpload.on(
       "state_changed",
@@ -161,6 +163,7 @@ export default function NewProduct() {
         console.error(err);
       },
       async () => {
+        console.log(getDownloadURL)
         const url = await getDownloadURL(imgUpload.snapshot.ref);
         setData((prevState: any) => ({
           ...prevState,
@@ -172,25 +175,13 @@ export default function NewProduct() {
 
   const saveToFirebase = async () => {
     try {
-      const existingProduct = await getProductsData(data.barCode);
-
-      if (existingProduct) {
-        enqueueSnackbar("El producto ya existe", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-        return;
-      }
       await createProduct(data.barCode, {
         ...data,
       });
       enqueueSnackbar("Producto guardado con exito", {
         variant: "success",
         anchorOrigin: {
-          vertical: "bottom",
+          vertical: "top",
           horizontal: "right",
         },
       });
@@ -227,26 +218,41 @@ export default function NewProduct() {
   useEffect(() => {
     const categoriesData = async () => {
       try {
-        const categories = await getAllCategoriesData();
-        setCategory(categories);
+        await getAllCategoriesData(setCategory)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     categoriesData();
-  }, [category]);
+  }, []);
+
+  const getDataProductForID = async () => {
+    console.log('entro aqui')
+    const dataFirebase: any = await getProductData(data.barCode)
+    if (dataFirebase !== null) {
+      setProductExist(true)
+      setData(dataFirebase)
+      setImageBase64(dataFirebase.image)
+      setUpload(true);
+    } else {
+      setData({ ...DATA_DEFAULT, barCode: data.barCode })
+      setImageBase64('')
+      setProductExist(false)
+    }
+  }
 
   useEffect(() => {
     const measurementsData = async () => {
       try {
-        const measurements = await getAllMeasurementsData();
-        setMeasure(measurements);
+        console.log('getAllMeasurementsData')
+        await getAllMeasurementsDataa(setMeasure);
+        // setMeasure(measurements);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
     measurementsData();
-  }, [measure]);
+  }, []);
   return (
     <Box
       sx={{
@@ -441,7 +447,8 @@ export default function NewProduct() {
                     </InputAdornment>
                   }
                   onChange={(e) => inputOnChange("barCode", e.target.value)}
-                  type={"number"}
+                  onBlur={() => { getDataProductForID() }}
+                  type={"text"}
                   sx={{
                     height: "44.9px",
                     borderRadius: "0.625rem",
@@ -498,6 +505,7 @@ export default function NewProduct() {
                         ref={fileRef}
                         onChange={() => {
                           setUpload(true);
+                          setProductExist(false);
                           uploadImage(fileRef);
                         }}
                         type='file'
@@ -527,16 +535,17 @@ export default function NewProduct() {
                           justifyContent: "space-evenly",
                           marginY: "10px",
                         }}
-                        display={data.image.length > 0 ? "none" : "flex"}
+                        display={(data.image.length > 0 && !productExist) ? "none" : "flex"}
                       >
                         <Button
                           sx={{
+                            display: productExist ? 'none' : 'block',
                             borderRadius: "0.625rem",
                             boxShadow:
                               "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                             background: "#69EAE2",
                           }}
-                          onClick={() => handleAcceptImage(fileRef)}
+                          onClick={() => { handleAcceptImage(fileRef) }}
                         >
                           <Typography
                             sx={{

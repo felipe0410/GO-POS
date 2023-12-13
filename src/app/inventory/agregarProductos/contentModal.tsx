@@ -20,6 +20,7 @@ import {
     addMeasurements,
     getAllCategoriesData,
     getAllMeasurementsData,
+    getAllMeasurementsDataa,
     removeCategory,
     removeMeasurements,
 } from "@/firebase";
@@ -61,26 +62,24 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
     useEffect(() => {
         const categoriesData = async () => {
             try {
-                const categories = await getAllCategoriesData();
-                setCategory(categories);
+                 await getAllCategoriesData(setCategory);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
         categoriesData();
-    }, [category]);
+    }, []);
 
     useEffect(() => {
         const measurementsData = async () => {
             try {
-                const measurements = await getAllMeasurementsData();
-                setMeasure(measurements);
+                 await getAllMeasurementsDataa(setMeasure);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         };
         measurementsData();
-    }, [measure]);
+    }, []);
 
     const handleDelete = async (document: string, tag: string) => {
         if (document === "categories") {
