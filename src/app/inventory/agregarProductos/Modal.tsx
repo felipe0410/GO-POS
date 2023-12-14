@@ -69,7 +69,6 @@ export default function ComponentModal() {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-
                     <NewProductSidebar OpenCategory={create.category} setOpen={setOpen} />
                 </Box>
             </Modal>

@@ -16,19 +16,8 @@ export default function InventoryCard({ data }: { data: any }) {
       paddingBottom: "12px",
     },
   }));
-
   const [openModal, setOpenModal] = React.useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
 
-  const handleClickOpen = (product: any, modalType: string) => {
-    setSelectedProduct(product);
-    setOpenModal(modalType);
-  };
-
-  const handleClose = () => {
-    setSelectedProduct(null);
-    setOpenModal(null);
-  };
 
   return data?.map((product: any) => {
     return (
@@ -53,41 +42,9 @@ export default function InventoryCard({ data }: { data: any }) {
           }}
         >
           <CardActions disableSpacing sx={{ padding: 0 }}>
-            <IconButton
-              sx={{ padding: "8px 3px" }}
-              onClick={() => handleClickOpen(product, "edit")}
-            >
-              <Box
-                component={"img"}
-                src={"/images/edit.svg"}
-                sx={{ width: "0.8rem", height: "0.8rem" }}
-              />
-            </IconButton>
-            <IconButton
-              sx={{ padding: "8px 3px" }}
-              onClick={() => handleClickOpen(product, "delete")}
-            >
-              <Box
-                component={"img"}
-                src={"/images/delete.svg"}
-                sx={{ width: "0.8rem", height: "0.8rem" }}
-              />
-            </IconButton>
           </CardActions>
-          {openModal === "delete" && (
-            <DeleteModal
-              data={selectedProduct}
-              open={Boolean(openModal)}
-              handleClose={handleClose}
-            />
-          )}
-          {openModal === "edit" && (
-            <EditModal
-              data={selectedProduct}
-              open={openModal !== null}
-              handleClose={handleClose}
-            />
-          )}
+          <EditModal data={product} />
+          <DeleteModal data={product} />
         </Box>
         <Box
           sx={{

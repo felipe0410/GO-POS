@@ -151,6 +151,7 @@ export default function StickyHeadTable() {
                   )}
                   {openModal === "edit" && (
                     <EditModal
+                      key={selectedProduct.barCode}
                       data={selectedProduct}
                       open={openModal !== null}
                       handleClose={handleClose}
