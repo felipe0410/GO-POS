@@ -42,3 +42,48 @@ export const inputs = [
     field: "price",
   },
 ];
+
+export const inputsEdit = [
+  {
+    name: "CODIGO DE BARRAS",
+    type: "qrbar",
+    width: "100%",
+    field: "barCode",
+  },
+  {
+    name: "NOMBRE DEL PRODUCTO",
+    type: "text",
+    width: "100%",
+    field: "productName",
+  },
+  {
+    name: "SELECCIONAR CATEGORÍA",
+    type: "category",
+    width: "45%",
+    field: "category",
+  },
+  {
+    name: "SELECCIONAR MEDIDA",
+    type: "measurement",
+    width: "45%",
+    field: "measurement",
+  },
+  {
+    name: "DESCRIPCIÓN",
+    type: "textarea",
+    width: "100%",
+    field: "description",
+  },
+  {
+    name: "PRECIO",
+    type: "amount",
+    width: "45%",
+    field: "price",
+  },
+  {
+    name: "CANTIDAD",
+    type: "qty",
+    width: "45%",
+    field: "cantidad",
+  },
+];

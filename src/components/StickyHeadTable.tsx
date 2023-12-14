@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { deleteProduct, getAllProductsData } from "@/firebase";
 import { Box, IconButton } from "@mui/material";
 import DeleteModal from "./DeleteModal";
+import EditModal from "./EditModal";
 
 interface Column {
   id: "iconos" | "productName" | "barCode" | "price" | "cantidad" | "category";
@@ -43,17 +44,17 @@ const columns: readonly Column[] = [
 
 export default function StickyHeadTable() {
   const [data, setData] = useState<undefined | any[]>(undefined);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = React.useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
 
-  const handleClickOpen = (product: any) => {
+  const handleClickOpen = (product: any, modalType: string) => {
     setSelectedProduct(product);
-    setOpen(true);
+    setOpenModal(modalType);
   };
 
   const handleClose = () => {
     setSelectedProduct(null);
-    setOpen(false);
+    setOpenModal(null);
   };
 
   useEffect(() => {
@@ -67,13 +68,6 @@ export default function StickyHeadTable() {
     getAllProducts();
   }, []);
 
-  const handleDelete = async (uid: string) => {
-    try {
-      await deleteProduct(uid);
-    } catch (error) {
-      console.error("error al eliminar ", error);
-    }
-  };
   return (
     <Paper
       elevation={0}
@@ -127,7 +121,10 @@ export default function StickyHeadTable() {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.uid}>
                   <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>
-                    <IconButton sx={{ padding: "8px 3px" }}>
+                    <IconButton
+                      sx={{ padding: "8px 3px" }}
+                      onClick={() => handleClickOpen(row, "edit")}
+                    >
                       <Box
                         component={"img"}
                         src={"/images/edit.svg"}
@@ -136,7 +133,7 @@ export default function StickyHeadTable() {
                     </IconButton>
                     <IconButton
                       sx={{ padding: "8px 3px" }}
-                      onClick={() => handleClickOpen(row)}
+                      onClick={() => handleClickOpen(row, "delete")}
                     >
                       <Box
                         component={"img"}
@@ -145,11 +142,20 @@ export default function StickyHeadTable() {
                       />
                     </IconButton>
                   </TableCell>
-                  <DeleteModal
-                    data={selectedProduct}
-                    open={open}
-                    handleClose={handleClose}
-                  />
+                  {openModal === "delete" && (
+                    <DeleteModal
+                      data={selectedProduct}
+                      open={Boolean(openModal)}
+                      handleClose={handleClose}
+                    />
+                  )}
+                  {openModal === "edit" && (
+                    <EditModal
+                      data={selectedProduct}
+                      open={openModal !== null}
+                      handleClose={handleClose}
+                    />
+                  )}
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (

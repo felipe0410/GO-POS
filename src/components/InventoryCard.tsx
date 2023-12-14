@@ -7,8 +7,8 @@ import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
-import DeleteDialog from "./DeleteModal";
 import DeleteModal from "./DeleteModal";
+import EditModal from "./EditModal";
 
 export default function InventoryCard({ data }: { data: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
@@ -17,17 +17,17 @@ export default function InventoryCard({ data }: { data: any }) {
     },
   }));
 
-  const [open, setOpen] = React.useState(false);
+  const [openModal, setOpenModal] = React.useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
 
-  const handleClickOpen = (product: any) => {
+  const handleClickOpen = (product: any, modalType: string) => {
     setSelectedProduct(product);
-    setOpen(true);
+    setOpenModal(modalType);
   };
 
   const handleClose = () => {
     setSelectedProduct(null);
-    setOpen(false);
+    setOpenModal(null);
   };
 
   return data?.map((product: any) => {
@@ -53,7 +53,10 @@ export default function InventoryCard({ data }: { data: any }) {
           }}
         >
           <CardActions disableSpacing sx={{ padding: 0 }}>
-            <IconButton sx={{ padding: "8px 3px" }}>
+            <IconButton
+              sx={{ padding: "8px 3px" }}
+              onClick={() => handleClickOpen(product, "edit")}
+            >
               <Box
                 component={"img"}
                 src={"/images/edit.svg"}
@@ -62,7 +65,7 @@ export default function InventoryCard({ data }: { data: any }) {
             </IconButton>
             <IconButton
               sx={{ padding: "8px 3px" }}
-              onClick={() => handleClickOpen(product)}
+              onClick={() => handleClickOpen(product, "delete")}
             >
               <Box
                 component={"img"}
@@ -71,11 +74,20 @@ export default function InventoryCard({ data }: { data: any }) {
               />
             </IconButton>
           </CardActions>
-          <DeleteModal
-            data={selectedProduct}
-            open={open}
-            handleClose={handleClose}
-          />
+          {openModal === "delete" && (
+            <DeleteModal
+              data={selectedProduct}
+              open={Boolean(openModal)}
+              handleClose={handleClose}
+            />
+          )}
+          {openModal === "edit" && (
+            <EditModal
+              data={selectedProduct}
+              open={openModal !== null}
+              handleClose={handleClose}
+            />
+          )}
         </Box>
         <Box
           sx={{

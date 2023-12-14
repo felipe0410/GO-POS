@@ -1,27 +1,10 @@
 import * as React from "react";
 import Button from "@mui/material/Button";
-import Avatar from "@mui/material/Avatar";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import DialogTitle from "@mui/material/DialogTitle";
-import Dialog from "@mui/material/Dialog";
-import PersonIcon from "@mui/icons-material/Person";
-import AddIcon from "@mui/icons-material/Add";
 import Typography from "@mui/material/Typography";
-import Image from "next/image";
 import { styled, css } from "@mui/system";
 import { Modal as BaseModal } from "@mui/base/Modal";
 import { Box, Paper } from "@mui/material";
 import { deleteProduct } from "@/firebase";
-
-export interface SimpleDialogProps {
-  open: boolean;
-  data: any;
-  handleClose: () => void;
-}
 
 const Modal = styled(BaseModal)`
   position: fixed;
@@ -50,8 +33,10 @@ const ModalContent = styled(Paper)(
   `
 );
 
-export default function DeleteModal(props: SimpleDialogProps) {
+export default function DeleteModal(props: any) {
   const { handleClose, open, data } = props;
+
+  console.log(data);
 
   const handleDelete = async (uid: string) => {
     try {
@@ -62,12 +47,12 @@ export default function DeleteModal(props: SimpleDialogProps) {
     }
   };
 
+  const handleCancel = () => {
+    handleClose();
+  };
+
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      slotsProps={{ backdrop: { backgroundColor: "transparent" } }}
-    >
+    <Modal open={open} onClose={handleClose}>
       <ModalContent>
         <Box sx={{ textAlign: "center" }}>
           <Typography
@@ -132,10 +117,11 @@ export default function DeleteModal(props: SimpleDialogProps) {
                 lineHeight: "normal",
               }}
             >
-              Si, Eliminar
+              SÍ, ELIMINAR
             </Typography>
           </Button>
           <Button
+            onClick={() => handleCancel()}
             sx={{
               width: "8.75rem",
               height: "1.5625rem",
@@ -157,7 +143,7 @@ export default function DeleteModal(props: SimpleDialogProps) {
                 lineHeight: "normal",
               }}
             >
-              Cancelar
+              CANCELAR
             </Typography>
           </Button>
         </Box>
