@@ -114,6 +114,24 @@ export const getProductData = async (uid: any) => {
     return null;
   }
 };
+export const updateProductData = async (uid: any, newData: any) => {
+  try {
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const productDocRef = doc(productCollectionRef, uid);
+
+    const docSnapshot = await getDoc(productDocRef);
+
+    if (docSnapshot.exists()) {
+      await updateDoc(productDocRef, newData);
+      console.log("Documento actualizado con éxito.");
+    } else {
+      console.log("El documento no existe.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el documento: ", error);
+  }
+};
 
 export const deleteProduct = async (uid: any) => {
   try {

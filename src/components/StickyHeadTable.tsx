@@ -121,42 +121,11 @@ export default function StickyHeadTable() {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.uid}>
                   <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>
-                    <IconButton
-                      sx={{ padding: "8px 3px" }}
-                      onClick={() => handleClickOpen(row, "edit")}
-                    >
-                      <Box
-                        component={"img"}
-                        src={"/images/edit.svg"}
-                        sx={{ width: "0.8rem", height: "0.8rem" }}
-                      />
-                    </IconButton>
-                    <IconButton
-                      sx={{ padding: "8px 3px" }}
-                      onClick={() => handleClickOpen(row, "delete")}
-                    >
-                      <Box
-                        component={"img"}
-                        src={"/images/delete.svg"}
-                        sx={{ width: "0.8rem", height: "0.8rem" }}
-                      />
-                    </IconButton>
+                    <Box sx={{ display: "flex", flexDirection: "row" }}>
+                      <EditModal data={row} />
+                      <DeleteModal data={row} />
+                    </Box>
                   </TableCell>
-                  {openModal === "delete" && (
-                    <DeleteModal
-                      data={selectedProduct}
-                      open={Boolean(openModal)}
-                      handleClose={handleClose}
-                    />
-                  )}
-                  {openModal === "edit" && (
-                    <EditModal
-                      key={selectedProduct.barCode}
-                      data={selectedProduct}
-                      open={openModal !== null}
-                      handleClose={handleClose}
-                    />
-                  )}
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (

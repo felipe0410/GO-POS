@@ -1,42 +1,33 @@
-'use client'
+"use client";
 import NewProduct from "@/components/NewProduct";
 import NewProductSidebar from "@/components/NewProductSidebar";
 import { Box, Divider, Typography } from "@mui/material";
 import ComponentModal from "./Modal";
+import Header from "@/components/Header";
 
 const Page = () => {
   return (
     <>
-      <Typography
-        id='title'
-        sx={{
-          color: '#69EAE2',
-          fontFamily: 'Nunito',
-          fontSize: { xs: '24px', sm: '40px' },
-          fontStyle: 'normal',
-          fontWeight: 700,
-          lineHeight: 'normal',
-        }}>
-        INVENTARIO
-      </Typography>
-      <Divider sx={{ background: '#69EAE2', width: '95%' }} />
+      <Header title='INVENTARIO' />
       <Box sx={{ marginTop: "2rem" }}>
         <Box>
-          <Typography sx={{
-            color: '#FFF',
-            fontFamily: 'Nunito Sans',
-            fontSize: { xs: '16px', sm: '32px' },
-            fontStyle: 'normal',
-            fontWeight: 700,
-            lineHeight: 'normal',
-          }}>
+          <Typography
+            sx={{
+              color: "#FFF",
+              fontFamily: "Nunito Sans",
+              fontSize: { xs: "16px", sm: "32px" },
+              fontStyle: "normal",
+              fontWeight: 700,
+              lineHeight: "normal",
+            }}
+          >
             AGREGAR NUEVO PRODUCTO
           </Typography>
           <Typography
             sx={{
               color: "#FFF",
               fontFamily: "Nunito",
-              fontSize: { xs: "12px", sm: '16px' },
+              fontSize: { xs: "12px", sm: "16px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "normal",
@@ -46,11 +37,13 @@ const Page = () => {
             Completa los campos para añadir nuevos productos a tu inventario.
           </Typography>
         </Box>
-        <Box sx={{
-          display: { xs: 'flex', sm: 'none' },
-          justifyContent: 'flex-end',
-          width: '95%',
-        }}>
+        <Box
+          sx={{
+            display: { xs: "flex", sm: "none" },
+            justifyContent: "flex-end",
+            width: "95%",
+          }}
+        >
           <ComponentModal />
         </Box>
         <Box
@@ -65,11 +58,11 @@ const Page = () => {
           <Box sx={{ width: { sm: "65%" } }}>
             <NewProduct />
           </Box>
-          <Box display={{ xs: 'none', sm: 'block' }} sx={{ width: "35%" }}>
+          <Box display={{ xs: "none", sm: "block" }} sx={{ width: "35%" }}>
             <NewProductSidebar />
           </Box>
         </Box>
-      </Box >
+      </Box>
     </>
   );
 };

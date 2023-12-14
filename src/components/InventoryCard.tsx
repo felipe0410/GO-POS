@@ -18,7 +18,6 @@ export default function InventoryCard({ data }: { data: any }) {
   }));
   const [openModal, setOpenModal] = React.useState<string | null>(null);
 
-
   return data?.map((product: any) => {
     return (
       <Card
@@ -42,9 +41,9 @@ export default function InventoryCard({ data }: { data: any }) {
           }}
         >
           <CardActions disableSpacing sx={{ padding: 0 }}>
+            <EditModal data={product} />
+            <DeleteModal data={product} />
           </CardActions>
-          <EditModal data={product} />
-          <DeleteModal data={product} />
         </Box>
         <Box
           sx={{

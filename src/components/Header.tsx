@@ -8,7 +8,7 @@ const Header = ({ title }: { title: string }) => {
         sx={{
           color: "#69EAE2",
           fontFamily: "Nunito",
-          fontSize: "2.5rem",
+          fontSize: { xs: "24px", sm: "40px" },
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "normal",
