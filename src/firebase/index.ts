@@ -8,6 +8,7 @@ import {
   arrayRemove,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -58,23 +59,40 @@ export const createProduct = async (uid: any, productData: any) => {
   }
 };
 
-export const getAllProductsData = async () => {
+export const getAllProductsData = (callback: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
     const productCollectionRef = collection(establecimientoDocRef, "productos");
-    const querySnapshot = await getDocs(productCollectionRef);
 
-    const productsData: any[] = [];
+    // Initial fetch of data
+    getDocs(productCollectionRef)
+      .then((querySnapshot) => {
+        const productsData: any[] = [];
+        querySnapshot.forEach((doc) => {
+          productsData.push({ id: doc.id, ...doc.data() });
+        });
 
-    querySnapshot.forEach((doc) => {
-      if (doc.exists()) {
-        productsData.push(doc.data());
-      }
+        callback(productsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching initial data:", error);
+        callback(null);
+      });
+
+    // Real-time updates
+    const unsubscribe = onSnapshot(productCollectionRef, (querySnapshot) => {
+      const productsData: any[] = [];
+      querySnapshot.forEach((doc) => {
+        productsData.push({ id: doc.id, ...doc.data() });
+      });
+
+      callback(productsData);
     });
 
-    return productsData;
+    // Return the unsubscribe function to stop observing changes
+    return unsubscribe;
   } catch (error) {
-    console.error("Error al obtener información de los productos: ", error);
+    console.error("Error setting up data observer: ", error);
     return null;
   }
 };
@@ -94,6 +112,26 @@ export const getProductData = async (uid: any) => {
   } catch (error) {
     console.error("Error al obtener información del documento: ", error);
     return null;
+  }
+};
+
+export const deleteProduct = async (uid: any) => {
+  try {
+    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const productDocRef = doc(productCollectionRef, uid);
+
+    const docSnapshot = await getDoc(productDocRef);
+
+    if (docSnapshot.exists()) {
+      await deleteDoc(productDocRef);
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error al eliminar el producto: ", error);
+    return false;
   }
 };
 

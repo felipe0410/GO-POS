@@ -9,10 +9,7 @@ const ProductCards = () => {
   useEffect(() => {
     const getAllProducts = async () => {
       try {
-        const allProducts = await getAllProductsData();
-        if (allProducts) {
-          setData(allProducts);
-        }
+        getAllProductsData(setData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }

@@ -7,6 +7,8 @@ import CardActions from "@mui/material/CardActions";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
+import DeleteDialog from "./DeleteModal";
+import DeleteModal from "./DeleteModal";
 
 export default function InventoryCard({ data }: { data: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
@@ -14,6 +16,20 @@ export default function InventoryCard({ data }: { data: any }) {
       paddingBottom: "12px",
     },
   }));
+
+  const [open, setOpen] = React.useState(false);
+  const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
+
+  const handleClickOpen = (product: any) => {
+    setSelectedProduct(product);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setSelectedProduct(null);
+    setOpen(false);
+  };
+
   return data?.map((product: any) => {
     return (
       <Card
@@ -44,7 +60,10 @@ export default function InventoryCard({ data }: { data: any }) {
                 sx={{ width: "0.8rem", height: "0.8rem" }}
               />
             </IconButton>
-            <IconButton sx={{ padding: "8px 3px" }}>
+            <IconButton
+              sx={{ padding: "8px 3px" }}
+              onClick={() => handleClickOpen(product)}
+            >
               <Box
                 component={"img"}
                 src={"/images/delete.svg"}
@@ -52,6 +71,11 @@ export default function InventoryCard({ data }: { data: any }) {
               />
             </IconButton>
           </CardActions>
+          <DeleteModal
+            data={selectedProduct}
+            open={open}
+            handleClose={handleClose}
+          />
         </Box>
         <Box
           sx={{
