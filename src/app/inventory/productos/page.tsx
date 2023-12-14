@@ -30,7 +30,7 @@ const Page = () => {
             sx={{
               color: "#FFF",
               fontFamily: "Nunito Sans",
-              fontSize: "2rem",
+              fontSize: { sm: "20px", md: "32px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "normal",
@@ -61,10 +61,16 @@ const Page = () => {
             boxShadow: "0px 1px 100px -50px #69EAE2",
           }}
         >
-          <Box sx={{ padding: "40px 48px", height: "100%" }}>
+          <Box
+            sx={{
+              padding: "40px 48px",
+              height: "100%",
+              textAlign: "-webkit-center",
+            }}
+          >
             <Box
               sx={{
-                display: "flex",
+                display: { sm: "blok", md: "flex" },
                 flexDirection: "row",
                 justifyContent: "space-between",
               }}
@@ -102,7 +108,12 @@ const Page = () => {
                   <Box component={"img"} src={"/images/scan.svg"} />
                 </IconButton>
               </Box>
-              <Box sx={{ width: "19rem" }}>
+              <Box
+                sx={{
+                  width: "19rem",
+                  marginTop: { xs: "15px", sm: "15px", md: "0" },
+                }}
+              >
                 <Box
                   sx={{
                     display: "flex",
