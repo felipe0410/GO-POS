@@ -13,6 +13,7 @@ import Paper from "@mui/material/Paper";
 import React, { useState } from "react";
 import StickyHeadTable from "@/components/StickyHeadTable";
 import ProductCards from "@/components/ProductCards";
+import TableResponsive from "@/components/TableResponsive";
 
 const Page = () => {
   const [isTable, setIsTable] = useState(false);
@@ -160,7 +161,24 @@ const Page = () => {
               </Box>
             </Box>
             <Box sx={{ marginTop: "1.56rem", height: "100%" }}>
-              {isTable ? <StickyHeadTable /> : <ProductCards />}
+              {isTable ? (
+                <>
+                  <Box
+                    display={{ md: "none", lg: "block", xs: "none" }}
+                    sx={{ height: "100%" }}
+                  >
+                    <StickyHeadTable />
+                  </Box>
+                  <Box
+                    display={{ lg: "none", md: "block", xs: "block" }}
+                    sx={{ height: "100%" }}
+                  >
+                    <TableResponsive />
+                  </Box>
+                </>
+              ) : (
+                <ProductCards />
+              )}
             </Box>
           </Box>
         </Paper>

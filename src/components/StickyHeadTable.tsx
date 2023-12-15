@@ -44,18 +44,6 @@ const columns: readonly Column[] = [
 
 export default function StickyHeadTable() {
   const [data, setData] = useState<undefined | any[]>(undefined);
-  const [openModal, setOpenModal] = React.useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
-
-  const handleClickOpen = (product: any, modalType: string) => {
-    setSelectedProduct(product);
-    setOpenModal(modalType);
-  };
-
-  const handleClose = () => {
-    setSelectedProduct(null);
-    setOpenModal(null);
-  };
 
   useEffect(() => {
     const getAllProducts = async () => {
@@ -86,7 +74,7 @@ export default function StickyHeadTable() {
             <TableRow>
               <TableCell
                 align={"center"}
-                style={{ minWidth: 90 }}
+                style={{ minWidth: 75 }}
                 sx={{
                   background: "#1F1D2B",
                   color: "#69EAE2",
