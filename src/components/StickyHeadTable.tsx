@@ -42,46 +42,30 @@ const columns: readonly Column[] = [
   },
 ];
 
-export default function StickyHeadTable() {
-  const [data, setData] = useState<undefined | any[]>(undefined);
-  const [openModal, setOpenModal] = React.useState<string | null>(null);
-  const [selectedProduct, setSelectedProduct] = React.useState<any>(null);
-
-  const handleClickOpen = (product: any, modalType: string) => {
-    setSelectedProduct(product);
-    setOpenModal(modalType);
-  };
-
-  const handleClose = () => {
-    setSelectedProduct(null);
-    setOpenModal(null);
-  };
-
-  useEffect(() => {
-    const getAllProducts = async () => {
-      try {
-        await getAllProductsData(setData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getAllProducts();
-  }, []);
-
+export default function StickyHeadTable({
+  filteredData,
+}: {
+  filteredData: any;
+}) {
   return (
     <Paper
       elevation={0}
-      sx={{ width: "100%", overflow: "hidden", background: "#1F1D2B" }}
+      sx={{
+        width: "100%",
+        overflow: "hidden",
+        background: "#1F1D2B",
+        height: "92%",
+      }}
     >
       <TableContainer
-        sx={{ maxHeight: 490, background: "#1F1D2B", border: "none" }}
+        sx={{ maxHeight: "100%", background: "#1F1D2B", border: "none" }}
       >
         <Table stickyHeader aria-label='sticky table'>
           <TableHead>
             <TableRow>
               <TableCell
                 align={"center"}
-                style={{ minWidth: 90 }}
+                style={{ minWidth: 75 }}
                 sx={{
                   background: "#1F1D2B",
                   color: "#69EAE2",
@@ -117,46 +101,15 @@ export default function StickyHeadTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((row) => {
+            {filteredData?.map((row: any) => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.uid}>
                   <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>
-                    <IconButton
-                      sx={{ padding: "8px 3px" }}
-                      onClick={() => handleClickOpen(row, "edit")}
-                    >
-                      <Box
-                        component={"img"}
-                        src={"/images/edit.svg"}
-                        sx={{ width: "0.8rem", height: "0.8rem" }}
-                      />
-                    </IconButton>
-                    <IconButton
-                      sx={{ padding: "8px 3px" }}
-                      onClick={() => handleClickOpen(row, "delete")}
-                    >
-                      <Box
-                        component={"img"}
-                        src={"/images/delete.svg"}
-                        sx={{ width: "0.8rem", height: "0.8rem" }}
-                      />
-                    </IconButton>
+                    <Box sx={{ display: "flex", flexDirection: "row" }}>
+                      <EditModal data={row} />
+                      <DeleteModal data={row} />
+                    </Box>
                   </TableCell>
-                  {openModal === "delete" && (
-                    <DeleteModal
-                      data={selectedProduct}
-                      open={Boolean(openModal)}
-                      handleClose={handleClose}
-                    />
-                  )}
-                  {openModal === "edit" && (
-                    <EditModal
-                      key={selectedProduct.barCode}
-                      data={selectedProduct}
-                      open={openModal !== null}
-                      handleClose={handleClose}
-                    />
-                  )}
                   {columns.map((column) => {
                     const value = row[column.id];
                     return (

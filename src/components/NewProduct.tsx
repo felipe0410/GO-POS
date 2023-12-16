@@ -78,7 +78,7 @@ export default function NewProduct() {
     barCode: "",
     description: "",
     image: "",
-    cantidad: ""
+    cantidad: "",
   };
   const [data, setData] = useState({
     productName: "",
@@ -88,7 +88,7 @@ export default function NewProduct() {
     barCode: "",
     description: "",
     image: "",
-    cantidad: ''
+    cantidad: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -96,7 +96,7 @@ export default function NewProduct() {
   const [imageBase64, setImageBase64] = useState("");
   const [category, setCategory] = useState<[]>([]);
   const [measure, setMeasure] = useState<[]>([]);
-  const [productExist, setProductExist] = useState(false)
+  const [productExist, setProductExist] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const uploadImage = (fileRef: RefObject<HTMLInputElement>) => {
@@ -143,7 +143,7 @@ export default function NewProduct() {
   };
 
   const uploadImageToFirebase = (imgRef: any, file: any) => {
-    console.log('entro a upload')
+    console.log("entro a upload");
     const imgUpload = uploadBytesResumable(imgRef, file);
     imgUpload.on(
       "state_changed",
@@ -163,7 +163,7 @@ export default function NewProduct() {
         console.error(err);
       },
       async () => {
-        console.log(getDownloadURL)
+        console.log(getDownloadURL);
         const url = await getDownloadURL(imgUpload.snapshot.ref);
         setData((prevState: any) => ({
           ...prevState,
@@ -218,7 +218,7 @@ export default function NewProduct() {
   useEffect(() => {
     const categoriesData = async () => {
       try {
-        await getAllCategoriesData(setCategory)
+        await getAllCategoriesData(setCategory);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -227,24 +227,23 @@ export default function NewProduct() {
   }, []);
 
   const getDataProductForID = async () => {
-    console.log('entro aqui')
-    const dataFirebase: any = await getProductData(data.barCode)
+    console.log("entro aqui");
+    const dataFirebase: any = await getProductData(data.barCode);
     if (dataFirebase !== null) {
-      setProductExist(true)
-      setData(dataFirebase)
-      setImageBase64(dataFirebase.image)
+      setProductExist(true);
+      setData(dataFirebase);
+      setImageBase64(dataFirebase.image);
       setUpload(true);
     } else {
-      setData({ ...DATA_DEFAULT, barCode: data.barCode })
-      setImageBase64('')
-      setProductExist(false)
+      setData({ ...DATA_DEFAULT, barCode: data.barCode });
+      setImageBase64("");
+      setProductExist(false);
     }
-  }
+  };
 
   useEffect(() => {
     const measurementsData = async () => {
       try {
-        console.log('getAllMeasurementsData')
         await getAllMeasurementsDataa(setMeasure);
         // setMeasure(measurements);
       } catch (error) {
@@ -271,12 +270,15 @@ export default function NewProduct() {
           boxShadow: "0px 1px 100px -50px #69EAE2",
         }}
       >
-        <Box sx={{ padding: { xs: '15px', sm: "2rem 3.8rem 2rem 3.4rem" } }}>
-          <Box id='container-inputs' sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            justifyContent: 'space-between',
-          }} >
+        <Box sx={{ padding: { xs: "15px", sm: "2rem 3.8rem 2rem 3.4rem" } }}>
+          <Box
+            id='container-inputs'
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
             {inputs.map((input, index) => {
               const style = {
                 width: input.width,
@@ -293,7 +295,7 @@ export default function NewProduct() {
               const styleTypography = {
                 color: "#FFF",
                 fontFamily: "Nunito",
-                fontSize: { xs: '10px', sm: "1rem" },
+                fontSize: { xs: "10px", sm: "1rem" },
                 fontStyle: "normal",
                 fontWeight: 700,
                 lineHeight: "normal",
@@ -373,7 +375,9 @@ export default function NewProduct() {
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                   />
-                  <Typography sx={{ ...styleTypography, marginTop: '10px' }}>{'CANTIDAD'}</Typography>
+                  <Typography sx={{ ...styleTypography, marginTop: "10px" }}>
+                    {"CANTIDAD"}
+                  </Typography>
                   <OutlinedInput
                     value={data["cantidad"]}
                     onChange={(e) => inputOnChange("cantidad", e.target.value)}
@@ -392,22 +396,22 @@ export default function NewProduct() {
                       display: "flex",
                       justifyContent: "flex-end",
                       marginBottom: "2%",
-                      marginLeft: 'auto',
-                      width: { sm: '50%' },
-                      marginTop: 'auto',
+                      marginLeft: "auto",
+                      width: { sm: "50%" },
+                      marginTop: "auto",
                     }}
                   >
                     <Button
                       onClick={() => saveToFirebase()}
                       disabled={!isNotEmpty(data)}
                       sx={{
-                        width: '100%',
+                        width: "100%",
                         height: "2.5rem",
                         borderRadius: "0.625rem",
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                         background: !isNotEmpty(data) ? "gray" : "#69EAE2",
-                        marginTop: '10px'
+                        marginTop: "10px",
                       }}
                     >
                       <Typography
@@ -447,7 +451,9 @@ export default function NewProduct() {
                     </InputAdornment>
                   }
                   onChange={(e) => inputOnChange("barCode", e.target.value)}
-                  onBlur={() => { getDataProductForID() }}
+                  onBlur={() => {
+                    getDataProductForID();
+                  }}
                   type={"text"}
                   sx={{
                     height: "44.9px",
@@ -535,17 +541,23 @@ export default function NewProduct() {
                           justifyContent: "space-evenly",
                           marginY: "10px",
                         }}
-                        display={(data.image.length > 0 && !productExist) ? "none" : "flex"}
+                        display={
+                          data.image.length > 0 && !productExist
+                            ? "none"
+                            : "flex"
+                        }
                       >
                         <Button
                           sx={{
-                            display: productExist ? 'none' : 'block',
+                            display: productExist ? "none" : "block",
                             borderRadius: "0.625rem",
                             boxShadow:
                               "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                             background: "#69EAE2",
                           }}
-                          onClick={() => { handleAcceptImage(fileRef) }}
+                          onClick={() => {
+                            handleAcceptImage(fileRef);
+                          }}
                         >
                           <Typography
                             sx={{
@@ -629,7 +641,6 @@ export default function NewProduct() {
                 </React.Fragment>
               );
             })}
-
           </Box>
         </Box>
       </Paper>
