@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import * as React from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -17,7 +17,7 @@ import { usePathname } from "next/navigation";
 import { Button, SwipeableDrawer, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-
+import { useParams } from 'next/navigation'
 
 const drawerWidth = 196;
 
@@ -75,6 +75,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+  const params = useParams()
+
 
   const sections = [
     {
@@ -99,7 +101,7 @@ export default function Sidebar() {
       section: "INVENTARIO",
       icon: "/images/inventario.svg",
       icon2: "/images/inventarioSelected.svg",
-      id: "/inventory",
+      id: "/inventory/productos",
       submenus: [
         {
           section: "PRIMERA RUTA",
@@ -135,6 +137,9 @@ export default function Sidebar() {
   const validation = (section: string) => {
     return pathname.startsWith(section);
   };
+
+  console.log('params::>', params)
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -249,6 +254,7 @@ export default function Sidebar() {
                     />
                   </ListItem>
                 </Link>
+                <>{console.log('open::>', open, 'selectedSection:::>', selectedSection, 'section.id::>', section.id)}</>
                 {open && section.submenus && selectedSection === section.id && (
                   <List
                     id='subCategory'

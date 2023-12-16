@@ -104,8 +104,6 @@ export default function EditModal(props: any) {
   const [measure, setMeasure] = React.useState<[]>([]);
   const [productExist, setProductExist] = React.useState(false);
   const fileRef = React.useRef<HTMLInputElement>(null);
-  console.log('%cproductt:::>', 'color:red', product);
-
   const inputOnChange = (field: string, value: string) => {
     setProduct({ ...product, [field]: value });
   };
