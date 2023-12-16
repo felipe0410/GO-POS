@@ -72,7 +72,7 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Sidebar() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [selectedSection, setSelectedSection] = React.useState<any>(null);
   const pathname = usePathname();
   const theme = useTheme();
@@ -138,16 +138,13 @@ export default function Sidebar() {
     }
   };
   const validation = (section: string) => {
-    console.log("%cvalidation::>", "color:red", section)
-    console.log("%cvalidation::>", "color:red", pathname.startsWith(section))
     return pathname.startsWith(section);
   };
 
   React.useEffect(() => {
     setSelectedSection(pathname)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  console.log('params::>', pathname)
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -157,7 +154,7 @@ export default function Sidebar() {
       </Button>
       <SwipeableDrawer
         id='Drawer'
-        variant={matchesSM ? undefined : "permanent"}
+        variant={matchesSM ? "persistent" : "permanent"}
         anchor='left'
         open={open}
         onClose={() => setOpen(false)}
@@ -166,6 +163,7 @@ export default function Sidebar() {
           style: {
             background: "transparent",
             border: "none",
+            width: !open ? '100px' : "auto"
           },
         }}
       >
@@ -264,7 +262,6 @@ export default function Sidebar() {
                     />
                   </ListItem>
                 </Link>
-                <>{console.log('open::>', open, 'selectedSection:::>', selectedSection, 'section.id::>', section.id)}</>
                 {open && section.submenus && selectedSection === section.id && (
                   <List
                     id='subCategory'
