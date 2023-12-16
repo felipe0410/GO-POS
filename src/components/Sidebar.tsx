@@ -1,4 +1,4 @@
-'use client'
+"use client"
 import * as React from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -13,11 +13,14 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { usePathname } from "next/navigation";
+// import { usePathname } from "next/navigation";
 import { Button, SwipeableDrawer, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+
 
 const drawerWidth = 196;
 
@@ -44,7 +47,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   alignItems: "center",
   justifyContent: "flex-end",
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -71,11 +73,12 @@ const Drawer = styled(MuiDrawer, {
 
 export default function Sidebar() {
   const [open, setOpen] = React.useState(true);
-  const [selectedSection, setSelectedSection] = React.useState(null);
+  const [selectedSection, setSelectedSection] = React.useState<any>(null);
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
   const params = useParams()
+  const router = useRouter()
 
 
   const sections = [
@@ -135,10 +138,16 @@ export default function Sidebar() {
     }
   };
   const validation = (section: string) => {
+    console.log("%cvalidation::>", "color:red", section)
+    console.log("%cvalidation::>", "color:red", pathname.startsWith(section))
     return pathname.startsWith(section);
   };
 
-  console.log('params::>', params)
+  React.useEffect(() => {
+    setSelectedSection(pathname)
+  }, [])
+
+  console.log('params::>', pathname)
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -188,7 +197,8 @@ export default function Sidebar() {
               <Box
                 sx={{
                   marginY: "30px",
-                  background: validation(section.id)
+                  background: (section.submenus && selectedSection === section.id)
+                    // validation(section.id)
                     ? "#252836"
                     : "transparent",
                   marginLeft: "12px",

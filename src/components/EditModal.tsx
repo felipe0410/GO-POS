@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -21,10 +22,8 @@ import {
   storage,
   updateProductData,
 } from "@/firebase";
-import NewProduct from "./NewProduct";
 import { inputsEdit } from "@/data/inputs";
 import { NumericFormat } from "react-number-format";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Input as BaseInput, InputProps } from "@mui/base/Input";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { ColorRing } from "react-loader-spinner";
