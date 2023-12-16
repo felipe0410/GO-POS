@@ -19,20 +19,12 @@ import { getAllProductsData } from "@/firebase";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 
-export default function TableResponsive() {
-  const [data, setData] = React.useState<undefined | any[]>(undefined);
+export default function TableResponsive({
+  filteredData,
+}: {
+  filteredData: any;
+}) {
   const [expandedRow, setExpandedRow] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const getAllProducts = async () => {
-      try {
-        await getAllProductsData(setData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getAllProducts();
-  }, []);
 
   return (
     <Paper
@@ -86,7 +78,7 @@ export default function TableResponsive() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((row: any) => (
+            {filteredData?.map((row: any) => (
               <React.Fragment key={row.uid}>
                 <TableRow>
                   <TableCell sx={{ borderColor: "#69EAE2" }}>

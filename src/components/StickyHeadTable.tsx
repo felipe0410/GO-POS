@@ -42,20 +42,11 @@ const columns: readonly Column[] = [
   },
 ];
 
-export default function StickyHeadTable() {
-  const [data, setData] = useState<undefined | any[]>(undefined);
-
-  useEffect(() => {
-    const getAllProducts = async () => {
-      try {
-        await getAllProductsData(setData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getAllProducts();
-  }, []);
-
+export default function StickyHeadTable({
+  filteredData,
+}: {
+  filteredData: any;
+}) {
   return (
     <Paper
       elevation={0}
@@ -110,7 +101,7 @@ export default function StickyHeadTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data?.map((row) => {
+            {filteredData?.map((row: any) => {
               return (
                 <TableRow hover role='checkbox' tabIndex={-1} key={row.uid}>
                   <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>

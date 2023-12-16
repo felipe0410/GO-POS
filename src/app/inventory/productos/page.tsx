@@ -10,18 +10,46 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import StickyHeadTable from "@/components/StickyHeadTable";
 import ProductCards from "@/components/ProductCards";
 import TableResponsive from "@/components/TableResponsive";
+import { getAllProductsData } from "@/firebase";
 
 const Page = () => {
   const [isTable, setIsTable] = useState(false);
+  const [data, setData] = React.useState<undefined | any[]>(undefined);
+  const [searchTerm, setSearchTerm] = useState("");
+
   const styleViewActive = {
     borderRadius: "0.625rem",
     background: "#69EAE2",
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   };
+
+  const handleSearchChange = (event: any) => {
+    setSearchTerm(event.target.value);
+  };
+
+  React.useEffect(() => {
+    const getAllProducts = async () => {
+      try {
+        await getAllProductsData(setData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getAllProducts();
+  }, []);
+
+  const filteredData = data?.filter(
+    (item) =>
+      searchTerm === "" ||
+      item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.barCode.toString().includes(searchTerm)
+  );
+
   return (
     <Box id='page products' sx={{ height: "100%" }}>
       <Header title='INVENTARIO' />
@@ -103,6 +131,8 @@ const Page = () => {
                       color: "#fff",
                     }}
                     placeholder='Buscar'
+                    value={searchTerm}
+                    onChange={handleSearchChange}
                   />
                 </Paper>
                 <IconButton sx={{ paddingTop: "0px", marginBottom: "4px" }}>
@@ -167,17 +197,17 @@ const Page = () => {
                     display={{ md: "none", lg: "block", xs: "none" }}
                     sx={{ height: "100%" }}
                   >
-                    <StickyHeadTable />
+                    <StickyHeadTable filteredData={filteredData} />
                   </Box>
                   <Box
                     display={{ lg: "none", md: "block", xs: "block" }}
                     sx={{ height: "100%" }}
                   >
-                    <TableResponsive />
+                    <TableResponsive filteredData={filteredData} />
                   </Box>
                 </>
               ) : (
-                <ProductCards />
+                <ProductCards filteredData={filteredData} />
               )}
             </Box>
           </Box>

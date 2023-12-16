@@ -10,20 +10,20 @@ import { Box } from "@mui/material";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 
-export default function InventoryCard({ data }: { data: any }) {
+export default function InventoryCard({ filteredData }: { filteredData: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
     "&:last-child": {
       paddingBottom: "12px",
     },
   }));
-  const [openModal, setOpenModal] = React.useState<string | null>(null);
 
-  return data?.map((product: any) => {
+  return filteredData?.map((product: any) => {
     return (
       <Card
         key={product.uid}
         sx={{
           width: "12rem",
+          maxHeight: "14.52rem",
           borderRadius: "0.32rem",
           background: "#2C3248",
           overflow: "visible",

@@ -3,20 +3,7 @@ import { Box, Paper } from "@mui/material";
 import InventoryCard from "./InventoryCard";
 import { getAllProductsData } from "@/firebase";
 
-const ProductCards = () => {
-  const [data, setData] = useState<undefined | any[]>(undefined);
-
-  useEffect(() => {
-    const getAllProducts = async () => {
-      try {
-        getAllProductsData(setData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getAllProducts();
-  }, []);
-
+const ProductCards = ({ filteredData }: { filteredData: any }) => {
   return (
     <Paper
       id='paper'
@@ -40,7 +27,7 @@ const ProductCards = () => {
           marginTop: "1.5rem",
         }}
       >
-        <InventoryCard data={data} />
+        <InventoryCard filteredData={filteredData} />
       </Box>
     </Paper>
   );
