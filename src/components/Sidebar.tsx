@@ -13,12 +13,9 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-// import { usePathname } from "next/navigation";
 import { Button, SwipeableDrawer, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { useParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 
 
@@ -72,13 +69,12 @@ const Drawer = styled(MuiDrawer, {
 }));
 
 export default function Sidebar() {
+  const [sectionActive, setSectionActive] = React.useState("")
   const [open, setOpen] = React.useState(false);
-  const [selectedSection, setSelectedSection] = React.useState<any>(null);
+  const [selectedSection, setSelectedSection] = React.useState<any>("");
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
-  const params = useParams()
-  const router = useRouter()
 
 
   const sections = [
@@ -143,9 +139,16 @@ export default function Sidebar() {
 
   React.useEffect(() => {
     setSelectedSection(pathname)
+    matchesSM ? setOpen(false) : setOpen(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const slice = (rutaCompleta: any) => {
+    const primeraBarra = rutaCompleta.indexOf('/');
+    const ultimaBarra = rutaCompleta.lastIndexOf('/');
+    const rutaRecortada = rutaCompleta.substring(primeraBarra, ultimaBarra)
+    return rutaRecortada
+  }
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -195,10 +198,13 @@ export default function Sidebar() {
               <Box
                 sx={{
                   marginY: "30px",
-                  background: (section.submenus && selectedSection === section.id)
-                    // validation(section.id)
+                  background: (selectedSection === section.id)
                     ? "#252836"
-                    : "transparent",
+                    : section?.submenus
+                      ? selectedSection?.includes(slice(section.id))
+                        ? "#252836"
+                        : "transparent"
+                      : "transparent",
                   marginLeft: "12px",
                   padding: "12px",
                   borderRadius: "12px 0 0 12px",
@@ -214,12 +220,14 @@ export default function Sidebar() {
                       padding: "5px",
                       marginLeft: "5px",
                       borderRadius: "0.5rem",
-                      background: validation(section.id) ? "#69EAE2" : "auto",
-                      boxShadow: validation(section.id)
+                      background: selectedSection?.includes(section.id) ? "#69EAE2" : "auto",
+                      boxShadow: selectedSection?.includes(section.id)
                         ? "0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
                         : "auto",
                     }}
-                    onClick={() => handleSectionClick(section.id)}
+                    onClick={() => {
+                      handleSectionClick(section.id)
+                    }}
                   >
                     <Box
                       sx={{
@@ -238,7 +246,7 @@ export default function Sidebar() {
                         <Box
                           component={"img"}
                           src={
-                            pathname.startsWith(section.id)
+                            selectedSection?.includes(section.id)
                               ? section.icon2
                               : section.icon
                           }
@@ -248,7 +256,7 @@ export default function Sidebar() {
                     <ListItemText
                       primary={section.section}
                       primaryTypographyProps={{
-                        color: !validation(section.id) ? "#69EAE2" : "auto",
+                        color: !selectedSection?.includes(section.id) ? "#69EAE2" : "auto",
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
@@ -262,7 +270,8 @@ export default function Sidebar() {
                     />
                   </ListItem>
                 </Link>
-                {open && section.submenus && selectedSection === section.id && (
+
+                {open && section.submenus && selectedSection?.includes(slice(section.id)) && (
                   <List
                     id='subCategory'
                     sx={{
