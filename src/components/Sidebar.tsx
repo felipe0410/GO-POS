@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -17,10 +17,9 @@ import ListItemText from "@mui/material/ListItemText";
 import { Button, SwipeableDrawer, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { useParams } from 'next/navigation'
-import { useRouter } from 'next/navigation'
-import { usePathname } from 'next/navigation'
-
+import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 const drawerWidth = 196;
 
@@ -77,9 +76,8 @@ export default function Sidebar() {
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
-  const params = useParams()
-  const router = useRouter()
-
+  const params = useParams();
+  const router = useRouter();
 
   const sections = [
     {
@@ -92,7 +90,7 @@ export default function Sidebar() {
       section: "VENDER",
       icon: "/images/vender.svg",
       icon2: "/images/venderSelected.svg",
-      id: "/Shipments",
+      id: "/vender",
     },
     {
       section: "CAJA",
@@ -142,9 +140,9 @@ export default function Sidebar() {
   };
 
   React.useEffect(() => {
-    setSelectedSection(pathname)
+    setSelectedSection(pathname);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -163,7 +161,7 @@ export default function Sidebar() {
           style: {
             background: "transparent",
             border: "none",
-            width: !open ? '100px' : "auto"
+            width: !open ? "100px" : "auto",
           },
         }}
       >
@@ -195,10 +193,11 @@ export default function Sidebar() {
               <Box
                 sx={{
                   marginY: "30px",
-                  background: (section.submenus && selectedSection === section.id)
-                    // validation(section.id)
-                    ? "#252836"
-                    : "transparent",
+                  background:
+                    section.submenus && selectedSection === section.id
+                      ? // validation(section.id)
+                        "#252836"
+                      : "transparent",
                   marginLeft: "12px",
                   padding: "12px",
                   borderRadius: "12px 0 0 12px",
