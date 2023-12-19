@@ -1,19 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Box, Paper } from "@mui/material";
-import InventoryCard from "./InventoryCard";
-import { getAllProductsData } from "@/firebase";
+import VenderCard from "./VenderCard";
 
-const ProductCards = ({ filteredData }: { filteredData: any }) => {
+const VenderCards = ({ filteredData }: { filteredData: any }) => {
   return (
     <Paper
       id='paper'
       elevation={0}
       style={{
+        height: "90%",
         overflowX: "auto",
         maxWidth: "100%",
         background: "#1F1D2B",
       }}
-      sx={{ height: { xs: "80%", sm: "80%", md: "90%" } }}
     >
       <Box
         id='container card'
@@ -27,10 +26,10 @@ const ProductCards = ({ filteredData }: { filteredData: any }) => {
           marginTop: "1.5rem",
         }}
       >
-        <InventoryCard filteredData={filteredData} />
+        <VenderCard filteredData={filteredData} />
       </Box>
     </Paper>
   );
 };
 
-export default ProductCards;
+export default VenderCards;

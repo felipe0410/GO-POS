@@ -15,9 +15,10 @@ import {
   styled,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductCards from "@/components/ProductCards";
-import { getAllProductsData } from "@/firebase";
+import { getAllCategoriesData, getAllProductsData } from "@/firebase";
+import VenderCards from "@/components/VenderCards";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -43,6 +44,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 const Page = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState<[]>([]);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event.target.value);
@@ -65,6 +67,17 @@ const Page = () => {
       item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.barCode.toString().includes(searchTerm)
   );
+
+  useEffect(() => {
+    const categoriesData = async () => {
+      try {
+        await getAllCategoriesData(setCategory);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    categoriesData();
+  }, []);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "100%" }}>
@@ -159,14 +172,16 @@ const Page = () => {
                   <MenuItem value=''>
                     <em>Categorias</em>
                   </MenuItem>
-                  <MenuItem value={10}>Ten</MenuItem>
-                  <MenuItem value={20}>Twenty</MenuItem>
-                  <MenuItem value={30}>Thirty</MenuItem>
+                  {category?.map((tag) => (
+                    <MenuItem key={tag} value={tag}>
+                      {tag}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Box>
             <Box sx={{ marginTop: "1.56rem", height: "75%" }}>
-              <ProductCards filteredData={filteredData} />
+              <VenderCards filteredData={filteredData} />
             </Box>
           </Box>
         </Paper>
@@ -235,12 +250,13 @@ const Page = () => {
               </Typography>
             </Button>
           </Box>
-          <Box sx={{ textSlignLast: "center" }}>
+          <Box sx={{ textAlignLast: "center" }}>
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "row",
                 marginTop: "1.88rem",
+                justifyContent: "space-between",
               }}
             >
               <Typography
@@ -263,6 +279,7 @@ const Page = () => {
                   fontStyle: "normal",
                   fontWeight: 600,
                   lineHeight: "140%",
+                  marginLeft: "100px",
                 }}
               >
                 Cantidad
@@ -281,7 +298,47 @@ const Page = () => {
               </Typography>
             </Box>
             <Divider sx={{ background: "#69EAE2" }} />
-            <Box id='items-list' sx={{ minHeight: "450px" }}></Box>
+            <Box id='items-list' sx={{ minHeight: "450px" }}>
+              <Box>
+                <Box sx={{ display: "flex", flexDirection: "row" }}>
+                  <Box
+                    component={"img"}
+                    src={"/images/imageVinilo.png"}
+                    alt={"imagen de prueba"}
+                    sx={{
+                      width: "3rem",
+                      height: "3rem",
+                    }}
+                  />
+                  <Box>
+                    <Typography
+                      sx={{
+                        color: "#FFF",
+                        fontFamily: "Nunito",
+                        fontSize: "0.875rem",
+                        fontStyle: "normal",
+                        fontWeight: 400,
+                        lineHeight: "140%",
+                      }}
+                    >
+                      NOMBRE DEL PRODUCTO
+                    </Typography>
+                    <Typography>$ 21312</Typography>
+                  </Box>
+                  <InputBase
+                    sx={{ width: "3rem" }}
+                    style={{
+                      color: "#FFF",
+                      borderRadius: "0.5rem",
+                      border: "1px solid var(--Base-Dark-Line, #393C49)",
+                      background: "var(--Base-Form-BG, #2D303E)",
+                    }}
+                  />
+                  <Typography>$ 324234</Typography>
+                </Box>
+                <Box sx={{ display: "flex", flexDirection: "row" }}></Box>
+              </Box>
+            </Box>
             <Divider sx={{ background: "#69EAE2" }} />
             <Box
               sx={{

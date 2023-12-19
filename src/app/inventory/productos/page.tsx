@@ -28,6 +28,7 @@ const Page = () => {
   };
 
   const handleSearchChange = (event: any) => {
+    event.preventDefault();
     setSearchTerm(event.target.value);
   };
 
@@ -92,7 +93,7 @@ const Page = () => {
         >
           <Box
             sx={{
-              padding: "40px 48px",
+              padding: { xs: "30px 2px 30px 10px ", sm: "40px 48px" },
               height: "100%",
               textAlign: "-webkit-center",
             }}
@@ -135,7 +136,13 @@ const Page = () => {
                     onChange={handleSearchChange}
                   />
                 </Paper>
-                <IconButton sx={{ paddingTop: "0px", marginBottom: "4px" }}>
+                <IconButton
+                  sx={{
+                    paddingTop: "0px",
+                    marginBottom: { xs: "px", sm: "4px" },
+                    paddingBottom: { xs: 0 },
+                  }}
+                >
                   <Box component={"img"} src={"/images/scan.svg"} />
                 </IconButton>
               </Box>

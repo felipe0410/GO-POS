@@ -22,21 +22,20 @@ const ModalContent = styled(Paper)(
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: ${!theme.breakpoints.down("sm") ? "8px" : "0"};
     overflow: hidden;
     background-color: #1f1d2b;
     border-radius: 0.625rem;
-    /* box-shadow: 0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2; */
-    padding: 24px;
-    width: 32.125rem;
+    padding: ${!theme.breakpoints.down("sm") ? "24px" : "13px"};
+    width: ${!theme.breakpoints.down("sm") ? "32.125rem" : "20rem"};
     height: 16rem;
   `
 );
 
 export default function DeleteModal(props: any) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
   const { data } = props;
-  const handleClose = () => setOpen(false)
+  const handleClose = () => setOpen(false);
   const handleDelete = async (uid: string) => {
     try {
       await deleteProduct(uid);
@@ -52,10 +51,7 @@ export default function DeleteModal(props: any) {
 
   return (
     <Box>
-      <IconButton
-        sx={{ padding: "8px 3px" }}
-        onClick={() => setOpen(true)}
-      >
+      <IconButton sx={{ padding: "8px 3px" }} onClick={() => setOpen(true)}>
         <Box
           component={"img"}
           src={"/images/delete.svg"}
