@@ -2,7 +2,15 @@ import React, { useEffect, useState } from "react";
 import { Box, Paper } from "@mui/material";
 import VenderCard from "./VenderCard";
 
-const VenderCards = ({ filteredData }: { filteredData: any }) => {
+const VenderCards = ({
+  filteredData,
+  setSelectedItems,
+  selectedItems,
+}: {
+  filteredData: any;
+  setSelectedItems: any;
+  selectedItems: any;
+}) => {
   return (
     <Paper
       id='paper'
@@ -26,7 +34,11 @@ const VenderCards = ({ filteredData }: { filteredData: any }) => {
           marginTop: "1.5rem",
         }}
       >
-        <VenderCard filteredData={filteredData} />
+        <VenderCard
+          filteredData={filteredData}
+          setSelectedItems={setSelectedItems}
+          selectedItems={selectedItems}
+        />
       </Box>
     </Paper>
   );

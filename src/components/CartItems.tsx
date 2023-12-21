@@ -1,14 +1,14 @@
 import { Box, Typography, InputBase, Button } from "@mui/material";
 import React from "react";
 
-const CartItems = () => {
+const CartItems = ({ product }: { product: any }) => {
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box
           component={"img"}
-          src={"/images/imageVinilo.png"}
-          alt={"imagen de prueba"}
+          src={product.image}
+          alt={`imagen del producto ${product.productName}`}
           sx={{
             width: "3rem",
             height: "3rem",
@@ -26,7 +26,7 @@ const CartItems = () => {
               width: "10.5rem",
             }}
           >
-            Nombre del producto
+            {product.productName}
           </Typography>
           <Typography
             sx={{
@@ -38,7 +38,7 @@ const CartItems = () => {
               lineHeight: "140%",
             }}
           >
-            $ 21312
+            {product.price}
           </Typography>
         </Box>
         <InputBase
@@ -53,6 +53,7 @@ const CartItems = () => {
             border: "1px solid var(--Base-Dark-Line, #393C49)",
             background: "var(--Base-Form-BG, #2D303E)",
           }}
+          value={product.cantidad}
         />
         <Typography
           sx={{
@@ -66,7 +67,7 @@ const CartItems = () => {
             alignSelf: "center",
           }}
         >
-          $ 324234
+          {product.acc}
         </Typography>
       </Box>
       <Box

@@ -64,9 +64,14 @@ const Page = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState<[]>([]);
   const [agregarDescuento, setAgregarDescuento] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event.target.value);
+  };
+  const handleCategoryChange = (event: any) => {
+    setSelectedCategory(event.target.value);
   };
 
   React.useEffect(() => {
@@ -82,9 +87,10 @@ const Page = () => {
 
   const filteredData = data?.filter(
     (item) =>
-      searchTerm === "" ||
-      item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.barCode.toString().includes(searchTerm)
+      (searchTerm === "" ||
+        item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.barCode.toString().includes(searchTerm)) &&
+      (selectedCategory === "" || item.category === selectedCategory)
   );
 
   useEffect(() => {
@@ -187,6 +193,8 @@ const Page = () => {
                   autoWidth
                   input={<BootstrapInput />}
                   style={{ color: "#FFF" }}
+                  value={selectedCategory}
+                  onChange={handleCategoryChange}
                 >
                   <MenuItem value=''>
                     <em>Categorias</em>
@@ -200,7 +208,11 @@ const Page = () => {
               </FormControl>
             </Box>
             <Box sx={{ marginTop: "1.56rem", height: "75%" }}>
-              <VenderCards filteredData={filteredData} />
+              <VenderCards
+                filteredData={filteredData}
+                setSelectedItems={setSelectedItems}
+                selectedItems={selectedItems}
+              />
             </Box>
           </Box>
         </Paper>
@@ -320,10 +332,28 @@ const Page = () => {
             </Box>
             <Divider sx={{ background: "#69EAE2" }} />
             <Box id='items-list' sx={{ maxHeight: "450px", overflowY: "auto" }}>
-              <CartItems />
-              <CartItems />
-              <CartItems />
-              <CartItems />
+              {selectedItems.length === 0 ? (
+                <Typography
+                  sx={{
+                    color: "#69EAE2",
+                    textAlign: "center",
+                    fontFamily: "Nunito",
+                    fontSize: "1rem",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                    marginTop: "2rem",
+                  }}
+                >
+                  AÑADE ITEMS A TU CARRITO
+                </Typography>
+              ) : (
+                selectedItems.map((product: any) => (
+                  <React.Fragment key={product.barCode}>
+                    <CartItems product={product} />
+                  </React.Fragment>
+                ))
+              )}
             </Box>
             <Divider sx={{ background: "#69EAE2", marginTop: "1.5rem" }} />
             <Box sx={{ marginTop: "0.8rem" }}>

@@ -3,17 +3,76 @@ import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
-import CardActions from "@mui/material/CardActions";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
 
-export default function VenderCard({ filteredData }: { filteredData: any }) {
+export default function VenderCard({
+  filteredData,
+  setSelectedItems,
+  selectedItems,
+}: {
+  filteredData: any;
+  setSelectedItems: any;
+  selectedItems: any;
+}) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
     "&:last-child": {
       paddingBottom: "12px",
     },
   }));
+
+  const handleDecrement = (product: any) => {
+    const existingItem = selectedItems.find(
+      (item: any) => item.barCode === product.barCode
+    );
+    if (existingItem) {
+      if (existingItem.cantidad > 1) {
+        const updatedItems = selectedItems.map((item: any) =>
+          item.barCode === product.barCode
+            ? { ...item, cantidad: item.cantidad - 1 }
+            : item
+        );
+        setSelectedItems(updatedItems);
+      } else {
+        const updatedItems = selectedItems.filter(
+          (item: any) => item.barCode !== product.barCode
+        );
+        setSelectedItems(updatedItems);
+      }
+    }
+  };
+
+  const handleIncrement = (product: any) => {
+    const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
+    const existingItem = selectedItems.find(
+      (item: any) => item.barCode === product.barCode
+    );
+
+    if (existingItem) {
+      const updatedItems = selectedItems.map((item: any) =>
+        item.barCode === product.barCode
+          ? {
+              ...item,
+              cantidad: item.cantidad + 1,
+              acc: (item.cantidad + 1) * cleanedPrice,
+            }
+          : item
+      );
+
+      setSelectedItems(updatedItems);
+    } else {
+      const newItems = {
+        image: product.image,
+        cantidad: 1,
+        productName: product.productName,
+        price: cleanedPrice,
+        nota: "",
+        barCode: product.barCode,
+        acc: cleanedPrice,
+      };
+      setSelectedItems([...selectedItems, newItems]);
+    }
+  };
 
   return filteredData?.map((product: any) => {
     return (
@@ -37,7 +96,7 @@ export default function VenderCard({ filteredData }: { filteredData: any }) {
             zIndex: 4,
           }}
         >
-          <Button sx={{ padding: 0 }}>
+          <Button sx={{ padding: 0 }} onClick={() => handleDecrement(product)}>
             <Box
               component={"img"}
               src={"/images/minus.svg"}
@@ -45,7 +104,7 @@ export default function VenderCard({ filteredData }: { filteredData: any }) {
             />
           </Button>
 
-          <Button sx={{ padding: 0 }}>
+          <Button sx={{ padding: 0 }} onClick={() => handleIncrement(product)}>
             <Box
               component={"img"}
               src={"/images/plus.svg"}
