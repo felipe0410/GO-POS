@@ -6,19 +6,25 @@ import {
   Divider,
   FormControl,
   IconButton,
+  InputAdornment,
   InputBase,
   InputLabel,
   MenuItem,
   Paper,
   Select,
+  Tooltip,
+  TooltipProps,
   Typography,
   styled,
+  tooltipClasses,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import ProductCards from "@/components/ProductCards";
 import { getAllCategoriesData, getAllProductsData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
+import CartItems from "@/components/CartItems";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import HelpIcon from "@mui/icons-material/Help";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -41,10 +47,23 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }));
 
+const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} classes={{ popper: className }} />
+))(({ theme }) => ({
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#69EAE2",
+    color: "#1F1D2B",
+    boxShadow: theme.shadows[1],
+    fontSize: 11,
+    maxWidth: "146px",
+  },
+}));
+
 const Page = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState<[]>([]);
+  const [agregarDescuento, setAgregarDescuento] = useState(false);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event.target.value);
@@ -190,11 +209,12 @@ const Page = () => {
       <Box
         sx={{
           width: "25.5625rem",
-          height: "100%",
           background: "#1F1D2B",
+          height: "100%",
+          borderRadius: "0.625rem",
         }}
       >
-        <Box padding={4}>
+        <Box padding={3} sx={{ height: "100%" }}>
           <Typography
             sx={{
               color: "#FFF",
@@ -207,7 +227,7 @@ const Page = () => {
               marginLeft: "1rem",
             }}
           >
-            VENTA #
+            VENTA # {"numero"}
           </Typography>
           <Box
             sx={{
@@ -250,7 +270,7 @@ const Page = () => {
               </Typography>
             </Button>
           </Box>
-          <Box sx={{ textAlignLast: "center" }}>
+          <Box sx={{ height: "100%" }}>
             <Box
               sx={{
                 display: "flex",
@@ -292,54 +312,173 @@ const Page = () => {
                   fontStyle: "normal",
                   fontWeight: 600,
                   lineHeight: "140%",
+                  marginRight: "17px",
                 }}
               >
                 Precio
               </Typography>
             </Box>
             <Divider sx={{ background: "#69EAE2" }} />
-            <Box id='items-list' sx={{ minHeight: "450px" }}>
-              <Box>
-                <Box sx={{ display: "flex", flexDirection: "row" }}>
-                  <Box
-                    component={"img"}
-                    src={"/images/imageVinilo.png"}
-                    alt={"imagen de prueba"}
+            <Box id='items-list' sx={{ maxHeight: "450px", overflowY: "auto" }}>
+              <CartItems />
+              <CartItems />
+              <CartItems />
+              <CartItems />
+            </Box>
+            <Divider sx={{ background: "#69EAE2", marginTop: "1.5rem" }} />
+            <Box sx={{ marginTop: "0.8rem" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#FFF",
+                    textAlign: "center",
+                    fontFamily: "Nunito",
+                    fontSize: "1rem",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                  }}
+                >
+                  SubTotal
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "#FFF",
+                    textAlign: "center",
+                    fontFamily: "Nunito",
+                    fontSize: "1rem",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                  }}
+                >
+                  $12231
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#FFF",
+                    textAlign: "center",
+                    fontFamily: "Nunito",
+                    fontSize: "1rem",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                  }}
+                >
+                  Costo de envío
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "#FFF",
+                    textAlign: "center",
+                    fontFamily: "Nunito",
+                    fontSize: "1rem",
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                  }}
+                >
+                  $0
+                </Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "0.5rem",
+                }}
+              >
+                {agregarDescuento === false ? (
+                  <Button
+                    onClick={() => setAgregarDescuento(true)}
                     sx={{
-                      width: "3rem",
-                      height: "3rem",
+                      color: "#69EAE2",
+                      textAlign: "center",
+                      fontFamily: "Nunito",
+                      fontSize: "1rem",
+                      fontStyle: "normal",
+                      fontWeight: 500,
+                      lineHeight: "140%",
+                      textTransform: "none",
                     }}
-                  />
-                  <Box>
+                  >
+                    Ingresar descuento
+                    <ArrowDropDownIcon sx={{ color: "#69EAE2" }} />
+                  </Button>
+                ) : (
+                  <>
                     <Typography
                       sx={{
                         color: "#FFF",
+                        textAlign: "center",
                         fontFamily: "Nunito",
-                        fontSize: "0.875rem",
+                        fontSize: "1rem",
                         fontStyle: "normal",
-                        fontWeight: 400,
+                        fontWeight: 500,
                         lineHeight: "140%",
                       }}
                     >
-                      NOMBRE DEL PRODUCTO
+                      Descuento
+                      <LightTooltip
+                        title='Puede ingresar el valor del descuento en porcentaje o pesos.'
+                        arrow
+                      >
+                        <HelpIcon
+                          sx={{
+                            fontSize: "0.8rem",
+                            "&:hover": { color: "#69EAE2" },
+                          }}
+                        />
+                      </LightTooltip>
                     </Typography>
-                    <Typography>$ 21312</Typography>
-                  </Box>
-                  <InputBase
-                    sx={{ width: "3rem" }}
-                    style={{
-                      color: "#FFF",
-                      borderRadius: "0.5rem",
-                      border: "1px solid var(--Base-Dark-Line, #393C49)",
-                      background: "var(--Base-Form-BG, #2D303E)",
-                    }}
-                  />
-                  <Typography>$ 324234</Typography>
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "row" }}></Box>
+                    <InputBase
+                      autoFocus
+                      startAdornment={
+                        <InputAdornment position='start'>
+                          <IconButton sx={{ paddingRight: "0px" }}>
+                            <Typography
+                              sx={{
+                                color: "#69EAE2",
+                                textAlign: "center",
+                                fontFamily: "Nunito",
+                                fontSize: "0.75rem",
+                                fontStyle: "normal",
+                                fontWeight: 500,
+                                lineHeight: "140%",
+                              }}
+                            >
+                              APLICAR
+                            </Typography>
+                          </IconButton>
+                        </InputAdornment>
+                      }
+                      sx={{ width: "9.75rem", height: "2.25rem" }}
+                      style={{
+                        borderRadius: "0.375rem",
+                        border: "1px solid #69EAE2",
+                        background: "#1F1D2B",
+                        color: "#FFF",
+                      }}
+                    />
+                  </>
+                )}
               </Box>
             </Box>
-            <Divider sx={{ background: "#69EAE2" }} />
+            <Divider sx={{ background: "#69EAE2", marginTop: "1rem" }} />
             <Box
               sx={{
                 display: "flex",
