@@ -59,13 +59,24 @@ const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
   },
 }));
 
+interface SelectedProduct {
+  image: string;
+  cantidad: number;
+  productName: string;
+  price: string;
+  nota: string;
+  barCode: string;
+  acc: number;
+}
+
 const Page = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState<[]>([]);
   const [agregarDescuento, setAgregarDescuento] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState<SelectedProduct[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [subtotal, setSubtotal] = useState(0);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event.target.value);
@@ -84,6 +95,14 @@ const Page = () => {
     };
     getAllProducts();
   }, []);
+
+  useEffect(() => {
+    const nuevoSubtotal = selectedItems.reduce(
+      (total, producto) => total + producto.acc,
+      0
+    );
+    setSubtotal(nuevoSubtotal);
+  }, [selectedItems]);
 
   const filteredData = data?.filter(
     (item) =>
@@ -350,7 +369,11 @@ const Page = () => {
               ) : (
                 selectedItems.map((product: any) => (
                   <React.Fragment key={product.barCode}>
-                    <CartItems product={product} />
+                    <CartItems
+                      product={product}
+                      setSelectedItems={setSelectedItems}
+                      selectedItems={selectedItems}
+                    />
                   </React.Fragment>
                 ))
               )}
@@ -388,7 +411,7 @@ const Page = () => {
                     lineHeight: "140%",
                   }}
                 >
-                  $12231
+                  {`$ ${subtotal}`}
                 </Typography>
               </Box>
               <Box
@@ -422,7 +445,7 @@ const Page = () => {
                     lineHeight: "140%",
                   }}
                 >
-                  $0
+                  $ 0
                 </Typography>
               </Box>
               <Box

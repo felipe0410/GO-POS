@@ -22,6 +22,7 @@ export default function VenderCard({
   }));
 
   const handleDecrement = (product: any) => {
+    const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
     const existingItem = selectedItems.find(
       (item: any) => item.barCode === product.barCode
     );
@@ -29,7 +30,11 @@ export default function VenderCard({
       if (existingItem.cantidad > 1) {
         const updatedItems = selectedItems.map((item: any) =>
           item.barCode === product.barCode
-            ? { ...item, cantidad: item.cantidad - 1 }
+            ? {
+                ...item,
+                cantidad: item.cantidad - 1,
+                acc: (item.cantidad - 1) * cleanedPrice,
+              }
             : item
         );
         setSelectedItems(updatedItems);
@@ -65,7 +70,7 @@ export default function VenderCard({
         image: product.image,
         cantidad: 1,
         productName: product.productName,
-        price: cleanedPrice,
+        price: product.price,
         nota: "",
         barCode: product.barCode,
         acc: cleanedPrice,

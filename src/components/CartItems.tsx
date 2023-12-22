@@ -1,7 +1,35 @@
 import { Box, Typography, InputBase, Button } from "@mui/material";
 import React from "react";
 
-const CartItems = ({ product }: { product: any }) => {
+const CartItems = ({
+  product,
+  setSelectedItems,
+  selectedItems,
+}: {
+  product: any;
+  setSelectedItems: any;
+  selectedItems: any;
+}) => {
+  const handleDelete = (product: any) => {
+    const updatedItems = selectedItems.filter(
+      (item: any) => item.barCode !== product.barCode
+    );
+    setSelectedItems(updatedItems);
+  };
+
+  const handleOnChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    product: any
+  ) => {
+    setSelectedItems((prevSelectedItems: any) => {
+      const updatedItems = prevSelectedItems.map((item: any) =>
+        item.barCode === product.barCode
+          ? { ...item, nota: event.target.value }
+          : item
+      );
+      return updatedItems;
+    });
+  };
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -14,7 +42,7 @@ const CartItems = ({ product }: { product: any }) => {
             height: "3rem",
           }}
         />
-        <Box>
+        <Box marginLeft={1}>
           <Typography
             sx={{
               color: "#FFF",
@@ -23,7 +51,10 @@ const CartItems = ({ product }: { product: any }) => {
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
-              width: "10.5rem",
+              width: "10.2rem",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
             }}
           >
             {product.productName}
@@ -63,11 +94,11 @@ const CartItems = ({ product }: { product: any }) => {
             fontStyle: "normal",
             fontWeight: 400,
             lineHeight: "140%",
-            marginLeft: "1.3rem",
+            marginLeft: "1rem",
             alignSelf: "center",
           }}
         >
-          {product.acc}
+          {`$ ${product.acc}`}
         </Typography>
       </Box>
       <Box
@@ -90,8 +121,12 @@ const CartItems = ({ product }: { product: any }) => {
             background: "var(--Base-Form-BG, #2D303E)",
           }}
           placeholder='Nota de la orden...'
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            handleOnChange(event, product)
+          }
         />
         <Button
+          onClick={() => handleDelete(product)}
           variant='outlined'
           sx={{
             height: "3rem",
