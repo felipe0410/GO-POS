@@ -68,12 +68,13 @@ export const styleSign_in = {
         padding: '5px 50px'
     },
     tyographyRegister: {
-        color: '#0A0F37',
-        fontFamily: 'Nunito',
-        fontSize: { xs: '18px', md: '32px' },
-        fontStyle: 'normal',
-        fontWeight: 900,
-        lineHeight: 'normal',
+        color: "#1F1D2B",
+        textAlign: "center",
+        fontFamily: "Nunito",
+        fontSize: "20px",
+        fontStyle: "normal",
+        fontWeight: 500,
+        lineHeight: "normal"
     }
 
 }
