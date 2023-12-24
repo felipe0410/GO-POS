@@ -15,6 +15,7 @@ export function middleware(request: NextRequest) {
     if (userCookie) {
         return NextResponse.next();
     }
+    console.log('llegue aqui::>', request.url)
     return NextResponse.redirect(new URL('/sign_in', request.url));
 }
 
