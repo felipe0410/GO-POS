@@ -6,7 +6,6 @@ export function middleware(request: NextRequest) {
     const getCookie = request.cookies.get('user')?.value;
     const userCookie = getCookie?.length;
     const pathname = request.nextUrl.pathname
-    console.log('llegue aqui1::>', request.nextUrl.pathname)
     if (['/sign_in', '/sign_up'].some(path => pathname.includes(path)) && userCookie) {
         return NextResponse.redirect(new URL('/', request.url));
     }
@@ -16,6 +15,15 @@ export function middleware(request: NextRequest) {
     if (userCookie) {
         return NextResponse.next();
     }
+    // return new Response(
+    //     '<script>window.location.href="/sign_in";</script>',
+    //     {
+    //         status: 200,
+    //         headers: {
+    //             'Content-Type': 'text/html',
+    //         },
+    //     }
+    // );
     return NextResponse.redirect(new URL('/sign_in', request.url));
 }
 
