@@ -15,27 +15,32 @@ import StickyHeadTable from "@/components/StickyHeadTable";
 import ProductCards from "@/components/ProductCards";
 import TableResponsive from "@/components/TableResponsive";
 import { getAllProductsData } from "@/firebase";
+import debounce from "debounce";
 
 const Page = () => {
   const [isTable, setIsTable] = useState(false);
   const [data, setData] = React.useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setfilter] = useState<any>()
 
   const styleViewActive = {
     borderRadius: "0.625rem",
     background: "#69EAE2",
     boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   };
+  const debouncedHandleSearchChange = debounce(() => {
 
+  }, 300);
   const handleSearchChange = (event: any) => {
-    event.preventDefault();
-    setSearchTerm(event.target.value);
+    setSearchTerm(event);
+    debouncedHandleSearchChange()
   };
 
   React.useEffect(() => {
     const getAllProducts = async () => {
       try {
-        await getAllProductsData(setData);
+        const nn = await getAllProductsData(setData);
+        console.log(nn)
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -43,13 +48,22 @@ const Page = () => {
     getAllProducts();
   }, []);
 
-  const filteredData = data?.filter(
-    (item) =>
-      searchTerm === "" ||
-      item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.barCode.toString().includes(searchTerm)
-  );
+
+
+  useEffect(() => {
+    const filteredData = data?.filter((item) => {
+      if (searchTerm === "") {
+        return true;
+      }
+      return Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setfilter(filteredData)
+    console.log(filteredData)
+  }, [data, searchTerm])
+
+
 
   return (
     <Box id='page products' sx={{ height: "100%" }}>
@@ -108,6 +122,7 @@ const Page = () => {
               <Box display={"flex"}>
                 <Paper
                   component='form'
+                  onSubmit={(e: any) => { console.log(e); e.preventDefault(); handleSearchChange(e.target[1].value) }}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -122,6 +137,7 @@ const Page = () => {
                     type='button'
                     sx={{ p: "10px" }}
                     aria-label='search'
+
                   >
                     <SearchIcon sx={{ color: "#fff" }} />
                   </IconButton>
@@ -132,8 +148,9 @@ const Page = () => {
                       color: "#fff",
                     }}
                     placeholder='Buscar'
-                    value={searchTerm}
-                    onChange={handleSearchChange}
+                    onBlur={(e) => {
+                      handleSearchChange(e.target.value); e.preventDefault();
+                    }}
                   />
                 </Paper>
                 <IconButton
@@ -204,17 +221,17 @@ const Page = () => {
                     display={{ md: "none", lg: "block", xs: "none" }}
                     sx={{ height: "100%" }}
                   >
-                    <StickyHeadTable filteredData={filteredData} />
+                    <StickyHeadTable filteredData={filter} />
                   </Box>
                   <Box
                     display={{ lg: "none", md: "block", xs: "block" }}
                     sx={{ height: "100%" }}
                   >
-                    <TableResponsive filteredData={filteredData} />
+                    <TableResponsive filteredData={filter} />
                   </Box>
                 </>
               ) : (
-                <ProductCards filteredData={filteredData} />
+                <ProductCards filteredData={filter} />
               )}
             </Box>
           </Box>

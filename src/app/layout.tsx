@@ -32,6 +32,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const route: any =
+    (children as React.ReactElement)?.props?.childPropSegment ?? null;
+  const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(
+    route
+  );
+  console.log(route)
+  console.log(validationRoutes)
+
   return (
     <html lang='en' style={{ height: '100%' }}>
       <body
@@ -43,28 +51,34 @@ export default function RootLayout({
           backgroundSize: "contain",
         }}
       >
-        <Box
-          id='Container Sidebar'
-          sx={{
-            zIndex: '10',
-            position: "fixed",
-            top: 0,
-            left: 0,
-            height: "100%",
-          }}
-        >
-          <Sidebar />
-        </Box>
-        <Box
-          id='container children layout'
-          sx={{
-            height: "100%",
-            marginTop: "64px",
-            marginLeft: { xs: '20px', sm: "244px" },
-          }}
-        >
-          {children}
-        </Box>
+        {validationRoutes
+          ? <>
+            {children}
+          </>
+          : <>
+            <Box
+              id='Container Sidebar'
+              sx={{
+                zIndex: '10',
+                position: "fixed",
+                top: 0,
+                left: 0,
+                height: "100%",
+              }}
+            >
+              <Sidebar />
+            </Box>
+            <Box
+              id='container children layout'
+              sx={{
+                height: "100%",
+                marginTop: "64px",
+                marginLeft: { xs: '20px', sm: "244px" },
+              }}
+            >
+              {children}
+            </Box>
+          </>}
       </body>
     </html>
   );

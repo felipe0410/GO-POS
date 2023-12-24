@@ -17,6 +17,8 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
     },
   }));
 
+  console.log('filteredData:::>', filteredData)
+
   return filteredData?.map((product: any) => {
     return (
       <Card

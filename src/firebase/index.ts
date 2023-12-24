@@ -17,6 +17,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -36,6 +37,8 @@ export const firebaseConfig = {
 const app: FirebaseApp = initializeApp(firebaseConfig);
 export const db: Firestore = getFirestore(app);
 export const storage = getStorage(app);
+const auth = getAuth();
+
 // const analytics = getAnalytics(app);
 
 export const createProduct = async (uid: any, productData: any) => {
@@ -87,8 +90,8 @@ export const getAllProductsData = (callback: any) => {
       });
 
       callback(productsData);
+      return productsData
     });
-
     // Return the unsubscribe function to stop observing changes
     return unsubscribe;
   } catch (error) {
@@ -288,5 +291,63 @@ export const removeMeasurements = async (measureToRemove: string) => {
     });
   } catch (error) {
     console.error("Error al eliminar la categoría: ", error);
+  }
+};
+// sing-in
+export const loginUser = async (email: any, password: any) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    const user = userCredential.user;
+    console.log(user);
+    return user;
+  } catch (error: any) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    const dataError = {
+      errorCode,
+      errorMessage,
+    };
+    console.error(dataError);
+    return dataError;
+  }
+};
+
+export const creteUser = async (email: any, password: any) => {
+  try {
+    const createUser = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return createUser.user;
+  } catch (error: any) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    const errorData = {
+      errorCode,
+      errorMessage,
+    };
+    console.log(errorData);
+    return errorData;
+  }
+};
+
+export const saveDataUser = async (uid: any, userData: any) => {
+  try {
+    const userCollectionRef = collection(db, "user");
+    const userDocRef = doc(userCollectionRef, uid);
+    await setDoc(userDocRef, {
+      uid: uid,
+      ...userData,
+    });
+    console.log("Documento guardado con ID: ", uid);
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar información en /user: ", error);
+    return null;
   }
 };
