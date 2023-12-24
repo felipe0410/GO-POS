@@ -24,6 +24,7 @@ import {
   removeMeasurements,
 } from "@/firebase";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import DeleteModal from "@/app/inventory/agregarProductos/deleteModal";
 
 const StyledBadge = styled(Badge)(
   ({ theme }) => `
@@ -165,9 +166,7 @@ function NewProductSidebar(props: any) {
               return (
                 <StyledBadge
                   badgeContent={
-                    <IconButton onClick={() => handleDelete(document, tag)}>
-                      <CancelIcon sx={{ color: "red" }} />
-                    </IconButton>
+                    <DeleteModal document={document} tag={tag} category={tag} />
                   }
                   key={i * 9}
                 >

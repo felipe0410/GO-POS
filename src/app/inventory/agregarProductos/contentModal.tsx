@@ -19,13 +19,13 @@ import {
     addCategory,
     addMeasurements,
     getAllCategoriesData,
-    getAllMeasurementsData,
     getAllMeasurementsDataa,
     removeCategory,
     removeMeasurements,
 } from "@/firebase";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import CloseIcon from '@mui/icons-material/Close';
+import DeleteModal from "./deleteModal";
 
 const StyledBadge = styled(Badge)(
     ({ theme }) => `
@@ -62,7 +62,7 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
     useEffect(() => {
         const categoriesData = async () => {
             try {
-                 await getAllCategoriesData(setCategory);
+                await getAllCategoriesData(setCategory);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -73,7 +73,7 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
     useEffect(() => {
         const measurementsData = async () => {
             try {
-                 await getAllMeasurementsDataa(setMeasure);
+                await getAllMeasurementsDataa(setMeasure);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -159,15 +159,18 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
                         lineHeight: "normal",
                     }}
                 />
-                <Box sx={{ padding: "0px 16px 16px 16px" }}>
+                <Box sx={{
+                    padding: "0px 16px 16px 16px",
+                    maxHeight: "400px",
+                    overflowY: "auto",
+                }}
+                >
                     {data &&
                         data.map((tag: any, i: any) => {
                             return (
                                 <StyledBadge
                                     badgeContent={
-                                        <IconButton onClick={() => handleDelete(document, tag)}>
-                                            <CancelIcon sx={{ color: "red" }} />
-                                        </IconButton>
+                                        <DeleteModal document={document} tag={tag} category={tag} />
                                     }
                                     key={i * 9}
                                 >
@@ -197,44 +200,44 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
                                 : "No hay unidades de medida para mostrar"}
                         </Typography>
                     )}
-                    <CardActions>
-                        <Grid container spacing={3}>
-                            <Grid item xs={8}>
-                                <OutlinedInput
-                                    value={document === "categories" ? newCategory : newMeasure}
-                                    onChange={(e) =>
-                                        document === "categories"
-                                            ? setNewCategory(e.target.value)
-                                            : setNewMeasure(e.target.value)
-                                    }
-                                    placeholder={
-                                        document === "categories"
-                                            ? "Agregar nueva categoría"
-                                            : "Agregar unidad de medida"
-                                    }
-                                    type='text'
-                                    sx={{
-                                        height: "44.9px",
-                                        width: "300px",
-                                        borderRadius: "0.625rem",
-                                        background: "#2C3248",
-                                        boxShadow:
-                                            "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                                    }}
-                                    style={{ color: "#FFF" }}
-                                />
-                            </Grid>
-                            <Grid item>
-                                <IconButton
-                                    color='secondary'
-                                    onClick={() => handleSave(document)}
-                                >
-                                    <Box component={"img"} src={"/images/okay.svg"} />
-                                </IconButton>
-                            </Grid>
-                        </Grid>
-                    </CardActions>
                 </Box>
+                <CardActions>
+                    <Grid container spacing={3}>
+                        <Grid item xs={8}>
+                            <OutlinedInput
+                                value={document === "categories" ? newCategory : newMeasure}
+                                onChange={(e) =>
+                                    document === "categories"
+                                        ? setNewCategory(e.target.value)
+                                        : setNewMeasure(e.target.value)
+                                }
+                                placeholder={
+                                    document === "categories"
+                                        ? "Agregar nueva categoría"
+                                        : "Agregar unidad de medida"
+                                }
+                                type='text'
+                                sx={{
+                                    height: "44.9px",
+                                    width: "300px",
+                                    borderRadius: "0.625rem",
+                                    background: "#2C3248",
+                                    boxShadow:
+                                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                                }}
+                                style={{ color: "#FFF" }}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <IconButton
+                                color='secondary'
+                                onClick={() => handleSave(document)}
+                            >
+                                <Box component={"img"} src={"/images/okay.svg"} />
+                            </IconButton>
+                        </Grid>
+                    </Grid>
+                </CardActions>
             </Card>
         );
     };
