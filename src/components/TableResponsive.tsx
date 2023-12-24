@@ -33,7 +33,7 @@ export default function TableResponsive({
         width: "100%",
         overflow: "hidden",
         background: "#1F1D2B",
-        height: "90%",
+        height: { xs: "80%", sm: "90%" },
       }}
     >
       <TableContainer

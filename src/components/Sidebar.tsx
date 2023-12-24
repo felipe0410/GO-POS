@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import * as React from "react";
 import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -76,7 +76,6 @@ export default function Sidebar() {
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
 
-
   const sections = [
     {
       section: "INICIO",
@@ -88,7 +87,7 @@ export default function Sidebar() {
       section: "VENDER",
       icon: "/images/vender.svg",
       icon2: "/images/venderSelected.svg",
-      id: "/Shipments",
+      id: "/vender",
     },
     {
       section: "CAJA",
@@ -141,7 +140,7 @@ export default function Sidebar() {
     setSelectedSection(pathname)
     matchesSM ? setOpen(false) : setOpen(true)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, []);
 
   const slice = (rutaCompleta: any) => {
     const primeraBarra = rutaCompleta.indexOf('/');
@@ -166,7 +165,7 @@ export default function Sidebar() {
           style: {
             background: "transparent",
             border: "none",
-            width: !open ? '100px' : "auto"
+            width: !open ? "100px" : "auto",
           },
         }}
       >
