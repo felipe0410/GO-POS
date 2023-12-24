@@ -1,10 +1,4 @@
 import { NextResponse } from 'next/server';
-const { onMessagePublished } = require("firebase-functions/v2/pubsub");
-
-exports.mirrorevents = onMessagePublished(
-    { topic: "topic-name", maxInstances: 100 },
-
-);
 
 import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
