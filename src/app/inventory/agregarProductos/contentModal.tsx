@@ -12,7 +12,6 @@ import {
     OutlinedInput,
     Button,
 } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import {
@@ -148,6 +147,9 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
                     boxShadow: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2",
                 }}
             >
+                <Button sx={{ float: "right", marginTop: '10px' }} onClick={() => setOpen(false)}>
+                    <CloseIcon sx={{ color: '#fff' }} />
+                </Button>
                 <CardHeader
                     title={cardTitle}
                     sx={{
@@ -165,6 +167,7 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
                     overflowY: "auto",
                 }}
                 >
+
                     {data &&
                         data.map((tag: any, i: any) => {
                             return (
@@ -245,9 +248,6 @@ function NewProductSidebar({ OpenCategory, setOpen }: { OpenCategory: any, setOp
         <>
             <SnackbarProvider />
             <Box>
-                <Button onClick={() => setOpen(false)}>
-                    <CloseIcon />
-                </Button>
                 <Box display={OpenCategory ? 'block' : 'none'}>
                     {cardContent("CATEGORIAS", "categories", category)}
                 </Box>

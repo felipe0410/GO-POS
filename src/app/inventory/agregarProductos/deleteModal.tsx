@@ -64,6 +64,7 @@ export default function DeleteModal({ document, tag, category }: { document: str
                 });
             }
         }
+        setOpen(false)
     };
 
     const handleCancel = () => {

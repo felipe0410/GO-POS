@@ -167,7 +167,11 @@ export const getAllCategoriesData = (callback: any) => {
     const unsubscribe = onSnapshot(categoriesDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const categoriesData = docSnapshot.data().Categories;
-        callback(categoriesData);
+        const sortedCategoriesData = categoriesData?.slice().sort((a: any, b: any) =>
+          a.localeCompare(b)
+        );
+
+        callback(sortedCategoriesData);
       } else {
         console.error('El documento "categories" no existe.');
         callback(null);
@@ -181,6 +185,7 @@ export const getAllCategoriesData = (callback: any) => {
     return null;
   }
 };
+
 
 export const addCategory = async (newCategory: string) => {
   try {
@@ -248,7 +253,10 @@ export const getAllMeasurementsDataa = (callback: any) => {
     const unsubscribe = onSnapshot(measurementsDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const measurementsData = docSnapshot.data().Measurements;
-        callback(measurementsData);
+        const sortedMeasurementsData = measurementsData?.slice().sort((a: any, b: any) =>
+          a.localeCompare(b)
+        );
+        callback(sortedMeasurementsData);
       } else {
         console.error('El documento "measurements" no existe.');
         callback(null);
@@ -261,6 +269,7 @@ export const getAllMeasurementsDataa = (callback: any) => {
     return null;
   }
 };
+
 
 export const addMeasurements = async (newMeasure: string) => {
   try {
