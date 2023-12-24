@@ -102,15 +102,15 @@ export default function Sidebar() {
       id: "/inventory/productos",
       submenus: [
         {
-          section: "PRIMERA RUTA",
+          section: "PRODUCTOS",
           id: "/inventory/productos",
         },
         {
-          section: "SEGUNDA RUTA",
+          section: "AGREGAR PRODUCTO",
           id: "/inventory/agregarProductos",
         },
         {
-          section: "TERCERA RUTA",
+          section: "HISTORIAL",
           id: "/inventory/historial",
         },
       ],
