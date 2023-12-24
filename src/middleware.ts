@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/', request.url));
     }
     console.log('llegue aqui2::>', request.url)
-    console.log('test::>', excludedPaths.some(path => ("https://0.0.0.0:8080/TableShipments").includes(path)))
+    console.log('test::>', excludedPaths.some(path => request.url.includes(path)))
     if (excludedPaths.some(path => request.url.includes(path))) {
         return NextResponse.next();
     }
