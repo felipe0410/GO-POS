@@ -16,7 +16,16 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
     console.log('llegue aqui::>', request.url)
-    return NextResponse.redirect(new URL('/sign_in', request.url));
+    return new Response(
+        '<script>window.location.href="/sign_in";</script>',
+        {
+            status: 200,
+            headers: {
+                'Content-Type': 'text/html',
+            },
+        }
+    );
+    // return NextResponse.redirect(new URL('/sign_in', request.url));
 }
 
 export const config = {
