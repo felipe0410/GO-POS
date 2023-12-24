@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { setGlobalOptions } from "firebase-functions/v2";
+// import { setGlobalOptions } from "firebase-functions/v2";
 
-setGlobalOptions({ maxInstances: 10 });
+// setGlobalOptions({ maxInstances: 10 });
 
 import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
