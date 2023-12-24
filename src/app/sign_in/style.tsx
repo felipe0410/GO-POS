@@ -33,8 +33,10 @@ export const styleSign_in = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-around',
-        height: '46%',
-        width: '100%'
+        height: { xs: '65%', lg: '46%' },
+        width: '100%',
+        marginBottom: { xs: 'auto', lg: '0' },
+        marginTop: { xs: '10vh', lg: '0' },
     },
     label: {
         color: '#0A0F37',
@@ -68,10 +70,10 @@ export const styleSign_in = {
         padding: '5px 50px'
     },
     tyographyRegister: {
-        color: "#1F1D2B",
+        color: { xs: '#FFF', lg: "#1F1D2B" },
         textAlign: "center",
         fontFamily: "Nunito",
-        fontSize: "20px",
+        fontSize: { xs: '10px', lg: "20px" },
         fontStyle: "normal",
         fontWeight: 500,
         lineHeight: "normal"

@@ -5,7 +5,7 @@ export default function LogginLayout({ children }: { children: React.ReactNode }
         <section style={{ height: '100%' }}>
             <Box sx={{
                 height: '100%',
-                backgroundImage: { xs: 'url("images/loggin.png")', md: 'url("images/loggin.png")' },
+                backgroundImage: { xs: 'url("images/loggin_responsive.png")', lg: 'url("images/loggin.png")' },
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
                 backgroundPosition: "center"

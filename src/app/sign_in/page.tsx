@@ -37,7 +37,7 @@ const Loggin = () => {
                     type={showPassword ? 'text' : 'password'}
                     startAdornment={
                         <InputAdornment position="end" sx={{ marginRight: '20px' }}>
-                            {showPassword ? <LockOpenIcon sx={{ color: '#fff' }} /> : <HttpsRoundedIcon sx={{ color: '#fff' }} />}
+                            {showPassword ? <LockOpenIcon sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <HttpsRoundedIcon sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} />}
                         </InputAdornment>
                     }
                     endAdornment={
@@ -48,7 +48,7 @@ const Loggin = () => {
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
                             >
-                                {showPassword ? <VisibilityOff sx={{ color: '#fff' }} /> : <Visibility sx={{ color: '#fff' }} />}
+                                {showPassword ? <VisibilityOff sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <Visibility sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} />}
                             </IconButton>
                         </InputAdornment>
                     }
@@ -59,9 +59,10 @@ const Loggin = () => {
                         fontWeight: 400,
                         lineHeight: "normal",
                         borderRadius: "50px",
-                        background: "#1F1D2B",
+                        background: { xs: '#fff', lg: "#1F1D2B" },
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                        color: "#fff"
+                        color: { lg: "#fff" },
+                        height: { xs: '35px', lg: 'auto' }
                     }}
                     placeholder='CONTRASEÑA'
                     onChange={(e) => setData({ ...data, 'password': e.target.value })}
@@ -120,7 +121,7 @@ const Loggin = () => {
                 <Box
                     sx={{
                         width: '50%',
-                        display: "flex",
+                        display: { xs: 'none', lg: "flex" },
                         flexDirection: "column",
                         height: "68%",
                         justifyContent: "flex-start",
@@ -162,24 +163,35 @@ const Loggin = () => {
                 </Box>
                 <Box
                     sx={{
-                        width: '50%',
+                        width: { lg: '50%' },
                         height: "90%",
                         display: 'flex',
                         flexDirection: "column",
-                        justifyContent: "center"
+                        justifyContent: { xs: 'space-around', lg: "center" }
                     }}>
                     <Box id='iniciar_sesion' sx={{ ...styleSign_in.containerField1 }}>
                         <Typography
-                            id='label'
                             sx={{
-
-                                color: "#1F1D2B",
+                                color: "#69EAE2",
                                 fontFamily: "Nunito",
-                                fontSize: '30px',
+                                fontSize: "32px",
                                 fontStyle: "normal",
                                 fontWeight: 800,
-                                lineHeight: 'normal'
+                                lineHeight: "normal"
                             }}>
+                            ¡BIENVENIDO!
+                        </Typography>
+                        <Typography
+                            id='label'
+                            sx={{
+                                color: { xs: '#FFF', lg: "#1F1D2B" },
+                                fontFamily: "Nunito",
+                                fontSize: { xs: '20px', lg: '30px' },
+                                fontStyle: "normal",
+                                fontWeight: { xs: 700, lg: 800 },
+                                lineHeight: 'normal'
+                            }}
+                        >
                             INICIAR SESION
                         </Typography>
                         <Box sx={{ width: { xs: '80%', md: '45%' } }}>
@@ -192,9 +204,10 @@ const Loggin = () => {
                                         lineHeight: "normal",
                                         width: '100%',
                                         borderRadius: "50px",
-                                        background: "#1F1D2B",
+                                        background: { xs: '#FFF', lg: "#1F1D2B" },
                                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                                        color: "#fff"
+                                        color: { lg: "#fff" },
+                                        height: { xs: '35px', lg: 'auto' }
                                     }}
                                     id="user"
                                     type="email"
@@ -203,7 +216,7 @@ const Loggin = () => {
                                     onChange={(e) => setData({ ...data, 'email': e.target.value })}
                                     startAdornment={
                                         <InputAdornment position="start">
-                                            <PersonSharpIcon sx={{ color: "#fff", marginRight: '20px' }} />
+                                            <PersonSharpIcon sx={{ color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: '20px' }} />
                                         </InputAdornment>
                                     }
 
@@ -220,18 +233,18 @@ const Loggin = () => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            width: "45%",
+                            width: { xs: '80%', lg: "45%" },
                         }}>
                             <Box sx={{ display: 'flex', alignItems: "center", }}>
                                 <Checkbox
-                                    icon={<RadioButtonUncheckedIcon sx={{ color: "#1F1D2B" }} />}
-                                    checkedIcon={<CheckCircleIcon sx={{ color: "#1F1D2B" }} />}
+                                    icon={<RadioButtonUncheckedIcon sx={{ color: { xs: '#fff', lg: "#1F1D2B" } }} />}
+                                    checkedIcon={<CheckCircleIcon sx={{ color: { xs: '#fff', lg: "#1F1D2B" } }} />}
                                 />
                                 <Typography
                                     sx={{
-                                        color: "#1F1D2B",
+                                        color: { xs: '#FFF', lg: "#1F1D2B" },
                                         fontFamily: "Nunito",
-                                        fontSize: "14px",
+                                        fontSize: { xs: '8px', lg: "14px" },
                                         fontStyle: "normal",
                                         fontWeight: 600,
                                         lineHeight: "normal",
@@ -242,9 +255,9 @@ const Loggin = () => {
                             </Box>
                             <Box>
                                 <Typography sx={{
-                                    color: "#1F1D2B",
+                                    color: { xs: '#FFF', lg: "#1F1D2B" },
                                     fontFamily: "Nunito",
-                                    fontSize: "14px",
+                                    fontSize: { xs: '8px', lg: "14px" },
                                     fontStyle: "normal",
                                     fontWeight: 600,
                                     lineHeight: "normal"
@@ -262,21 +275,21 @@ const Loggin = () => {
                                 boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                                 color: "#1F1D2B",
                                 fontFamily: "Nunito",
-                                fontSize: "16px",
+                                fontSize: { xs: '14px', lg: "16px" },
                                 fontStyle: "normal",
                                 fontWeight: 700,
                                 lineHeight: "normal",
                             }}>
                             INICIAR SESION
                         </Button>
-                    </Box>
-                    <Box id="registrate">
-                        <Typography sx={{ ...styleSign_in.tyographyRegister }}>
-                            ¿No tienes una cuenta?<br />
-                            <Link style={{ fontWeight: 700, }} href={'/sign_up'}>
-                                REGISTRATE
-                            </Link>
-                        </Typography>
+                        <Box id="registrate">
+                            <Typography sx={{ ...styleSign_in.tyographyRegister }}>
+                                ¿No tienes una cuenta?<br />
+                                <Link style={{ fontWeight: 700, }} href={'/sign_up'}>
+                                    REGISTRATE
+                                </Link>
+                            </Typography>
+                        </Box>
                     </Box>
                 </Box>
             </Box >
