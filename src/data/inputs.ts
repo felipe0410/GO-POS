@@ -87,3 +87,36 @@ export const inputsEdit = [
     field: "cantidad",
   },
 ];
+
+export const dataInputs = [
+  {
+    name: "Nombre Completo",
+    type: "text",
+    width: "100%",
+    field: "name",
+  },
+  {
+    name: "Dirección",
+    type: "text",
+    width: "100%",
+    field: "direccion",
+  },
+  {
+    name: "E-mail",
+    type: "mail",
+    width: "100%",
+    field: "email",
+  },
+  {
+    name: "Cedula/Nit",
+    type: "text",
+    width: "45%",
+    field: "identificacion",
+  },
+  {
+    name: "Celular",
+    type: "number",
+    width: "45%",
+    field: "celular",
+  },
+];

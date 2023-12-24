@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
@@ -27,6 +26,7 @@ import { NumericFormat } from "react-number-format";
 import { Input as BaseInput, InputProps } from "@mui/base/Input";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { ColorRing } from "react-loader-spinner";
+import CloseIcon from "@mui/icons-material/Close";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -224,6 +224,25 @@ export default function EditModal(props: any) {
 
       <Modal open={open} onClose={handleClose}>
         <ModalContent>
+          <Box
+            sx={{
+              position: "relative",
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "-6%",
+              marginRight: "3%",
+              zIndex: 4,
+            }}
+          >
+            <IconButton
+              sx={{ padding: "8px 3px" }}
+              onClick={() => {
+                handleClose();
+              }}
+            >
+              <CloseIcon sx={{ color: "#69EAE2", fontSize: "20px" }} />
+            </IconButton>
+          </Box>
           <Box>
             <Typography
               sx={{
