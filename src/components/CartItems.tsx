@@ -98,7 +98,7 @@ const CartItems = ({
             alignSelf: "center",
           }}
         >
-          {`$ ${product.acc}`}
+          {`$ ${product.acc.toLocaleString("en-US")}`}
         </Typography>
       </Box>
       <Box

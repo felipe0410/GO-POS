@@ -19,7 +19,7 @@ const ProductCards = ({ filteredData }: { filteredData: any }) => {
         id='container card'
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
           gridRowGap: "3rem", // Espacio entre las filas
           gridColumnGap: "1rem", // Espacio entre las columnas
           height: "100%",
