@@ -5,6 +5,7 @@ export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
     const getCookie = request.cookies.get('user')?.value;
     const userCookie = getCookie?.length;
+    console.log('userCookie;;;>', userCookie)
     if (['/sign_in', '/sign_up'].some(path => request.url.includes(path)) && userCookie) {
         return NextResponse.redirect(new URL('/', request.url));
     }
