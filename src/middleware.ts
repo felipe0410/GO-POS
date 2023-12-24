@@ -10,13 +10,16 @@ export function middleware(request: NextRequest) {
     if (['/sign_in', '/sign_up'].some(path => request.url.includes(path)) && userCookie) {
         return NextResponse.redirect(new URL('/', request.url));
     }
+    console.log('llegue aqui2::>', request.url)
+    console.log('test::>', excludedPaths.some(path => ("https://0.0.0.0:8080/TableShipments").includes(path)))
     if (excludedPaths.some(path => request.url.includes(path))) {
         return NextResponse.next();
     }
+    console.log('llegue aqui3::>', request.url)
     if (userCookie) {
         return NextResponse.next();
     }
-    console.log('llegue aqui::>', request.url)
+    console.log('llegue aqui4::>', request.url)
     return new Response(
         '<script>window.location.href="/sign_in";</script>',
         {
