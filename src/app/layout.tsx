@@ -19,6 +19,8 @@ import "@fontsource/nunito-sans/600.css";
 import "@fontsource/nunito-sans/700.css";
 import "@fontsource/nunito-sans/800.css";
 import "@fontsource/nunito-sans/900.css";
+import { cookies } from 'next/headers'
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -40,6 +42,9 @@ export default function RootLayout({
   console.log(route)
   console.log(validationRoutes)
 
+  const cookieStore = cookies()
+  const theme = cookieStore.get('user')
+  console.log('user::>', theme)
   return (
     <html lang='en' style={{ height: '100%' }}>
       <body

@@ -18,7 +18,6 @@ import {
   addCategory,
   addMeasurements,
   getAllCategoriesData,
-  getAllMeasurementsData,
   getAllMeasurementsDataa,
   removeCategory,
   removeMeasurements,

@@ -40,7 +40,7 @@ export const storage = getStorage(app);
 const auth = getAuth();
 
 // const analytics = getAnalytics(app);
-
+// Función para crear un producto
 export const createProduct = async (uid: any, productData: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -61,7 +61,7 @@ export const createProduct = async (uid: any, productData: any) => {
     return null;
   }
 };
-
+// Función para obtener todos los  productos
 export const getAllProductsData = (callback: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -99,7 +99,7 @@ export const getAllProductsData = (callback: any) => {
     return null;
   }
 };
-
+// Función para obtener datos de un producto específico
 export const getProductData = async (uid: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -117,6 +117,7 @@ export const getProductData = async (uid: any) => {
     return null;
   }
 };
+// Función para actualizar datos de un producto
 export const updateProductData = async (uid: any, newData: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -136,6 +137,7 @@ export const updateProductData = async (uid: any, newData: any) => {
   }
 };
 
+// Función para eliminar un producto
 export const deleteProduct = async (uid: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -156,6 +158,7 @@ export const deleteProduct = async (uid: any) => {
   }
 };
 
+// Función para obtener todas las categorías
 export const getAllCategoriesData = (callback: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -186,7 +189,7 @@ export const getAllCategoriesData = (callback: any) => {
   }
 };
 
-
+// Función para agregar una nueva categoría
 export const addCategory = async (newCategory: string) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -203,6 +206,7 @@ export const addCategory = async (newCategory: string) => {
   }
 };
 
+// Función para eliminar una categoría
 export const removeCategory = async (categoryToRemove: string) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -220,28 +224,7 @@ export const removeCategory = async (categoryToRemove: string) => {
   }
 };
 
-export const getAllMeasurementsData = async () => {
-  try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
-    const measurementsCollectionRef = collection(
-      establecimientoDocRef,
-      "measurements"
-    );
-    const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
-    const docSnapshot = await getDoc(measurementsDocRef);
-    if (docSnapshot.exists()) {
-      const measurementsData = docSnapshot.data().Measurements;
-      return measurementsData;
-    } else {
-      console.error('El documento "measurements" no existe.');
-      return null;
-    }
-  } catch (error) {
-    console.error("Error al obtener la información de la colección: ", error);
-    return null;
-  }
-};
-
+// Función para obtener todos los datos de medidas en tiempo real
 export const getAllMeasurementsDataa = (callback: any) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -270,7 +253,7 @@ export const getAllMeasurementsDataa = (callback: any) => {
   }
 };
 
-
+// Función para agregar una nueva medida
 export const addMeasurements = async (newMeasure: string) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -286,7 +269,7 @@ export const addMeasurements = async (newMeasure: string) => {
     console.error("Error al agregar nueva categoría: ", error);
   }
 };
-
+// Función para eliminar una medida
 export const removeMeasurements = async (measureToRemove: string) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
@@ -302,7 +285,7 @@ export const removeMeasurements = async (measureToRemove: string) => {
     console.error("Error al eliminar la categoría: ", error);
   }
 };
-// sing-in
+// funcion para ingresar
 export const loginUser = async (email: any, password: any) => {
   try {
     const userCredential = await signInWithEmailAndPassword(
@@ -324,7 +307,7 @@ export const loginUser = async (email: any, password: any) => {
     return dataError;
   }
 };
-
+// funcion para crear usuario
 export const creteUser = async (email: any, password: any) => {
   try {
     const createUser = await createUserWithEmailAndPassword(
@@ -345,9 +328,10 @@ export const creteUser = async (email: any, password: any) => {
   }
 };
 
+// funcion para guardar informacion de usuarios
 export const saveDataUser = async (uid: any, userData: any) => {
   try {
-    const userCollectionRef = collection(db, "establishments");
+    const userCollectionRef = collection(db, "registeredEstablishments");
     const userDocRef = doc(userCollectionRef, uid);
     await setDoc(userDocRef, {
       uid: uid,

@@ -11,10 +11,9 @@ import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
 import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Checkbox from '@mui/material/Checkbox';
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { SidebarContext } from "./context"
+
 
 
 
@@ -206,11 +205,9 @@ const Loggin = () => {
                                     onChange={(e) => setData({ ...data, 'email': e.target.value })}
                                     startAdornment={
                                         <InputAdornment position="start">
-                                            <PersonSharpIcon sx={{ color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: { lg: '20px' } }} />
+                                            <PersonSharpIcon sx={{ color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: { lg: '10px' } }} />
                                         </InputAdornment>
                                     }
-
-
                                 />
                             </Box>
                         </Box>
@@ -257,7 +254,6 @@ const Loggin = () => {
                             </Box>
                         </Box>
                         <Button
-
                             onClick={logginUserr}
                             sx={{
                                 width: '45%',

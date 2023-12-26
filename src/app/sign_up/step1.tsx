@@ -78,7 +78,7 @@ const Step_one = () => {
                 backgroundImage: { xs: 'url("images/loggin_responsive.png")', lg: 'url("images/loggin.png")' },
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
-                backgroundPosition: "center"
+                backgroundPosition: "center",
             }}>
                 <SnackbarProvider />
                 <Box sx={{

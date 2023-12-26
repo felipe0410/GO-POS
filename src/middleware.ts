@@ -15,15 +15,6 @@ export function middleware(request: NextRequest) {
     if (userCookie) {
         return NextResponse.next();
     }
-    // return new Response(
-    //     '<script>window.location.href="/sign_in";</script>',
-    //     {
-    //         status: 200,
-    //         headers: {
-    //             'Content-Type': 'text/html',
-    //         },
-    //     }
-    // );
     return NextResponse.redirect(new URL('/sign_in', request.url));
 }
 

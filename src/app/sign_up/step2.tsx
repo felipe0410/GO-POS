@@ -24,7 +24,7 @@ const Step_second = () => {
         return true;
     };
     const validateLength = () => {
-        const arrayValue = Object.values(inputs_step_second);
+        const arrayValue = [data?.NIT_CC ?? "", data?.direction ?? "", data?.phone ?? ""];
         const validation = arrayValue.some((valor: any) => valor.length < 2);
         if (validation) {
             return true;

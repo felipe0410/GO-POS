@@ -93,7 +93,6 @@ const ImgInput = ({ data, setData, folderSaved }: { data: any, setData: any, fol
 
     useEffect(() => {
         if (data?.img === "default") {
-            console.log('entro aqui')
             setData({ ...data, img: "" })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
