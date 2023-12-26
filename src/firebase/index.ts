@@ -3,8 +3,9 @@ import { FirebaseApp, initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import {
+  CollectionReference,
+  DocumentData,
   Firestore,
-  addDoc,
   arrayRemove,
   arrayUnion,
   collection,
@@ -18,6 +19,25 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
+interface User {
+  decodedString: string | null;
+}
+
+const user: () => User = () => {
+  let decodedString = "";
+  if (typeof window !== "undefined") {
+    const base64String: string | null = localStorage?.getItem("user") ?? "";
+    const correctedBase64String = base64String.replace(/%3D/g, "=");
+    decodedString = atob(correctedBase64String);
+  }
+  return { decodedString };;
+};
+
+// Llama a la función user y muestra el tema
+console.log(user().decodedString);
+
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -43,7 +63,7 @@ const auth = getAuth();
 // Función para crear un producto
 export const createProduct = async (uid: any, productData: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const productosCollectionRef = collection(
       establecimientoDocRef,
       "productos"
@@ -52,7 +72,7 @@ export const createProduct = async (uid: any, productData: any) => {
 
     await setDoc(productDocRef, {
       uid: uid,
-      user: "LocalFelipe",
+      user: `${user().decodedString}`,
       ...productData,
     });
     return uid;
@@ -64,10 +84,8 @@ export const createProduct = async (uid: any, productData: any) => {
 // Función para obtener todos los  productos
 export const getAllProductsData = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const productCollectionRef = collection(establecimientoDocRef, "productos");
-
-    // Initial fetch of data
     getDocs(productCollectionRef)
       .then((querySnapshot) => {
         const productsData: any[] = [];
@@ -81,14 +99,11 @@ export const getAllProductsData = (callback: any) => {
         console.error("Error fetching initial data:", error);
         callback(null);
       });
-
-    // Real-time updates
     const unsubscribe = onSnapshot(productCollectionRef, (querySnapshot) => {
       const productsData: any[] = [];
       querySnapshot.forEach((doc) => {
         productsData.push({ id: doc.id, ...doc.data() });
       });
-
       callback(productsData);
       return productsData
     });
@@ -102,7 +117,7 @@ export const getAllProductsData = (callback: any) => {
 // Función para obtener datos de un producto específico
 export const getProductData = async (uid: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
     const docSnapshot = await getDoc(productDocRef);
@@ -120,7 +135,7 @@ export const getProductData = async (uid: any) => {
 // Función para actualizar datos de un producto
 export const updateProductData = async (uid: any, newData: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
 
@@ -140,7 +155,7 @@ export const updateProductData = async (uid: any, newData: any) => {
 // Función para eliminar un producto
 export const deleteProduct = async (uid: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
 
@@ -161,7 +176,7 @@ export const deleteProduct = async (uid: any) => {
 // Función para obtener todas las categorías
 export const getAllCategoriesData = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const categoriesCollectionRef = collection(
       establecimientoDocRef,
       "categories"
@@ -192,7 +207,7 @@ export const getAllCategoriesData = (callback: any) => {
 // Función para agregar una nueva categoría
 export const addCategory = async (newCategory: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const categoriesCollectionRef = collection(
       establecimientoDocRef,
       "categories"
@@ -209,7 +224,7 @@ export const addCategory = async (newCategory: string) => {
 // Función para eliminar una categoría
 export const removeCategory = async (categoryToRemove: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const categoriesCollectionRef = collection(
       establecimientoDocRef,
       "categories"
@@ -227,7 +242,7 @@ export const removeCategory = async (categoryToRemove: string) => {
 // Función para obtener todos los datos de medidas en tiempo real
 export const getAllMeasurementsDataa = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const measurementsCollectionRef = collection(
       establecimientoDocRef,
       "measurements"
@@ -256,7 +271,7 @@ export const getAllMeasurementsDataa = (callback: any) => {
 // Función para agregar una nueva medida
 export const addMeasurements = async (newMeasure: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const measurementsCollectionRef = collection(
       establecimientoDocRef,
       "measurements"
@@ -272,7 +287,7 @@ export const addMeasurements = async (newMeasure: string) => {
 // Función para eliminar una medida
 export const removeMeasurements = async (measureToRemove: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", "LocalFelipe");
+    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const measurementsCollectionRef = collection(
       establecimientoDocRef,
       "measurements"

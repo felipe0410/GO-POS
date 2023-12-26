@@ -80,6 +80,7 @@ const Loggin = () => {
                 const expirationDate = new Date(Date.now() + oneDay);
                 const encodedUid = btoa(loggin.uid);
                 setCookie('user', encodedUid, { expires: expirationDate });
+                localStorage.setItem("user", encodedUid)
                 enqueueSnackbar('Autenticacion exitosa', {
                     variant: 'success',
                     anchorOrigin: {
