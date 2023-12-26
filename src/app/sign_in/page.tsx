@@ -3,7 +3,7 @@ import { VisibilityOff, Visibility } from "@mui/icons-material"
 import { Box, Typography, TextField, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useCookies } from "react-cookie"
 import { styleSign_in } from "./style"
 import { loginUser } from "@/firebase"
@@ -14,6 +14,7 @@ import Checkbox from '@mui/material/Checkbox';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { SidebarContext } from "./context"
 
 
 
@@ -36,7 +37,7 @@ const Loggin = () => {
                     id="outlined-adornment-password"
                     type={showPassword ? 'text' : 'password'}
                     startAdornment={
-                        <InputAdornment position="end" sx={{ marginRight: '20px' }}>
+                        <InputAdornment position="start" sx={{ marginRight: { lg: '20px' } }}>
                             {showPassword ? <LockOpenIcon sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <HttpsRoundedIcon sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} />}
                         </InputAdornment>
                     }
@@ -171,17 +172,6 @@ const Loggin = () => {
                     }}>
                     <Box id='iniciar_sesion' sx={{ ...styleSign_in.containerField1 }}>
                         <Typography
-                            sx={{
-                                color: "#69EAE2",
-                                fontFamily: "Nunito",
-                                fontSize: "32px",
-                                fontStyle: "normal",
-                                fontWeight: 800,
-                                lineHeight: "normal"
-                            }}>
-                            ¡BIENVENIDO!
-                        </Typography>
-                        <Typography
                             id='label'
                             sx={{
                                 color: { xs: '#FFF', lg: "#1F1D2B" },
@@ -216,7 +206,7 @@ const Loggin = () => {
                                     onChange={(e) => setData({ ...data, 'email': e.target.value })}
                                     startAdornment={
                                         <InputAdornment position="start">
-                                            <PersonSharpIcon sx={{ color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: '20px' }} />
+                                            <PersonSharpIcon sx={{ color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: { lg: '20px' } }} />
                                         </InputAdornment>
                                     }
 
@@ -233,7 +223,7 @@ const Loggin = () => {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
-                            width: { xs: '80%', lg: "45%" },
+                            width: { xs: '75%', lg: "45%" },
                         }}>
                             <Box sx={{ display: 'flex', alignItems: "center", }}>
                                 <Checkbox
@@ -285,7 +275,7 @@ const Loggin = () => {
                         <Box id="registrate">
                             <Typography sx={{ ...styleSign_in.tyographyRegister }}>
                                 ¿No tienes una cuenta?<br />
-                                <Link style={{ fontWeight: 700, }} href={'/sign_up'}>
+                                <Link style={{ fontWeight: 700, textDecoration: "revert" }} href={'/sign_up'}>
                                     REGISTRATE
                                 </Link>
                             </Typography>
