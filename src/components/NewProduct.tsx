@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   FormControl,
-  FormLabel,
   IconButton,
   InputAdornment,
   MenuItem,

@@ -8,7 +8,7 @@ export default function StepRegister() {
     const { step } = React.useContext(SidebarContext) || {};
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: "space-around", width: { lg: "37%" }, alignSelf: "center" }}>
+        <Box sx={{ display: 'flex', justifyContent: "space-around", width: { lg: "37%" }, alignSelf: "center", minWidth: '200px' }}>
             {steps.map((stepp, index) => {
                 return (
                     <Box key={`${index * 123}-${stepp}`}>

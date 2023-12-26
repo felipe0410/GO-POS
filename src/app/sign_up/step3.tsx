@@ -11,8 +11,9 @@ import { useRouter } from "next/navigation";
 import { SnackbarProvider } from "notistack";
 import { SidebarContext } from "./context";
 import StepRegister from "./progress";
+import ImgInput from "@/components/inputIMG";
 
-const Step_second = () => {
+const Step_third = () => {
     const { step, setStep, setData, data, inputs_step_second } = useContext(SidebarContext) || {};
     const router = useRouter();
     const validarInputs = () => {
@@ -106,7 +107,7 @@ const Step_second = () => {
                                 textAlignLast: "center",
                             }}
                         >
-                            Ya estas registrado ¡Bienvenido a GO!
+                            Agrega tu logo
                         </Typography>
 
                         <Typography
@@ -120,38 +121,12 @@ const Step_second = () => {
                                 fontWeight: 600,
                                 lineHeight: { lg: "30px" }
                             }}>
-                            Ahora vamos a crear tu perfil con los datos de tu establecimiento, mas adelante podras editarlo en la seccion de “Ajustes”, estos datos se usaran para generar las facturas de tu establecimiento
+                            El logo se utilizara para generar las facturas y reportes de tu establecimiento, mas adelante podras editarlo en la seccion de “Ajustes”,
+                            Asegurate de que tu logo se encuentre en formato PNG o JPG antes de subirlo
                         </Typography>
-                        {inputs_step_second.map((input: { type: string | undefined; label: string | undefined; placeHolder: string | undefined; value: unknown; field: any; validation: () => any; msgErrror: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }, index: number) => {
-                            return (
-                                <Box sx={{ width: { lg: '50%' }, alignSelf: 'center' }} key={index * 98}>
-                                    <>
-                                        <OutlinedInput
-                                            fullWidth
-                                            sx={{
-                                                borderRadius: "20px",
-                                                background: "#FFF",
-                                                boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                                                height: "35px"
-                                            }}
-                                            id={input.label}
-                                            type={input.type}
-                                            placeholder={input.placeHolder}
-                                            value={input.value}
-                                            onChange={(e) =>
-                                                setData({ ...data, [input.field]: e.target.value })
-                                            }
-                                        />
-                                    </>
-                                    <Typography
-                                        display={input.validation() ? "none" : "block"}
-                                        color='error'
-                                    >
-                                        {input.msgErrror}
-                                    </Typography>
-                                </Box>
-                            );
-                        })}
+                        <Box sx={{ width: { xs: '60%', lg: '264px' }, height: { xs: '60%', lg: "50%" }, maxHeight: "264px", margin: '10px auto' }}>
+                            <ImgInput data={data} setData={setData} />
+                        </Box>
                         <Box sx={{ textAlignLast: "center" }}>
                             <Button
                                 onClick={() => setStep(step + 1)}
@@ -174,7 +149,7 @@ const Step_second = () => {
                                 SIGUIENTE
                             </Button>
                         </Box>
-                        <Box id="StepRegister" sx={{ display: "flex", justifyContent: "center" }}>
+                        <Box id="StepRegister" sx={{ display: "flex", justifyContent: "center", marginTop: '20px' }}>
                             <StepRegister />
                         </Box>
                     </Box>
@@ -184,4 +159,4 @@ const Step_second = () => {
     )
 }
 
-export default Step_second
+export default Step_third
