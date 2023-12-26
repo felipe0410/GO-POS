@@ -8,7 +8,6 @@ import Step_third from "./step3";
 
 const Sing_up = () => {
   const { step } = useContext(SidebarContext) || {};
-  console.log(step)
   return (
     <>
       {

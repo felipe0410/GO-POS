@@ -20,7 +20,7 @@ type SidebarProviderProps = {
 
 export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
     const [isOpen, setIsOpen] = useState('esto es una prueba');
-    const [step, setStep] = useState(2)
+    const [step, setStep] = useState(0)
     const [data, setData] = useState<any>({
         rol: "admin",
         name: "",
@@ -32,7 +32,6 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
         direction: "default",
         phone: "default",
     });
-    console.log('data::>', data)
     const inputs = [
         {
             type: "text",

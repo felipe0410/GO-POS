@@ -154,15 +154,18 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                 <Box
                     id='contianer_img'
                     sx={{
+                        background: 'red',
                         justifyContent: "center",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
                         width: "100%",
+                        maxHeight: '30vh',
+                        height: '100%'
                     }}
                 >
                     <img
-                        style={{ width: "100%", height: '100%' }}
+                        style={{ width: "100%", height: '80%' }}
                         src={imageBase64}
                         alt='Preview'
                     />
