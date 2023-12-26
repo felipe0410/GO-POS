@@ -2,7 +2,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { creteUser, saveDataUser } from "@/firebase";
 import { enqueueSnackbar } from "notistack";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation";
 
 type SidebarContextType = {
     isOpen: string;
