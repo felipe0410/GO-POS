@@ -347,7 +347,7 @@ export const creteUser = async (email: any, password: any) => {
 
 export const saveDataUser = async (uid: any, userData: any) => {
   try {
-    const userCollectionRef = collection(db, "user");
+    const userCollectionRef = collection(db, "establishments");
     const userDocRef = doc(userCollectionRef, uid);
     await setDoc(userDocRef, {
       uid: uid,

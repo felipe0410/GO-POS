@@ -1,15 +1,16 @@
 "use client";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import { RefObject, useEffect, useRef, useState } from "react";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { storage } from "@/firebase";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { enqueueSnackbar } from "notistack";
+import LinearBuffer from "./progress";
 
 
-const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
-    console.log(data)
+const ImgInput = ({ data, setData, folderSaved }: { data: any, setData: any, folderSaved: string }) => {
     const [loading, setLoading] = useState(false);
+    const [upload2, setupload2] = useState(false)
     const [upload, setUpload] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
     const [productExist, setProductExist] = useState(false);
@@ -50,9 +51,11 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
             },
             async () => {
                 const url = await getDownloadURL(imgUpload.snapshot.ref);
+                console.log('finalice')
+                setupload2(false)
                 setData((prevState: any) => ({
                     ...prevState,
-                    image: url,
+                    img: url,
                 }));
             }
         );
@@ -60,10 +63,11 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
 
     const handleAcceptImage = (fileRef: any) => {
         setLoading(true);
+        setupload2(true)
         if (fileRef.current?.files?.length) {
             const file = fileRef.current.files[0];
             const fileName = Date.now() + "_" + file.name;
-            const imgRef = ref(storage, "images/" + fileName);
+            const imgRef = ref(storage, `${folderSaved}/` + fileName);
             uploadImageToFirebase(imgRef, file);
             setLoading(false);
             setProductExist(true)
@@ -114,7 +118,6 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                 <Button
                     component='label'
                     sx={{
-                        marginTop: "12px",
                         border: "dashed #ffffff47",
                         width: "80%",
                         height: "80%",
@@ -154,7 +157,6 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                 <Box
                     id='contianer_img'
                     sx={{
-                        background: 'red',
                         justifyContent: "center",
                         display: "flex",
                         flexDirection: "column",
@@ -169,6 +171,9 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                         src={imageBase64}
                         alt='Preview'
                     />
+                    <Box sx={{ display: upload2 ? 'block' : 'none', width: '100%', marginTop: '10px' }}>
+                        <LinearBuffer />
+                    </Box>
                     <Box
                         sx={{
                             width: "90%",
@@ -188,6 +193,7 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                                 boxShadow:
                                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                                 background: "#69EAE2",
+                                width: '45%'
                             }}
                             onClick={() => {
                                 handleAcceptImage(fileRef);
@@ -204,15 +210,22 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                                     lineHeight: "normal",
                                 }}
                             >
-                                CARGAR
+                                {
+                                    loading
+                                        ? <CircularProgress />
+                                        : "CARGAR"
+                                }
+
                             </Typography>
                         </Button>
                         <Button
                             sx={{
+                                display: productExist ? "none" : "block",
                                 borderRadius: "0.625rem",
                                 boxShadow:
                                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                                 background: "#69EAE2",
+                                width: '48%'
                             }}
                             onClick={() => handleCancel()}
                         >
@@ -227,7 +240,11 @@ const ImgInput = ({ data, setData }: { data: any, setData: any }) => {
                                     lineHeight: "normal",
                                 }}
                             >
-                                CANCELAR
+                                {
+                                    loading
+                                        ? <CircularProgress />
+                                        : "CANCELAR"
+                                }
                             </Typography>
                         </Button>
                     </Box>

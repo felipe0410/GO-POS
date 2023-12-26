@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, ReactNode } from 'react';
 import { creteUser, saveDataUser } from "@/firebase";
 import { enqueueSnackbar } from "notistack";
+import { useRouter } from 'next/router';
 
 type SidebarContextType = {
     isOpen: string;
@@ -21,6 +22,7 @@ type SidebarProviderProps = {
 export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
     const [isOpen, setIsOpen] = useState('esto es una prueba');
     const [step, setStep] = useState(0)
+    const router = useRouter();
     const [data, setData] = useState<any>({
         rol: "admin",
         name: "",
@@ -136,7 +138,6 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
     const createUser = async () => {
         if (!validateLength()) {
             const creation: any = await creteUser(data.email, data.password);
-            saveDataUser(creation.uid, data);
             if (creation?.errorCode === "auth/email-already-in-use") {
                 enqueueSnackbar("El correo ya esta en uso", {
                     variant: "error",
@@ -146,6 +147,7 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
                     },
                 });
             } else {
+                saveDataUser(creation.uid, data);
                 enqueueSnackbar("Usuario creado con exito", {
                     variant: "success",
                     anchorOrigin: {
@@ -153,9 +155,9 @@ export const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) =>
                         horizontal: "right",
                     },
                 });
-                // setTimeout(() => {
-                //     router.push("/sign_in");
-                // }, 3000);
+                setTimeout(() => {
+                    router.push("/sign_in");
+                }, 3000);
             }
         } else {
             enqueueSnackbar("Completa los campos", {

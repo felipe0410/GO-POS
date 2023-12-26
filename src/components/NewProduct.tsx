@@ -26,6 +26,7 @@ import {
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
+import LinearBuffer from "./progress";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -534,6 +535,7 @@ export default function NewProduct() {
                         src={imageBase64}
                         alt='Preview'
                       />
+                      {/* <LinearBuffer /> */}
                       <Box
                         sx={{
                           width: "90%",
