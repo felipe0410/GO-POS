@@ -13,8 +13,8 @@ export function middleware(request: NextRequest) {
     const csrfTokenCookie = responseCookies.get("user");
     console.log('csrfTokenCookie:::>', csrfTokenCookie)
     const res = NextResponse.next();
-    res.headers.append('Access-Control-Allow-Origin', '*');
-    res.headers.append('Access-Control-Allow-Credentials', 'true');
+    headersStore.append('Access-Control-Allow-Origin', '*');
+    headersStore.append('Access-Control-Allow-Credentials', 'true');
     const getCookie = request?.cookies?.get('user')?.value ?? "";
     const allCookies = request.cookies.getAll()
     console.log('allCookies', allCookies)
