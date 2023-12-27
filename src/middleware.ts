@@ -3,7 +3,14 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
+    const allowOrigin = 'https://go-pos-add98.web.app'; // Reemplazar con tu dominio de Firebase Hosting
+    const res = NextResponse.next()
+    // add the CORS headers to the response
+    res.headers.append('Access-Control-Allow-Origin', allowOrigin)
+    res.headers.append('Access-Control-Allow-Credentials', 'true')
     const getCookie = request?.cookies?.get('user')?.value ?? "";
+    const allCookies = request.cookies.getAll()
+    console.log('allCookies', allCookies)
     console.log('request.cookies::::>', request.cookies)
     console.log('getCookie::::>', getCookie)
     const userCookie = getCookie?.length ?? 0;
