@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
     const res = NextResponse.next();
-    res.headers.append('Access-Control-Allow-Origin', 'https://go-pos-add98.web.app');
+    res.headers.append('Access-Control-Allow-Origin', 'https://fh-2c2b323f5b1eafa3---ssrgoposadd98-4fbts745qa-uc.a.run.app/');
     res.headers.append('Access-Control-Allow-Credentials', 'true');
     const getCookie = request?.cookies?.get('user')?.value ?? "";
     const allCookies = request.cookies.getAll()
