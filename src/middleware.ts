@@ -1,15 +1,15 @@
 import { NextResponse } from 'next/server';
-
 import type { NextRequest } from 'next/server';
+
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
     const getCookie = request?.cookies?.get('user')?.value ?? "";
-    console.log('request::::>', request)
     console.log('request.cookies::::>', request.cookies)
     console.log('getCookie::::>', getCookie)
     const userCookie = getCookie?.length ?? 0;
     console.log("userCookie:::>>", userCookie)
     const pathname = request.nextUrl.pathname
+    console.log('request.nextUrl::>', request.nextUrl)
     if (['/sign_in', '/sign_up'].some(path => pathname.includes(path)) && userCookie > 0) {
         return NextResponse.redirect(new URL('/', request.url));
     }
