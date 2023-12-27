@@ -1,8 +1,17 @@
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
+
+    const headersStore = headers();
+    console.log('responseCookies:::>', headersStore)
+    const responseCookies = new ResponseCookies(headersStore as Headers);
+    console.log('responseCookies:::>', responseCookies)
+    const csrfTokenCookie = responseCookies.get("user");
+    console.log('csrfTokenCookie:::>', csrfTokenCookie)
     const res = NextResponse.next();
     res.headers.append('Access-Control-Allow-Origin', 'https://fh-2c2b323f5b1eafa3---ssrgoposadd98-4fbts745qa-uc.a.run.app/');
     res.headers.append('Access-Control-Allow-Credentials', 'true');
