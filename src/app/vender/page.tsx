@@ -261,9 +261,18 @@ const Page = () => {
       {/* SIDEBAR */}
       <Box
         sx={{
-          width: "25.5625rem",
+          listStyle: "none",
+          margin: 0,
+          padding: 0,
+          position: "absolute",
+          paddingTop: "8px",
+          paddingBottom: "8px",
           background: "#1F1D2B",
           height: "100%",
+          overflow: "hidden",
+          top: 0,
+          right: 0,
+          width: "25.5625rem",
           borderRadius: "0.625rem",
         }}
       >
