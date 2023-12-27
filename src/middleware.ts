@@ -5,7 +5,6 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
-
     const headersStore = headers();
     console.log('responseCookies:::>', headersStore)
     const responseCookies = new ResponseCookies(headersStore as Headers);
