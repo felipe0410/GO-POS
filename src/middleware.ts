@@ -4,16 +4,16 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
     const getCookie = request.cookies.get('user')?.value;
-    const userCookie = getCookie?.length;
-    console.log("userCookie:::>>",userCookie)
+    const userCookie = getCookie?.length ?? 0;
+    console.log("userCookie:::>>", userCookie)
     const pathname = request.nextUrl.pathname
-    if (['/sign_in', '/sign_up'].some(path => pathname.includes(path)) && userCookie) {
+    if (['/sign_in', '/sign_up'].some(path => pathname.includes(path)) && userCookie > 0) {
         return NextResponse.redirect(new URL('/', request.url));
     }
     if (excludedPaths.some(path => pathname.includes(path))) {
         return NextResponse.next();
     }
-    if (userCookie) {
+    if (userCookie > 0) {
         return NextResponse.next();
     }
     // return new Response(

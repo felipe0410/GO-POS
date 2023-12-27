@@ -195,8 +195,6 @@ export const getAllCategoriesData = (callback: any) => {
         callback(null);
       }
     });
-
-    // Devuelve la función unsubscribe para que puedas detener el observador cuando sea necesario
     return unsubscribe;
   } catch (error) {
     console.error("Error al obtener la información de la colección: ", error);
@@ -210,15 +208,12 @@ export const addCategory = async (newCategory: string) => {
     const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
     const categoriesCollectionRef = collection(establecimientoDocRef, "categories");
     const categoriesDocRef = doc(categoriesCollectionRef, "categories");
-    // Verifica si el documento ya existe
     const docSnapshot = await getDoc(categoriesDocRef);
     if (docSnapshot.exists()) {
-      // Si el documento existe, actualiza el array de categorías
       await updateDoc(categoriesDocRef, {
         Categories: arrayUnion(newCategory),
       });
     } else {
-      // Si el documento no existe, créalo y establece el array de categorías
       await setDoc(categoriesDocRef, {
         Categories: [newCategory],
       });
