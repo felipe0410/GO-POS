@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server';
 
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
+
     const headersStore = headers();
     console.log('responseCookies:::>', headersStore)
     const responseCookies = new ResponseCookies(headersStore as Headers);
@@ -12,8 +13,8 @@ export function middleware(request: NextRequest) {
     const csrfTokenCookie = responseCookies.get("user");
     console.log('csrfTokenCookie:::>', csrfTokenCookie)
     const res = NextResponse.next();
-    headersStore.append('Access-Control-Allow-Origin', '*');
-    headersStore.append('Access-Control-Allow-Credentials', 'true');
+    res.headers.append('Access-Control-Allow-Origin', '*');
+    res.headers.append('Access-Control-Allow-Credentials', 'true');
     const getCookie = request?.cookies?.get('user')?.value ?? "";
     const allCookies = request.cookies.getAll()
     console.log('allCookies', allCookies)
