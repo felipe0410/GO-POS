@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 export function middleware(request: NextRequest) {
     const excludedPaths = ['/_next', '/static', '/sign_in', '/sign_up', '/font', '.'];
     const getCookie = request.cookies.get('user')?.value;
+    console.log('getCookie::::>', getCookie)
     const userCookie = getCookie?.length ?? 0;
     console.log("userCookie:::>>", userCookie)
     const pathname = request.nextUrl.pathname
