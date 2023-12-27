@@ -188,9 +188,9 @@ export const getAllCategoriesData = (callback: any) => {
         const sortedCategoriesData = categoriesData?.slice().sort((a: any, b: any) =>
           a.localeCompare(b)
         );
-
         callback(sortedCategoriesData);
       } else {
+        addCategory('varios')
         console.error('El documento "categories" no existe.');
         callback(null);
       }
@@ -208,14 +208,22 @@ export const getAllCategoriesData = (callback: any) => {
 export const addCategory = async (newCategory: string) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
-    const categoriesCollectionRef = collection(
-      establecimientoDocRef,
-      "categories"
-    );
+    const categoriesCollectionRef = collection(establecimientoDocRef, "categories");
     const categoriesDocRef = doc(categoriesCollectionRef, "categories");
-    await updateDoc(categoriesDocRef, {
-      Categories: arrayUnion(newCategory),
-    });
+    // Verifica si el documento ya existe
+    const docSnapshot = await getDoc(categoriesDocRef);
+    if (docSnapshot.exists()) {
+      // Si el documento existe, actualiza el array de categorías
+      await updateDoc(categoriesDocRef, {
+        Categories: arrayUnion(newCategory),
+      });
+    } else {
+      // Si el documento no existe, créalo y establece el array de categorías
+      await setDoc(categoriesDocRef, {
+        Categories: [newCategory],
+      });
+    }
+    console.log('Categoría agregada exitosamente.');
   } catch (error) {
     console.error("Error al agregar nueva categoría: ", error);
   }
@@ -254,8 +262,10 @@ export const getAllMeasurementsDataa = (callback: any) => {
         const sortedMeasurementsData = measurementsData?.slice().sort((a: any, b: any) =>
           a.localeCompare(b)
         );
+        console.log('sortedMeasurementsData:::>', sortedMeasurementsData)
         callback(sortedMeasurementsData);
       } else {
+        addMeasurements('und')
         console.error('El documento "measurements" no existe.');
         callback(null);
       }
@@ -272,16 +282,22 @@ export const getAllMeasurementsDataa = (callback: any) => {
 export const addMeasurements = async (newMeasure: string) => {
   try {
     const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
-    const measurementsCollectionRef = collection(
-      establecimientoDocRef,
-      "measurements"
-    );
+    const measurementsCollectionRef = collection(establecimientoDocRef, "measurements");
     const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
-    await updateDoc(measurementsDocRef, {
-      Measurements: arrayUnion(newMeasure),
-    });
+    const docSnapshot = await getDoc(measurementsDocRef);
+    if (docSnapshot.exists()) {
+      await updateDoc(measurementsDocRef, {
+        Measurements: arrayUnion(newMeasure),
+      });
+    } else {
+      await setDoc(measurementsDocRef, {
+        Measurements: [newMeasure],
+      });
+    }
+
+    console.log('Unidad de medida agregada exitosamente.');
   } catch (error) {
-    console.error("Error al agregar nueva categoría: ", error);
+    console.error("Error al agregar nueva unidad de medida: ", error);
   }
 };
 // Función para eliminar una medida
