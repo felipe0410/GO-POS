@@ -40,15 +40,6 @@ export default async function RootLayout({
   const cookieStore = cookies()
   const headersList = headers()
   console.log(headersList)
-  // const theme = cookieStore?.get('user') ?? { value: "holaa" }
-  // if (theme?.value.length < 10 && !validationRoutes) {
-  //   console.log('entro aqui');
-  //   redirect('/sign_in');
-  // }
-  // if (theme?.value.length > 10 && validationRoutes) {
-  //   console.log('entro aqui3');
-  //   redirect('/');
-  // }
   await new Promise(resolve => setTimeout(resolve, 2000));
   const theme = cookieStore?.get('user') ?? { value: "holaa" }
   console.log(theme)
@@ -73,8 +64,8 @@ export default async function RootLayout({
         }}
       >
         <>
-          esta es la cookie:{headersList.get('cookie')}
-          esta es la otra:{cookieStore?.get('user')?.value}
+          esta es la cookie:{headersList}
+          esta es la otra:{cookieStore?.get('user')}
         </>
         {validationRoutes
           ? <>
