@@ -37,13 +37,13 @@ export default function RootLayout({
     (children as React.ReactElement)?.props?.childPropSegment ?? null;
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
   const cookieStore = cookies()
-  const theme = cookieStore?.get('user') ?? { value: "" }
+  const theme = cookieStore?.get('user') ?? { value: "holaa" }
 
-  if (theme?.value.length === 0 && !validationRoutes) {
+  if (theme?.value.length < 10 && !validationRoutes) {
     console.log('entro aqui');
     redirect('/sign_in');
   }
-  if (theme?.value.length > 0 && validationRoutes) {
+  if (theme?.value.length > 10 && validationRoutes) {
     console.log('entro aqui3');
     redirect('/');
   }
@@ -58,6 +58,9 @@ export default function RootLayout({
           backgroundSize: "contain",
         }}
       >
+        <>
+          {theme?.value}
+        </>
         {validationRoutes
           ? <>
             {children}
