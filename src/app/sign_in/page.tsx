@@ -100,6 +100,7 @@ const Loggin = () => {
                     window.location.reload();
                 }, 500);
             } else {
+                router.push('/inventory/productos')
                 enqueueSnackbar('Credenciales invalidas', {
                     variant: 'error',
                     anchorOrigin: {

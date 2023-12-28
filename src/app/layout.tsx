@@ -19,10 +19,12 @@ import "@fontsource/nunito-sans/600.css";
 import "@fontsource/nunito-sans/700.css";
 import "@fontsource/nunito-sans/800.css";
 import "@fontsource/nunito-sans/900.css";
-import { cookies } from 'next/headers'
 const inter = Inter({ subsets: ["latin"] });
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import { cookies } from 'next/headers'
+import { getCookie } from 'cookies-next';
 
 export const metadata: Metadata = {
   title: "GO-POS",
@@ -37,12 +39,16 @@ export default async function RootLayout({
   const route: any =
     (children as React.ReactElement)?.props?.childPropSegment ?? null;
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
-  const cookieStore = cookies()
   const headersList = headers()
   console.log(headersList)
   await new Promise(resolve => setTimeout(resolve, 2000));
-  const theme = cookieStore?.get('user') ?? { value: "holaa" }
+  const cookieStore = cookies()
+  console.log(cookieStore)
+  const theme = cookieStore?.get('user') ?? { value: "" }
   console.log(theme)
+  console.log(theme)
+  console.log(getCookie('user'))
+  console.log(cookieStore.getAll())
   if (theme?.value.length < 10 && !validationRoutes) {
     console.log('entro aqui');
     redirect('/sign_in');
@@ -51,7 +57,6 @@ export default async function RootLayout({
     console.log('entro aqui3');
     redirect('/');
   }
-
   return (
     <html lang='en' style={{ height: '100%' }}>
       <body
@@ -64,8 +69,9 @@ export default async function RootLayout({
         }}
       >
         <>
-          esta es la cookie:{headersList}
-          esta es la otra:{cookieStore?.get('user')}
+          esta es la cookie:{theme.value}
+          <br />
+          esta es la general:{`${cookieStore.getAll().map(e => e.value)}`}
         </>
         {validationRoutes
           ? <>

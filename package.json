@@ -15,6 +15,7 @@
     "@fontsource/nunito-sans": "^5.0.8",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.19",
+    "cookies-next": "^4.1.0",
     "debounce": "^2.0.0",
     "firebase": "^10.7.1",
     "firebase-functions": "^4.5.0",
@@ -28,6 +29,7 @@
     "react-number-format": "^5.3.1"
   },
   "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
