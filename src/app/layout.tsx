@@ -36,9 +36,7 @@ export default function RootLayout({
 }) {
   const route: any =
     (children as React.ReactElement)?.props?.childPropSegment ?? null;
-  const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(
-    route
-  );
+  const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
   const cookieStore = cookies()
   const theme = cookieStore?.get('user') ?? { value: "" }
 
