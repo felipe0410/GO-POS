@@ -20,7 +20,6 @@ import "@fontsource/nunito-sans/700.css";
 import "@fontsource/nunito-sans/800.css";
 import "@fontsource/nunito-sans/900.css";
 import { cookies } from 'next/headers'
-import { NextResponse } from 'next/server';
 const inter = Inter({ subsets: ["latin"] });
 import { redirect } from 'next/navigation'
 
@@ -45,7 +44,7 @@ export default function RootLayout({
     redirect('/sign_in');
   }
   if (theme?.value.length > 0 && validationRoutes) {
-    console.log('entro aqui2');
+    console.log('entro aqui3');
     redirect('/');
   }
   return (
