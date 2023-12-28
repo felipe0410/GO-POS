@@ -1,10 +1,9 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
+import { redirect, usePathname } from 'next/navigation'
 import { getAnalytics } from "firebase/analytics";
 import {
-  CollectionReference,
-  DocumentData,
   DocumentReference,
   DocumentSnapshot,
   Firestore,
@@ -16,7 +15,6 @@ import {
   getDoc,
   getDocs,
   getFirestore,
-  increment,
   onSnapshot,
   setDoc,
   updateDoc,
@@ -26,23 +24,36 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { headers } from "next/headers";
 
 interface User {
-  decodedString: string | null;
+  decodedString: string;
 }
 
 export const user: () => User = () => {
   let decodedString = "";
   if (typeof window !== "undefined") {
-    const base64String: string | null = localStorage?.getItem("user") ?? "";
+    const base64String: string = localStorage?.getItem("user") ?? "";
     const correctedBase64String = base64String.replace(/%3D/g, "=");
     decodedString = atob(correctedBase64String);
   }
   return { decodedString };
 };
 
-// Llama a la función user y muestra el tema
 console.log(user().decodedString);
+
+console.log(user().decodedString?.length)
+
+export const rediret = (pathname: string) => {
+  if (user().decodedString?.length === 0 && pathname !== "/sign_in") {
+    window.location.href = '/sign_in';
+  }
+  if(user().decodedString?.length > 0 && pathname === "/sign_in"){
+    window.location.href = '/inventory/productos';
+  }
+}
+
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

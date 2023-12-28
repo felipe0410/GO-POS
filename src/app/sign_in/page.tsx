@@ -3,16 +3,17 @@ import { VisibilityOff, Visibility } from "@mui/icons-material"
 import { Box, Typography, TextField, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useCookies } from "react-cookie"
 import { styleSign_in } from "./style"
-import { loginUser } from "@/firebase"
+import { loginUser, rediret } from "@/firebase"
 import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
 import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Checkbox from '@mui/material/Checkbox';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { redirect, useRouter } from 'next/navigation'
 
 
 
@@ -28,7 +29,10 @@ const Loggin = () => {
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
-
+    const router = useRouter()
+    
+    const theme = cookies.user
+    console.log('theme:::cookie:::>', theme)
     const password = () => {
         return (
             <FormControl fullWidth variant="outlined">
@@ -79,7 +83,7 @@ const Loggin = () => {
                 const oneDay = 24 * 60 * 60 * 1000;
                 const expirationDate = new Date(Date.now() + oneDay);
                 const encodedUid = btoa(loggin.uid);
-                setCookie('user', encodedUid, {
+                await setCookie('user', encodedUid, {
                     expires: expirationDate,
                     sameSite: 'none',
                     secure: true
@@ -92,10 +96,12 @@ const Loggin = () => {
                         horizontal: 'right'
                     }
                 })
-                setTimeout(() => {
-                    window.location.reload();
+                setTimeout(async () => {
+                    // await router.push('/inventory/productos')
+                    window.location.href = '/inventory/productos';
                 }, 500);
             } else {
+                router.push('/inventory/productos')
                 enqueueSnackbar('Credenciales invalidas', {
                     variant: 'error',
                     anchorOrigin: {
@@ -115,6 +121,12 @@ const Loggin = () => {
             console.log(error)
         }
     }
+
+    useEffect(() => {
+        rediret("/sign_in")
+    }, [])
+    
+
     return (
         <Box sx={{ height: '100%' }}>
             <Box id='box-second' sx={{
