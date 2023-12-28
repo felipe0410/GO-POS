@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { redirect, usePathname } from 'next/navigation'
+import { redirect, usePathname } from "next/navigation";
 import { getAnalytics } from "firebase/analytics";
 import {
   DocumentReference,
@@ -42,18 +42,16 @@ export const user: () => User = () => {
 
 console.log(user().decodedString);
 
-console.log(user().decodedString?.length)
+console.log(user().decodedString?.length);
 
 export const rediret = (pathname: string) => {
   if (user().decodedString?.length === 0 && pathname !== "/sign_in") {
-    window.location.href = '/sign_in';
+    window.location.href = "/sign_in";
   }
-  if(user().decodedString?.length > 0 && pathname === "/sign_in"){
-    window.location.href = '/inventory/productos';
+  if (user().decodedString?.length > 0 && pathname === "/sign_in") {
+    window.location.href = "/inventory/productos";
   }
-}
-
-
+};
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -258,6 +256,39 @@ export const getInvoiceData = async (uid: any) => {
     }
   } catch (error) {
     console.error("Error al obtener información del documento: ", error);
+    return null;
+  }
+};
+
+//funcion para crear los pendientes y agregar los datos
+export const createIncompletedItems = async (
+  uid: string,
+  incompletedData: any
+) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      await setDoc(establecimientoDocRef, {});
+    }
+    const pendingCollectionRef = collection(establecimientoDocRef, "pendings");
+    const pendingDocRef = doc(pendingCollectionRef, uid);
+    await setDoc(pendingDocRef, {
+      uid: uid,
+      user: `${user().decodedString}`,
+      ...incompletedData,
+    });
+    console.log("se guardo con exito");
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar información en /pendings: ", error);
     return null;
   }
 };

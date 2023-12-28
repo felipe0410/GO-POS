@@ -1,4 +1,5 @@
 "use client";
+import { createIncompletedItems } from "@/firebase";
 import { Box, Typography, InputBase, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
@@ -14,15 +15,20 @@ const IncompleteCartItem = ({
     nota: "",
     cantidad: 0,
     acc: 0,
+    barCode: "",
   });
 
   const cleanedPrice = Number(incompletedItem.price.replace(/[$,]/g, ""));
-  //   const handleDelete = (product: any) => {
-  //     const updatedItems = selectedItems.filter(
-  //       (item: any) => item.barCode !== product.barCode
-  //     );
-  //     setSelectedItems(updatedItems);
-  //   };
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${year}${month}${day}${hours}${minutes}`;
+  };
 
   const handleOnChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -31,25 +37,32 @@ const IncompleteCartItem = ({
     setIncompletedItem({ ...incompletedItem, [field]: event.target.value });
   };
 
-  const pushIncompletedItem = () => {
-    setSelectedItems((prevData: any) => [...prevData, incompletedItem]);
-    setIncompletedItem({
-      productName: "",
-      price: "",
-      nota: "",
-      cantidad: 0,
-      acc: 0,
-    });
+  const pushIncompletedItem = async () => {
+    try {
+      setSelectedItems((prevData: any) => [...prevData, incompletedItem]);
+      await createIncompletedItems(incompletedItem.barCode, incompletedItem);
+      console.log("se guardo con exito con el numero", incompletedItem.barCode);
+      setIncompletedItem({
+        productName: "",
+        price: "",
+        nota: "",
+        cantidad: 0,
+        acc: 0,
+        barCode: "",
+      });
+    } catch (error) {
+      console.error("error al agregar items incompletos", error);
+    }
   };
 
   useEffect(() => {
     setIncompletedItem((prevData) => ({
       ...prevData,
       acc: cleanedPrice * incompletedItem.cantidad,
+      barCode: getCurrentDateTime(),
     }));
   }, [incompletedItem.cantidad, cleanedPrice]);
 
-  console.log(incompletedItem);
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
