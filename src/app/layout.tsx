@@ -37,7 +37,7 @@ export default function RootLayout({
     (children as React.ReactElement)?.props?.childPropSegment ?? null;
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
   const cookieStore = cookies()
-  const theme = cookieStore?.get('user') ?? { value: "holaa" }
+  const theme = cookieStore?.get('user') ?? { value: localStorage?.getItem("user") ?? "" } ?? { value: "holaa" }
 
   if (theme?.value.length < 10 && !validationRoutes) {
     console.log('entro aqui');
