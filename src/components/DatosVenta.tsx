@@ -11,9 +11,11 @@ import {
   Select,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { NumericFormat } from "react-number-format";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import { createInvoice } from "@/firebase";
+import LinearBuffer from "./progress";
 
 interface UserData {
   name: string;
@@ -26,7 +28,7 @@ interface UserData {
 
 const metodosDePago = ["Efectivo", "Transferencia", "Datáfono"];
 
-const DatosVenta = ({ total }: { total: number }) => {
+const DatosVenta = (props: any) => {
   const [data, setData] = useState<UserData>({
     name: "",
     direccion: "",
@@ -34,15 +36,90 @@ const DatosVenta = ({ total }: { total: number }) => {
     identificacion: "",
     celular: "",
   });
+  const {
+    total,
+    selectedItems,
+    subtotal,
+    descuento,
+    loading,
+    setLoading,
+    setReciboPago,
+    numeroFactura,
+    handleVenderClick,
+  } = props;
+
   const [metodoPago, setMetodoPago] = useState("");
   const [valorRecibido, setValorRecibido] = useState<number | null>(null);
   const [mostrarValorDevolver, setMostrarValorDevolver] = useState(false);
   const [datosGuardados, setDatosGuardados] = useState(false);
+  const [factura, setFactura] = useState({
+    invoice: "",
+    date: "",
+    vendedor: "santiago",
+    cliente: {
+      name: "tan",
+      direccion: "tan",
+      email: "tan",
+      identificacion: "tan",
+      celular: "tan",
+    },
+    compra: [],
+    subtotal: 0,
+    descuento: 0,
+    total: 0,
+  });
+
+  const getCurrentDateTime = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, "0");
+    const day = String(now.getDate()).padStart(2, "0");
+    const hours = String(now.getHours()).padStart(2, "0");
+    const minutes = String(now.getMinutes()).padStart(2, "0");
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
+  };
+
+  const vender = async () => {
+    try {
+      handleVenderClick();
+      setLoading(true);
+      await createInvoice(factura.invoice, {
+        ...factura,
+      });
+      console.log("se creo con exito");
+      setLoading(false);
+      setReciboPago(true);
+    } catch (error) {
+      console.error("falló el primer intento");
+    }
+  };
 
   const datosGuardadosLocalStorage = () => {
     const datosCliente = JSON.stringify(data);
     localStorage.setItem("cliente", datosCliente);
+    localStorage.setItem("invoice", numeroFactura());
     setDatosGuardados(true);
+    setFactura({
+      ...factura,
+      invoice: numeroFactura(),
+      total,
+      subtotal,
+      date: getCurrentDateTime(),
+      descuento,
+      cliente: {
+        name: data.name,
+        direccion: data.direccion,
+        email: data.email,
+        identificacion: data.identificacion,
+        celular: data.celular,
+      },
+      compra: selectedItems.map((item: any) => ({
+        productName: item.productName,
+        cantidad: item.cantidad,
+        acc: item.acc,
+        barCode: item.barCode,
+      })),
+    });
   };
 
   const isNotEmpty = (fields: any) => {
@@ -71,7 +148,9 @@ const DatosVenta = ({ total }: { total: number }) => {
     return valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0;
   };
 
-  return (
+  return loading ? (
+    <LinearBuffer />
+  ) : (
     <>
       <Typography
         sx={{
@@ -337,6 +416,7 @@ const DatosVenta = ({ total }: { total: number }) => {
       </Box>
       <Box sx={{ textAlign: "center" }}>
         <Button
+          onClick={() => vender()}
           sx={{
             borderRadius: "0.5rem",
             background: "#69EAE2",

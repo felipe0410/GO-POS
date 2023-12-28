@@ -5,6 +5,8 @@ import { getAnalytics } from "firebase/analytics";
 import {
   CollectionReference,
   DocumentData,
+  DocumentReference,
+  DocumentSnapshot,
   Firestore,
   arrayRemove,
   arrayUnion,
@@ -14,25 +16,34 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  increment,
   onSnapshot,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { createUserWithEmailAndPassword, getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 interface User {
   decodedString: string | null;
 }
 
-const user: () => User = () => {
+export const user: () => User = () => {
   let decodedString = "";
   if (typeof window !== "undefined") {
     const base64String: string | null = localStorage?.getItem("user") ?? "";
     const correctedBase64String = base64String.replace(/%3D/g, "=");
     decodedString = atob(correctedBase64String);
   }
-  return { decodedString };;
+  return { decodedString };
 };
+
+// Llama a la función user y muestra el tema
+console.log(user().decodedString);
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -58,7 +69,11 @@ const auth = getAuth();
 // Función para crear un producto
 export const createProduct = async (uid: any, productData: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const productosCollectionRef = collection(
       establecimientoDocRef,
       "productos"
@@ -79,7 +94,11 @@ export const createProduct = async (uid: any, productData: any) => {
 // Función para obtener todos los  productos
 export const getAllProductsData = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     getDocs(productCollectionRef)
       .then((querySnapshot) => {
@@ -100,7 +119,7 @@ export const getAllProductsData = (callback: any) => {
         productsData.push({ id: doc.id, ...doc.data() });
       });
       callback(productsData);
-      return productsData
+      return productsData;
     });
     // Return the unsubscribe function to stop observing changes
     return unsubscribe;
@@ -112,7 +131,11 @@ export const getAllProductsData = (callback: any) => {
 // Función para obtener datos de un producto específico
 export const getProductData = async (uid: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
     const docSnapshot = await getDoc(productDocRef);
@@ -130,7 +153,11 @@ export const getProductData = async (uid: any) => {
 // Función para actualizar datos de un producto
 export const updateProductData = async (uid: any, newData: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
 
@@ -150,7 +177,11 @@ export const updateProductData = async (uid: any, newData: any) => {
 // Función para eliminar un producto
 export const deleteProduct = async (uid: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
 
@@ -168,10 +199,66 @@ export const deleteProduct = async (uid: any) => {
   }
 };
 
+//funcion para crear la factura y agregar los datos
+export const createInvoice = async (uid: string, invoiceData: any) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      await setDoc(establecimientoDocRef, {});
+    }
+    const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
+    const invoiceDocRef = doc(invoicesCollectionRef, uid);
+    await setDoc(invoiceDocRef, {
+      uid: uid,
+      user: `${user().decodedString}`,
+      ...invoiceData,
+    });
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar información en /invoices: ", error);
+    return null;
+  }
+};
+
+//funcion para obtener una factura
+export const getInvoiceData = async (uid: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+    const invoiceDocRef = doc(invoiceCollectionRef, uid);
+    const docSnapshot = await getDoc(invoiceDocRef);
+    if (docSnapshot.exists()) {
+      return docSnapshot.data();
+    } else {
+      console.log("El documento no existe.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener información del documento: ", error);
+    return null;
+  }
+};
+
 // Función para obtener todas las categorías
 export const getAllCategoriesData = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const categoriesCollectionRef = collection(
       establecimientoDocRef,
       "categories"
@@ -180,12 +267,12 @@ export const getAllCategoriesData = (callback: any) => {
     const unsubscribe = onSnapshot(categoriesDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const categoriesData = docSnapshot.data().Categories;
-        const sortedCategoriesData = categoriesData?.slice().sort((a: any, b: any) =>
-          a.localeCompare(b)
-        );
+        const sortedCategoriesData = categoriesData
+          ?.slice()
+          .sort((a: any, b: any) => a.localeCompare(b));
         callback(sortedCategoriesData);
       } else {
-        addCategory('varios')
+        addCategory("varios");
         console.error('El documento "categories" no existe.');
         callback(null);
       }
@@ -200,8 +287,15 @@ export const getAllCategoriesData = (callback: any) => {
 // Función para agregar una nueva categoría
 export const addCategory = async (newCategory: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
-    const categoriesCollectionRef = collection(establecimientoDocRef, "categories");
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const categoriesCollectionRef = collection(
+      establecimientoDocRef,
+      "categories"
+    );
     const categoriesDocRef = doc(categoriesCollectionRef, "categories");
     const docSnapshot = await getDoc(categoriesDocRef);
     if (docSnapshot.exists()) {
@@ -213,7 +307,7 @@ export const addCategory = async (newCategory: string) => {
         Categories: [newCategory],
       });
     }
-    console.log('Categoría agregada exitosamente.');
+    console.log("Categoría agregada exitosamente.");
   } catch (error) {
     console.error("Error al agregar nueva categoría: ", error);
   }
@@ -222,7 +316,11 @@ export const addCategory = async (newCategory: string) => {
 // Función para eliminar una categoría
 export const removeCategory = async (categoryToRemove: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const categoriesCollectionRef = collection(
       establecimientoDocRef,
       "categories"
@@ -240,7 +338,11 @@ export const removeCategory = async (categoryToRemove: string) => {
 // Función para obtener todos los datos de medidas en tiempo real
 export const getAllMeasurementsDataa = (callback: any) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const measurementsCollectionRef = collection(
       establecimientoDocRef,
       "measurements"
@@ -249,13 +351,13 @@ export const getAllMeasurementsDataa = (callback: any) => {
     const unsubscribe = onSnapshot(measurementsDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const measurementsData = docSnapshot.data().Measurements;
-        const sortedMeasurementsData = measurementsData?.slice().sort((a: any, b: any) =>
-          a.localeCompare(b)
-        );
-        console.log('sortedMeasurementsData:::>', sortedMeasurementsData)
+        const sortedMeasurementsData = measurementsData
+          ?.slice()
+          .sort((a: any, b: any) => a.localeCompare(b));
+        console.log("sortedMeasurementsData:::>", sortedMeasurementsData);
         callback(sortedMeasurementsData);
       } else {
-        addMeasurements('und')
+        addMeasurements("und");
         console.error('El documento "measurements" no existe.');
         callback(null);
       }
@@ -271,8 +373,15 @@ export const getAllMeasurementsDataa = (callback: any) => {
 // Función para agregar una nueva medida
 export const addMeasurements = async (newMeasure: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
-    const measurementsCollectionRef = collection(establecimientoDocRef, "measurements");
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const measurementsCollectionRef = collection(
+      establecimientoDocRef,
+      "measurements"
+    );
     const measurementsDocRef = doc(measurementsCollectionRef, "measurements");
     const docSnapshot = await getDoc(measurementsDocRef);
     if (docSnapshot.exists()) {
@@ -285,7 +394,7 @@ export const addMeasurements = async (newMeasure: string) => {
       });
     }
 
-    console.log('Unidad de medida agregada exitosamente.');
+    console.log("Unidad de medida agregada exitosamente.");
   } catch (error) {
     console.error("Error al agregar nueva unidad de medida: ", error);
   }
@@ -293,7 +402,11 @@ export const addMeasurements = async (newMeasure: string) => {
 // Función para eliminar una medida
 export const removeMeasurements = async (measureToRemove: string) => {
   try {
-    const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
     const measurementsCollectionRef = collection(
       establecimientoDocRef,
       "measurements"
