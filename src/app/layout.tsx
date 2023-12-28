@@ -61,7 +61,7 @@ export default function RootLayout({
         }}
       >
         <>
-          {headersList.get('cookie')}
+          esta es la cookie:{headersList.get('cookie')}
         </>
         {validationRoutes
           ? <>
