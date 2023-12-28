@@ -27,6 +27,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
 import DatosVenta from "@/components/DatosVenta";
 import Factura from "@/components/Factura";
+import IncompleteCartItem from "@/components/IncompleteCartItem";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -457,7 +458,7 @@ const Page = () => {
                     <Divider sx={{ background: "#69EAE2" }} />
                     <Box
                       id='items-list'
-                      sx={{ maxHeight: "450px", overflowY: "auto" }}
+                      sx={{ maxHeight: "270px", overflowY: "auto" }}
                     >
                       {selectedItems.length === 0 ? (
                         <Typography
@@ -485,6 +486,7 @@ const Page = () => {
                           </React.Fragment>
                         ))
                       )}
+                      <IncompleteCartItem setSelectedItems={setSelectedItems} />
                     </Box>
                     <Divider
                       sx={{ background: "#69EAE2", marginTop: "1.5rem" }}

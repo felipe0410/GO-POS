@@ -35,7 +35,9 @@ const CartItems = ({
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box
           component={"img"}
-          src={product.image}
+          src={
+            product.image === undefined ? "/images/noImage.svg" : product.image
+          }
           alt={`imagen del producto ${product.productName}`}
           sx={{
             width: "3rem",
