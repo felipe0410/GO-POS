@@ -22,9 +22,9 @@ import "@fontsource/nunito-sans/900.css";
 const inter = Inter({ subsets: ["latin"] });
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import type { NextApiRequest, NextApiResponse } from 'next';
 import { cookies } from 'next/headers'
 import { getCookie } from 'cookies-next';
+import { user } from "@/firebase";
 
 export const metadata: Metadata = {
   title: "GO-POS",
@@ -57,6 +57,7 @@ export default async function RootLayout({
     console.log('entro aqui3');
     redirect('/');
   }
+  // console.log(user().decodedString)
   return (
     <html lang='en' style={{ height: '100%' }}>
       <body
@@ -73,16 +74,14 @@ export default async function RootLayout({
           <br />
           esta es la general:{`${cookieStore.getAll().map(e => e.value)}`}
         </>
-        {validationRoutes
-          ? <>
-            {children}
-          </>
-          : <>
+        {
+          <>
             <Box
               id='Container Sidebar'
               sx={{
-                zIndex: '10',
-                position: "fixed",
+                display: validationRoutes ? "none" : 'block',
+                zIndex: validationRoutes ? "" : '10',
+                position: validationRoutes ? "" : "fixed",
                 top: 0,
                 left: 0,
                 height: "100%",
@@ -94,8 +93,8 @@ export default async function RootLayout({
               id='container children layout'
               sx={{
                 height: "100%",
-                marginTop: "64px",
-                marginLeft: { xs: '20px', sm: "244px" },
+                marginTop: validationRoutes ? "" : "64px",
+                marginLeft: validationRoutes ? "" : { xs: '20px', sm: "244px" },
               }}
             >
               {children}
