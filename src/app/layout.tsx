@@ -43,13 +43,13 @@ export default function RootLayout({
   const theme = cookieStore?.get('user') ?? { value: "" }
 
   if (theme?.value.length === 0 && !validationRoutes) {
-    console.log('entro aqui')
-    redirect('/sign_in')
-  } else if (validationRoutes) {
-    redirect('/')
+    console.log('entro aqui');
+    redirect('/sign_in');
   }
-
-
+  if (theme?.value.length > 0 && validationRoutes) {
+    console.log('entro aqui2');
+    redirect('/');
+  }
   return (
     <html lang='en' style={{ height: '100%' }}>
       <body

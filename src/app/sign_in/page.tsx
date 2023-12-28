@@ -96,7 +96,7 @@ const Loggin = () => {
                 })
                 setTimeout(() => {
                     router.push('/inventory/productos')
-                    // window.location.reload();
+                    window.location.reload();
                 }, 500);
             } else {
                 enqueueSnackbar('Credenciales invalidas', {
