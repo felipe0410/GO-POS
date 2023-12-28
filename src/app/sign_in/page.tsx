@@ -13,6 +13,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Checkbox from '@mui/material/Checkbox';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { redirect, useRouter } from 'next/navigation'
 
 
 
@@ -28,6 +29,7 @@ const Loggin = () => {
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
+    const router = useRouter()
 
     const password = () => {
         return (
@@ -79,7 +81,7 @@ const Loggin = () => {
                 const oneDay = 24 * 60 * 60 * 1000;
                 const expirationDate = new Date(Date.now() + oneDay);
                 const encodedUid = btoa(loggin.uid);
-                setCookie('user', encodedUid, {
+                await setCookie('user', encodedUid, {
                     expires: expirationDate,
                     sameSite: 'none',
                     secure: true
@@ -92,9 +94,10 @@ const Loggin = () => {
                         horizontal: 'right'
                     }
                 })
-                setTimeout(() => {
-                    window.location.reload();
-                }, 500);
+                router.push('/inventory/productos')
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 500);
             } else {
                 enqueueSnackbar('Credenciales invalidas', {
                     variant: 'error',

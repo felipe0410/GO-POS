@@ -33,11 +33,6 @@ const user: () => User = () => {
   }
   return { decodedString };;
 };
-
-// Llama a la función user y muestra el tema
-console.log(user().decodedString);
-
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 

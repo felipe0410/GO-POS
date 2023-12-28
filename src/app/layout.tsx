@@ -20,9 +20,9 @@ import "@fontsource/nunito-sans/700.css";
 import "@fontsource/nunito-sans/800.css";
 import "@fontsource/nunito-sans/900.css";
 import { cookies } from 'next/headers'
-
-
+import { NextResponse } from 'next/server';
 const inter = Inter({ subsets: ["latin"] });
+import { redirect } from 'next/navigation'
 
 export const metadata: Metadata = {
   title: "GO-POS",
@@ -39,12 +39,15 @@ export default function RootLayout({
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(
     route
   );
-  console.log(route)
-  console.log(validationRoutes)
-
   const cookieStore = cookies()
-  const theme = cookieStore.get('user')
-  console.log('user::>', theme)
+  const theme = cookieStore?.get('user') ?? { value: "" }
+
+  if (theme?.value.length === 0 && !validationRoutes) {
+    console.log('entro aqui')
+    redirect('/sign_in')
+  }
+
+
   return (
     <html lang='en' style={{ height: '100%' }}>
       <body
