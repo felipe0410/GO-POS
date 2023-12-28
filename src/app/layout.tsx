@@ -22,6 +22,7 @@ import "@fontsource/nunito-sans/900.css";
 import { cookies } from 'next/headers'
 const inter = Inter({ subsets: ["latin"] });
 import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
 export const metadata: Metadata = {
   title: "GO-POS",
@@ -37,6 +38,9 @@ export default function RootLayout({
     (children as React.ReactElement)?.props?.childPropSegment ?? null;
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
   const cookieStore = cookies()
+  const headersList = headers()
+  console.log(headersList.get('cookie'))
+  console.log(headersList)
   const theme = cookieStore?.get('user') ?? { value: localStorage?.getItem("user") ?? "" } ?? { value: "holaa" }
 
   if (theme?.value.length < 10 && !validationRoutes) {
@@ -59,7 +63,7 @@ export default function RootLayout({
         }}
       >
         <>
-          {theme?.value}
+          {headersList.get('cookie')}
         </>
         {validationRoutes
           ? <>
