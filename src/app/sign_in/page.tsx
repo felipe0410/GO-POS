@@ -30,7 +30,8 @@ const Loggin = () => {
         event.preventDefault();
     };
     const router = useRouter()
-
+    const theme = cookies.user
+    console.log('theme:::cookie:::>', theme)
     const password = () => {
         return (
             <FormControl fullWidth variant="outlined">
