@@ -3,10 +3,10 @@ import { VisibilityOff, Visibility } from "@mui/icons-material"
 import { Box, Typography, TextField, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useCookies } from "react-cookie"
 import { styleSign_in } from "./style"
-import { loginUser } from "@/firebase"
+import { loginUser, rediret } from "@/firebase"
 import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
 import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -30,6 +30,7 @@ const Loggin = () => {
         event.preventDefault();
     };
     const router = useRouter()
+    
     const theme = cookies.user
     console.log('theme:::cookie:::>', theme)
     const password = () => {
@@ -97,7 +98,7 @@ const Loggin = () => {
                 })
                 setTimeout(async () => {
                     // await router.push('/inventory/productos')
-                    window.location.reload();
+                    window.location.href = '/inventory/productos';
                 }, 500);
             } else {
                 router.push('/inventory/productos')
@@ -120,6 +121,12 @@ const Loggin = () => {
             console.log(error)
         }
     }
+
+    useEffect(() => {
+        rediret("/sign_in")
+    }, [])
+    
+
     return (
         <Box sx={{ height: '100%' }}>
             <Box id='box-second' sx={{

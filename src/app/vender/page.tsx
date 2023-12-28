@@ -20,7 +20,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import { getAllCategoriesData, getAllProductsData } from "@/firebase";
+import { getAllCategoriesData, getAllProductsData, rediret } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import CartItems from "@/components/CartItems";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -149,6 +149,9 @@ const Page = () => {
     );
     setSubtotal(nuevoSubtotal);
   }, [selectedItems]);
+  useEffect(() => {
+    rediret("")
+  }, [])
 
   const filteredData = data?.filter(
     (item) =>

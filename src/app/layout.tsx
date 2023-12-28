@@ -36,27 +36,18 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const route: any =
-    (children as React.ReactElement)?.props?.childPropSegment ?? null;
+  const route: any = (children as React.ReactElement)?.props?.childPropSegment ?? null;
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
-  const headersList = headers()
-  console.log(headersList)
-  await new Promise(resolve => setTimeout(resolve, 2000));
   const cookieStore = cookies()
-  console.log(cookieStore)
   const theme = cookieStore?.get('user') ?? { value: "" }
-  console.log(theme)
-  console.log(theme)
-  console.log(getCookie('user'))
-  console.log(cookieStore.getAll())
-  if (theme?.value.length < 10 && !validationRoutes) {
-    console.log('entro aqui');
-    redirect('/sign_in');
-  }
-  if (theme?.value.length > 10 && validationRoutes) {
-    console.log('entro aqui3');
-    redirect('/');
-  }
+  // if (theme?.value.length < 10 && !validationRoutes) {
+  //   console.log('entro aqui');
+  //   redirect('/sign_in');
+  // }
+  // if (theme?.value.length > 10 && validationRoutes) {
+  //   console.log('entro aqui3');
+  //   redirect('/');
+  // }
   // console.log(user().decodedString)
   return (
     <html lang='en' style={{ height: '100%' }}>
@@ -69,11 +60,6 @@ export default async function RootLayout({
           backgroundSize: "contain",
         }}
       >
-        <>
-          esta es la cookie:{theme.value}
-          <br />
-          esta es la general:{`${cookieStore.getAll().map(e => e.value)}`}
-        </>
         {
           <>
             <Box
