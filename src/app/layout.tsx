@@ -74,7 +74,7 @@ export default async function RootLayout({
       >
         <>
           esta es la cookie:{headersList.get('cookie')}
-          esta es la otra:{cookieStore?.get('user')}
+          esta es la otra:{cookieStore?.get('user')?.value}
         </>
         {validationRoutes
           ? <>
