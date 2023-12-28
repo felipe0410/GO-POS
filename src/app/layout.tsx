@@ -39,7 +39,7 @@ export default function RootLayout({
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
   const cookieStore = cookies()
   const headersList = headers()
-  const theme = cookieStore?.get('user') ?? { value: localStorage?.getItem("user") ?? "" } ?? { value: "holaa" }
+  const theme = cookieStore?.get('user') ?? { value: "holaa" }
 
   if (theme?.value.length < 10 && !validationRoutes) {
     console.log('entro aqui');
