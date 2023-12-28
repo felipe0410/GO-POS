@@ -94,9 +94,9 @@ const Loggin = () => {
                         horizontal: 'right'
                     }
                 })
-                router.push('/inventory/productos')
                 setTimeout(() => {
-                    window.location.reload();
+                    router.push('/inventory/productos')
+                    // window.location.reload();
                 }, 500);
             } else {
                 enqueueSnackbar('Credenciales invalidas', {

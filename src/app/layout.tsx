@@ -45,6 +45,8 @@ export default function RootLayout({
   if (theme?.value.length === 0 && !validationRoutes) {
     console.log('entro aqui')
     redirect('/sign_in')
+  } else if (validationRoutes) {
+    redirect('/')
   }
 
 
