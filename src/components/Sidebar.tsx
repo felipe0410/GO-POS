@@ -2,17 +2,15 @@
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Button, SwipeableDrawer, useMediaQuery } from "@mui/material";
+import { Button, SwipeableDrawer, Typography, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { usePathname } from 'next/navigation'
@@ -26,9 +24,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-interface AppBarProps extends MuiAppBarProps {
-  open?: boolean;
-}
 
 export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) {
   const [selectedSection, setSelectedSection] = React.useState<any>("");
@@ -81,6 +76,26 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
         },
       ],
     },
+    {
+      section: "AJUSTES",
+      icon: "/images/settings.svg",
+      icon2: "/images/inventarioSelected.svg",
+      id: "/settings/user",
+      submenus: [
+        {
+          section: "USUARIO",
+          id: "/settings/user",
+        },
+        {
+          section: "EMPLEADOS",
+          id: "/settings/employees",
+        },
+        {
+          section: "ESTABLECIMIENTO",
+          id: "/settings/establishment",
+        },
+      ],
+    }
   ];
 
   const handleDrawerOpen = () => {
@@ -142,22 +157,21 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
             overflow: "hidden",
           }}
         >
-          <DrawerHeader>
-            {open ? (
-              <IconButton onClick={handleDrawerClose}>
-                <ChevronLeftIcon
-                  sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px" }}
-                />
-              </IconButton>
-            ) : (
-              <IconButton onClick={handleDrawerOpen}>
-                <ChevronRightIcon
-                  sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px" }}
-                />
-              </IconButton>
-            )}
-          </DrawerHeader>
-          <Divider />
+          <Box>
+            <Typography
+              align="center"
+              sx={{
+                color: "#FFF",
+                textShadow: "0px 0px 20px #69EAE2",
+                fontFamily: "Nunito",
+                fontSize: open ? "3.75rem" : "3rem",
+                fontStyle: "normal",
+                fontWeight: 800,
+                lineHeight: "normal",
+              }}>
+              GO
+            </Typography>
+          </Box>
           {sections.map((section) => (
             <React.Fragment key={section.id}>
               <Box
@@ -274,34 +288,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
               </Box>
             </React.Fragment>
           ))}
-          <Box
-            sx={{
-              marginLeft: "15px",
-            }}
-          >
-            <Link
-              href={"/"}
-              style={{ textDecoration: "none", color: "#1F1D2B" }}
-            >
-              <Button
-                sx={{
-                  textAlign: "start",
-                  paddingLeft: "23px",
-                  mb: "30px",
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    justifyContent: "center",
-                  }}
-                >
-                  <Box component={"img"} src={"/images/settings.svg"} />
-                </ListItemIcon>
-              </Button>
-            </Link>
-          </Box>
-          <Box sx={{ textAlign: "start", paddingLeft: "25px" }}>
+          <DrawerHeader>
             {open ? (
               <IconButton onClick={handleDrawerClose}>
                 <ChevronLeftIcon
@@ -315,7 +302,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                 />
               </IconButton>
             )}
-          </Box>
+          </DrawerHeader>
           <Box
             sx={{
               marginTop: "100%",
@@ -343,6 +330,6 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
           </Box>
         </List>
       </SwipeableDrawer>
-    </Box>
+    </Box >
   );
 }
