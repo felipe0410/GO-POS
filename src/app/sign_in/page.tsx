@@ -3,7 +3,7 @@ import { VisibilityOff, Visibility } from "@mui/icons-material"
 import { Box, Typography, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { useCookies } from "react-cookie"
 import { styleSign_in } from "./style"
 import { loginUser } from "@/firebase"
@@ -13,9 +13,10 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Checkbox from '@mui/material/Checkbox';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import { GlobalContext } from "../globalContex"
 
 const Loggin = () => {
-    const [cookies, setCookie] = useCookies(['user']);
+    const { setCookie } = useContext(GlobalContext) || {};
     const [showPassword, setShowPassword] = useState(false);
     const [data, setData] = useState({
         password: '',
@@ -77,9 +78,7 @@ const Loggin = () => {
                 const expirationDate = new Date(Date.now() + oneDay);
                 const encodedUid = btoa(loggin.uid);
                 await setCookie('user', encodedUid, {
-                    expires: expirationDate,
-                    sameSite: 'none',
-                    secure: true
+                    expires: expirationDate
                 });
                 localStorage.setItem("user", encodedUid)
                 enqueueSnackbar('Autenticacion exitosa', {

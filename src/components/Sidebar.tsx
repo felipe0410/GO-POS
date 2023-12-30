@@ -14,6 +14,8 @@ import { Button, SwipeableDrawer, Typography, useMediaQuery } from "@mui/materia
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { usePathname } from 'next/navigation'
+import { useContext } from "react";
+import { GlobalContext } from "@/app/globalContex";
 
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -26,11 +28,12 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 
 export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) {
+  const { removeCookieUser } = useContext(GlobalContext) || {};
+
   const [selectedSection, setSelectedSection] = React.useState<any>("");
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
-
   const sections = [
     {
       section: "INICIO",
@@ -317,6 +320,16 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                 textAlign: "start",
                 paddingLeft: "20px",
               }}
+              onClick={async () => {
+                console.log('entre aqui')
+                try {
+                  await removeCookieUser('user', "", {
+                    expires: new Date(0)
+                  });
+                } catch (error) {
+                  console.log(error)
+                }
+              }}
             >
               <ListItemIcon
                 sx={{
@@ -327,6 +340,21 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
               >
                 <Box component={"img"} src={"/images/logout.svg"} />
               </ListItemIcon>
+              <ListItemText
+                primary={"SALIR"}
+                primaryTypographyProps={{
+                  color: "#69EAE2",
+                  fontFamily: "Nunito",
+                  fontSize: "0.875rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "normal",
+                  marginLeft: "10px",
+                }}
+                sx={{
+                  opacity: open ? 1 : 0,
+                }}
+              />
             </Button>
           </Box>
         </List>

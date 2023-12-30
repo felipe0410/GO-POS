@@ -9,8 +9,7 @@ import { keyframes } from "@emotion/react";
 
 
 const ContainerChildren = ({ childrenn, validationRoutes }: { childrenn: any, validationRoutes: any }) => {
-    const [cookies] = useCookies(['user']);
-    const { isOpen, setIsOpen } = useContext(GlobalContext) || {};
+    const { isOpen, setIsOpen, cookies } = useContext(GlobalContext) || {};
     const [validation, setValidation] = useState(false)
     const validationCookie = cookies?.user?.length > 0
     useEffect(() => {
