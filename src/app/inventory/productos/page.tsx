@@ -59,7 +59,6 @@ const Page = () => {
       );
     });
     setfilter(filteredData)
-    console.log(filteredData)
   }, [data, searchTerm])
 
 

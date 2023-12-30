@@ -153,7 +153,6 @@ export const getProductData = async (uid: any) => {
     if (docSnapshot.exists()) {
       return docSnapshot.data();
     } else {
-      console.log("El documento no existe.");
       return null;
     }
   } catch (error) {
@@ -398,7 +397,6 @@ export const getAllMeasurementsDataa = (callback: any) => {
         const sortedMeasurementsData = measurementsData
           ?.slice()
           .sort((a: any, b: any) => a.localeCompare(b));
-        console.log("sortedMeasurementsData:::>", sortedMeasurementsData);
         callback(sortedMeasurementsData);
       } else {
         addMeasurements("und");

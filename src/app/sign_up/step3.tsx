@@ -4,7 +4,7 @@ import {
     Button,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider } from "notistack";
@@ -14,7 +14,7 @@ import ImgInput from "@/components/inputIMG";
 
 const Step_third = () => {
     const { step, setStep, setData, data, inputs_step_second, createUser } = useContext(SidebarContext) || {};
-    console.log(data)
+    const [imageBase64, setImageBase64] = useState("");
     const router = useRouter();
     const validarInputs = () => {
         for (const input of inputs_step_second) {
@@ -125,7 +125,7 @@ const Step_third = () => {
                             Asegurate de que tu logo se encuentre en formato PNG o JPG antes de subirlo
                         </Typography>
                         <Box sx={{ width: { xs: '60%', lg: '264px' }, height: { xs: '60%', lg: "50%" }, maxHeight: "264px", margin: '10px auto' }}>
-                            <ImgInput data={data} setData={setData} folderSaved={"imgProfileUsers"} />
+                            <ImgInput data={data} setData={setData} folderSaved={"imgProfileUsers"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
                         </Box>
                         <Box sx={{
                             textAlignLast: "center",

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Box } from "@mui/material";
-import Sidebar from "@/components/Sidebar";
 import "@fontsource/nunito/200.css";
 import "@fontsource/nunito/300.css";
 import "@fontsource/nunito/400.css";
@@ -37,17 +35,6 @@ export default async function RootLayout({
   const route: any = (children as React.ReactElement)?.props?.childPropSegment ?? null;
   const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
   const cookieStore = cookies()
-  const theme = cookieStore?.get('user') ?? { value: "" }
-  // if (theme?.value.length < 10 && !validationRoutes) {
-  //   console.log('entro aqui');
-  //   redirect('/sign_in');
-  // }
-  // if (theme?.value.length > 10 && validationRoutes) {
-  //   console.log('entro aqui3');
-  //   redirect('/');
-  // }
-  // console.log(user().decodedString)
-  console.log('route::>', route)
   return (
     <html lang='en' style={{ height: '100%' }}>
       <GlobalContextProvider>
@@ -58,7 +45,6 @@ export default async function RootLayout({
             background: "#252836",
             backgroundRepeat: "no-repeat",
             backgroundSize: "contain",
-            overflowY: route === "inventory" ? "auto" : "hidden"
           }}
         >
           {

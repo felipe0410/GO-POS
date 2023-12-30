@@ -8,13 +8,12 @@ import { enqueueSnackbar } from "notistack";
 import LinearBuffer from "./progress";
 
 
-const ImgInput = ({ data, setData, folderSaved }: { data: any, setData: any, folderSaved: string }) => {
+const ImgInput = ({ data, setData, folderSaved, fiel = "img", imageBase64, setImageBase64 }: { data: any, setData: any, folderSaved: string, fiel?: string, imageBase64: any, setImageBase64: any }) => {
     const [loading, setLoading] = useState(false);
     const [upload2, setupload2] = useState(false)
     const [upload, setUpload] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
     const [productExist, setProductExist] = useState(false);
-    const [imageBase64, setImageBase64] = useState("");
 
     const uploadImage = (fileRef: RefObject<HTMLInputElement>) => {
         if (fileRef.current?.files?.length) {
@@ -55,7 +54,7 @@ const ImgInput = ({ data, setData, folderSaved }: { data: any, setData: any, fol
                 setupload2(false)
                 setData((prevState: any) => ({
                     ...prevState,
-                    img: url,
+                    [fiel]: url,
                 }));
             }
         );
@@ -87,17 +86,22 @@ const ImgInput = ({ data, setData, folderSaved }: { data: any, setData: any, fol
         setUpload(false);
         setData((prevState: any) => ({
             ...prevState,
-            img: "",
+            [fiel]: "",
         }));
     };
 
     useEffect(() => {
-        if (data?.img === "default") {
-            setData({ ...data, img: "" })
+        if (data[fiel] === "default") {
+            setData({ ...data, [fiel]: "" })
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    useEffect(() => {
+        if (imageBase64.length === 0) { setUpload(false) } else {
+            setUpload(true)
+        }
+    }, [imageBase64])
     return (
         <>
             <Box
