@@ -13,10 +13,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Checkbox from '@mui/material/Checkbox';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { redirect, useRouter } from 'next/navigation'
-
-
-
+import { useRouter } from 'next/navigation'
 
 const Loggin = () => {
     const [cookies, setCookie] = useCookies(['user']);
@@ -30,9 +27,7 @@ const Loggin = () => {
         event.preventDefault();
     };
     const router = useRouter()
-    
-    const theme = cookies.user
-    console.log('theme:::cookie:::>', theme)
+
     const password = () => {
         return (
             <FormControl fullWidth variant="outlined">
@@ -125,7 +120,7 @@ const Loggin = () => {
     useEffect(() => {
         rediret("/sign_in")
     }, [])
-    
+
 
     return (
         <Box sx={{ height: '100%' }}>

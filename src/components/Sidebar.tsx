@@ -1,8 +1,7 @@
 "use client";
 import * as React from "react";
-import { styled, useTheme, Theme, CSSObject } from "@mui/material/styles";
+import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import MuiDrawer from "@mui/material/Drawer";
 import { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -19,26 +18,6 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { usePathname } from 'next/navigation'
 
 
-const drawerWidth = 196;
-
-const openedMixin = (theme: Theme): CSSObject => ({
-  width: drawerWidth,
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.enteringScreen,
-  }),
-  overflowX: "hidden",
-});
-
-const closedMixin = (theme: Theme): CSSObject => ({
-  transition: theme.transitions.create("width", {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  overflowX: "hidden",
-  width: `calc( 104px + 1px)`,
-});
-
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
@@ -51,26 +30,7 @@ interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
 }
 
-const Drawer = styled(MuiDrawer, {
-  shouldForwardProp: (prop) => prop !== "open",
-})(({ theme, open }) => ({
-  width: drawerWidth,
-  flexShrink: 0,
-  whiteSpace: "nowrap",
-  boxSizing: "border-box",
-  ...(open && {
-    ...openedMixin(theme),
-    "& .MuiDrawer-paper": openedMixin(theme),
-  }),
-  ...(!open && {
-    ...closedMixin(theme),
-    "& .MuiDrawer-paper": closedMixin(theme),
-  }),
-}));
-
-export default function Sidebar() {
-  const [sectionActive, setSectionActive] = React.useState("")
-  const [open, setOpen] = React.useState(false);
+export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) {
   const [selectedSection, setSelectedSection] = React.useState<any>("");
   const pathname = usePathname();
   const theme = useTheme();
@@ -93,7 +53,13 @@ export default function Sidebar() {
       section: "CAJA",
       icon2: "/images/cajaSelected.svg",
       icon: "/images/caja.svg",
-      id: "/TableShipments",
+      id: "/register/invoices",
+      submenus: [
+        {
+          section: "Facturas",
+          id: "/register/invoices",
+        },
+      ],
     },
     {
       section: "INVENTARIO",

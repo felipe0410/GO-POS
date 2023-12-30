@@ -174,8 +174,8 @@ const Page = () => {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", height: "100%" }}>
-      <Box sx={{ width: "65%" }}>
+    <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
+      <Box id='conainer_vender' sx={{ width: "calc(100% - 25.5625rem)" }}>
         <Header title='VENDER' />
         <Paper
           id={"paper"}

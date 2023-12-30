@@ -31,10 +31,10 @@ export default function VenderCard({
         const updatedItems = selectedItems.map((item: any) =>
           item.barCode === product.barCode
             ? {
-                ...item,
-                cantidad: item.cantidad - 1,
-                acc: (item.cantidad - 1) * cleanedPrice,
-              }
+              ...item,
+              cantidad: item.cantidad - 1,
+              acc: (item.cantidad - 1) * cleanedPrice,
+            }
             : item
         );
         setSelectedItems(updatedItems);
@@ -57,10 +57,10 @@ export default function VenderCard({
       const updatedItems = selectedItems.map((item: any) =>
         item.barCode === product.barCode
           ? {
-              ...item,
-              cantidad: item.cantidad + 1,
-              acc: (item.cantidad + 1) * cleanedPrice,
-            }
+            ...item,
+            cantidad: item.cantidad + 1,
+            acc: (item.cantidad + 1) * cleanedPrice,
+          }
           : item
       );
 
@@ -84,8 +84,8 @@ export default function VenderCard({
       <Card
         key={product.uid}
         sx={{
-          width: "12rem",
-          maxHeight: "14.52rem",
+          width: "15rem",
+          maxHeight: "17.52rem",
           borderRadius: "0.32rem",
           background: "#2C3248",
           overflow: "visible",
@@ -131,17 +131,18 @@ export default function VenderCard({
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "6.5rem",
-              height: "6.5rem",
+              height: "7.5rem",
               position: "absolute",
               left: "50%",
               transform: "translateX(-50%)",
             }}
+            loading="lazy"
           />
         </Box>
         <StyledCardContent
           sx={{
             padding: 0,
-            width: "9rem",
+            width: "12rem",
           }}
         >
           <Typography

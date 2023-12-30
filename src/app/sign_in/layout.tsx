@@ -12,7 +12,6 @@ export default function LogginLayout({ children }: { children: React.ReactNode }
         console.log('entro aqui2');
         redirect('/');
     }
-    
     return (
         <section style={{ height: '100%' }}>
             <SidebarProvider>

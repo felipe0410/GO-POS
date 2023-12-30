@@ -17,20 +17,19 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
     },
   }));
 
-  console.log('filteredData:::>', filteredData)
-
   return filteredData?.map((product: any) => {
     return (
       <Card
-        key={product.uid}
+        key={product.uid * 2}
         sx={{
-          width: "12rem",
-          maxHeight: "14.52rem",
+          width: "15rem",
+          maxHeight: "17.52rem",
           borderRadius: "0.32rem",
           background: "#2C3248",
           overflow: "visible",
           textAlign: "-webkit-center",
         }}
+
       >
         <Box
           sx={{
@@ -48,6 +47,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           </CardActions>
         </Box>
         <Box
+          id='contianer img'
           sx={{
             position: "relative",
             height: "8rem",
@@ -61,17 +61,18 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "6.5rem",
-              height: "6.5rem",
+              height: "7.5rem",
               position: "absolute",
               left: "50%",
               transform: "translateX(-50%)",
             }}
+            loading="lazy"
           />
         </Box>
         <StyledCardContent
           sx={{
             padding: 0,
-            width: "9rem",
+            width: "12rem",
           }}
         >
           <Typography

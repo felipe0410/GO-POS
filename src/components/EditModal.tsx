@@ -14,10 +14,8 @@ import {
   Select,
 } from "@mui/material";
 import {
-  deleteProduct,
   getAllCategoriesData,
   getAllMeasurementsDataa,
-  getProductData,
   storage,
   updateProductData,
 } from "@/firebase";
@@ -27,6 +25,7 @@ import { Input as BaseInput, InputProps } from "@mui/base/Input";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { ColorRing } from "react-loader-spinner";
 import CloseIcon from "@mui/icons-material/Close";
+import CreateTwoToneIcon from '@mui/icons-material/CreateTwoTone';
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -222,8 +221,8 @@ export default function EditModal(props: any) {
         />
       </IconButton>
 
-      <Modal open={open} onClose={handleClose}>
-        <ModalContent>
+      <Modal id='modal' open={open} onClose={handleClose}>
+        <ModalContent sx={{ boxShadow: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2" }}>
           <Box
             sx={{
               position: "relative",
@@ -266,13 +265,21 @@ export default function EditModal(props: any) {
               height: "100%",
             }}
           >
-            <Box sx={{ width: "40%", alignSelf: "center" }}>
+            <Box sx={{
+              width: "47%",
+              alignSelf: "center",
+              background: "#fff",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "space-between",
+              padding: "11px",
+              height: "95%",
+              marginRight: "47px",
+              borderRadius: "10px",
+              alignItems: "flex-end"
+            }}>
               <Button component='label'>
-                <Box
-                  component={"img"}
-                  src={"/images/edit.svg"}
-                  sx={{ width: "0.8rem", height: "0.8rem" }}
-                />
+                <CreateTwoToneIcon fontSize={"medium"} sx={{ color: "#1F1D2B" }} />
                 <input
                   style={{
                     overflow: "hidden",
@@ -303,8 +310,8 @@ export default function EditModal(props: any) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    width: "17rem",
-                    height: "18rem",
+                    width: "100%",
+                    height: "100%",
                   }}
                 >
                   <img
@@ -393,16 +400,22 @@ export default function EditModal(props: any) {
                   ]}
                 />
               ) : (
-                <Box
-                  component={"img"}
-                  src={product.image}
-                  alt={`imagen del producto ${product.productName}`}
-                  sx={{
-                    display: !imageBase64 ? "block" : "none",
-                    width: "17rem",
-                    height: "18rem",
-                  }}
-                />
+                <Box sx={{
+                  height: "100%",
+                  display: imageBase64 ? "none" : "flex",
+                  alignItems: "center"
+                }}>
+                  <Box
+                    component={"img"}
+                    src={product.image}
+                    alt={`imagen del producto ${product.productName}`}
+                    sx={{
+                      display: !imageBase64 ? "block" : "none",
+                      width: "17rem",
+                      height: "18rem",
+                    }}
+                  />
+                </Box>
               )}
             </Box>
             <Box
@@ -590,7 +603,12 @@ export default function EditModal(props: any) {
               })}
             </Box>
           </Box>
-          <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
+          <Box sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "53%",
+            marginLeft: "auto"
+          }}>
             <Button
               onClick={() => handleUpdateProduct(product.uid, product)}
               sx={{

@@ -39,8 +39,7 @@ const Page = () => {
   React.useEffect(() => {
     const getAllProducts = async () => {
       try {
-        const nn = await getAllProductsData(setData);
-        console.log(nn)
+        await getAllProductsData(setData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -66,7 +65,7 @@ const Page = () => {
 
 
   return (
-    <Box id='page products' sx={{ height: "100%" }}>
+    <Box id='page products' sx={{ height: "78%" }}>
       <Header title='INVENTARIO' />
       <Box sx={{ marginTop: "2rem", height: "100%" }}>
         <Box>

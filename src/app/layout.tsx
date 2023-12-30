@@ -19,12 +19,10 @@ import "@fontsource/nunito-sans/600.css";
 import "@fontsource/nunito-sans/700.css";
 import "@fontsource/nunito-sans/800.css";
 import "@fontsource/nunito-sans/900.css";
-const inter = Inter({ subsets: ["latin"] });
-import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 import { cookies } from 'next/headers'
-import { getCookie } from 'cookies-next';
-import { user } from "@/firebase";
+import { GlobalContextProvider } from "./globalContex";
+import ContainerSidebar from "./ContainerSidebar";
+import ContainerChildren from "./ContainerChildren";
 
 export const metadata: Metadata = {
   title: "GO-POS",
@@ -51,42 +49,38 @@ export default async function RootLayout({
   // console.log(user().decodedString)
   return (
     <html lang='en' style={{ height: '100%' }}>
-      <body
-        style={{
-          height: "100%",
-          margin: "0",
-          background: "#252836",
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "contain",
-        }}
-      >
-        {
-          <>
-            <Box
-              id='Container Sidebar'
-              sx={{
-                display: validationRoutes ? "none" : 'block',
-                zIndex: validationRoutes ? "" : '10',
-                position: validationRoutes ? "" : "fixed",
-                top: 0,
-                left: 0,
-                height: "100%",
-              }}
-            >
-              <Sidebar />
-            </Box>
-            <Box
-              id='container children layout'
-              sx={{
-                height: "100%",
-                marginTop: validationRoutes ? "" : "64px",
-                marginLeft: validationRoutes ? "" : { xs: '20px', sm: "244px" },
-              }}
-            >
-              {children}
-            </Box>
-          </>}
-      </body>
+      <GlobalContextProvider>
+        <body
+          style={{
+            height: "100%",
+            margin: "0",
+            background: "#252836",
+            backgroundRepeat: "no-repeat",
+            backgroundSize: "contain",
+            overflowY: "hidden"
+          }}
+        >
+          {
+            <>
+              <Box
+                id='Container Sidebar'
+                sx={{
+                  display: validationRoutes ? "none" : 'block',
+                  zIndex: validationRoutes ? "" : '10',
+                  position: validationRoutes ? "" : "fixed",
+                  top: 0,
+                  left: 0,
+                  height: "100%",
+                }}
+              >
+                <ContainerSidebar />
+              </Box>
+              <>
+                <ContainerChildren childrenn={children} validationRoutes={validationRoutes} />
+              </>
+            </>}
+        </body>
+      </GlobalContextProvider>
     </html>
   );
 }

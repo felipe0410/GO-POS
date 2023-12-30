@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Paper } from "@mui/material";
 import InventoryCard from "./InventoryCard";
-import { getAllProductsData } from "@/firebase";
 
 const ProductCards = ({ filteredData }: { filteredData: any }) => {
+  const [isHovered, setIsHovered] = useState(false);
   return (
     <Paper
       id='paper'
@@ -19,9 +19,9 @@ const ProductCards = ({ filteredData }: { filteredData: any }) => {
         id='container card'
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
-          gridRowGap: "3rem", // Espacio entre las filas
-          gridColumnGap: "1rem", // Espacio entre las columnas
+          gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
+          gridRowGap: "3rem",
+          gridColumnGap: "1rem",
           height: "100%",
           justifyItems: "center",
           marginTop: "1.5rem",

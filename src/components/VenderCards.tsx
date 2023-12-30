@@ -26,7 +26,7 @@ const VenderCards = ({
         id='container card'
         sx={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
+          gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
           gridRowGap: "3rem", // Espacio entre las filas
           height: "100%",
           justifyItems: "center",

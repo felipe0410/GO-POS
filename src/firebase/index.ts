@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { redirect, usePathname } from "next/navigation";
 import { getAnalytics } from "firebase/analytics";
 import {
   DocumentReference,
@@ -24,7 +23,6 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { headers } from "next/headers";
 
 interface User {
   decodedString: string;
@@ -55,7 +53,6 @@ export const rediret = (pathname: string) => {
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
-
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 export const firebaseConfig = {
@@ -483,7 +480,9 @@ export const loginUser = async (email: any, password: any) => {
     return dataError;
   }
 };
+
 // funcion para crear usuario
+
 export const creteUser = async (email: any, password: any) => {
   try {
     const createUser = await createUserWithEmailAndPassword(
