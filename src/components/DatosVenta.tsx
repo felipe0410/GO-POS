@@ -48,7 +48,7 @@ const DatosVenta = (props: any) => {
     handleVenderClick,
   } = props;
 
-  const [metodoPago, setMetodoPago] = useState("");
+  const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [valorRecibido, setValorRecibido] = useState<number | null>(null);
   const [mostrarValorDevolver, setMostrarValorDevolver] = useState(false);
   const [datosGuardados, setDatosGuardados] = useState(false);
@@ -89,13 +89,21 @@ const DatosVenta = (props: any) => {
       console.log("se creo con exito");
       setLoading(false);
       setReciboPago(true);
+      setDatosGuardados(false);
     } catch (error) {
       console.error("falló el primer intento");
     }
   };
 
   const datosGuardadosLocalStorage = () => {
-    const datosCliente = JSON.stringify(data);
+    const dataWithDefaults = {
+      name: data.name || "XXXX",
+      direccion: data.direccion || "XXXX",
+      email: data.email || "XXXX",
+      identificacion: data.identificacion || "XXXX",
+      celular: data.celular || "XXXX",
+    };
+    const datosCliente = JSON.stringify(dataWithDefaults);
     localStorage.setItem("cliente", datosCliente);
     localStorage.setItem("invoice", numeroFactura());
     setDatosGuardados(true);
@@ -106,13 +114,7 @@ const DatosVenta = (props: any) => {
       subtotal,
       date: getCurrentDateTime(),
       descuento,
-      cliente: {
-        name: data.name,
-        direccion: data.direccion,
-        email: data.email,
-        identificacion: data.identificacion,
-        celular: data.celular,
-      },
+      cliente: dataWithDefaults,
       compra: selectedItems.map((item: any) => ({
         productName: item.productName,
         cantidad: item.cantidad,
@@ -242,10 +244,9 @@ const DatosVenta = (props: any) => {
             <Box sx={{ textAlign: "center" }}>
               <Button
                 onClick={datosGuardadosLocalStorage}
-                disabled={!isNotEmpty(data)}
                 sx={{
                   borderRadius: "0.5rem",
-                  background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                  background: "#69EAE2",
                   marginTop: "1.5rem",
                 }}
               >
@@ -284,7 +285,7 @@ const DatosVenta = (props: any) => {
       <Select
         onChange={(e: any) => setMetodoPago(e.target.value)}
         value={metodoPago}
-        displayEmpty // Esto permite mostrar un elemento vacío o con valor null
+        displayEmpty
         style={{
           color: metodoPago === "" ? "var(--text-light, #ABBBC2)" : "#69EAE2",
         }}
@@ -299,9 +300,6 @@ const DatosVenta = (props: any) => {
             "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
         }}
       >
-        <MenuItem value='' disabled>
-          Método de Pago
-        </MenuItem>
         {metodosDePago.map((metodo) => (
           <MenuItem key={metodo} value={metodo}>
             {metodo}
@@ -416,10 +414,19 @@ const DatosVenta = (props: any) => {
       </Box>
       <Box sx={{ textAlign: "center" }}>
         <Button
+          disabled={
+            datosGuardados && valorRecibido !== null && valorRecibido >= total
+              ? false
+              : true
+          }
           onClick={() => vender()}
           sx={{
             borderRadius: "0.5rem",
-            background: "#69EAE2",
+            background:
+              datosGuardados && valorRecibido !== null && valorRecibido >= total
+                ? "#69EAE2"
+                : "gray",
+
             marginTop: "1.5rem",
             width: "8rem",
           }}
