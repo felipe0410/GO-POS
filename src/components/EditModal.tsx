@@ -88,11 +88,9 @@ const ModalContent = styled(Paper)(
     overflow: hidden;
     background-color: #1f1d2b;
     border-radius: 0.625rem;
-    /* box-shadow: 0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2; */
     padding: 24px;
     width: 48.6875rem;
-    height: 35rem;
-  `
+    height: 35rem;  `
 );
 
 export default function EditModal(props: any) {
@@ -275,7 +273,6 @@ export default function EditModal(props: any) {
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              // padding: "11px",
               height: "95%",
               marginRight: { sm: "47px" },
               borderRadius: "10px",

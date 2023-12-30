@@ -26,7 +26,7 @@ import {
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "@/firebase";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
-import LinearBuffer from "./progress";
+import Calculatorr from "./modalCalculator";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -395,10 +395,10 @@ export default function NewProduct() {
                   <Box
                     sx={{
                       display: "flex",
-                      justifyContent: "flex-end",
+                      justifyContent: "space-between",
                       marginBottom: "2%",
                       marginLeft: "auto",
-                      width: { sm: "50%" },
+                      width: "100%",
                       marginTop: "auto",
                     }}
                   >
@@ -406,7 +406,7 @@ export default function NewProduct() {
                       onClick={() => saveToFirebase()}
                       disabled={!isNotEmpty(data)}
                       sx={{
-                        width: "100%",
+                        width: "45%",
                         height: "2.5rem",
                         borderRadius: "0.625rem",
                         boxShadow:
@@ -429,6 +429,9 @@ export default function NewProduct() {
                         GUARDAR
                       </Typography>
                     </Button>
+                    <Box sx={{ width: '45%' }}>
+                      <Calculatorr />
+                    </Box>
                   </Box>
                 </>
               );

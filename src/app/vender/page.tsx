@@ -96,7 +96,6 @@ const Page = () => {
     initialContadorFactura
   );
 
-  // Actualiza localStorage cada vez que el contador cambia
   useEffect(() => {
     localStorage.setItem("contadorFactura", contadorFactura.toString());
   }, [contadorFactura]);
@@ -106,7 +105,6 @@ const Page = () => {
   };
 
   const handleVenderClick = () => {
-    // Incrementa el contador de factura
     setContadorFactura((prevContador) => prevContador + 1);
   };
 
