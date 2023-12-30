@@ -1,19 +1,18 @@
 'use client'
 import { VisibilityOff, Visibility } from "@mui/icons-material"
-import { Box, Typography, TextField, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
+import { Box, Typography, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
-import { useContext, useEffect, useState } from "react"
+import { useState } from "react"
 import { useCookies } from "react-cookie"
 import { styleSign_in } from "./style"
-import { loginUser, rediret } from "@/firebase"
+import { loginUser } from "@/firebase"
 import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
 import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import Checkbox from '@mui/material/Checkbox';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { useRouter } from 'next/navigation'
 
 const Loggin = () => {
     const [cookies, setCookie] = useCookies(['user']);
@@ -26,7 +25,6 @@ const Loggin = () => {
     const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
     };
-    const router = useRouter()
 
     const password = () => {
         return (
@@ -92,11 +90,9 @@ const Loggin = () => {
                     }
                 })
                 setTimeout(async () => {
-                    // await router.push('/inventory/productos')
                     window.location.href = '/inventory/productos';
                 }, 500);
             } else {
-                router.push('/inventory/productos')
                 enqueueSnackbar('Credenciales invalidas', {
                     variant: 'error',
                     anchorOrigin: {
@@ -116,10 +112,6 @@ const Loggin = () => {
             console.log(error)
         }
     }
-
-    useEffect(() => {
-        rediret("/sign_in")
-    }, [])
 
 
     return (

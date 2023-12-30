@@ -144,7 +144,6 @@ export default function NewProduct() {
   }, []);
 
   const getDataProductForID = async () => {
-    console.log("entro aqui");
     const dataFirebase: any = await getProductData(data.barCode);
     if (dataFirebase !== null) {
       setData(dataFirebase);
@@ -392,7 +391,9 @@ export default function NewProduct() {
                     ) : input.type === "category" ? (
                       categorySelect
                     ) : input.type === "img" ? (
-                      <ImgInput data={data} setData={setData} folderSaved={"images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
+                      <Box id='contianer img' sx={{ width: { xs: '200%', sm: '150%' }, height: '100%' }}>
+                        <ImgInput data={data} setData={setData} folderSaved={"images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
+                      </Box>
                     ) : input.type === "amount" ? (
                       amountInput
                     ) : input.type === "textarea" ? (
@@ -403,8 +404,10 @@ export default function NewProduct() {
                       <>
                         <OutlinedInput
                           value={data["productName"]}
-                          onChange={(e) =>
-                            inputOnChange(input.field, e.target.value)
+                          onChange={(e) => {
+                            inputOnChange(input.field, e.target.value);
+                          }
+
                           }
                           type={input.type}
                           sx={{

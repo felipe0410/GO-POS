@@ -40,18 +40,14 @@ export const user: () => User = () => {
   return { decodedString };
 };
 
-console.log(user().decodedString);
-
-console.log(user().decodedString?.length);
-
-export const rediret = (pathname: string) => {
-  if (user().decodedString?.length === 0 && pathname !== "/sign_in") {
-    window.location.href = "/sign_in";
-  }
-  if (user().decodedString?.length > 0 && pathname === "/sign_in") {
-    window.location.href = "/inventory/productos";
-  }
-};
+// export const rediret = (pathname: string) => {
+//   if (user().decodedString?.length === 0 && pathname !== "/sign_in") {
+//     window.location.href = "/sign_in";
+//   }
+//   if (user().decodedString?.length > 0 && pathname === "/sign_in") {
+//     window.location.href = "/inventory/productos";
+//   }
+// };
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries

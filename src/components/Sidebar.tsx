@@ -177,7 +177,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
             <React.Fragment key={section.id}>
               <Box
                 sx={{
-                  marginY: "30px",
+                  marginY: { sm: "30px" },
                   background: (selectedSection === section.id)
                     ? "#252836"
                     : section?.submenus

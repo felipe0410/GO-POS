@@ -4,13 +4,8 @@ import NewProductSidebar from "@/components/NewProductSidebar";
 import { Box, Divider, Typography } from "@mui/material";
 import ComponentModal from "./Modal";
 import Header from "@/components/Header";
-import { useEffect } from "react";
-import { rediret } from "@/firebase";
 
 const Page = () => {
-  useEffect(() => {
-    rediret("")
-  }, [])
   return (
     <>
       <Header title='INVENTARIO' />
