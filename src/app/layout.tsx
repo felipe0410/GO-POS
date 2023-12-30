@@ -49,7 +49,7 @@ export default async function RootLayout({
         >
           {
             <>
-              <Box
+              {/* <Box
                 id='Container Sidebar'
                 sx={{
                   display: validationRoutes ? "none" : 'block',
@@ -61,7 +61,7 @@ export default async function RootLayout({
                 }}
               >
                 <ContainerSidebar />
-              </Box>
+              </Box> */}
               <>
                 <ContainerChildren childrenn={children} validationRoutes={validationRoutes} />
               </>

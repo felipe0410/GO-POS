@@ -161,6 +161,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
             <Typography
               align="center"
               sx={{
+                animation: "myAnim 2s ease 0s 1 normal forwards",
                 color: "#FFF",
                 textShadow: "0px 0px 20px #69EAE2",
                 fontFamily: "Nunito",
