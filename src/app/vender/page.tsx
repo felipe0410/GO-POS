@@ -28,6 +28,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import DatosVenta from "@/components/DatosVenta";
 import Factura from "@/components/Factura";
 import IncompleteCartItem from "@/components/IncompleteCartItem";
+import debounce from "debounce";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -76,6 +77,7 @@ const Page = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState<[]>([]);
+  const [filter, setfilter] = useState<any>();
   const [agregarDescuento, setAgregarDescuento] = useState(false);
   const [selectedItems, setSelectedItems] = useState<SelectedProduct[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -125,9 +127,13 @@ const Page = () => {
     setInputValue(e.target.value);
   };
 
+  const debouncedHandleSearchChange = debounce(() => {}, 300);
+
   const handleSearchChange = (event: any) => {
-    setSearchTerm(event.target.value);
+    setSearchTerm(event);
+    debouncedHandleSearchChange();
   };
+
   const handleCategoryChange = (event: any) => {
     setSelectedCategory(event.target.value);
   };
@@ -151,16 +157,32 @@ const Page = () => {
     setSubtotal(nuevoSubtotal);
   }, [selectedItems]);
   useEffect(() => {
-    rediret("")
-  }, [])
+    rediret("");
+  }, []);
 
-  const filteredData = data?.filter(
-    (item) =>
-      (searchTerm === "" ||
-        item.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.barCode.toString().includes(searchTerm)) &&
-      (selectedCategory === "" || item.category === selectedCategory)
-  );
+  useEffect(() => {
+    const filteredData = data?.filter((item) => {
+      if (searchTerm === "") {
+        return true;
+      }
+      return Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+    setfilter(filteredData);
+  }, [data, searchTerm]);
+
+  const addItemBySearch = () => {
+    if (filter?.length === 1) {
+      const cleanedPrice = Number(filter[0].price.replace(/[$,]/g, ""));
+      const newItem = {
+        ...filter[0],
+        acc: cleanedPrice,
+        cantidad: 1,
+      };
+      setSelectedItems([...selectedItems, newItem]);
+    }
+  };
 
   useEffect(() => {
     const categoriesData = async () => {
@@ -196,6 +218,12 @@ const Page = () => {
             <Box display={"flex"}>
               <Paper
                 component='form'
+                onSubmit={(e: any) => {
+                  console.log(e);
+                  e.preventDefault();
+                  handleSearchChange(e.target[1].value);
+                  addItemBySearch();
+                }}
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -220,8 +248,10 @@ const Page = () => {
                     color: "#fff",
                   }}
                   placeholder='Buscar'
-                  value={searchTerm}
-                  onChange={handleSearchChange}
+                  onBlur={(e) => {
+                    handleSearchChange(e.target.value);
+                    e.preventDefault();
+                  }}
                 />
                 <IconButton
                   sx={{
@@ -278,7 +308,7 @@ const Page = () => {
             </Box>
             <Box sx={{ marginTop: "1.56rem", height: "75%" }}>
               <VenderCards
-                filteredData={filteredData}
+                filteredData={filter}
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
               />
@@ -459,6 +489,7 @@ const Page = () => {
                       </Typography>
                     </Box>
                     <Divider sx={{ background: "#69EAE2" }} />
+                    <IncompleteCartItem setSelectedItems={setSelectedItems} />
                     <Box
                       id='items-list'
                       sx={{ maxHeight: "270px", overflowY: "auto" }}
@@ -489,7 +520,6 @@ const Page = () => {
                           </React.Fragment>
                         ))
                       )}
-                      <IncompleteCartItem setSelectedItems={setSelectedItems} />
                     </Box>
                     <Divider
                       sx={{ background: "#69EAE2", marginTop: "1.5rem" }}
@@ -725,10 +755,11 @@ const Page = () => {
                     </Box>
                     <Box sx={{ textAlign: "center", marginTop: "1rem" }}>
                       <Button
+                        disabled={descuento > subtotal ? true : false}
                         onClick={() => setNextStep(true)}
                         style={{
                           borderRadius: "0.5rem",
-                          background: "#69EAE2",
+                          background: descuento > subtotal ? "gray" : "#69EAE2",
                           width: "7rem",
                         }}
                       >
