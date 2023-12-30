@@ -260,26 +260,29 @@ export default function EditModal(props: any) {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
+              flexDirection: { xs: 'column', sm: "row" },
               width: "100%",
-              height: "100%",
+              height: "85%",
+              overflowY: 'auto'
             }}
           >
             <Box sx={{
+              overflowY: "hidden",
+              border: "solid 11px #fff",
               width: "47%",
               alignSelf: "center",
-              background: "#fff",
+              background: { xs: 'linear-gradient(rgb(31 29 43 / 0%) 51%, #FFF 57%)', sm: "#fff" },
               display: "flex",
               flexDirection: "column",
               justifyContent: "space-between",
-              padding: "11px",
+              // padding: "11px",
               height: "95%",
-              marginRight: "47px",
+              marginRight: { sm: "47px" },
               borderRadius: "10px",
               alignItems: "flex-end"
             }}>
               <Button component='label'>
-                <CreateTwoToneIcon fontSize={"medium"} sx={{ color: "#1F1D2B" }} />
+                <CreateTwoToneIcon fontSize={"medium"} sx={{ color: { xs: '#fff', sm: "#1F1D2B" }, marginRight: '-30px' }} />
                 <input
                   style={{
                     overflow: "hidden",
@@ -411,8 +414,8 @@ export default function EditModal(props: any) {
                     alt={`imagen del producto ${product.productName}`}
                     sx={{
                       display: !imageBase64 ? "block" : "none",
-                      width: "17rem",
-                      height: "18rem",
+                      width: "100%",
+                      height: "100%",
                     }}
                   />
                 </Box>
@@ -424,7 +427,7 @@ export default function EditModal(props: any) {
                 display: "flex",
                 flexWrap: "wrap",
                 justifyContent: "space-between",
-                width: "60%",
+                width: { sm: "60%" },
               }}
             >
               {inputsEdit.map((input, index) => {
@@ -439,6 +442,7 @@ export default function EditModal(props: any) {
                   },
                 };
                 const styleTypography = {
+                  display: { xs: 'none', sm: "block" },
                   color: "#FFF",
                   fontFamily: "Nunito",
                   fontSize: "13px",
@@ -605,9 +609,9 @@ export default function EditModal(props: any) {
           </Box>
           <Box sx={{
             display: "flex",
-            justifyContent: "space-between",
-            width: "53%",
-            marginLeft: "auto"
+            justifyContent: { xs: 'center', sm: "space-between" },
+            width: { sm: "53%" },
+            marginLeft: { xs: '0', sm: "auto" }
           }}>
             <Button
               onClick={() => handleUpdateProduct(product.uid, product)}

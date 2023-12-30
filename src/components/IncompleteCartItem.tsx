@@ -39,7 +39,7 @@ const IncompleteCartItem = ({
 
   const pushIncompletedItem = async () => {
     try {
-      setSelectedItems((prevData: any) => [...prevData, incompletedItem]);
+      setSelectedItems((prevData: any) => [incompletedItem, ...prevData]);
       await createIncompletedItems(incompletedItem.barCode, incompletedItem);
       console.log("se guardo con exito con el numero", incompletedItem.barCode);
       setIncompletedItem({

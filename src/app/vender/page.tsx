@@ -110,7 +110,7 @@ const Page = () => {
     setContadorFactura((prevContador) => prevContador + 1);
   };
 
-  const calcularTotal = () => {
+  const calcularTotal = (event: any) => {
     if (inputValue.includes("%")) {
       let valorSinPorcentaje: number;
       const porcentajeComoNumero = Number(inputValue.replace("%", ""));
@@ -127,7 +127,7 @@ const Page = () => {
     setInputValue(e.target.value);
   };
 
-  const debouncedHandleSearchChange = debounce(() => {}, 300);
+  const debouncedHandleSearchChange = debounce(() => { }, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -490,9 +490,10 @@ const Page = () => {
                     </Box>
                     <Divider sx={{ background: "#69EAE2" }} />
                     <IncompleteCartItem setSelectedItems={setSelectedItems} />
+                    <Divider sx={{ background: "#69EAE2", marginTop: '10px' }} />
                     <Box
                       id='items-list'
-                      sx={{ maxHeight: "270px", overflowY: "auto" }}
+                      sx={{ maxHeight: "41%", overflowY: "auto", scrollBehavior: "smooth" }}
                     >
                       {selectedItems.length === 0 ? (
                         <Typography
@@ -680,7 +681,7 @@ const Page = () => {
                                   <InputAdornment position='start'>
                                     <IconButton
                                       sx={{ paddingRight: "0px" }}
-                                      onClick={calcularTotal}
+                                      onClick={(event) => calcularTotal(event)}
                                     >
                                       <Typography
                                         sx={{
@@ -699,9 +700,7 @@ const Page = () => {
                                   </InputAdornment>
                                 }
                                 value={inputValue}
-                                onChange={(
-                                  event: React.ChangeEvent<HTMLInputElement>
-                                ) => handleInputChange(event)}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(event)}
                                 sx={{ width: "9.75rem", height: "2.25rem" }}
                                 style={{
                                   borderRadius: "0.375rem",

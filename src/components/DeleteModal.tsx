@@ -59,7 +59,7 @@ export default function DeleteModal(props: any) {
         />
       </IconButton>
       <Modal open={open} onClose={handleClose}>
-        <ModalContent>
+        <ModalContent sx={{ boxShadow: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2" }}>
           <Box sx={{ textAlign: "center" }}>
             <Typography
               sx={{

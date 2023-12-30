@@ -63,7 +63,6 @@ export default function VenderCard({
           }
           : item
       );
-
       setSelectedItems(updatedItems);
     } else {
       const newItems = {
@@ -75,7 +74,7 @@ export default function VenderCard({
         barCode: product.barCode,
         acc: cleanedPrice,
       };
-      setSelectedItems([...selectedItems, newItems]);
+      setSelectedItems([newItems, ...selectedItems]);
     }
   };
 

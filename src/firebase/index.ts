@@ -15,6 +15,8 @@ import {
   getDocs,
   getFirestore,
   onSnapshot,
+  orderBy,
+  query,
   setDoc,
   updateDoc,
 } from "firebase/firestore";
@@ -106,7 +108,9 @@ export const getAllProductsData = (callback: any) => {
       `${user().decodedString}`
     );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
-    getDocs(productCollectionRef)
+    // Query para obtener los productos ordenados alfabéticamente
+    const orderedQuery = query(productCollectionRef, orderBy("productName"));
+    getDocs(orderedQuery)
       .then((querySnapshot) => {
         const productsData: any[] = [];
         querySnapshot.forEach((doc) => {
@@ -119,14 +123,15 @@ export const getAllProductsData = (callback: any) => {
         console.error("Error fetching initial data:", error);
         callback(null);
       });
-    const unsubscribe = onSnapshot(productCollectionRef, (querySnapshot) => {
+    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot: any) => {
       const productsData: any[] = [];
-      querySnapshot.forEach((doc) => {
+      querySnapshot.forEach((doc: any) => {
         productsData.push({ id: doc.id, ...doc.data() });
       });
       callback(productsData);
       return productsData;
     });
+
     // Return the unsubscribe function to stop observing changes
     return unsubscribe;
   } catch (error) {

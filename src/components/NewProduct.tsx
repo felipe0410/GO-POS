@@ -379,6 +379,7 @@ export default function NewProduct() {
                     {"CANTIDAD"}
                   </Typography>
                   <OutlinedInput
+                    id="cantidad"
                     value={data["cantidad"]}
                     onChange={(e) => inputOnChange("cantidad", e.target.value)}
                     type={"number"}
@@ -527,11 +528,11 @@ export default function NewProduct() {
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        width: "200px",
+                        width: { xs: "9.25rem", sm: '200px' }, height: "8.375rem"
                       }}
                     >
                       <img
-                        style={{ width: "100%" }}
+                        style={{ width: "10.25rem", height: "9.375rem" }}
                         src={imageBase64}
                         alt='Preview'
                       />

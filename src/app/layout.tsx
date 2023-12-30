@@ -47,6 +47,7 @@ export default async function RootLayout({
   //   redirect('/');
   // }
   // console.log(user().decodedString)
+  console.log('route::>', route)
   return (
     <html lang='en' style={{ height: '100%' }}>
       <GlobalContextProvider>
@@ -57,7 +58,7 @@ export default async function RootLayout({
             background: "#252836",
             backgroundRepeat: "no-repeat",
             backgroundSize: "contain",
-            overflowY: "hidden"
+            overflowY: route === "inventory" ? "auto" : "hidden"
           }}
         >
           {

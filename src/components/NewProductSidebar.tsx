@@ -78,35 +78,6 @@ function NewProductSidebar(props: any) {
     };
     measurementsData();
   }, []);
-
-  const handleDelete = async (document: string, tag: string) => {
-    if (document === "categories") {
-      if (tag) {
-        await removeCategory(tag);
-      } else {
-        enqueueSnackbar("Error al eliminar la categoria", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      }
-    } else if (document === "measurements") {
-      if (tag) {
-        await removeMeasurements(tag);
-      } else {
-        enqueueSnackbar("Error al eliminar la unidad de medida", {
-          variant: "error",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-        });
-      }
-    }
-  };
-
   const handleSave = async (document: string) => {
     if (document === "categories") {
       if (newCategory) {
@@ -140,12 +111,14 @@ function NewProductSidebar(props: any) {
   const cardContent = (cardTitle: string, document: string, data: any) => {
     return (
       <Card
+        id='constainer_card'
         sx={{
           marginLeft: "2.2rem",
           marginBottom: "3rem",
           borderRadius: "0.625rem",
           background: "#1F1D2B",
           boxShadow: "0px 1px 100px -50px #69EAE2",
+          maxHeight: '50vh'
         }}
       >
         <CardHeader
@@ -159,7 +132,7 @@ function NewProductSidebar(props: any) {
             lineHeight: "normal",
           }}
         />
-        <Box sx={{ padding: "0px 16px 16px 16px" }}>
+        <Box sx={{ padding: "0px 16px 16px 16px", maxHeight: '27vh', overflowY: 'auto' }}>
           {data &&
             data.map((tag: any, i: any) => {
               return (
@@ -195,44 +168,44 @@ function NewProductSidebar(props: any) {
                 : "No hay unidades de medida para mostrar"}
             </Typography>
           )}
-          <CardActions>
-            <Grid container spacing={3}>
-              <Grid item xs={8}>
-                <OutlinedInput
-                  value={document === "categories" ? newCategory : newMeasure}
-                  onChange={(e) =>
-                    document === "categories"
-                      ? setNewCategory(e.target.value)
-                      : setNewMeasure(e.target.value)
-                  }
-                  placeholder={
-                    document === "categories"
-                      ? "Agregar nueva categoría"
-                      : "Agregar unidad de medida"
-                  }
-                  type='text'
-                  sx={{
-                    height: "44.9px",
-                    width: "300px",
-                    borderRadius: "0.625rem",
-                    background: "#2C3248",
-                    boxShadow:
-                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                  style={{ color: "#FFF" }}
-                />
-              </Grid>
-              <Grid item>
-                <IconButton
-                  color='secondary'
-                  onClick={() => handleSave(document)}
-                >
-                  <Box component={"img"} src={"/images/okay.svg"} />
-                </IconButton>
-              </Grid>
-            </Grid>
-          </CardActions>
         </Box>
+        <CardActions>
+          <Grid container spacing={3}>
+            <Grid item xs={8}>
+              <OutlinedInput
+                value={document === "categories" ? newCategory : newMeasure}
+                onChange={(e) =>
+                  document === "categories"
+                    ? setNewCategory(e.target.value)
+                    : setNewMeasure(e.target.value)
+                }
+                placeholder={
+                  document === "categories"
+                    ? "Agregar nueva categoría"
+                    : "Agregar unidad de medida"
+                }
+                type='text'
+                sx={{
+                  height: "44.9px",
+                  width: "300px",
+                  borderRadius: "0.625rem",
+                  background: "#2C3248",
+                  boxShadow:
+                    "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                }}
+                style={{ color: "#FFF" }}
+              />
+            </Grid>
+            <Grid item>
+              <IconButton
+                color='secondary'
+                onClick={() => handleSave(document)}
+              >
+                <Box component={"img"} src={"/images/okay.svg"} />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </CardActions>
       </Card>
     );
   };
@@ -240,7 +213,7 @@ function NewProductSidebar(props: any) {
   return (
     <>
       <SnackbarProvider />
-      <Box>
+      <Box id='container-2' sx={{ height: '100%' }}>
         {cardContent("CATEGORIAS", "categories", category)}
         {cardContent("UNIDADES DE MEDIDA", "measurements", measure)}
       </Box>

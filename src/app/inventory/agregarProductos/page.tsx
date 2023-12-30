@@ -63,7 +63,7 @@ const Page = () => {
           <Box sx={{ width: { sm: "65%" } }}>
             <NewProduct />
           </Box>
-          <Box display={{ xs: "none", sm: "block" }} sx={{ width: "35%" }}>
+          <Box id='NewProductSidebar' display={{ xs: "none", sm: "block" }} sx={{ width: "35%", height: '100%' }}>
             <NewProductSidebar />
           </Box>
         </Box>
