@@ -53,7 +53,7 @@ const CartItems = ({
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
-              width: "10.2rem",
+              width: {xs:'7.5rem',sm:"10.2rem"},
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -112,8 +112,8 @@ const CartItems = ({
       >
         <InputBase
           sx={{
-            width: "16.6875rem",
-            height: "3rem",
+            width: { xs: '74%', sm: "16.6875rem" },
+            height: { xs: '2rem', sm: "3rem" },
             padding: "1rem",
           }}
           style={{
@@ -131,8 +131,8 @@ const CartItems = ({
           onClick={() => handleDelete(product)}
           variant='outlined'
           sx={{
-            height: "3rem",
-            width: "3rem",
+            height: { xs: '2rem', sm: "3rem" },
+            width: { xs: '2rem', sm: "3rem" },
             minWidth: 0,
             padding: 0,
             marginLeft: "1.6rem",

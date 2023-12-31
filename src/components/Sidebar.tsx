@@ -29,7 +29,6 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) {
   const { removeCookieUser } = useContext(GlobalContext) || {};
-
   const [selectedSection, setSelectedSection] = React.useState<any>("");
   const pathname = usePathname();
   const theme = useTheme();

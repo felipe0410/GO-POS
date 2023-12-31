@@ -71,15 +71,15 @@ const IncompleteCartItem = ({
           src={"/images/noImage.svg"}
           alt={"logo no imagen"}
           sx={{
-            width: "3rem",
-            height: "3rem",
+            width: { xs: '2.5rem', sm: "3rem" },
+            height: { xs: '2.9rem', sm: "3rem" },
           }}
         />
-        <Box marginLeft={1} sx={{ width: "163.200px" }}>
+        <Box marginLeft={1} sx={{ width: { xs: '43%', sm: "163.200px" } }}>
           <InputBase
             sx={{
-              width: "8rem",
-              height: "1.3rem",
+              width: "90%",
+              height: { xs: '1rem', sm: "1.3rem" },
               paddingLeft: "5px",
             }}
             style={{
@@ -105,8 +105,8 @@ const IncompleteCartItem = ({
             customInput={InputBase}
             style={{ color: "#FFF" }}
             sx={{
-              height: "1.5rem",
-              width: "4.3rem",
+              height: { xs: '1rem', sm: "1.5rem" },
+              width: "90%",
               borderRadius: "0.5rem",
               border: "1px solid var(--Base-Dark-Line, #393C49)",
               background: "var(--Base-Form-BG, #2D303E)",
@@ -117,7 +117,7 @@ const IncompleteCartItem = ({
         <InputBase
           sx={{
             width: "3rem",
-            padding: "0.5rem",
+            padding: { sm: "0.5rem" },
             textAlignLast: "center",
           }}
           style={{
@@ -157,8 +157,8 @@ const IncompleteCartItem = ({
       >
         <InputBase
           sx={{
-            width: "12.27rem",
-            height: "3rem",
+            width: { xs: '55%', sm: "12.27rem" },
+            height: { xs: '2rem', sm: "3rem" },
             padding: "1rem",
           }}
           style={{
@@ -176,35 +176,34 @@ const IncompleteCartItem = ({
           onClick={() => pushIncompletedItem()}
           variant='outlined'
           sx={{
-            height: "3rem",
-            width: "3rem",
+            height: { xs: '2rem', sm: "3rem" },
+            width: { xs: '2rem', sm: "3rem" },
             minWidth: 0,
             padding: 0,
-            marginLeft: "1.6rem",
+            marginLeft: { xs: '20px', sm: "1.6rem" },
           }}
           style={{
             borderRadius: "0.5rem",
             border: "1px solid var(--Accents-Red, #69EAE2)",
           }}
         >
-          <Box component={"img"} src={"/images/okay.svg"} />
+          <Box sx={{ width: '50%' }} component={"img"} src={"/images/okay.svg"} />
         </Button>
         <Button
-          //   onClick={() => handleDelete(product)}
           variant='outlined'
           sx={{
-            height: "3rem",
-            width: "3rem",
+            height: { xs: '2rem', sm: "3rem" },
+            width: { xs: '2rem', sm: "3rem" },
             minWidth: 0,
             padding: 0,
-            marginLeft: "1.6rem",
+            marginLeft: { xs: '2rem', sm: "1.6rem" },
           }}
           style={{
             borderRadius: "0.5rem",
             border: "1px solid var(--Accents-Red, #FF7CA3)",
           }}
         >
-          <Box component={"img"} src={"/images/deletePink.svg"} />
+          <Box sx={{ width: '50%' }} component={"img"} src={"/images/deletePink.svg"} />
         </Button>
       </Box>
     </Box>
