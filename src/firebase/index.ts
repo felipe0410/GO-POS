@@ -518,3 +518,29 @@ export const saveDataUser = async (uid: any, userData: any) => {
     return null;
   }
 };
+
+export const getEstablishmentData = async () => {
+  try {
+    const encodedUserUID = localStorage.getItem('user');
+    console.log(encodedUserUID)
+    if (!encodedUserUID) {
+      console.error('No se encontró un UID en el local storage');
+      return null;
+    }
+    const userUID = atob(encodedUserUID);
+    const userCollectionRef = collection(db, 'registeredEstablishments');
+    const establishmentDocRef = doc(userCollectionRef, userUID)
+    const docSnapshot = await getDoc(establishmentDocRef);
+    if (docSnapshot.exists()) {
+      const establishmentData = docSnapshot.data();
+      console.log('Data del establecimiento:', establishmentData);
+      return establishmentData;
+    } else {
+      console.error('El documento del establecimiento no existe');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error al obtener la información del establecimiento:', error);
+    return null;
+  }
+};

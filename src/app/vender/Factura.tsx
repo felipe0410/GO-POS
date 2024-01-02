@@ -1,9 +1,10 @@
-import { Box, Divider, IconButton, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import React, { useEffect, useState } from "react";
-import { getInvoiceData } from "@/firebase";
+import { getEstablishmentData, getInvoiceData } from "@/firebase";
 import { DocumentData } from "firebase/firestore";
 import JsBarcode from "jsbarcode";
+import ReactToPrint from "react-to-print";
 
 interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
@@ -15,6 +16,14 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
   const numeroFactura = localStorage.getItem("invoice");
   const [facturaData, setFacturaData] = useState<null | DocumentData>(null);
   const { setReciboPago, setSelectedItems, setNextStep } = props;
+  const [establishmentData, setEstablishmentData] = useState({
+    phone: "",
+    NIT_CC: "",
+    email: "",
+    nameEstablishment: "",
+    name: "",
+    direction: ""
+  })
 
   const setNuevaFactura = () => {
     setReciboPago(false);
@@ -35,9 +44,21 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
   }, [numeroFactura]);
 
   useEffect(() => {
-    if (numeroFactura)
+    if (numeroFactura) {
       JsBarcode("#barcode", numeroFactura, { background: "#D9D9D9" });
+    }
   }, [numeroFactura]);
+
+  useEffect(() => {
+    const dataEstablesimente = async () => {
+      const data: any = await getEstablishmentData()
+      if (data !== null) {
+        setEstablishmentData(data)
+      }
+    }
+    dataEstablesimente()
+  }, [])
+
 
   return (
     <>
@@ -71,7 +92,11 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           TICKET/FACTURA
         </Typography>
       </Box>
-      <Box sx={{ width: "22.25rem", height: "44.875rem" }}>
+      {/* <ReactToPrint
+        trigger={() => <button>Imprimir Factura</button>} // Esto puede ser un botón u otro elemento que desees como disparador de la impresión
+        content={() => document.getElementById('factura')}
+      > */}
+      <Box id='factura' sx={{ width: "22.25rem", height: "44.875rem" }}>
         <Box
           sx={{
             height: "100%",
@@ -106,7 +131,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     lineHeight: "110%",
                   }}
                 >
-                  PAPELERIA SANTIAGO
+                  {establishmentData?.nameEstablishment?.toUpperCase() ?? ""}
                 </Typography>
               </Box>
               <Box
@@ -126,7 +151,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     lineHeight: "140%",
                   }}
                 >
-                  NIT 29129302939
+                  NIT:{establishmentData.NIT_CC}
                 </Typography>
                 <Typography
                   sx={{
@@ -138,7 +163,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     lineHeight: "140%",
                   }}
                 >
-                  CELULAR 3125607423
+                  CELULAR:{establishmentData.phone}
                 </Typography>
               </Box>
               <Typography
@@ -152,7 +177,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   lineHeight: "140%",
                 }}
               >
-                Cra 7#5-22 Aquitania, Boyacá
+                {establishmentData.direction}
               </Typography>
             </Box>
             <Box padding={1}>
@@ -208,7 +233,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                       lineHeight: "140%",
                     }}
                   >
-                    Santiago x
+                    {establishmentData.name}
                   </span>
                 </Typography>
               </Box>
@@ -587,8 +612,80 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           </Box>
         </Box>
       </Box>
+      {/* </ReactToPrint> */}
+      <Box>
+        <Button sx={{
+          color: "#1F1D2B",
+          fontFamily: "Nunito",
+          fontSize: "12px",
+          fontStyle: "normal",
+          fontWeight: 800,
+          lineHeight: "140%",
+        }}
+        >
+          GENERAR FACTURA EN TAMAÑO CARTA
+        </Button>
+        <Button
+          onClick={() => imprimirFactura()}
+          sx={{
+            color: "#1F1D2B",
+            fontFamily: "Nunito",
+            fontSize: "12px",
+            fontStyle: "normal",
+            fontWeight: 800,
+            lineHeight: "140%",
+          }}
+        >
+          IMPRIMIR
+        </Button>
+      </Box >
     </>
   );
 };
 
 export default Factura;
+
+
+// Función para imprimir la factura
+const imprimirFactura = () => {
+  const elementoFactura = document.getElementById('factura');
+  if (elementoFactura) {
+    const ventanaImpresion: any = window.open('', '_blank');
+    ventanaImpresion.document.write(`
+      <html>
+        <head>
+          <title>Factura</title>
+          <style>
+            @media print {
+              body {
+                width: 58mm;
+                margin: 0;
+                font-family: "Nunito";
+                font-size: 12px;
+                line-height: 140%;
+                color: #1F1D2B;
+              }
+
+              #factura {
+                width: 58mm;
+                height: auto;
+                padding: 10px;
+                background-image: url("images/factura.svg");
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-position: center;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          ${elementoFactura.innerHTML}
+        </body>
+      </html>
+    `);
+    ventanaImpresion.document.close();
+    ventanaImpresion.print();
+  } else {
+    console.error('Elemento con id "factura" no encontrado');
+  }
+};

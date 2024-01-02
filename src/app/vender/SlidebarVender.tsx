@@ -1,6 +1,6 @@
 import CartItems from "@/components/CartItems";
 import DatosVenta from "@/components/DatosVenta";
-import Factura from "@/components/Factura";
+import Factura from "@/app/vender/Factura";
 import IncompleteCartItem from "@/components/IncompleteCartItem";
 import { Box, IconButton, SwipeableDrawer, Button, Typography, Divider, InputBase, InputAdornment, Badge, BadgeProps, styled, useMediaQuery, useTheme, Tooltip, TooltipProps, tooltipClasses } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
@@ -9,8 +9,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
 import { VenderContext } from "./Context_vender";
+import { getEstablishmentData } from "@/firebase";
 
-const SlidebarVender = ({selectedItems, setSelectedItems}:{selectedItems:any, setSelectedItems:any}) => {
+const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: any, setSelectedItems: any }) => {
     const [open, setOpen] = useState(false)
     const [nextStep, setNextStep] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -20,12 +21,23 @@ const SlidebarVender = ({selectedItems, setSelectedItems}:{selectedItems:any, se
     const [descuento, setDescuento] = useState(0);
     const [inputValue, setInputValue] = useState("");
     const [subtotal, setSubtotal] = useState(0);
-    const { LightTooltip } = useContext(VenderContext) ?? {};
+
+    const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
+        <Tooltip {...props} classes={{ popper: className }} />
+    ))(({ theme }) => ({
+        [`& .${tooltipClasses.tooltip}`]: {
+            backgroundColor: "#69EAE2",
+            color: "#1F1D2B",
+            boxShadow: theme.shadows[1],
+            fontSize: 11,
+            maxWidth: "146px",
+        },
+    }));
 
     const theme = useTheme()
 
     let totalUnidades = 0;
-    selectedItems?.forEach((element:any) => {
+    selectedItems?.forEach((element: any) => {
         totalUnidades += element.cantidad;
     });
     const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
@@ -63,14 +75,15 @@ const SlidebarVender = ({selectedItems, setSelectedItems}:{selectedItems:any, se
 
     const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
         '& .MuiBadge-badge': {
-          right: -3,
-          top: 13,
-          padding: '0 4px',
+            right: -3,
+            top: 13,
+            padding: '0 4px',
         },
-      }));
+    }));
 
     useEffect(() => {
         localStorage.setItem("contadorFactura", contadorFactura.toString());
+        console.log(getEstablishmentData())
     }, [contadorFactura]);
 
     useEffect(() => {
@@ -122,7 +135,6 @@ const SlidebarVender = ({selectedItems, setSelectedItems}:{selectedItems:any, se
                         right: 0,
                         width: { xs: '100%', sm: "25.5625rem" },
                         borderRadius: "10px 0px 0px 10px",
-                        // boxShadow: { xs: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2", sm: "" }
                     }}
                 >
                     <Box id='principal container' padding={3} sx={{ height: "100%", width: '100%', overflow: 'auto' }}>
