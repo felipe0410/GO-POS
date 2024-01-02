@@ -97,23 +97,67 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           TICKET/FACTURA
         </Typography>
       </Box>
-      <Box id='factura' sx={{ width: "22.25rem", height: "44.875rem" }}>
-        <Box
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-around"
+      }}>
+        <Button sx={{
+          width: '45%',
+          background: '#69EAE2',
+          color: "#1F1D2B",
+          fontFamily: "Nunito",
+          fontSize: "12px",
+          fontStyle: "normal",
+          fontWeight: 800,
+          lineHeight: "140%",
+        }}
+        >
+          TAMAÑO CARTA
+        </Button>
+        <Button
+          onClick={handlePrint}
           sx={{
-            height: "100%",
-            backgroundImage: 'url("images/factura.svg")',
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "brightness(1.2)"
+            width: '45%',
+            background: '#69EAE2',
+            color: "#1F1D2B",
+            fontFamily: "Nunito",
+            fontSize: "12px",
+            fontStyle: "normal",
+            fontWeight: 800,
+            lineHeight: "140%",
           }}
         >
+          IMPRIMIR
+        </Button>
+      </Box >
+      <Box sx={{
+        marginTop: '20px',
+        borderRadius: "8px",
+        border: "5px solid #69EAE2",
+        background: "#1F1D2B",
+        width: "100%",
+        height: "30px",
+        flexShrink: 0,
+        marginBottom: '-15px'
+      }} />
+      <Box id='factura' sx={{
+        margin: '0 auto',
+        width: "100%",
+        height: "100%",
+        backgroundImage: 'url("images/factura.svg")',
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+        backgroundPosition: "bootom",
+        filter: "brightness(1.2)"
+      }}>
+        <Box>
           <Box
             ref={componentRef}
             sx={{
+              filter: "brightness(1.2)",
               maxWidth: '22.25rem',
               padding: "10px",
-              marginTop: "1rem",
+              height:'105%'
             }}
           >
             <Box
@@ -616,86 +660,8 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           </Box>
         </Box>
       </Box>
-      <Box sx={{
-        display: "flex",
-        justifyContent: "space-around"
-      }}>
-        <Button sx={{
-          width: '45%',
-          background: '#69EAE2',
-          color: "#1F1D2B",
-          fontFamily: "Nunito",
-          fontSize: "12px",
-          fontStyle: "normal",
-          fontWeight: 800,
-          lineHeight: "140%",
-        }}
-        >
-          GENERAR FACTURA EN TAMAÑO CARTA
-        </Button>
-        <Button
-          onClick={handlePrint}
-          sx={{
-            width: '45%',
-            background: '#69EAE2',
-            color: "#1F1D2B",
-            fontFamily: "Nunito",
-            fontSize: "12px",
-            fontStyle: "normal",
-            fontWeight: 800,
-            lineHeight: "140%",
-          }}
-        >
-          IMPRIMIR
-        </Button>
-      </Box >
     </>
   );
 };
 
 export default Factura;
-
-
-// Función para imprimir la factura
-const imprimirFactura = () => {
-  const elementoFactura = document.getElementById('factura');
-  if (elementoFactura) {
-    const ventanaImpresion: any = window.open('', '_blank');
-    ventanaImpresion.document.write(`
-      <html>
-        <head>
-          <title>Factura</title>
-          <style>
-            @media print {
-              body {
-                width: 58mm;
-                margin: 0;
-                font-family: "Nunito";
-                font-size: 12px;
-                line-height: 140%;
-                color: #1F1D2B;
-              }
-
-              #factura {
-                width: 58mm;
-                height: auto;
-                padding: 10px;
-                background-image: url("images/factura.svg");
-                background-repeat: no-repeat;
-                background-size: cover;
-                background-position: center;
-              }
-            }
-          </style>
-        </head>
-        <body>
-          ${elementoFactura.innerHTML}
-        </body>
-      </html>
-    `);
-    ventanaImpresion.document.close();
-    ventanaImpresion.print();
-  } else {
-    console.error('Elemento con id "factura" no encontrado');
-  }
-};
