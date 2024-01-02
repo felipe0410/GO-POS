@@ -1,10 +1,10 @@
 import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getEstablishmentData, getInvoiceData } from "@/firebase";
 import { DocumentData } from "firebase/firestore";
 import JsBarcode from "jsbarcode";
-import ReactToPrint from "react-to-print";
+import ReactToPrint, { useReactToPrint } from "react-to-print";
 
 interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
@@ -45,7 +45,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
 
   useEffect(() => {
     if (numeroFactura) {
-      JsBarcode("#barcode", numeroFactura, { background: "#D9D9D9" });
+      JsBarcode("#barcode", numeroFactura);
     }
   }, [numeroFactura]);
 
@@ -58,6 +58,11 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     }
     dataEstablesimente()
   }, [])
+
+  const componentRef: any = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
 
   return (
@@ -92,10 +97,6 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           TICKET/FACTURA
         </Typography>
       </Box>
-      {/* <ReactToPrint
-        trigger={() => <button>Imprimir Factura</button>} // Esto puede ser un botón u otro elemento que desees como disparador de la impresión
-        content={() => document.getElementById('factura')}
-      > */}
       <Box id='factura' sx={{ width: "22.25rem", height: "44.875rem" }}>
         <Box
           sx={{
@@ -104,10 +105,13 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
+            filter: "brightness(1.2)"
           }}
         >
           <Box
+            ref={componentRef}
             sx={{
+              maxWidth: '22.25rem',
               padding: "10px",
               marginTop: "1rem",
             }}
@@ -612,9 +616,13 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           </Box>
         </Box>
       </Box>
-      {/* </ReactToPrint> */}
-      <Box>
+      <Box sx={{
+        display: "flex",
+        justifyContent: "space-around"
+      }}>
         <Button sx={{
+          width: '45%',
+          background: '#69EAE2',
           color: "#1F1D2B",
           fontFamily: "Nunito",
           fontSize: "12px",
@@ -626,8 +634,10 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           GENERAR FACTURA EN TAMAÑO CARTA
         </Button>
         <Button
-          onClick={() => imprimirFactura()}
+          onClick={handlePrint}
           sx={{
+            width: '45%',
+            background: '#69EAE2',
             color: "#1F1D2B",
             fontFamily: "Nunito",
             fontSize: "12px",
