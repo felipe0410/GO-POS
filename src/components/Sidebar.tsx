@@ -13,7 +13,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { Button, SwipeableDrawer, Typography, useMediaQuery } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useContext } from "react";
 import { GlobalContext } from "@/app/globalContex";
 
@@ -131,6 +131,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
     const rutaRecortada = rutaCompleta.substring(primeraBarra, ultimaBarra)
     return rutaRecortada
   }
+  const route = useRouter()
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

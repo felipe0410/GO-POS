@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, useContext, useEffect, useState } from "react";
 import { Box, Paper } from "@mui/material";
 import VenderCard from "./VenderCard";
+import { SelectedProduct } from "@/app/vender/interface";
+import { VenderContext } from "@/app/vender/Context_vender";
 
 const VenderCards = ({
   filteredData,
@@ -8,9 +10,11 @@ const VenderCards = ({
   selectedItems,
 }: {
   filteredData: any;
-  setSelectedItems: any;
-  selectedItems: any;
+  setSelectedItems:any,
+  selectedItems:any,
 }) => {
+  // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
+  console.log('venderCards:::>',selectedItems)
   return (
     <Paper
       id='paper'

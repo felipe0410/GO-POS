@@ -5,6 +5,9 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
+import { Dispatch } from "react";
+import { SelectedProduct } from "@/app/vender/interface";
+import { VenderContext } from "@/app/vender/Context_vender";
 
 export default function VenderCard({
   filteredData,
@@ -12,9 +15,11 @@ export default function VenderCard({
   selectedItems,
 }: {
   filteredData: any;
-  setSelectedItems: any;
-  selectedItems: any;
+  setSelectedItems:any
+  selectedItems:any
 }) {
+  console.log("selectedItems:::>", selectedItems)
+
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
     "&:last-child": {
       paddingBottom: "12px",
@@ -23,12 +28,12 @@ export default function VenderCard({
 
   const handleDecrement = (product: any) => {
     const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
-    const existingItem = selectedItems.find(
+    const existingItem = selectedItems?.find(
       (item: any) => item.barCode === product.barCode
     );
     if (existingItem) {
       if (existingItem.cantidad > 1) {
-        const updatedItems = selectedItems.map((item: any) =>
+        const updatedItems = selectedItems?.map((item: any) =>
           item.barCode === product.barCode
             ? {
               ...item,
@@ -39,7 +44,7 @@ export default function VenderCard({
         );
         setSelectedItems(updatedItems);
       } else {
-        const updatedItems = selectedItems.filter(
+        const updatedItems = selectedItems?.filter(
           (item: any) => item.barCode !== product.barCode
         );
         setSelectedItems(updatedItems);
@@ -49,12 +54,12 @@ export default function VenderCard({
 
   const handleIncrement = (product: any) => {
     const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
-    const existingItem = selectedItems.find(
+    const existingItem = selectedItems?.find(
       (item: any) => item.barCode === product.barCode
     );
 
     if (existingItem) {
-      const updatedItems = selectedItems.map((item: any) =>
+      const updatedItems = selectedItems?.map((item: any) =>
         item.barCode === product.barCode
           ? {
             ...item,
@@ -74,7 +79,8 @@ export default function VenderCard({
         barCode: product.barCode,
         acc: cleanedPrice,
       };
-      setSelectedItems([newItems, ...selectedItems]);
+      console.log('newItems:::>', newItems)
+      setSelectedItems([newItems, ...selectedItems])
     }
   };
 

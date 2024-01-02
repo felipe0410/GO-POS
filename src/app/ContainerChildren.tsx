@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "./globalContex";
 import { Box, Typography } from "@mui/material";
 import Sidebar from "@/components/Sidebar";
-import { useCookies } from "react-cookie"
 import { keyframes } from "@emotion/react";
 
 
@@ -14,16 +13,25 @@ const ContainerChildren = ({ childrenn, validationRoutes }: { childrenn: any, va
     const validationCookie = cookies?.user?.length > 0
     useEffect(() => {
         if (validationCookie) {
-            validationRoutes && (window.location.href = "/inventory/productos")
-            setTimeout(() => {
+            if (validationRoutes) {
+                (window.location.href = "/inventory/productos")
+                setTimeout(() => {
+                    setValidation(true)
+                }, 2000);
+            } else {
                 setValidation(true)
-            }, 2000);
+            }
         } else {
-            !validationRoutes && (window.location.href = "/sign_in")
-            setTimeout(() => {
+            if (!validationRoutes) {
+                (window.location.href = "/sign_in")
+                setTimeout(() => {
+                    setValidation(true)
+                }, 2000);
+            } else {
                 setValidation(true)
-            }, 2000);
+            }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
     const myAnim = keyframes`
     0% {
