@@ -6,8 +6,7 @@ import JsBarcode from "jsbarcode";
 
 const Factura = ({ data }: { data: any }) => {
   React.useEffect(() => {
-    if (data.invoice)
-      JsBarcode("#barcode", data.invoice, { background: "#D9D9D9" });
+    if (data.invoice) JsBarcode("#barcode", data.invoice);
   }, [data.invoice]);
 
   return (
@@ -19,6 +18,7 @@ const Factura = ({ data }: { data: any }) => {
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundColor: "#FFF",
         }}
       >
         <Box
