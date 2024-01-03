@@ -8,8 +8,6 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
-import { VenderContext } from "./Context_vender";
-import { getEstablishmentData } from "@/firebase";
 
 const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: any, setSelectedItems: any }) => {
     const [open, setOpen] = useState(false)
@@ -83,7 +81,6 @@ const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: an
 
     useEffect(() => {
         localStorage.setItem("contadorFactura", contadorFactura.toString());
-        console.log(getEstablishmentData())
     }, [contadorFactura]);
 
     useEffect(() => {

@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { getEstablishmentData, getInvoiceData } from "@/firebase";
 import { DocumentData } from "firebase/firestore";
 import JsBarcode from "jsbarcode";
-import ReactToPrint, { useReactToPrint } from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 
 interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
@@ -61,7 +61,10 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
 
   const componentRef: any = useRef();
   const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
+    content: () => {
+      const content = componentRef.current;
+      return content
+    },
   });
 
 
@@ -157,7 +160,12 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               filter: "brightness(1.2)",
               maxWidth: '22.25rem',
               padding: "10px",
-              height:'105%'
+              '@media print': {
+                "@page": {
+                  size: `${componentRef?.current?.clientWidth}px ${(componentRef?.current?.clientHeight) * 1.1}px`,
+                },
+                width: '100%'
+              },
             }}
           >
             <Box
