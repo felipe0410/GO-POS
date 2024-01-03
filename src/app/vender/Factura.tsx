@@ -170,9 +170,8 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               background: '#fff',
               '@media print': {
                 "@page": {
-                  size: `${componentRef?.current?.clientWidth}px ${
-                    componentRef?.current?.clientHeight * 1.1
-                  }px`,
+                  size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
+                    }px`,
                 },
                 width: "100%",
               },
@@ -459,7 +458,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontSize: "0.8rem",
+                    fontSize: "0.7rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -471,27 +470,27 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontSize: "0.8rem",
+                    fontSize: "0.7rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
                     marginLeft: "75px",
                   }}
                 >
-                  CANTIDAD
+                  UND
                 </Typography>
                 <Typography
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontSize: "0.8rem",
+                    fontSize: "0.7rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
                     marginRight: "5px",
                   }}
                 >
-                  PRECIO
+                  $VALOR
                 </Typography>
               </Box>
               <Box mt={1}>
