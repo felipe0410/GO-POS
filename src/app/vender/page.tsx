@@ -47,10 +47,10 @@ const Page = () => {
   const [category, setCategory] = useState<[]>([]);
   const [filter, setfilter] = useState<any>();
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedItems, setSelectedItems] = useState<any>([])
+  const [selectedItems, setSelectedItems] = useState<any>([]);
   // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
 
-  const debouncedHandleSearchChange = debounce(() => { }, 300);
+  const debouncedHandleSearchChange = debounce(() => {}, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -71,8 +71,6 @@ const Page = () => {
     };
     getAllProducts();
   }, []);
-
-
 
   useEffect(() => {
     const filteredData = data?.filter((item) => {
@@ -108,10 +106,13 @@ const Page = () => {
     };
     categoriesData();
   }, []);
-  console.log('%cContextselectedItems::>', 'color:red', selectedItems)
+  console.log("%cContextselectedItems::>", "color:red", selectedItems);
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
-      <Box id='conainer_vender' sx={{ width: { xs: '100%', sm: "calc(100% - 25.5625rem)" } }}>
+      <Box
+        id='conainer_vender'
+        sx={{ width: { xs: "100%", sm: "calc(100% - 25.5625rem)" } }}
+      >
         <Header title='VENDER' />
         <Paper
           id={"paper"}
@@ -220,7 +221,7 @@ const Page = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Box sx={{ marginTop: { sm: "1.56rem" }, height: "75%" }}>
+            <Box sx={{ marginTop: { sm: "1.56rem" }, height: "70%" }}>
               <VenderCards
                 filteredData={filter}
                 setSelectedItems={setSelectedItems}
@@ -230,8 +231,11 @@ const Page = () => {
           </Box>
         </Paper>
       </Box>
-      <SlidebarVender selectedItems={selectedItems} setSelectedItems={setSelectedItems} />
-    </Box >
+      <SlidebarVender
+        selectedItems={selectedItems}
+        setSelectedItems={setSelectedItems}
+      />
+    </Box>
   );
 };
 

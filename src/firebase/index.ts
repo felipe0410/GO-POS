@@ -234,6 +234,45 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
   }
 };
 
+//funcion para obtener las facturas
+export const getAllInvoicesData = async (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+    const orderedQuery = query(invoiceCollectionRef, orderBy("invoice"));
+    getDocs(orderedQuery)
+      .then((querySnapshot) => {
+        const invoiceData: any[] = [];
+        querySnapshot.forEach((doc) => {
+          invoiceData.push({ id: doc.id, ...doc.data() });
+        });
+
+        callback(invoiceData);
+      })
+      .catch((error) => {
+        console.error("Error fetching initial data:", error);
+        callback(null);
+      });
+    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot: any) => {
+      const invoiceData: any[] = [];
+      querySnapshot.forEach((doc: any) => {
+        invoiceData.push({ id: doc.id, ...doc.data() });
+      });
+      callback(invoiceData);
+      return invoiceData;
+    });
+    // Return the unsubscribe function to stop observing changes
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up data observer: ", error);
+    return null;
+  }
+};
+
 //funcion para obtener una factura
 export const getInvoiceData = async (uid: any) => {
   try {

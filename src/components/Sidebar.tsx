@@ -10,13 +10,17 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { Button, SwipeableDrawer, Typography, useMediaQuery } from "@mui/material";
+import {
+  Button,
+  SwipeableDrawer,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter } from "next/navigation";
 import { useContext } from "react";
 import { GlobalContext } from "@/app/globalContex";
-
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -26,8 +30,13 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-
-export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) {
+export default function Sidebar({
+  open,
+  setOpen,
+}: {
+  open: any;
+  setOpen: any;
+}) {
   const { removeCookieUser } = useContext(GlobalContext) || {};
   const [selectedSection, setSelectedSection] = React.useState<any>("");
   const pathname = usePathname();
@@ -53,7 +62,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
       id: "/register/invoices",
       submenus: [
         {
-          section: "Facturas",
+          section: "FACTURAS",
           id: "/register/invoices",
         },
       ],
@@ -97,7 +106,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
           id: "/settings/establishment",
         },
       ],
-    }
+    },
   ];
 
   const handleDrawerOpen = () => {
@@ -120,18 +129,18 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
   };
 
   React.useEffect(() => {
-    setSelectedSection(pathname)
-    matchesSM ? setOpen(false) : setOpen(true)
+    setSelectedSection(pathname);
+    matchesSM ? setOpen(false) : setOpen(true);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const slice = (rutaCompleta: any) => {
-    const primeraBarra = rutaCompleta.indexOf('/');
-    const ultimaBarra = rutaCompleta.lastIndexOf('/');
-    const rutaRecortada = rutaCompleta.substring(primeraBarra, ultimaBarra)
-    return rutaRecortada
-  }
-  const route = useRouter()
+    const primeraBarra = rutaCompleta.indexOf("/");
+    const ultimaBarra = rutaCompleta.lastIndexOf("/");
+    const rutaRecortada = rutaCompleta.substring(primeraBarra, ultimaBarra);
+    return rutaRecortada;
+  };
+  const route = useRouter();
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -162,7 +171,7 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
         >
           <Box>
             <Typography
-              align="center"
+              align='center'
               sx={{
                 animation: "myAnim 2s ease 0s 1 normal forwards",
                 color: "#FFF",
@@ -172,7 +181,8 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                 fontStyle: "normal",
                 fontWeight: 800,
                 lineHeight: "normal",
-              }}>
+              }}
+            >
               GO
             </Typography>
           </Box>
@@ -181,9 +191,10 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
               <Box
                 sx={{
                   marginY: { sm: "30px" },
-                  background: (selectedSection === section.id)
-                    ? "#252836"
-                    : section?.submenus
+                  background:
+                    selectedSection === section.id
+                      ? "#252836"
+                      : section?.submenus
                       ? selectedSection?.includes(slice(section.id))
                         ? "#252836"
                         : "transparent"
@@ -203,13 +214,15 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                       padding: "5px",
                       marginLeft: "5px",
                       borderRadius: "0.5rem",
-                      background: selectedSection?.includes(section.id) ? "#69EAE2" : "auto",
+                      background: selectedSection?.includes(section.id)
+                        ? "#69EAE2"
+                        : "auto",
                       boxShadow: selectedSection?.includes(section.id)
                         ? "0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
                         : "auto",
                     }}
                     onClick={() => {
-                      handleSectionClick(section.id)
+                      handleSectionClick(section.id);
                     }}
                   >
                     <Box
@@ -239,7 +252,9 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                     <ListItemText
                       primary={section.section}
                       primaryTypographyProps={{
-                        color: !selectedSection?.includes(section.id) ? "#69EAE2" : "auto",
+                        color: !selectedSection?.includes(section.id)
+                          ? "#69EAE2"
+                          : "auto",
                         fontFamily: "Nunito",
                         fontSize: "0.875rem",
                         fontStyle: "normal",
@@ -254,41 +269,43 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                   </ListItem>
                 </Link>
 
-                {open && section.submenus && selectedSection?.includes(slice(section.id)) && (
-                  <List
-                    id='subCategory'
-                    sx={{
-                      marginLeft: "15px",
-                    }}
-                  >
-                    {section.submenus.map((submenu) => (
-                      <Link
-                        href={submenu.id}
-                        key={submenu.id}
-                        style={{ textDecoration: "none", color: "#1F1D2B" }}
-                      >
-                        <ListItem>
-                          <ListItemText
-                            primary={submenu.section}
-                            primaryTypographyProps={{
-                              color: validation(submenu.id)
-                                ? "#69EAE2"
-                                : "#fff",
-                              fontFamily: "Nunito",
-                              fontSize: "0.875rem",
-                              fontStyle: "normal",
-                              fontWeight: 700,
-                              lineHeight: "normal",
-                            }}
-                            sx={{
-                              opacity: open ? 1 : 0,
-                            }}
-                          />
-                        </ListItem>
-                      </Link>
-                    ))}
-                  </List>
-                )}
+                {open &&
+                  section.submenus &&
+                  selectedSection?.includes(slice(section.id)) && (
+                    <List
+                      id='subCategory'
+                      sx={{
+                        marginLeft: "15px",
+                      }}
+                    >
+                      {section.submenus.map((submenu) => (
+                        <Link
+                          href={submenu.id}
+                          key={submenu.id}
+                          style={{ textDecoration: "none", color: "#1F1D2B" }}
+                        >
+                          <ListItem>
+                            <ListItemText
+                              primary={submenu.section}
+                              primaryTypographyProps={{
+                                color: validation(submenu.id)
+                                  ? "#69EAE2"
+                                  : "#fff",
+                                fontFamily: "Nunito",
+                                fontSize: "0.875rem",
+                                fontStyle: "normal",
+                                fontWeight: 700,
+                                lineHeight: "normal",
+                              }}
+                              sx={{
+                                opacity: open ? 1 : 0,
+                              }}
+                            />
+                          </ListItem>
+                        </Link>
+                      ))}
+                    </List>
+                  )}
               </Box>
             </React.Fragment>
           ))}
@@ -321,13 +338,13 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
                 paddingLeft: "20px",
               }}
               onClick={async () => {
-                console.log('entre aqui')
+                console.log("entre aqui");
                 try {
-                  await removeCookieUser('user', "", {
-                    expires: new Date(0)
+                  await removeCookieUser("user", "", {
+                    expires: new Date(0),
                   });
                 } catch (error) {
-                  console.log(error)
+                  console.log(error);
                 }
               }}
             >
@@ -359,6 +376,6 @@ export default function Sidebar({ open, setOpen }: { open: any, setOpen: any }) 
           </Box>
         </List>
       </SwipeableDrawer>
-    </Box >
+    </Box>
   );
 }
