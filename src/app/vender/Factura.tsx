@@ -22,8 +22,8 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     email: "",
     nameEstablishment: "",
     name: "",
-    direction: ""
-  })
+    direction: "",
+  });
 
   const setNuevaFactura = () => {
     setReciboPago(false);
@@ -51,22 +51,21 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
 
   useEffect(() => {
     const dataEstablesimente = async () => {
-      const data: any = await getEstablishmentData()
+      const data: any = await getEstablishmentData();
       if (data !== null) {
-        setEstablishmentData(data)
+        setEstablishmentData(data);
       }
-    }
-    dataEstablesimente()
-  }, [])
+    };
+    dataEstablesimente();
+  }, []);
 
   const componentRef: any = useRef();
   const handlePrint = useReactToPrint({
     content: () => {
       const content = componentRef.current;
-      return content
+      return content;
     },
   });
-
 
   return (
     <>
@@ -100,28 +99,31 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           TICKET/FACTURA
         </Typography>
       </Box>
-      <Box sx={{
-        display: "flex",
-        justifyContent: "space-around"
-      }}>
-        <Button sx={{
-          width: '45%',
-          background: '#69EAE2',
-          color: "#1F1D2B",
-          fontFamily: "Nunito",
-          fontSize: "12px",
-          fontStyle: "normal",
-          fontWeight: 800,
-          lineHeight: "140%",
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-around",
         }}
+      >
+        <Button
+          sx={{
+            width: "45%",
+            background: "#69EAE2",
+            color: "#1F1D2B",
+            fontFamily: "Nunito",
+            fontSize: "12px",
+            fontStyle: "normal",
+            fontWeight: 800,
+            lineHeight: "140%",
+          }}
         >
           TAMAÑO CARTA
         </Button>
         <Button
           onClick={handlePrint}
           sx={{
-            width: '45%',
-            background: '#69EAE2',
+            width: "45%",
+            background: "#69EAE2",
             color: "#1F1D2B",
             fontFamily: "Nunito",
             fontSize: "12px",
@@ -132,40 +134,47 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
         >
           IMPRIMIR
         </Button>
-      </Box >
-      <Box sx={{
-        marginTop: '20px',
-        borderRadius: "8px",
-        border: "5px solid #69EAE2",
-        background: "#1F1D2B",
-        width: "100%",
-        height: "30px",
-        flexShrink: 0,
-        marginBottom: '-15px'
-      }} />
-      <Box id='factura' sx={{
-        margin: '0 auto',
-        width: "100%",
-        height: "100%",
-        backgroundImage: 'url("images/factura.svg")',
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",
-        backgroundPosition: "bootom",
-        filter: "brightness(1.2)"
-      }}>
+      </Box>
+      <Box
+        sx={{
+          marginTop: "20px",
+          borderRadius: "8px",
+          border: "5px solid #69EAE2",
+          background: "#1F1D2B",
+          width: "100%",
+          height: "30px",
+          flexShrink: 0,
+          marginBottom: "-15px",
+        }}
+      />
+      <Box
+        id='factura'
+        sx={{
+          margin: "0 auto",
+          width: "100%",
+          height: "100%",
+          backgroundImage: 'url("images/factura.svg")',
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "bootom",
+          filter: "brightness(1.2)",
+        }}
+      >
         <Box>
           <Box
             ref={componentRef}
             sx={{
               filter: "brightness(1.2)",
-              maxWidth: '22.25rem',
+              maxWidth: "22.25rem",
               padding: "10px",
               background: '#fff',
               '@media print': {
                 "@page": {
-                  size: `${componentRef?.current?.clientWidth}px ${(componentRef?.current?.clientHeight) * 1.1}px`,
+                  size: `${componentRef?.current?.clientWidth}px ${
+                    componentRef?.current?.clientHeight * 1.1
+                  }px`,
                 },
-                width: '100%'
+                width: "100%",
               },
             }}
           >
