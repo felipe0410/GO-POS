@@ -160,6 +160,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               filter: "brightness(1.2)",
               maxWidth: '22.25rem',
               padding: "10px",
+              background: '#fff',
               '@media print': {
                 "@page": {
                   size: `${componentRef?.current?.clientWidth}px ${(componentRef?.current?.clientHeight) * 1.1}px`,
@@ -200,8 +201,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 600,
                     lineHeight: "140%",
@@ -212,8 +212,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 600,
                     lineHeight: "140%",
@@ -226,8 +225,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 sx={{
                   color: "#000",
                   textAlign: "center",
-                  fontFamily: "Nunito",
-                  fontSize: "0.75rem",
+                  fontSize: "0.8rem",
                   fontStyle: "normal",
                   fontWeight: 600,
                   lineHeight: "140%",
@@ -240,8 +238,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               <Typography
                 sx={{
                   color: "#000",
-                  fontFamily: "Nunito",
-                  fontSize: "0.75rem",
+                  fontSize: "0.8rem",
                   fontStyle: "normal",
                   fontWeight: 700,
                   lineHeight: "140%",
@@ -254,13 +251,13 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   display: "flex",
                   flexDirection: "row",
                   justifyContent: "space-between",
+                  borderTop: "solid",
                 }}
               >
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 700,
                     lineHeight: "140%",
@@ -270,11 +267,11 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 </Typography>
                 <Typography
                   sx={{
+                    width: '60%',
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.625rem",
+                    fontSize: "0.85rem",
                     fontStyle: "normal",
-                    fontWeight: 800,
+                    fontWeight: 900,
                     lineHeight: "140%",
                   }}
                 >
@@ -282,10 +279,9 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   <span
                     style={{
                       color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.625rem",
+                      fontSize: "0.8rem",
                       fontStyle: "normal",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       lineHeight: "140%",
                     }}
                   >
@@ -297,6 +293,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               <Box>
                 <Box
                   sx={{
+                    borderTop: "solid",
                     display: "flex",
                     flexDirection: "row",
                     justifyContent: "space-between",
@@ -305,8 +302,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   <Typography
                     sx={{
                       color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.625rem",
+                      fontSize: "0.8rem",
                       fontStyle: "normal",
                       fontWeight: 800,
                       lineHeight: "140%",
@@ -317,8 +313,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     <span
                       style={{
                         color: "#000",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625rem",
+                        fontSize: "0.8rem",
                         fontStyle: "normal",
                         fontWeight: 600,
                         lineHeight: "140%",
@@ -330,8 +325,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   <Typography
                     sx={{
                       color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.625rem",
+                      fontSize: "0.8rem",
                       fontStyle: "normal",
                       fontWeight: 800,
                       lineHeight: "140%",
@@ -342,8 +336,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     <span
                       style={{
                         color: "#000",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625rem",
+                        fontSize: "0.8rem",
                         fontStyle: "normal",
                         fontWeight: 600,
                         lineHeight: "140%",
@@ -363,8 +356,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   <Typography
                     sx={{
                       color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.625rem",
+                      fontSize: "0.8rem",
                       fontStyle: "normal",
                       fontWeight: 800,
                       lineHeight: "140%",
@@ -375,8 +367,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     <span
                       style={{
                         color: "#000",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625rem",
+                        fontSize: "0.8rem",
                         fontStyle: "normal",
                         fontWeight: 600,
                         lineHeight: "140%",
@@ -388,8 +379,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   <Typography
                     sx={{
                       color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.625rem",
+                      fontSize: "0.8rem",
                       fontStyle: "normal",
                       fontWeight: 800,
                       lineHeight: "140%",
@@ -400,8 +390,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     <span
                       style={{
                         color: "#000",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625rem",
+                        fontSize: "0.8rem",
                         fontStyle: "normal",
                         fontWeight: 600,
                         lineHeight: "140%",
@@ -414,8 +403,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.625rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 800,
                     lineHeight: "140%",
@@ -426,8 +414,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   <span
                     style={{
                       color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.625rem",
+                      fontSize: "0.8rem",
                       fontStyle: "normal",
                       fontWeight: 600,
                       lineHeight: "140%",
@@ -442,8 +429,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 sx={{
                   color: "#000",
                   textAlign: "center",
-                  fontFamily: "Nunito",
-                  fontSize: "0.75rem",
+                  fontSize: "0.8rem",
                   fontStyle: "normal",
                   fontWeight: 900,
                   lineHeight: "140%",
@@ -464,8 +450,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -477,8 +462,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -491,8 +475,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -515,8 +498,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     <Typography
                       sx={{
                         color: "#000",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625",
+                        fontSize: "0.8",
                         fontStyle: "normal",
                         fontWeight: 400,
                         lineHeight: "140%",
@@ -532,8 +514,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                       sx={{
                         color: "#000",
                         textAlign: "center",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625",
+                        fontSize: "0.8",
                         fontStyle: "normal",
                         fontWeight: 400,
                         lineHeight: "140%",
@@ -546,8 +527,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         width: "70px",
                         color: "#000",
                         textAlign: "center",
-                        fontFamily: "Nunito",
-                        fontSize: "0.625",
+                        fontSize: "0.8",
                         fontStyle: "normal",
                         fontWeight: 400,
                         lineHeight: "140%",
@@ -565,14 +545,14 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   flexDirection: "row",
                   justifyContent: "space-between",
                   marginTop: "8px",
+                  borderTop: "solid"
                 }}
               >
                 <Typography
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "1rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -583,8 +563,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "1rem",
                     fontStyle: "normal",
                     fontWeight: 700,
                     lineHeight: "140%",
@@ -605,8 +584,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "1rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -617,8 +595,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "1rem",
                     fontStyle: "normal",
                     fontWeight: 700,
                     lineHeight: "140%",
@@ -639,8 +616,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   sx={{
                     color: "#000",
                     textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "1rem",
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
@@ -651,8 +627,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 <Typography
                   sx={{
                     color: "#000",
-                    fontFamily: "Nunito",
-                    fontSize: "0.75rem",
+                    fontSize: "1rem",
                     fontStyle: "normal",
                     fontWeight: 700,
                     lineHeight: "140%",
