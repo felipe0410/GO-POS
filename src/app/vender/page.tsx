@@ -36,10 +36,8 @@ import DatosVenta from "@/components/DatosVenta";
 import Factura from "@/components/Factura";
 import IncompleteCartItem from "@/components/IncompleteCartItem";
 import debounce from "debounce";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import CloseIcon from '@mui/icons-material/Close';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-
+import CloseIcon from "@mui/icons-material/Close";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -85,14 +83,13 @@ interface SelectedProduct {
 }
 
 const Page = () => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState<[]>([]);
   const [filter, setfilter] = useState<any>();
   const [agregarDescuento, setAgregarDescuento] = useState(false);
   const [selectedItems, setSelectedItems] = useState<SelectedProduct[]>([]);
-  console.log(selectedItems)
   const [selectedCategory, setSelectedCategory] = useState("");
   const [subtotal, setSubtotal] = useState(0);
   const [descuento, setDescuento] = useState(0);
@@ -102,7 +99,7 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [reciboPago, setReciboPago] = useState(false);
   const storedContadorFactura = localStorage.getItem("contadorFactura");
-  const colorPrimary = "#69EAE2"
+  const colorPrimary = "#69EAE2";
   const theme = createTheme({
     palette: {
       primary: {
@@ -162,7 +159,7 @@ const Page = () => {
     setInputValue(e.target.value);
   };
 
-  const debouncedHandleSearchChange = debounce(() => { }, 300);
+  const debouncedHandleSearchChange = debounce(() => {}, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -228,17 +225,19 @@ const Page = () => {
   }, []);
 
   const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
-    '& .MuiBadge-badge': {
+    "& .MuiBadge-badge": {
       right: -3,
       top: 13,
-      padding: '0 4px',
+      padding: "0 4px",
     },
   }));
 
-
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
-      <Box id='conainer_vender' sx={{ width: { xs: '100%', sm: "calc(100% - 25.5625rem)" } }}>
+      <Box
+        id='conainer_vender'
+        sx={{ width: { xs: "100%", sm: "calc(100% - 25.5625rem)" } }}
+      >
         <Header title='VENDER' />
         <Paper
           id={"paper"}
@@ -347,7 +346,7 @@ const Page = () => {
                 </Select>
               </FormControl>
             </Box>
-            <Box sx={{ marginTop: { sm: "1.56rem" }, height: "75%" }}>
+            <Box sx={{ marginTop: { sm: "1.56rem" }, height: "70%" }}>
               <VenderCards
                 filteredData={filter}
                 setSelectedItems={setSelectedItems}
@@ -357,14 +356,22 @@ const Page = () => {
           </Box>
         </Paper>
       </Box>
-      <Box display={'flex'}>
+      <Box display={"flex"}>
         <CssBaseline />
-        <IconButton sx={{
-          position: "absolute",
-          top: "20px",
-          right: "30px"
-        }} onClick={() => setOpen(true)} aria-label="cart">
-          <StyledBadge badgeContent={totalUnidades} sx={{ color: '#fff' }} color="success">
+        <IconButton
+          sx={{
+            position: "absolute",
+            top: "20px",
+            right: "30px",
+          }}
+          onClick={() => setOpen(true)}
+          aria-label='cart'
+        >
+          <StyledBadge
+            badgeContent={totalUnidades}
+            sx={{ color: "#fff" }}
+            color='success'
+          >
             <ShoppingCartIcon />
           </StyledBadge>
         </IconButton>
@@ -396,12 +403,19 @@ const Page = () => {
               overflow: "hidden",
               top: 0,
               right: 0,
-              width: { xs: '100%', sm: "25.5625rem" },
+              width: { xs: "100%", sm: "25.5625rem" },
               borderRadius: "10px 0px 0px 10px",
-              boxShadow: { xs: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2", sm: "" }
+              boxShadow: {
+                xs: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2",
+                sm: "",
+              },
             }}
           >
-            <Box id='principal container' padding={3} sx={{ height: "100%", width: '100%', overflow: 'auto' }}>
+            <Box
+              id='principal container'
+              padding={3}
+              sx={{ height: "100%", width: "100%", overflow: "auto" }}
+            >
               {reciboPago ? (
                 <Factura
                   setReciboPago={setReciboPago}
@@ -410,9 +424,12 @@ const Page = () => {
                 />
               ) : (
                 <>
-                  <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
-                    <Button sx={{ float: "right" }} onClick={() => setOpen(false)}>
-                      <CloseIcon sx={{ color: '#fff' }} />
+                  <Box sx={{ display: { xs: "block", sm: "none" } }}>
+                    <Button
+                      sx={{ float: "right" }}
+                      onClick={() => setOpen(false)}
+                    >
+                      <CloseIcon sx={{ color: "#fff" }} />
                     </Button>
                   </Box>
                   {nextStep ? (
@@ -446,7 +463,7 @@ const Page = () => {
                     sx={{
                       color: "#FFF",
                       fontFamily: "Nunito",
-                      fontSize: { xs: '14px', sm: "1.25rem" },
+                      fontSize: { xs: "14px", sm: "1.25rem" },
                       fontStyle: "normal",
                       fontWeight: 800,
                       lineHeight: "140%",
@@ -481,13 +498,16 @@ const Page = () => {
                         }}
                       >
                         <Button
-                          style={{ borderRadius: "0.5rem", background: "#69EAE2" }}
+                          style={{
+                            borderRadius: "0.5rem",
+                            background: "#69EAE2",
+                          }}
                         >
                           <Typography
                             sx={{
                               color: "#1F1D2B",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '10px', sm: "0.875rem" },
+                              fontSize: { xs: "10px", sm: "0.875rem" },
                               fontStyle: "normal",
                               fontWeight: 600,
                               lineHeight: "140%",
@@ -498,13 +518,16 @@ const Page = () => {
                         </Button>
                         <Button
                           variant='outlined'
-                          style={{ borderRadius: "0.5rem", borderColor: "#69EAE2" }}
+                          style={{
+                            borderRadius: "0.5rem",
+                            borderColor: "#69EAE2",
+                          }}
                         >
                           <Typography
                             sx={{
                               color: "#69EAE2",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '10px', sm: "0.875rem" },
+                              fontSize: { xs: "10px", sm: "0.875rem" },
                               fontStyle: "normal",
                               fontWeight: 600,
                               lineHeight: "140%",
@@ -529,7 +552,7 @@ const Page = () => {
                             sx={{
                               color: "var(--White, #FFF)",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '12px', sm: "1rem" },
+                              fontSize: { xs: "12px", sm: "1rem" },
                               fontStyle: "normal",
                               fontWeight: 600,
                               lineHeight: "140%",
@@ -541,7 +564,7 @@ const Page = () => {
                             sx={{
                               color: "var(--White, #FFF)",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '12px', sm: "1rem" },
+                              fontSize: { xs: "12px", sm: "1rem" },
                               fontStyle: "normal",
                               fontWeight: 600,
                               lineHeight: "140%",
@@ -554,7 +577,7 @@ const Page = () => {
                             sx={{
                               color: "var(--White, #FFF)",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '12px', sm: "1rem" },
+                              fontSize: { xs: "12px", sm: "1rem" },
                               fontStyle: "normal",
                               fontWeight: 600,
                               lineHeight: "140%",
@@ -565,11 +588,19 @@ const Page = () => {
                           </Typography>
                         </Box>
                         <Divider sx={{ background: "#69EAE2" }} />
-                        <IncompleteCartItem setSelectedItems={setSelectedItems} />
-                        <Divider sx={{ background: "#69EAE2", marginTop: '10px' }} />
+                        <IncompleteCartItem
+                          setSelectedItems={setSelectedItems}
+                        />
+                        <Divider
+                          sx={{ background: "#69EAE2", marginTop: "10px" }}
+                        />
                         <Box
                           id='items-list'
-                          sx={{ maxHeight: "41%", overflowY: "auto", scrollBehavior: "smooth" }}
+                          sx={{
+                            maxHeight: "41%",
+                            overflowY: "auto",
+                            scrollBehavior: "smooth",
+                          }}
                         >
                           {selectedItems.length === 0 ? (
                             <Typography
@@ -614,7 +645,7 @@ const Page = () => {
                                 color: "#FFF",
                                 textAlign: "center",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '14px', sm: "1rem" },
+                                fontSize: { xs: "14px", sm: "1rem" },
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "140%",
@@ -627,7 +658,7 @@ const Page = () => {
                                 color: "#FFF",
                                 textAlign: "center",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '14px', sm: "1rem" },
+                                fontSize: { xs: "14px", sm: "1rem" },
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "140%",
@@ -648,7 +679,7 @@ const Page = () => {
                                 color: "#FFF",
                                 textAlign: "center",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '14px', sm: "1rem" },
+                                fontSize: { xs: "14px", sm: "1rem" },
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "140%",
@@ -661,7 +692,7 @@ const Page = () => {
                                 color: "#FFF",
                                 textAlign: "center",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '14px', sm: "1rem" },
+                                fontSize: { xs: "14px", sm: "1rem" },
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "140%",
@@ -684,7 +715,7 @@ const Page = () => {
                                   color: "#69EAE2",
                                   textAlign: "center",
                                   fontFamily: "Nunito",
-                                  fontSize: { xs: '14px', sm: "1rem" },
+                                  fontSize: { xs: "14px", sm: "1rem" },
                                   fontStyle: "normal",
                                   fontWeight: 500,
                                   lineHeight: "140%",
@@ -701,7 +732,7 @@ const Page = () => {
                                     color: "#FFF",
                                     textAlign: "center",
                                     fontFamily: "Nunito",
-                                    fontSize: { xs: '14px', sm: "1rem" },
+                                    fontSize: { xs: "14px", sm: "1rem" },
                                     fontStyle: "normal",
                                     fontWeight: 500,
                                     lineHeight: "140%",
@@ -726,7 +757,7 @@ const Page = () => {
                                       color: "#69EAE2",
                                       textAlign: "center",
                                       fontFamily: "Nunito",
-                                      fontSize: { xs: '14px', sm: "1rem" },
+                                      fontSize: { xs: "14px", sm: "1rem" },
                                       fontStyle: "normal",
                                       fontWeight: 500,
                                       lineHeight: "90%",
@@ -745,7 +776,10 @@ const Page = () => {
                                       <Box
                                         component={"img"}
                                         src={"/images/edit.svg"}
-                                        sx={{ width: "0.9rem", height: "0.9rem" }}
+                                        sx={{
+                                          width: "0.9rem",
+                                          height: "0.9rem",
+                                        }}
                                       />
                                     </IconButton>
                                     {`$ ${descuento.toLocaleString("en-US")}`}
@@ -757,7 +791,9 @@ const Page = () => {
                                       <InputAdornment position='start'>
                                         <IconButton
                                           sx={{ paddingRight: "0px" }}
-                                          onClick={(event) => calcularTotal(event)}
+                                          onClick={(event) =>
+                                            calcularTotal(event)
+                                          }
                                         >
                                           <Typography
                                             sx={{
@@ -776,7 +812,9 @@ const Page = () => {
                                       </InputAdornment>
                                     }
                                     value={inputValue}
-                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleInputChange(event)}
+                                    onChange={(
+                                      event: React.ChangeEvent<HTMLInputElement>
+                                    ) => handleInputChange(event)}
                                     sx={{ width: "9.75rem", height: "2.25rem" }}
                                     style={{
                                       borderRadius: "0.375rem",
@@ -806,7 +844,7 @@ const Page = () => {
                               color: "#FFF",
                               textAlign: "center",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '14px', sm: "1rem" },
+                              fontSize: { xs: "14px", sm: "1rem" },
                               fontStyle: "normal",
                               fontWeight: 500,
                               lineHeight: "140%",
@@ -819,13 +857,15 @@ const Page = () => {
                               color: "#FFF",
                               textAlign: "center",
                               fontFamily: "Nunito",
-                              fontSize: { xs: '14px', sm: "1rem" },
+                              fontSize: { xs: "14px", sm: "1rem" },
                               fontStyle: "normal",
                               fontWeight: 500,
                               lineHeight: "140%",
                             }}
                           >
-                            {`$ ${(subtotal - descuento).toLocaleString("en-US")}`}
+                            {`$ ${(subtotal - descuento).toLocaleString(
+                              "en-US"
+                            )}`}
                           </Typography>
                         </Box>
                         <Box sx={{ textAlign: "center", marginTop: "1rem" }}>
@@ -834,7 +874,8 @@ const Page = () => {
                             onClick={() => setNextStep(true)}
                             style={{
                               borderRadius: "0.5rem",
-                              background: descuento > subtotal ? "gray" : "#69EAE2",
+                              background:
+                                descuento > subtotal ? "gray" : "#69EAE2",
                               width: "7rem",
                             }}
                           >
@@ -861,8 +902,7 @@ const Page = () => {
           </Box>
         </SwipeableDrawer>
       </Box>
-
-    </Box >
+    </Box>
   );
 };
 

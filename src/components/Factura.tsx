@@ -75,7 +75,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
         <Box
           sx={{
             height: "100%",
-            backgroundImage: 'url("images/factura.svg")',
+            backgroundImage: 'url("images/factura.png")',
             backgroundRepeat: "no-repeat",
             backgroundSize: "cover",
             backgroundPosition: "center",
