@@ -212,7 +212,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     color: "#000",
                     fontSize: "0.8rem",
                     fontStyle: "normal",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     lineHeight: "140%",
                   }}
                 >
@@ -223,7 +223,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     color: "#000",
                     fontSize: "0.8rem",
                     fontStyle: "normal",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     lineHeight: "140%",
                   }}
                 >
@@ -236,7 +236,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   textAlign: "center",
                   fontSize: "0.8rem",
                   fontStyle: "normal",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   lineHeight: "140%",
                 }}
               >
@@ -324,7 +324,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         color: "#000",
                         fontSize: "0.8rem",
                         fontStyle: "normal",
-                        fontWeight: 600,
+                        fontWeight: 700,
                         lineHeight: "140%",
                       }}
                     >
@@ -347,7 +347,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         color: "#000",
                         fontSize: "0.8rem",
                         fontStyle: "normal",
-                        fontWeight: 600,
+                        fontWeight: 700,
                         lineHeight: "140%",
                       }}
                     >
@@ -401,7 +401,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         color: "#000",
                         fontSize: "0.8rem",
                         fontStyle: "normal",
-                        fontWeight: 600,
+                        fontWeight: 700,
                         lineHeight: "140%",
                       }}
                     >
@@ -414,7 +414,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     color: "#000",
                     fontSize: "0.8rem",
                     fontStyle: "normal",
-                    fontWeight: 800,
+                    fontWeight: 700,
                     lineHeight: "140%",
                     marginTop: "3px",
                   }}
@@ -425,7 +425,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                       color: "#000",
                       fontSize: "0.8rem",
                       fontStyle: "normal",
-                      fontWeight: 600,
+                      fontWeight: 700,
                       lineHeight: "140%",
                     }}
                   >
@@ -509,7 +509,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         color: "#000",
                         fontSize: "0.8",
                         fontStyle: "normal",
-                        fontWeight: 400,
+                        fontWeight: 700,
                         lineHeight: "140%",
                         width: "10.2rem",
                         overflow: "hidden",
@@ -525,7 +525,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         textAlign: "center",
                         fontSize: "0.8",
                         fontStyle: "normal",
-                        fontWeight: 400,
+                        fontWeight: 700,
                         lineHeight: "140%",
                       }}
                     >
@@ -538,7 +538,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         textAlign: "center",
                         fontSize: "0.8",
                         fontStyle: "normal",
-                        fontWeight: 400,
+                        fontWeight: 700,
                         lineHeight: "140%",
                       }}
                     >
