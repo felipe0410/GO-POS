@@ -131,10 +131,16 @@ export default function InvoicesTable({ filteredData }: { filteredData: any }) {
                     {hora}
                   </TableCell>
                   <TableCell
-                    sx={{ color: "#FFF", borderColor: "#69EAE2" }}
+                    sx={{
+                      color:
+                        row.status === undefined || row.status === "cancelado"
+                          ? "green"
+                          : "red",
+                      borderColor: "#69EAE2",
+                    }}
                     align='center'
                   >
-                    POR HACER
+                    CANCELADO
                   </TableCell>
                 </TableRow>
               );
