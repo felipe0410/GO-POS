@@ -11,13 +11,13 @@ import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import InvoicesTable from "./InvoicesTable";
 import { getAllInvoicesData } from "@/firebase";
+import InvoicesTableResponsive from "./InvoicesTableResponsive";
+import DateModal from "./DateModal";
 
 const Invoices = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
   const [data, setData] = useState<undefined | any[]>(undefined);
-
-  console.log(data);
 
   const debouncedHandleSearchChange = debounce(() => {}, 300);
 
@@ -42,8 +42,15 @@ const Invoices = () => {
       if (searchTerm === "") {
         return true;
       }
-      return Object.values(item).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
+
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      const [fecha, hora] = item?.date.split(" ");
+
+      return (
+        fecha.includes(lowerSearchTerm) ||
+        item.cliente.name.toLowerCase().includes(lowerSearchTerm) ||
+        String(item.invoice).toLowerCase().includes(lowerSearchTerm) ||
+        String(item.status).toLowerCase().includes(lowerSearchTerm)
       );
     });
     setfilter(filteredData);
@@ -98,20 +105,22 @@ const Invoices = () => {
                   e.preventDefault();
                 }}
               />
-              {/* <IconButton
-                  sx={{
-                    marginTop: "2px",
-                    paddingTop: "0px",
-                    marginBottom: "4px",
-                    paddingBottom: "0px",
-                  }}
-                >
-                  <Box component={"img"} src={"/images/scan.svg"} />
-                </IconButton> */}
+              <DateModal setSearchTerm={setSearchTerm} />
             </Paper>
           </Box>
-          <Box>
-            <InvoicesTable filteredData={filter} />
+          <Box sx={{ marginTop: "1.56rem", height: "100%" }}>
+            <Box
+              display={{ md: "none", lg: "block", xs: "none" }}
+              sx={{ height: "100%" }}
+            >
+              <InvoicesTable filteredData={filter} />
+            </Box>
+            <Box
+              display={{ lg: "none", md: "block", xs: "block" }}
+              sx={{ height: "100%" }}
+            >
+              <InvoicesTableResponsive filteredData={filter} />
+            </Box>
           </Box>
         </Box>
       </Paper>

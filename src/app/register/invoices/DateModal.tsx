@@ -6,22 +6,22 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import ReceiptIcon from "@mui/icons-material/Receipt";
-import Factura from "./Factura";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import DateTimeComponent from "./DateTimeComponent";
 
 const style = {
   position: "absolute" as "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 400,
+  width: 500,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
-const FacturaModal = ({ data }: { data: any }) => {
+const DateModal = ({ setSearchTerm }: { setSearchTerm: any }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -29,7 +29,7 @@ const FacturaModal = ({ data }: { data: any }) => {
   return (
     <div>
       <Button onClick={handleOpen}>
-        <ReceiptIcon sx={{ color: "#69EAE2" }} />
+        <CalendarMonthIcon sx={{ color: "#69EAE2" }} />
       </Button>
       <Modal
         aria-labelledby='transition-modal-title'
@@ -74,7 +74,10 @@ const FacturaModal = ({ data }: { data: any }) => {
                 />
               </Button>
             </Box>
-            <Factura data={data} />
+            <DateTimeComponent
+              setSearchTerm={setSearchTerm}
+              handleClose={handleClose}
+            />
           </Box>
         </Fade>
       </Modal>
@@ -82,4 +85,4 @@ const FacturaModal = ({ data }: { data: any }) => {
   );
 };
 
-export default FacturaModal;
+export default DateModal;
