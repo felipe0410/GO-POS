@@ -14,7 +14,6 @@ const VenderCards = ({
   selectedItems:any,
 }) => {
   // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
-  console.log('venderCards:::>',selectedItems)
   return (
     <Paper
       id='paper'

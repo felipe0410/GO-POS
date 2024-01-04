@@ -13,11 +13,10 @@ import {
   styled,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getAllCategoriesData, getAllProductsData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import debounce from "debounce";
-import { VenderContext } from "./Context_vender";
 import SlidebarVender from "./SlidebarVender";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -48,13 +47,13 @@ const Page = () => {
   const [filter, setfilter] = useState<any>();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedItems, setSelectedItems] = useState<any>([]);
-  // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
 
-  const debouncedHandleSearchChange = debounce(() => {}, 300);
+  const debouncedHandleSearchChange = debounce(() => { }, 1000);
 
-  const handleSearchChange = (event: any) => {
+  const handleSearchChange = async (event: any) => {
     setSearchTerm(event);
     debouncedHandleSearchChange();
+    filteredData(event)
   };
 
   const handleCategoryChange = (event: any) => {
@@ -72,8 +71,9 @@ const Page = () => {
     getAllProducts();
   }, []);
 
-  useEffect(() => {
-    const filteredData = data?.filter((item) => {
+
+  const filteredData = async (event: any) => {
+    const filterSearch: any = await data?.filter((item) => {
       if (searchTerm === "") {
         return true;
       }
@@ -81,20 +81,36 @@ const Page = () => {
         String(value).toLowerCase().includes(searchTerm.toLowerCase())
       );
     });
-    setfilter(filteredData);
-  }, [data, searchTerm]);
-
-  const addItemBySearch = () => {
-    if (filter?.length === 1) {
-      const cleanedPrice = Number(filter[0].price.replace(/[$,]/g, ""));
+    setfilter(filterSearch);
+    const foundProducts = data?.filter(producto => producto.barCode === event);
+    let productAlreadyInList
+    if (foundProducts?.length === 1) {
+      const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
       const newItem = {
-        ...filter[0],
+        ...foundProducts[0],
         acc: cleanedPrice,
         cantidad: 1,
       };
-      setSelectedItems([...selectedItems, newItem]);
+      const updatedItems = selectedItems?.map((item: any) => {
+        if (item.barCode === newItem.barCode) {
+          productAlreadyInList = true
+          return { ...item, cantidad: item.cantidad + 1 };
+        }
+        productAlreadyInList = false
+        return item;
+      });
+      if (!productAlreadyInList || selectedItems?.length === 0) {
+        await updatedItems.push(newItem);
+      }
+      setSelectedItems(updatedItems);
+      setSearchTerm("")
     }
-  };
+  }
+
+  useEffect(() => {
+    filteredData("")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   useEffect(() => {
     const categoriesData = async () => {
@@ -106,7 +122,6 @@ const Page = () => {
     };
     categoriesData();
   }, []);
-  console.log("%cContextselectedItems::>", "color:red", selectedItems);
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
       <Box
@@ -134,10 +149,8 @@ const Page = () => {
               <Paper
                 component='form'
                 onSubmit={(e: any) => {
-                  console.log(e);
                   e.preventDefault();
                   handleSearchChange(e.target[1].value);
-                  addItemBySearch();
                 }}
                 sx={{
                   display: "flex",
@@ -163,10 +176,8 @@ const Page = () => {
                     color: "#fff",
                   }}
                   placeholder='Buscar'
-                  onBlur={(e) => {
-                    handleSearchChange(e.target.value);
-                    e.preventDefault();
-                  }}
+                  value={searchTerm}
+                  onChange={(e) => handleSearchChange(e.target.value)}
                 />
                 <IconButton
                   sx={{
@@ -234,7 +245,8 @@ const Page = () => {
       <SlidebarVender
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
-      />
+        searchTerm={searchTerm}
+        handleSearchChange={handleSearchChange} />
     </Box>
   );
 };

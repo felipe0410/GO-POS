@@ -18,7 +18,6 @@ export default function VenderCard({
   setSelectedItems:any
   selectedItems:any
 }) {
-  console.log("selectedItems:::>", selectedItems)
 
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
     "&:last-child": {

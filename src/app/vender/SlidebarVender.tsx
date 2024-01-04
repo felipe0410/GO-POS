@@ -2,15 +2,16 @@ import CartItems from "@/components/CartItems";
 import DatosVenta from "@/components/DatosVenta";
 import Factura from "@/app/vender/Factura";
 import IncompleteCartItem from "@/components/IncompleteCartItem";
-import { Box, IconButton, SwipeableDrawer, Button, Typography, Divider, InputBase, InputAdornment, Badge, BadgeProps, styled, useMediaQuery, useTheme, Tooltip, TooltipProps, tooltipClasses } from "@mui/material";
+import { Box, IconButton, SwipeableDrawer, Button, Typography, Divider, InputBase, InputAdornment, Badge, BadgeProps, styled, useMediaQuery, useTheme, Tooltip, TooltipProps, tooltipClasses, Paper } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
+import Chip from '@mui/material/Chip';
 
 
-const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: any, setSelectedItems: any }) => {
+const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSearchChange }: { selectedItems: any, setSelectedItems: any, searchTerm: any, handleSearchChange: any }) => {
     const [open, setOpen] = useState(false)
     const [nextStep, setNextStep] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -38,6 +39,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: an
     let totalUnidades = 0;
     selectedItems?.forEach((element: any) => {
         totalUnidades += element.cantidad;
+        console.log(totalUnidades)
     });
     const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
     const generarNumeroFactura = () => {
@@ -210,7 +212,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: an
                                                 display: "flex",
                                                 flexDirection: "row",
                                                 justifyContent: "space-evenly",
-                                                width: "70%",
+                                                width: "100%",
                                                 marginTop: "1rem",
                                             }}
                                         >
@@ -247,8 +249,54 @@ const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: an
                                                     DOMICILIO
                                                 </Typography>
                                             </Button>
+                                            <>
+                                                <Chip
+                                                    label={
+                                                        <Typography>
+                                                            <span >#</span> {totalUnidades}
+                                                        </Typography>
+                                                    }
+                                                    color="error" />
+                                            </>
                                         </Box>
-                                        <Box sx={{ height: "100%" }}>
+                                        <Box sx={{ height: "100%", marginTop: '20px' }}>
+                                            <Paper
+                                                component='form'
+                                                onSubmit={(e: any) => {
+                                                    e.preventDefault();
+                                                    handleSearchChange(e.target[1].value);
+                                                }}
+                                                sx={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    color: "#fff",
+                                                    width: "100%",
+                                                    height: "2rem",
+                                                    borderRadius: "0.3125rem",
+                                                    background: "#2C3248",
+                                                }}
+                                            >
+                                                <InputBase
+                                                    sx={{
+                                                        ml: 1,
+                                                        flex: 1,
+                                                        color: "#fff",
+                                                    }}
+                                                    placeholder='codigo de barras'
+                                                    value={searchTerm}
+                                                    onChange={(e) => handleSearchChange(e.target.value)}
+                                                />
+                                                <IconButton
+                                                    sx={{
+                                                        marginTop: "2px",
+                                                        paddingTop: "0px",
+                                                        marginBottom: "4px",
+                                                        paddingBottom: "0px",
+                                                    }}
+                                                >
+                                                    <Box component={"img"} src={"/images/scan.svg"} />
+                                                </IconButton>
+                                            </Paper>
                                             <Box
                                                 sx={{
                                                     display: "flex",
@@ -591,8 +639,8 @@ const SlidebarVender = ({ selectedItems, setSelectedItems }: { selectedItems: an
                         )}
                     </Box>
                 </Box>
-            </SwipeableDrawer>
-        </Box>
+            </SwipeableDrawer >
+        </Box >
     )
 }
 
