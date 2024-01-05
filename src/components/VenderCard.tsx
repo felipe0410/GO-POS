@@ -5,26 +5,16 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
-import { Dispatch } from "react";
+import { Dispatch, useCallback } from "react";
 import { SelectedProduct } from "@/app/vender/interface";
 import { VenderContext } from "@/app/vender/Context_vender";
 
-export default function VenderCard({
-  filteredData,
-  setSelectedItems,
-  selectedItems,
-}: {
-  filteredData: any;
-  setSelectedItems:any
-  selectedItems:any
-}) {
-
-  const StyledCardContent = styled(CardContent)(({ theme }) => ({
-    "&:last-child": {
-      paddingBottom: "12px",
-    },
-  }));
-
+const StyledCardContent = styled(CardContent)(({ theme }) => ({
+  "&:last-child": {
+    paddingBottom: "12px",
+  },
+}));
+const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, }: { filteredData: any; setSelectedItems: any, selectedItems: any }) => {
   const handleDecrement = (product: any) => {
     const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
     const existingItem = selectedItems?.find(
@@ -49,14 +39,13 @@ export default function VenderCard({
         setSelectedItems(updatedItems);
       }
     }
-  };
+  }
 
   const handleIncrement = (product: any) => {
     const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
     const existingItem = selectedItems?.find(
       (item: any) => item.barCode === product.barCode
     );
-
     if (existingItem) {
       const updatedItems = selectedItems?.map((item: any) =>
         item.barCode === product.barCode
@@ -81,7 +70,7 @@ export default function VenderCard({
       console.log('newItems:::>', newItems)
       setSelectedItems([newItems, ...selectedItems])
     }
-  };
+  }
 
   return filteredData?.map((product: any) => {
     return (
@@ -224,4 +213,8 @@ export default function VenderCard({
       </Card>
     );
   });
-}
+})
+
+VenderCard.displayName = 'VenderCard';
+
+export default VenderCard

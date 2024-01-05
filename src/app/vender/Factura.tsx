@@ -24,7 +24,6 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     name: "",
     direction: "",
   });
-
   const setNuevaFactura = () => {
     setReciboPago(false);
     setSelectedItems([]);

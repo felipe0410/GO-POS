@@ -1,5 +1,5 @@
 import React, { Dispatch, useContext, useEffect, useState } from "react";
-import { Box, Paper } from "@mui/material";
+import { Box, Pagination, Paper } from "@mui/material";
 import VenderCard from "./VenderCard";
 import { SelectedProduct } from "@/app/vender/interface";
 import { VenderContext } from "@/app/vender/Context_vender";
@@ -10,10 +10,11 @@ const VenderCards = ({
   selectedItems,
 }: {
   filteredData: any;
-  setSelectedItems:any,
-  selectedItems:any,
+  setSelectedItems: any,
+  selectedItems: any,
 }) => {
-  // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
+
+
   return (
     <Paper
       id='paper'
@@ -42,6 +43,7 @@ const VenderCards = ({
           selectedItems={selectedItems}
         />
       </Box>
+
     </Paper>
   );
 };

@@ -30,6 +30,22 @@ const CartItems = ({
       return updatedItems;
     });
   };
+
+  const handleChange = (
+    event: any,
+    product: any
+  ) => {
+    const numericValue = Number(product.price.replace(/[^0-9.-]+/g, ''));
+    setSelectedItems((prevSelectedItems: any) => {
+      const updatedItems = prevSelectedItems.map((item: any) =>
+        item.barCode === product.barCode
+          ? { ...item, acc: (event.target.value * numericValue), cantidad: (event?.target?.value > 0 ? parseInt(event?.target?.value ?? 0) : 0) }
+          : item
+      );
+      return updatedItems;
+    });
+  };
+
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -53,7 +69,7 @@ const CartItems = ({
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
-              width: {xs:'7.5rem',sm:"10.2rem"},
+              width: { xs: '7.5rem', sm: "10.2rem" },
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -74,6 +90,9 @@ const CartItems = ({
             {product.price}
           </Typography>
         </Box>
+        <>
+          {console.log('product:::>', product)}
+        </>
         <InputBase
           sx={{
             width: "3rem",
@@ -87,6 +106,10 @@ const CartItems = ({
             background: "var(--Base-Form-BG, #2D303E)",
           }}
           value={product.cantidad}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            handleChange(event, product)
+          }
+          }
         />
         <Typography
           sx={{

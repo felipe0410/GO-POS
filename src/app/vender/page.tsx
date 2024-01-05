@@ -7,10 +7,13 @@ import {
   InputBase,
   InputLabel,
   MenuItem,
+  Pagination,
   Paper,
   Select,
   Typography,
   styled,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
@@ -48,13 +51,8 @@ const Page = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedItems, setSelectedItems] = useState<any>([]);
 
-  const debouncedHandleSearchChange = debounce(() => { }, 1000);
-
-  const handleSearchChange = async (event: any) => {
-    setSearchTerm(event);
-    debouncedHandleSearchChange();
-    filteredData(event)
-  };
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
   const handleCategoryChange = (event: any) => {
     setSelectedCategory(event.target.value);
@@ -73,7 +71,8 @@ const Page = () => {
 
 
   const filteredData = async (event: any) => {
-    const filterSearch: any = await data?.filter((item) => {
+    const foundProducts = data?.filter(producto => producto.barCode === event);
+    const filterSearch: any = data?.filter((item) => {
       if (searchTerm === "") {
         return true;
       }
@@ -82,7 +81,6 @@ const Page = () => {
       );
     });
     setfilter(filterSearch);
-    const foundProducts = data?.filter(producto => producto.barCode === event);
     let productAlreadyInList
     if (foundProducts?.length === 1) {
       const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
@@ -94,7 +92,7 @@ const Page = () => {
       const updatedItems = selectedItems?.map((item: any) => {
         if (item.barCode === newItem.barCode) {
           productAlreadyInList = true
-          return { ...item, cantidad: item.cantidad + 1 };
+          return { ...item, cantidad: item.cantidad + 1, acc: item.acc + newItem.acc };
         }
         productAlreadyInList = false
         return item;
@@ -106,6 +104,16 @@ const Page = () => {
       setSearchTerm("")
     }
   }
+
+  // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
+  const itemsPerPage = 12; // Número de elementos por página
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Obtener la página actual de la matriz filtrada
+  const currentDataPage = filter?.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filter?.length / itemsPerPage);
 
   useEffect(() => {
     filteredData("")
@@ -141,7 +149,7 @@ const Page = () => {
           <Box
             sx={{
               padding: "40px 48px",
-              height: "100%",
+              height: {xs:"90%",sm:'105%'},
               textAlign: "-webkit-center",
             }}
           >
@@ -150,7 +158,7 @@ const Page = () => {
                 component='form'
                 onSubmit={(e: any) => {
                   e.preventDefault();
-                  handleSearchChange(e.target[1].value);
+                  filteredData(e.target[1].value);
                 }}
                 sx={{
                   display: "flex",
@@ -177,7 +185,10 @@ const Page = () => {
                   }}
                   placeholder='Buscar'
                   value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onChange={(e) => {
+                    console.log('e.target.value::>', e.target.value)
+                    setSearchTerm(e.target.value)
+                  }}
                 />
                 <IconButton
                   sx={{
@@ -209,35 +220,16 @@ const Page = () => {
               >
                 AGREGAR DESDE CATALOGO
               </Typography>
-              <FormControl sx={{ m: 1, minWidth: 170 }} variant='standard'>
-                <InputLabel id='category-label' style={{ color: "#69EAE2" }}>
-                  CATEGORIAS
-                </InputLabel>
-                <Select
-                  labelId='category-label'
-                  autoWidth
-                  input={<BootstrapInput />}
-                  style={{ color: "#FFF" }}
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                >
-                  <MenuItem value=''>
-                    <em>Categorias</em>
-                  </MenuItem>
-                  {category?.map((tag) => (
-                    <MenuItem key={tag} value={tag}>
-                      {tag}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Box>
             <Box sx={{ marginTop: { sm: "1.56rem" }, height: "70%" }}>
               <VenderCards
-                filteredData={filter}
+                filteredData={currentDataPage}
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
               />
+              <Box id='pagination' sx={{ filter: "invert(1)", display: "flex", justifyContent: "center", marginTop: '20px', width: { xs: '110%', sm: "100%" } }} >
+                <Pagination sx={{ color: "#fff" }} onChange={(e, page) => setCurrentPage(page)} count={totalPages} shape="circular" size={matches ? "large" : "small"} />
+              </Box>
             </Box>
           </Box>
         </Paper>
@@ -246,7 +238,9 @@ const Page = () => {
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
         searchTerm={searchTerm}
-        handleSearchChange={handleSearchChange} />
+        filteredData={filteredData}
+        setSearchTerm={setSearchTerm}
+      />
     </Box>
   );
 };
