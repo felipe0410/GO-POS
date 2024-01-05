@@ -505,7 +505,6 @@ export const loginUser = async (email: any, password: any) => {
       password
     );
     const user = userCredential.user;
-    console.log(user);
     return user;
   } catch (error: any) {
     const errorCode = error.code;
@@ -561,7 +560,6 @@ export const saveDataUser = async (uid: any, userData: any) => {
 export const getEstablishmentData = async () => {
   try {
     const encodedUserUID = localStorage.getItem('user');
-    console.log(encodedUserUID)
     if (!encodedUserUID) {
       console.error('No se encontró un UID en el local storage');
       return null;

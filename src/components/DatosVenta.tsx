@@ -86,12 +86,11 @@ const DatosVenta = (props: any) => {
       await createInvoice(factura.invoice, {
         ...factura,
       });
-      console.log("se creo con exito");
       setLoading(false);
       setReciboPago(true);
       setDatosGuardados(false);
     } catch (error) {
-      console.error("falló el primer intento");
+      console.error("falló el primer intento",error);
     }
   };
 

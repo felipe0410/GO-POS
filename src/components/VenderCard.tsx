@@ -67,7 +67,6 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
         barCode: product.barCode,
         acc: cleanedPrice,
       };
-      console.log('newItems:::>', newItems)
       setSelectedItems([newItems, ...selectedItems])
     }
   }

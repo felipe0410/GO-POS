@@ -29,7 +29,6 @@ const ImgInput = ({ data, setData, folderSaved, fiel = "img", imageBase64, setIm
         }
     };
     const uploadImageToFirebase = (imgRef: any, file: any) => {
-        console.log("entro a upload");
         const imgUpload = uploadBytesResumable(imgRef, file);
         imgUpload.on(
             "state_changed",
@@ -50,7 +49,6 @@ const ImgInput = ({ data, setData, folderSaved, fiel = "img", imageBase64, setIm
             },
             async () => {
                 const url = await getDownloadURL(imgUpload.snapshot.ref);
-                console.log('finalice')
                 setupload2(false)
                 setData((prevState: any) => ({
                     ...prevState,

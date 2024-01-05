@@ -223,7 +223,7 @@ const Page = () => {
                 <Divider sx={{ background: "#69EAE2", marginTop: "12px" }} />
               </Box>
             </Box>
-            <Box sx={{ marginTop: "1.56rem", height: "90%" }}>
+            <Box sx={{ marginTop: "1.56rem", height: { xs: '90%', sm: "80%" } }}>
               {isTable ? (
                 <>
                   <Box
@@ -234,7 +234,7 @@ const Page = () => {
                   </Box>
                   <Box
                     display={{ lg: "none", md: "block", xs: "block" }}
-                    sx={{ height: "100%" }}
+                    sx={{ height: "80%" }}
                   >
                     <TableResponsive filteredData={currentDataPage} />
                   </Box>

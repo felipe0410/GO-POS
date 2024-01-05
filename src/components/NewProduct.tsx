@@ -155,7 +155,6 @@ export default function NewProduct() {
   };
 
   const user = atob(localStorage?.getItem('user') ?? "")
-  console.log('user:::>', user)
 
   useEffect(() => {
     const measurementsData = async () => {

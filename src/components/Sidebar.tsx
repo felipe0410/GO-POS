@@ -338,7 +338,6 @@ export default function Sidebar({
                 paddingLeft: "20px",
               }}
               onClick={async () => {
-                console.log("entre aqui");
                 try {
                   await removeCookieUser("user", "", {
                     expires: new Date(0),

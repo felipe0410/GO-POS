@@ -90,9 +90,6 @@ const CartItems = ({
             {product.price}
           </Typography>
         </Box>
-        <>
-          {console.log('product:::>', product)}
-        </>
         <InputBase
           sx={{
             width: "3rem",

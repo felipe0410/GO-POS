@@ -84,7 +84,6 @@ const Invoices = () => {
             <Paper
               component='form'
               onSubmit={(e: any) => {
-                console.log(e);
                 e.preventDefault();
                 handleSearchChange(e.target[1].value);
               }}
