@@ -187,9 +187,16 @@ export default function InvoicesTableResponsive({
                             </TableCell>
                             <TableCell
                               align='center'
-                              sx={{ color: "#FFF", borderColor: "#69EAE2" }}
+                              sx={{
+                                color:
+                                  row.status === undefined ||
+                                  row.status === "cancelado"
+                                    ? "green"
+                                    : "red",
+                                borderColor: "#69EAE2",
+                              }}
                             >
-                              POR HACER
+                              {row.status ? row.status : "CANCELADO"}
                             </TableCell>
                           </TableRow>
                         </Table>

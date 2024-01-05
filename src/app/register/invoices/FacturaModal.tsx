@@ -8,6 +8,9 @@ import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Factura from "./Factura";
+import { useReactToPrint } from "react-to-print";
+import { Typography } from "@mui/material";
+import jsPDF from "jspdf";
 
 const style = {
   position: "absolute" as "absolute",
@@ -25,6 +28,29 @@ const FacturaModal = ({ data }: { data: any }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const componentRef: any = React.useRef();
+
+  const handleDescargarPDF = () => {
+    const content = componentRef.current;
+    const pdf = new jsPDF({
+      unit: "px",
+      format: "A4",
+      orientation: "portrait",
+    });
+    pdf.html(content, {
+      callback: () => {
+        pdf.save("mi_factura.pdf");
+      },
+    });
+  };
+
+  const handlePrint = useReactToPrint({
+    content: () => {
+      const content = componentRef.current;
+      return content;
+    },
+  });
 
   return (
     <div>
@@ -74,7 +100,72 @@ const FacturaModal = ({ data }: { data: any }) => {
                 />
               </Button>
             </Box>
-            <Factura data={data} />
+            <Box
+              ref={componentRef}
+              sx={{
+                "@media print": {
+                  "@page": {
+                    size: `${componentRef?.current?.clientWidth}px ${
+                      componentRef?.current?.clientHeight * 1.1
+                    }px`,
+                  },
+                  width: "100%",
+                },
+              }}
+            >
+              <Factura data={data} />
+            </Box>
+            <Box
+              sx={{
+                marginTop: "10px",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <Button
+                onClick={handleDescargarPDF}
+                sx={{
+                  width: "8.4375rem",
+                  height: "2.1875rem",
+                }}
+                style={{ borderRadius: "0.5rem", background: "#69EAE2" }}
+              >
+                <Typography
+                  sx={{
+                    color: "#1F1D2B",
+                    fontFamily: "Nunito",
+                    fontSize: "0.75rem",
+                    fontStyle: "normal",
+                    fontWeight: 800,
+                    lineHeight: "140%",
+                  }}
+                >
+                  DESCARGAR
+                </Typography>
+              </Button>
+              <Button
+                onClick={handlePrint}
+                sx={{
+                  width: "8.4375rem",
+                  height: "2.1875rem",
+                }}
+                style={{ borderRadius: "0.5rem", background: "#69EAE2" }}
+              >
+                <Typography
+                  sx={{
+                    color: "#1F1D2B",
+                    fontFamily: "Nunito",
+                    fontSize: "0.75rem",
+                    fontStyle: "normal",
+                    fontWeight: 800,
+                    lineHeight: "140%",
+                  }}
+                >
+                  IMPRIMIR
+                </Typography>
+              </Button>
+            </Box>
           </Box>
         </Fade>
       </Modal>

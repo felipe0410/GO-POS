@@ -1,11 +1,9 @@
 "use client";
-import { Box, Typography, Divider, Button } from "@mui/material";
+import { Box, Typography, Divider } from "@mui/material";
 import React from "react";
 import { facturaStyles } from "./styles";
 import JsBarcode from "jsbarcode";
 import { getEstablishmentData } from "@/firebase";
-import { useReactToPrint } from "react-to-print";
-import { jsPDF } from "jspdf";
 
 const Factura = ({ data }: { data: any }) => {
   const [establishmentData, setEstablishmentData] = React.useState({
@@ -15,28 +13,6 @@ const Factura = ({ data }: { data: any }) => {
     nameEstablishment: "",
     name: "",
     direction: "",
-  });
-  const componentRef: any = React.useRef();
-
-  const handleDescargarPDF = () => {
-    const content = componentRef.current;
-    const pdf = new jsPDF({
-      unit: "px",
-      format: "a4",
-      orientation: "portrait",
-    });
-    pdf.html(content, {
-      callback: () => {
-        pdf.save("mi_archivo.pdf");
-      },
-    });
-  };
-
-  const handlePrint = useReactToPrint({
-    content: () => {
-      const content = componentRef.current;
-      return content;
-    },
   });
 
   React.useEffect(() => {
@@ -62,18 +38,9 @@ const Factura = ({ data }: { data: any }) => {
         }}
       >
         <Box
-          ref={componentRef}
           sx={{
             padding: "10px",
             marginTop: "1rem",
-            "@media print": {
-              "@page": {
-                size: `${componentRef?.current?.clientWidth}px ${
-                  componentRef?.current?.clientHeight * 1.1
-                }px`,
-              },
-              width: "100%",
-            },
           }}
         >
           <Box
@@ -314,57 +281,6 @@ const Factura = ({ data }: { data: any }) => {
             </Box>
           </Box>
         </Box>
-      </Box>
-      <Box
-        sx={{
-          marginTop: "10px",
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-        }}
-      >
-        <Button
-          onClick={handleDescargarPDF}
-          sx={{
-            width: "8.4375rem",
-            height: "2.1875rem",
-          }}
-          style={{ borderRadius: "0.5rem", background: "#69EAE2" }}
-        >
-          <Typography
-            sx={{
-              color: "#1F1D2B",
-              fontFamily: "Nunito",
-              fontSize: "0.75rem",
-              fontStyle: "normal",
-              fontWeight: 800,
-              lineHeight: "140%",
-            }}
-          >
-            DESCARGAR
-          </Typography>
-        </Button>
-        <Button
-          onClick={handlePrint}
-          sx={{
-            width: "8.4375rem",
-            height: "2.1875rem",
-          }}
-          style={{ borderRadius: "0.5rem", background: "#69EAE2" }}
-        >
-          <Typography
-            sx={{
-              color: "#1F1D2B",
-              fontFamily: "Nunito",
-              fontSize: "0.75rem",
-              fontStyle: "normal",
-              fontWeight: 800,
-              lineHeight: "140%",
-            }}
-          >
-            IMPRIMIR
-          </Typography>
-        </Button>
       </Box>
     </>
   );
