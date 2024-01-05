@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
 import Chip from '@mui/material/Chip';
+import { getAllInvoicesData } from "@/firebase";
 
 
 const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredData, setSearchTerm }: { selectedItems: any, setSelectedItems: any, searchTerm: any, filteredData: any, setSearchTerm: any }) => {
@@ -21,6 +22,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
     const [descuento, setDescuento] = useState(0);
     const [inputValue, setInputValue] = useState("");
     const [subtotal, setSubtotal] = useState(0);
+    const [dataInvocie, setDataInvoice] = useState([])
 
     const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
         <Tooltip {...props} classes={{ popper: className }} />
@@ -53,9 +55,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
     const initialContadorFactura = storedContadorFactura
         ? parseInt(storedContadorFactura, 10)
         : 1;
-    const [contadorFactura, setContadorFactura] = useState(
-        initialContadorFactura
-    );
+    const [contadorFactura, setContadorFactura] = useState(initialContadorFactura);
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     };
@@ -81,8 +81,13 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
     }));
 
     useEffect(() => {
-        localStorage.setItem("contadorFactura", contadorFactura.toString());
-    }, [contadorFactura]);
+        getAllInvoicesData(setDataInvoice)
+    }, [])
+
+    useEffect(() => {
+        setContadorFactura(dataInvocie.length)
+        localStorage.setItem("contadorFactura", (dataInvocie.length).toString());
+    }, [contadorFactura, dataInvocie]);
 
     useEffect(() => {
         const nuevoSubtotal: number = (selectedItems ?? []).reduce(

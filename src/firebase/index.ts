@@ -180,39 +180,39 @@ export const updateProductData = async (uid: any, newData: any) => {
   }
 };
 
-// export const updateProductDataCantidad = async (uid: any, newData: any) => {
-//   console.log(uid)
-//   try {
-//     const establecimientoDocRef = doc(
-//       db,
-//       "establecimientos",
-//       `${user().decodedString}`
-//     );
-//     const productCollectionRef = collection(establecimientoDocRef, "productos");
-//     const productDocRef = doc(productCollectionRef, uid);
+export const updateProductDataCantidad = async (uid: any, newData: any) => {
+  console.log(uid)
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const productDocRef = doc(productCollectionRef, uid);
 
-//     const docSnapshot = await getDoc(productDocRef);
+    const docSnapshot = await getDoc(productDocRef);
 
-//     if (docSnapshot.exists()) {
-//       const existingData = docSnapshot.data();
-//       if (existingData) {
-//         const newCantidad = existingData.cantidad - newData.cantidad;
+    if (docSnapshot.exists()) {
+      const existingData = docSnapshot.data();
+      if (existingData) {
+        const newCantidad = existingData.cantidad - newData.cantidad;
 
-//         if (newCantidad >= 0) {
-//           // Actualizar el documento con la nueva cantidad
-//           await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
-//           console.log("Documento actualizado con éxito.");
-//         } else {
-//           console.log("No hay suficiente cantidad para actualizar.");
-//         }
-//       }
-//     } else {
-//       console.log("El documento no existe.");
-//     }
-//   } catch (error) {
-//     console.error("Error al actualizar el documento: ", error);
-//   }
-// };
+        if (newCantidad >= 0) {
+          // Actualizar el documento con la nueva cantidad
+          await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
+          console.log("Documento actualizado con éxito.");
+        } else {
+          console.log("No hay suficiente cantidad para actualizar.");
+        }
+      }
+    } else {
+      console.log("El documento no existe.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el documento: ", error);
+  }
+};
 
 
 // Función para eliminar un producto
@@ -279,28 +279,27 @@ export const getAllInvoicesData = async (callback: any) => {
     );
     const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
     const orderedQuery = query(invoiceCollectionRef, orderBy("invoice"));
-    getDocs(orderedQuery)
-      .then((querySnapshot) => {
-        const invoiceData: any[] = [];
-        querySnapshot.forEach((doc) => {
-          invoiceData.push({ id: doc.id, ...doc.data() });
-        });
 
-        callback(invoiceData);
-      })
-      .catch((error) => {
-        console.error("Error fetching initial data:", error);
-        callback(null);
-      });
+    // Obtener datos iniciales
+    const initialQuerySnapshot = await getDocs(orderedQuery);
+    const initialInvoiceData = initialQuerySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    callback(initialInvoiceData);
+
+    // Establecer observador para cambios en tiempo real
     const unsubscribe = onSnapshot(orderedQuery, (querySnapshot: any) => {
-      const invoiceData: any[] = [];
-      querySnapshot.forEach((doc: any) => {
-        invoiceData.push({ id: doc.id, ...doc.data() });
-      });
-      callback(invoiceData);
-      return invoiceData;
+      const updatedInvoiceData = querySnapshot.docs.map((doc: any) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      callback(updatedInvoiceData);
     });
-    // Return the unsubscribe function to stop observing changes
+
+    // Devolver la función para detener la observación de cambios
     return unsubscribe;
   } catch (error) {
     console.error("Error setting up data observer: ", error);
