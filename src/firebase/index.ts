@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import {
   DocumentReference,
@@ -181,7 +181,7 @@ export const updateProductData = async (uid: any, newData: any) => {
 };
 
 // Función para eliminar un producto
-export const deleteProduct = async (uid: any) => {
+export const deleteProduct = async (uid: any, img: string) => {
   try {
     const establecimientoDocRef = doc(
       db,
@@ -190,10 +190,10 @@ export const deleteProduct = async (uid: any) => {
     );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
-
     const docSnapshot = await getDoc(productDocRef);
-
     if (docSnapshot.exists()) {
+      const previousImageRef = ref(storage, img);
+      await deleteObject(previousImageRef);
       await deleteDoc(productDocRef);
       return true;
     } else {

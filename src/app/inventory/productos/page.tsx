@@ -6,7 +6,10 @@ import {
   Divider,
   IconButton,
   InputBase,
+  Pagination,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
@@ -22,6 +25,14 @@ const Page = () => {
   const [data, setData] = React.useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>()
+  const itemsPerPage = 12;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentDataPage = filter?.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filter?.length / itemsPerPage);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
 
   const styleViewActive = {
     borderRadius: "0.625rem",
@@ -212,25 +223,28 @@ const Page = () => {
                 <Divider sx={{ background: "#69EAE2", marginTop: "12px" }} />
               </Box>
             </Box>
-            <Box sx={{ marginTop: "1.56rem", height: "100%" }}>
+            <Box sx={{ marginTop: "1.56rem", height: "90%" }}>
               {isTable ? (
                 <>
                   <Box
                     display={{ md: "none", lg: "block", xs: "none" }}
                     sx={{ height: "100%" }}
                   >
-                    <StickyHeadTable filteredData={filter} />
+                    <StickyHeadTable filteredData={currentDataPage} />
                   </Box>
                   <Box
                     display={{ lg: "none", md: "block", xs: "block" }}
                     sx={{ height: "100%" }}
                   >
-                    <TableResponsive filteredData={filter} />
+                    <TableResponsive filteredData={currentDataPage} />
                   </Box>
                 </>
               ) : (
-                <ProductCards filteredData={filter} />
+                <ProductCards filteredData={currentDataPage} />
               )}
+              <Box id='pagination' sx={{ filter: "invert(1)", display: "flex", justifyContent: "center", marginTop: '20px', width: { xs: '115%', sm: "100%" }, marginLeft: { xs: '-15px', sm: '0' } }} >
+                <Pagination sx={{ color: "#fff" }} onChange={(e, page) => setCurrentPage(page)} count={totalPages} shape="circular" size={matches ? "large" : "small"} />
+              </Box>
             </Box>
           </Box>
         </Paper>

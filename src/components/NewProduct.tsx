@@ -154,6 +154,9 @@ export default function NewProduct() {
     }
   };
 
+  const user = atob(localStorage?.getItem('user') ?? "")
+  console.log('user:::>', user)
+
   useEffect(() => {
     const measurementsData = async () => {
       try {
@@ -392,7 +395,7 @@ export default function NewProduct() {
                       categorySelect
                     ) : input.type === "img" ? (
                       <Box id='contianer img' sx={{ width: { xs: '200%', sm: '150%' }, height: '100%' }}>
-                        <ImgInput data={data} setData={setData} folderSaved={"images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
+                        <ImgInput data={data} setData={setData} folderSaved={user.length > 0 ? user : "images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
                       </Box>
                     ) : input.type === "amount" ? (
                       amountInput

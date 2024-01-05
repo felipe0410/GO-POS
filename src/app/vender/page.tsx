@@ -19,7 +19,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
 import { getAllCategoriesData, getAllProductsData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
-import debounce from "debounce";
 import SlidebarVender from "./SlidebarVender";
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -106,7 +105,7 @@ const Page = () => {
   }
 
   // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
-  const itemsPerPage = 12; // Número de elementos por página
+  const itemsPerPage = 12; 
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -149,7 +148,7 @@ const Page = () => {
           <Box
             sx={{
               padding: "40px 48px",
-              height: {xs:"90%",sm:'105%'},
+              height: { xs: "90%", sm: '105%' },
               textAlign: "-webkit-center",
             }}
           >
@@ -227,7 +226,7 @@ const Page = () => {
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
               />
-              <Box id='pagination' sx={{ filter: "invert(1)", display: "flex", justifyContent: "center", marginTop: '20px', width: { xs: '110%', sm: "100%" } }} >
+              <Box id='pagination' sx={{ filter: "invert(1)", display: "flex", justifyContent: "center", marginTop: '20px', width: { xs: '115%', sm: "100%" }, marginLeft: { xs: '-15px', sm: '0' } }} >
                 <Pagination sx={{ color: "#fff" }} onChange={(e, page) => setCurrentPage(page)} count={totalPages} shape="circular" size={matches ? "large" : "small"} />
               </Box>
             </Box>

@@ -11,7 +11,6 @@ import {
   CardActions,
   OutlinedInput,
 } from "@mui/material";
-import CancelIcon from "@mui/icons-material/Cancel";
 import Badge from "@mui/material/Badge";
 import { styled } from "@mui/material/styles";
 import {
@@ -19,8 +18,6 @@ import {
   addMeasurements,
   getAllCategoriesData,
   getAllMeasurementsDataa,
-  removeCategory,
-  removeMeasurements,
 } from "@/firebase";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import DeleteModal from "@/app/inventory/agregarProductos/deleteModal";
