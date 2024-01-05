@@ -105,7 +105,7 @@ const Page = () => {
   }
 
   // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
-  const itemsPerPage = 12; 
+  const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -133,7 +133,7 @@ const Page = () => {
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
       <Box
         id='conainer_vender'
-        sx={{ width: { xs: "100%", sm: "calc(100% - 25.5625rem)" } }}
+        sx={{ width: { xs: "100%", lg: "calc(100% - 25.5625rem)" } }}
       >
         <Header title='VENDER' />
         <Paper

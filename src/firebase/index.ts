@@ -180,6 +180,41 @@ export const updateProductData = async (uid: any, newData: any) => {
   }
 };
 
+// export const updateProductDataCantidad = async (uid: any, newData: any) => {
+//   console.log(uid)
+//   try {
+//     const establecimientoDocRef = doc(
+//       db,
+//       "establecimientos",
+//       `${user().decodedString}`
+//     );
+//     const productCollectionRef = collection(establecimientoDocRef, "productos");
+//     const productDocRef = doc(productCollectionRef, uid);
+
+//     const docSnapshot = await getDoc(productDocRef);
+
+//     if (docSnapshot.exists()) {
+//       const existingData = docSnapshot.data();
+//       if (existingData) {
+//         const newCantidad = existingData.cantidad - newData.cantidad;
+
+//         if (newCantidad >= 0) {
+//           // Actualizar el documento con la nueva cantidad
+//           await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
+//           console.log("Documento actualizado con éxito.");
+//         } else {
+//           console.log("No hay suficiente cantidad para actualizar.");
+//         }
+//       }
+//     } else {
+//       console.log("El documento no existe.");
+//     }
+//   } catch (error) {
+//     console.error("Error al actualizar el documento: ", error);
+//   }
+// };
+
+
 // Función para eliminar un producto
 export const deleteProduct = async (uid: any, img: string) => {
   try {

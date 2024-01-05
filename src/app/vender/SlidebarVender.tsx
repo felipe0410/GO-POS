@@ -40,7 +40,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
     selectedItems?.forEach((element: any) => {
         totalUnidades += element.cantidad;
     });
-    const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+    const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
     const generarNumeroFactura = () => {
         return String(contadorFactura).padStart(7, "0");
     };
@@ -112,7 +112,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
                     style: {
                         background: "transparent",
                         border: "none",
-                        width: !matchesSM ? "100%" : "95%",
+                        width: !matchesSM ? "45%" : "95%",
                     },
                 }}
                 onClose={() => setOpen(false)}
@@ -131,7 +131,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
                         overflow: "hidden",
                         top: 0,
                         right: 0,
-                        width: { xs: '100%', sm: "25.5625rem" },
+                        width: { xs: '100%', lg: "25.5625rem" },
                         borderRadius: "10px 0px 0px 10px",
                     }}
                 >
@@ -144,7 +144,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
                             />
                         ) : (
                             <>
-                                <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                                <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
                                     <Button sx={{ float: "right" }} onClick={() => setOpen(false)}>
                                         <CloseIcon sx={{ color: '#fff' }} />
                                     </Button>

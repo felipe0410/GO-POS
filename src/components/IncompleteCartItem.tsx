@@ -30,11 +30,19 @@ const IncompleteCartItem = ({
     return `${year}${month}${day}${hours}${minutes}`;
   };
 
+  const validationDisabled = incompletedItem.acc > 0 && incompletedItem.productName.length > 0
   const handleOnChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     field: any
   ) => {
-    setIncompletedItem({ ...incompletedItem, [field]: event.target.value });
+    const validationParseInt = parseInt(event.target.value)
+    const validation = field === 'cantidad'
+      ? Number.isNaN(validationParseInt)
+        ? 0
+        : validationParseInt
+      : event.target.value
+    console.log(validation)
+    setIncompletedItem({ ...incompletedItem, [field]: validation });
   };
 
   const pushIncompletedItem = async () => {
@@ -173,6 +181,7 @@ const IncompleteCartItem = ({
           }
         />
         <Button
+          disabled={!validationDisabled}
           onClick={() => pushIncompletedItem()}
           variant='outlined'
           sx={{
@@ -181,6 +190,7 @@ const IncompleteCartItem = ({
             minWidth: 0,
             padding: 0,
             marginLeft: { xs: '20px', sm: "1.6rem" },
+            filter: validationDisabled ? 'invert(0)' : 'invert(50%)'
           }}
           style={{
             borderRadius: "0.5rem",
@@ -190,6 +200,14 @@ const IncompleteCartItem = ({
           <Box sx={{ width: '50%' }} component={"img"} src={"/images/okay.svg"} />
         </Button>
         <Button
+          onClick={() => setIncompletedItem({
+            productName: "",
+            price: "",
+            nota: "",
+            cantidad: 0,
+            acc: 0,
+            barCode: "",
+          })}
           variant='outlined'
           sx={{
             height: { xs: '2rem', sm: "3rem" },
