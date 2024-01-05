@@ -22,10 +22,15 @@ import {
 import { inputsEdit } from "@/data/inputs";
 import { NumericFormat } from "react-number-format";
 import { Input as BaseInput, InputProps } from "@mui/base/Input";
-import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  deleteObject,
+  getDownloadURL,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { ColorRing } from "react-loader-spinner";
 import CloseIcon from "@mui/icons-material/Close";
-import CreateTwoToneIcon from '@mui/icons-material/CreateTwoTone';
+import CreateTwoToneIcon from "@mui/icons-material/CreateTwoTone";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -90,7 +95,8 @@ const ModalContent = styled(Paper)(
     border-radius: 0.625rem;
     padding: 24px;
     width: 48.6875rem;
-    height: 35rem;  `
+    height: 35rem;
+  `
 );
 
 export default function EditModal(props: any) {
@@ -105,6 +111,8 @@ export default function EditModal(props: any) {
   const [productExist, setProductExist] = React.useState(false);
   const fileRef = React.useRef<HTMLInputElement>(null);
 
+  const previousImageUrlRef = React.useRef<string | null>(null);
+
   const uploadImage = (fileRef: React.RefObject<HTMLInputElement>) => {
     if (fileRef.current?.files?.length) {
       const file = fileRef.current.files[0];
@@ -115,28 +123,25 @@ export default function EditModal(props: any) {
       };
       reader.readAsDataURL(file);
     } else {
-      console.error("No file selected");
+      console.error("no file selected");
     }
   };
 
-  const handleAcceptImage = (fileRef: any) => {
+  const handleAcceptImage = (fileRef: React.RefObject<HTMLInputElement>) => {
     if (fileRef.current?.files?.length) {
       const file = fileRef.current.files[0];
       const fileName = Date.now() + "_" + file.name;
       const imgRef = ref(storage, "images/" + fileName);
+      previousImageUrlRef.current = product.image;
       uploadImageToFirebase(imgRef, file);
       setImageBase64("");
     }
   };
 
-  const handleCancel = () => {
-    setImageBase64("");
-    setUpload(false);
-  };
-
-  const uploadImageToFirebase = (imgRef: any, file: any) => {
+  const uploadImageToFirebase = (imgRef: any, file: File) => {
     setLoading(true);
     const imgUpload = uploadBytesResumable(imgRef, file);
+
     imgUpload.on(
       "state_changed",
       ({ state }) => {
@@ -152,19 +157,90 @@ export default function EditModal(props: any) {
         }
       },
       (err) => {
-        console.error(err);
+        console.error("Error during upload:", err);
+        setLoading(false);
       },
       async () => {
-        console.log(getDownloadURL);
-        const url = await getDownloadURL(imgUpload.snapshot.ref);
-        setProduct((prevState: any) => ({
-          ...prevState,
-          image: url,
-        }));
-        setLoading(false);
+        try {
+          const url = await getDownloadURL(imgUpload.snapshot.ref);
+          if (previousImageUrlRef.current) {
+            const previousImageRef = ref(storage, previousImageUrlRef.current);
+            await deleteObject(previousImageRef);
+          }
+          setProduct((prevState: any) => ({
+            ...prevState,
+            image: url,
+          }));
+        } catch (error) {
+          console.error("Error getting download URL:", error);
+        } finally {
+          setLoading(false);
+        }
       }
     );
   };
+
+  // const uploadImage = (fileRef: React.RefObject<HTMLInputElement>) => {
+  //   if (fileRef.current?.files?.length) {
+  //     const file = fileRef.current.files[0];
+  //     const reader = new FileReader();
+  //     reader.onload = (event) => {
+  //       const base64String: any = event?.target?.result;
+  //       if (base64String) setImageBase64(base64String);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   } else {
+  //     console.error("No file selected");
+  //   }
+  // };
+
+  // const handleAcceptImage = (fileRef: any) => {
+  //   if (fileRef.current?.files?.length) {
+  //     const file = fileRef.current.files[0];
+  //     const fileName = Date.now() + "_" + file.name;
+  //     const imgRef = ref(storage, "images/" + fileName);
+  //     uploadImageToFirebase(imgRef, file);
+  //     setImageBase64("");
+  //   }
+  // };
+
+  // const uploadImageToFirebase = (imgRef: any, file: any) => {
+  //   setLoading(true);
+  //   const imgUpload = uploadBytesResumable(imgRef, file);
+  //   imgUpload.on(
+  //     "state_changed",
+  //     ({ state }) => {
+  //       switch (state) {
+  //         case "paused":
+  //           console.log("Upload is paused");
+  //           break;
+  //         case "running":
+  //           console.log("Upload is running");
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //     },
+  //     (err) => {
+  //       console.error(err);
+  //     },
+  //     async () => {
+  //       console.log(getDownloadURL);
+  //       const url = await getDownloadURL(imgUpload.snapshot.ref);
+  //       setProduct((prevState: any) => ({
+  //         ...prevState,
+  //         image: url,
+  //       }));
+  //       setLoading(false);
+  //     }
+  //   );
+  // };
+
+  const handleCancel = () => {
+    setImageBase64("");
+    setUpload(false);
+  };
+
   const inputOnChange = (field: string, value: string) => {
     setProduct({ ...product, [field]: value });
   };
@@ -220,7 +296,12 @@ export default function EditModal(props: any) {
       </IconButton>
 
       <Modal id='modal' open={open} onClose={handleClose}>
-        <ModalContent sx={{ boxShadow: "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2" }}>
+        <ModalContent
+          sx={{
+            boxShadow:
+              "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2",
+          }}
+        >
           <Box
             sx={{
               position: "relative",
@@ -258,28 +339,39 @@ export default function EditModal(props: any) {
           <Box
             sx={{
               display: "flex",
-              flexDirection: { xs: 'column', sm: "row" },
+              flexDirection: { xs: "column", sm: "row" },
               width: "100%",
               height: "85%",
-              overflowY: 'auto'
+              overflowY: "auto",
             }}
           >
-            <Box sx={{
-              overflowY: "hidden",
-              border: "solid 11px #fff",
-              width: "47%",
-              alignSelf: "center",
-              background: { xs: 'linear-gradient(rgb(31 29 43 / 0%) 51%, #FFF 57%)', sm: "#fff" },
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "space-between",
-              height: "95%",
-              marginRight: { sm: "47px" },
-              borderRadius: "10px",
-              alignItems: "flex-end"
-            }}>
+            <Box
+              sx={{
+                overflowY: "hidden",
+                border: "solid 11px #fff",
+                width: "47%",
+                alignSelf: "center",
+                background: {
+                  xs: "linear-gradient(rgb(31 29 43 / 0%) 51%, #FFF 57%)",
+                  sm: "#fff",
+                },
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+                height: "95%",
+                marginRight: { sm: "47px" },
+                borderRadius: "10px",
+                alignItems: "flex-end",
+              }}
+            >
               <Button component='label'>
-                <CreateTwoToneIcon fontSize={"medium"} sx={{ color: { xs: '#fff', sm: "#1F1D2B" }, marginRight: '-30px' }} />
+                <CreateTwoToneIcon
+                  fontSize={"medium"}
+                  sx={{
+                    color: { xs: "#fff", sm: "#1F1D2B" },
+                    marginRight: "-30px",
+                  }}
+                />
                 <input
                   style={{
                     overflow: "hidden",
@@ -400,11 +492,13 @@ export default function EditModal(props: any) {
                   ]}
                 />
               ) : (
-                <Box sx={{
-                  height: "100%",
-                  display: imageBase64 ? "none" : "flex",
-                  alignItems: "center"
-                }}>
+                <Box
+                  sx={{
+                    height: "100%",
+                    display: imageBase64 ? "none" : "flex",
+                    alignItems: "center",
+                  }}
+                >
                   <Box
                     component={"img"}
                     src={product.image}
@@ -439,7 +533,7 @@ export default function EditModal(props: any) {
                   },
                 };
                 const styleTypography = {
-                  display: { xs: 'none', sm: "block" },
+                  display: { xs: "none", sm: "block" },
                   color: "#FFF",
                   fontFamily: "Nunito",
                   fontSize: "13px",
@@ -604,12 +698,14 @@ export default function EditModal(props: any) {
               })}
             </Box>
           </Box>
-          <Box sx={{
-            display: "flex",
-            justifyContent: { xs: 'center', sm: "space-between" },
-            width: { sm: "53%" },
-            marginLeft: { xs: '0', sm: "auto" }
-          }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: { xs: "center", sm: "space-between" },
+              width: { sm: "53%" },
+              marginLeft: { xs: "0", sm: "auto" },
+            }}
+          >
             <Button
               onClick={() => handleUpdateProduct(product.uid, product)}
               sx={{

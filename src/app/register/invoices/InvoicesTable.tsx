@@ -140,7 +140,7 @@ export default function InvoicesTable({ filteredData }: { filteredData: any }) {
                     }}
                     align='center'
                   >
-                    CANCELADO
+                    {row.status ? row.status : "CANCELADO"}
                   </TableCell>
                 </TableRow>
               );

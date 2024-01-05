@@ -14,11 +14,12 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 500,
+  width: 400,
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  textAlign: "-webkit-center",
 };
 
 const DateModal = ({ setSearchTerm }: { setSearchTerm: any }) => {
@@ -54,7 +55,13 @@ const DateModal = ({ setSearchTerm }: { setSearchTerm: any }) => {
           }}
           in={open}
         >
-          <Box sx={{ ...style, maxHeight: "95%", overflowY: "auto" }}>
+          <Box
+            sx={{
+              ...style,
+              maxHeight: "90%",
+              overflowY: "auto",
+            }}
+          >
             <Box
               sx={{
                 display: "flex",

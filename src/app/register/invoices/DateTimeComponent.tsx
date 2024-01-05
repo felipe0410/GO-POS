@@ -2,21 +2,7 @@ import * as React from "react";
 import dayjs from "dayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { StaticDateTimePicker } from "@mui/x-date-pickers/StaticDateTimePicker";
-import {
-  DateTimePickerTabs,
-  DateTimePickerTabsProps,
-} from "@mui/x-date-pickers/DateTimePicker";
-import DateRangeIcon from "@mui/icons-material/DateRange";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-
-function CustomTabs(props: DateTimePickerTabsProps) {
-  return (
-    <React.Fragment>
-      <DateTimePickerTabs {...props} />
-    </React.Fragment>
-  );
-}
+import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 
 export default function DateTimeComponent({
   setSearchTerm,
@@ -29,8 +15,7 @@ export default function DateTimeComponent({
 
   const handleAcceptDate = () => {
     if (dateTabs) {
-      const [date, hora] = dateTabs.split(" ");
-      setSearchTerm(date);
+      setSearchTerm(dateTabs);
       handleClose();
     }
   };
@@ -45,25 +30,18 @@ export default function DateTimeComponent({
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <StaticDateTimePicker
+      <StaticDatePicker
+        sx={{ width: "10px", display: "block" }}
         onAccept={handleAcceptDate}
         onChange={(newValue) => {
           if (newValue) {
-            setDateTabs(dayjs(newValue).format("YYYY-MM-DD HH:mm"));
+            setDateTabs(dayjs(newValue).format("YYYY-MM-DD"));
           }
         }}
         defaultValue={dayjs(getCurrentDateTime())}
-        slots={{
-          tabs: CustomTabs,
-        }}
         slotProps={{
           actionBar: {
             actions: ["accept"],
-          },
-          tabs: {
-            hidden: false,
-            dateIcon: <DateRangeIcon />,
-            timeIcon: <AccessTimeIcon />,
           },
         }}
       />
