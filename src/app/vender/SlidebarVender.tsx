@@ -117,7 +117,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredD
                     style: {
                         background: "transparent",
                         border: "none",
-                        width: !matchesSM ? "45%" : "95%",
+                        width: !matchesSM ? "410px" : "95%",
                     },
                 }}
                 onClose={() => setOpen(false)}

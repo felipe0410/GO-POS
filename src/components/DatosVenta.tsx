@@ -14,7 +14,7 @@ import {
 import React, { useState } from "react";
 import { NumericFormat } from "react-number-format";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { createInvoice } from "@/firebase";
+import { createInvoice, updateProductDataCantidad } from "@/firebase";
 import LinearBuffer from "./progress";
 
 interface UserData {
@@ -90,7 +90,7 @@ const DatosVenta = (props: any) => {
       setReciboPago(true);
       setDatosGuardados(false);
     } catch (error) {
-      console.error("falló el primer intento",error);
+      console.error("falló el primer intento", error);
     }
   };
 
@@ -103,6 +103,7 @@ const DatosVenta = (props: any) => {
       celular: data.celular || "XXXX",
     };
     const datosCliente = JSON.stringify(dataWithDefaults);
+    selectedItems.map((e: any) => updateProductDataCantidad(e.barCode, e))
     localStorage.setItem("cliente", datosCliente);
     localStorage.setItem("invoice", numeroFactura());
     setDatosGuardados(true);
