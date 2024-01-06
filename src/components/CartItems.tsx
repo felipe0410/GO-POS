@@ -1,5 +1,6 @@
-import { Box, Typography, InputBase, Button } from "@mui/material";
-import React from "react";
+import { Box, Typography, InputBase, Button, IconButton, InputAdornment } from "@mui/material";
+import React, { useState } from "react";
+import { NumericFormat } from "react-number-format";
 
 const CartItems = ({
   product,
@@ -10,6 +11,7 @@ const CartItems = ({
   setSelectedItems: any;
   selectedItems: any;
 }) => {
+  const [edit, setEdit] = useState(false)
   const handleDelete = (product: any) => {
     const updatedItems = selectedItems.filter(
       (item: any) => item.barCode !== product.barCode
@@ -17,6 +19,8 @@ const CartItems = ({
     setSelectedItems(updatedItems);
   };
 
+  const calcularTotal = (event: any) => {
+  };
   const handleOnChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     product: any
@@ -30,6 +34,24 @@ const CartItems = ({
       return updatedItems;
     });
   };
+
+  const handleOnChangePrice = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    product: any
+  ) => {
+    setSelectedItems((prevSelectedItems: any) => {
+      // Eliminar el signo $ y espacios usando una expresión regular
+      const cleanString = event.target.value.replace(/[\$,\s]/g, '');
+      // Convertir la cadena limpia a un número
+      const numberValue = parseFloat(cleanString)
+      const updatedItems = prevSelectedItems.map((item: any) =>
+        item.barCode === product.barCode
+          ? { ...item, price: event.target.value, acc: (numberValue > 0 ? numberValue : 0) * item.cantidad }
+          : item
+      );
+      return updatedItems;
+    });
+  }; console.log(selectedItems)
 
   const handleChange = (
     event: any,
@@ -46,6 +68,7 @@ const CartItems = ({
     });
   };
 
+
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -60,7 +83,7 @@ const CartItems = ({
             height: "3rem",
           }}
         />
-        <Box marginLeft={1}>
+        <Box marginLeft={1} sx={{ width: '48%' }}>
           <Typography
             sx={{
               color: "#FFF",
@@ -87,7 +110,56 @@ const CartItems = ({
               lineHeight: "140%",
             }}
           >
-            {product.price}
+            {edit ?
+              <Box id='container numeric'
+                sx={{
+                  display: 'flex',
+                  height: { xs: '1rem', sm: "1.5rem" },
+                  width: "90%",
+                  borderRadius: "0.5rem",
+                  border: "1px solid var(--Base-Dark-Line, #393C49)",
+                  background: "var(--Base-Form-BG, #2D303E)",
+                  paddingLeft: "5px",
+                }}
+              >
+                <NumericFormat
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    handleOnChangePrice(event, product)
+                  }
+                  value={product.price}
+                  prefix='$ '
+                  placeholder='Precio...'
+                  thousandSeparator
+                  customInput={InputBase}
+                  style={{ color: "#FFF" }}
+                />
+                <IconButton
+                  sx={{ paddingRight: "0px", marginRight: '-10px' }}
+                  onClick={(event) => calcularTotal(event)}
+                >
+                  <IconButton
+                    color='secondary'
+                    onClick={() => setEdit(false)}
+                  >
+                    <Box component={"img"} src={"/images/okay.svg"} />
+                  </IconButton>
+                </IconButton>
+              </Box>
+              : <>
+                <Typography sx={{ color: '#69EAE2' }}>
+                  {product.price}
+                  <IconButton
+                    sx={{ paddingTop: "2px", paddingRight: "2px" }}
+                    onClick={() => { setEdit(true); }}>
+                    <Box
+                      component={"img"}
+                      src={"/images/edit.svg"}
+                      sx={{ width: "0.9rem", height: "0.9rem" }}
+                    />
+                  </IconButton>
+                </Typography>
+              </>
+            }
           </Typography>
         </Box>
         <InputBase
