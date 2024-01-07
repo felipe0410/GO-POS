@@ -1,7 +1,6 @@
 "use client";
 import { dataInputs } from "@/data/inputs";
 import {
-  Box,
   Button,
   Divider,
   FormControl,
@@ -9,13 +8,21 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { createInvoice, updateProductDataCantidad } from "@/firebase";
+import { createClient, createInvoice, getAllClientsData, updateProductDataCantidad } from "@/firebase";
 import LinearBuffer from "./progress";
+import Box from '@mui/material/Box';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList';
+import TabPanel from '@mui/lab/TabPanel';
+import React from "react";
+import Autocomplete from '@mui/material/Autocomplete';
 
 interface UserData {
   name: string;
@@ -47,27 +54,35 @@ const DatosVenta = (props: any) => {
     numeroFactura,
     handleVenderClick,
   } = props;
-
+  const [value, setValue] = React.useState('1');
+  const [options, setOptions] = useState([''])
+  const [valueClient, setValueClient] = React.useState<string | null>(options[0]);
+  const [inputValue, setInputValue] = React.useState('');
   const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [valorRecibido, setValorRecibido] = useState<number | null>(null);
   const [mostrarValorDevolver, setMostrarValorDevolver] = useState(false);
   const [datosGuardados, setDatosGuardados] = useState(false);
+  const [clientsData, setClientsData] = useState([])
   const [factura, setFactura] = useState({
     invoice: "",
     date: "",
-    vendedor: "santiago",
+    vendedor: "xxx",
     cliente: {
-      name: "tan",
-      direccion: "tan",
-      email: "tan",
-      identificacion: "tan",
-      celular: "tan",
+      name: "",
+      direccion: "",
+      email: "",
+      identificacion: "",
+      celular: "",
     },
     compra: [],
     subtotal: 0,
     descuento: 0,
     total: 0,
   });
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -150,6 +165,19 @@ const DatosVenta = (props: any) => {
     return valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0;
   };
 
+  useEffect(() => {
+    getAllClientsData(setClientsData)
+  }, [])
+  useEffect(() => {
+    if (clientsData.length > 0) {
+      const array: any = []
+      clientsData.map((e: any) => { array.push(e.name) })
+      setOptions(array)
+    }
+  }, [clientsData])
+
+
+
   return loading ? (
     <LinearBuffer />
   ) : (
@@ -169,7 +197,9 @@ const DatosVenta = (props: any) => {
         DATOS DEL CLIENTE
       </Typography>
       <Divider sx={{ background: "#69EAE2", width: "100%" }} />
-      <Box padding={2}>
+
+
+      <Box >
         {datosGuardados ? (
           <>
             <IconButton
@@ -209,6 +239,39 @@ const DatosVenta = (props: any) => {
           </>
         ) : (
           <>
+            <Box >
+              <Autocomplete
+                placeholder="Clientes registrados"
+                style={{
+                  marginTop: '20px',
+                  color: "#FFF",
+                  borderRadius: "0.5rem",
+                  background: "#2C3248",
+                  boxShadow:
+                    "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                  width: '100%'
+                }}
+                value={valueClient}
+                onChange={(event: any, newValue: string | null) => {
+                  setValueClient(newValue);
+                  const clients: any = clientsData?.find((e: any) => e.name === newValue) ?? []
+                  Object.values(clients).length > 0 ? setData(clients) :
+                    setData({
+                      name: "",
+                      direccion: "",
+                      email: "",
+                      identificacion: "",
+                      celular: "",
+                    })
+                }}
+                inputValue={inputValue}
+                onInputChange={(event, newInputValue) => {
+                  setInputValue(newInputValue);
+                }}
+                options={options}
+                renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+              />
+            </Box>
             {dataInputs.map((input, index) => {
               const style = {
                 width: input.width,
@@ -241,31 +304,58 @@ const DatosVenta = (props: any) => {
                 </React.Fragment>
               );
             })}
-            <Box sx={{ textAlign: "center" }}>
-              <Button
-                onClick={datosGuardadosLocalStorage}
-                sx={{
-                  borderRadius: "0.5rem",
-                  background: "#69EAE2",
-                  marginTop: "1.5rem",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#1F1D2B",
-                    fontFamily: "Nunito",
-                    fontSize: "0.875rem",
-                    fontStyle: "normal",
-                    fontWeight: 600,
-                    lineHeight: "140%",
-                  }}
-                >
-                  GUARDAR DATOS
-                </Typography>
-              </Button>
-            </Box>
           </>
         )}
+        <Box sx={{ textAlign: "center", display: datosGuardados ? 'none' : 'flex', justifyContent: 'space-between' }}>
+          <Button
+            onClick={datosGuardadosLocalStorage}
+            sx={{
+              borderRadius: "0.5rem",
+              background: "#69EAE2",
+              marginTop: "1.5rem",
+              width: '45%'
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#1F1D2B",
+                fontFamily: "Nunito",
+                fontSize: "0.875rem",
+                fontStyle: "normal",
+                fontWeight: 600,
+                lineHeight: "140%",
+              }}
+            >
+              Continuar
+            </Typography>
+          </Button>
+          <Button
+            disabled={Object.values(data).some((e) => e.length === 0)}
+            onClick={() => {
+              createClient(data.identificacion, data)
+              datosGuardadosLocalStorage()
+            }}
+            sx={{
+              borderRadius: "0.5rem",
+              background: Object.values(data).some((e) => e.length === 0) ? "gray" : "#69EAE2",
+              marginTop: "1.5rem",
+              width: '45%'
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#1F1D2B",
+                fontFamily: "Nunito",
+                fontSize: "0.875rem",
+                fontStyle: "normal",
+                fontWeight: 600,
+                lineHeight: "140%",
+              }}
+            >
+              Guardar
+            </Typography>
+          </Button>
+        </Box>
       </Box>
       <Typography
         sx={{

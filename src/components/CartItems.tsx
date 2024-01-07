@@ -40,9 +40,7 @@ const CartItems = ({
     product: any
   ) => {
     setSelectedItems((prevSelectedItems: any) => {
-      // Eliminar el signo $ y espacios usando una expresión regular
       const cleanString = event.target.value.replace(/[\$,\s]/g, '');
-      // Convertir la cadena limpia a un número
       const numberValue = parseFloat(cleanString)
       const updatedItems = prevSelectedItems.map((item: any) =>
         item.barCode === product.barCode
@@ -51,7 +49,7 @@ const CartItems = ({
       );
       return updatedItems;
     });
-  }; console.log(selectedItems)
+  };
 
   const handleChange = (
     event: any,

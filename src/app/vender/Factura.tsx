@@ -66,6 +66,18 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     },
   });
 
+  const saveDataToLocalStorage = (key: string, data: any) => {
+    try {
+      const serializedData = JSON.stringify(data);
+      localStorage.setItem(key, serializedData);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+    }
+  };
+  useEffect(() => {
+    saveDataToLocalStorage('selectedItems', [])
+  }, [])
+
   return (
     <>
       <IconButton sx={{ paddingLeft: 0 }} onClick={() => setNuevaFactura()}>

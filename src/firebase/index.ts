@@ -269,7 +269,69 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
   }
 };
 
-//funcion para obtener las facturas
+export const createClient = async (uid: string, data: any) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      await setDoc(establecimientoDocRef, {});
+    }
+    const invoicesCollectionRef = collection(establecimientoDocRef, "clients");
+    const invoiceDocRef = doc(invoicesCollectionRef, uid);
+    await setDoc(invoiceDocRef, {
+      uid: uid,
+      user: `${user().decodedString}`,
+      ...data,
+    });
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar información en /clients: ", error);
+    return null;
+  }
+};
+
+export const getAllClientsData = (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const clientsCollectionRef = collection(establecimientoDocRef, "clients");
+    const orderedQuery = query(clientsCollectionRef, orderBy("name"));
+    getDocs(orderedQuery)
+      .then((querySnapshot) => {
+        const clientsData: any[] = [];
+        querySnapshot.forEach((doc) => {
+          clientsData.push({ id: doc.id, ...doc.data() });
+        });
+        callback(clientsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching initial clients data:", error);
+        callback(null);
+      });
+    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot) => {
+      const clientsData: any[] = [];
+      querySnapshot.forEach((doc) => {
+        clientsData.push({ id: doc.id, ...doc.data() });
+      });
+      callback(clientsData);
+    });
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up clients data observer: ", error);
+    return null;
+  }
+};
+
 export const getAllInvoicesData = async (callback: any) => {
   try {
     const establecimientoDocRef = doc(

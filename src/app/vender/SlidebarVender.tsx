@@ -3,7 +3,7 @@ import DatosVenta from "@/components/DatosVenta";
 import Factura from "@/app/vender/Factura";
 import IncompleteCartItem from "@/components/IncompleteCartItem";
 import { Box, IconButton, SwipeableDrawer, Button, Typography, Divider, InputBase, InputAdornment, Badge, BadgeProps, styled, useMediaQuery, useTheme, Tooltip, TooltipProps, tooltipClasses, Paper } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";

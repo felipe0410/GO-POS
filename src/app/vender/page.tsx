@@ -2,61 +2,27 @@
 import Header from "@/components/Header";
 import {
   Box,
-  FormControl,
   IconButton,
   InputBase,
-  InputLabel,
-  MenuItem,
   Pagination,
   Paper,
-  Select,
   Typography,
-  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import { getAllCategoriesData, getAllProductsData } from "@/firebase";
+import { getAllProductsData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
-
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  "label + &": {
-    marginTop: theme.spacing(3),
-  },
-  ".MuiSelect-icon": { color: "#69EAE2" },
-  "& .MuiInputBase-input": {
-    borderRadius: "0.5rem",
-    position: "relative",
-    backgroundColor: "#1F1D2B",
-    border: "1px solid #69EAE2",
-    fontSize: 16,
-    padding: "10px 26px 10px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    fontFamily: "Nunito",
-    "&:focus": {
-      borderRadius: "0.5rem",
-      borderColor: "#69EAE2",
-    },
-  },
-}));
 
 const Page = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState<[]>([]);
   const [filter, setfilter] = useState<any>();
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedItems, setSelectedItems] = useState<any>([]);
-
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
-
-  const handleCategoryChange = (event: any) => {
-    setSelectedCategory(event.target.value);
-  };
-
   React.useEffect(() => {
     const getAllProducts = async () => {
       try {
@@ -104,13 +70,10 @@ const Page = () => {
     }
   }
 
-  // const { selectedItems, setSelectedItems } = useContext(VenderContext) ?? {};
   const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
-  // Obtener la página actual de la matriz filtrada
   const currentDataPage = filter?.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filter?.length / itemsPerPage);
 
@@ -119,16 +82,39 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  useEffect(() => {
-    const categoriesData = async () => {
-      try {
-        await getAllCategoriesData(setCategory);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const saveDataToLocalStorage = (key: string, data: any) => {
+    try {
+      const serializedData = JSON.stringify(data);
+      localStorage.setItem(key, serializedData);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+    }
+  };
+  const getDataFromLocalStorage = (key: string) => {
+    try {
+      const serializedData = localStorage.getItem(key);
+      if (serializedData === null) {
+        return null;
       }
-    };
-    categoriesData();
-  }, []);
+      return JSON.parse(serializedData);
+    } catch (error) {
+      console.error("Error getting data from localStorage:", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    if (selectedItems.length > 0) {
+      saveDataToLocalStorage('selectedItems', selectedItems)
+    }
+  }, [selectedItems])
+
+  useEffect(() => {
+    const localStorageSelectedItems = getDataFromLocalStorage('selectedItems')
+    if(localStorageSelectedItems.length>0){
+      setSelectedItems(localStorageSelectedItems)
+    }
+  }, [])
+
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
       <Box
