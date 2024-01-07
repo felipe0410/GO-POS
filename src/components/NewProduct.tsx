@@ -1,5 +1,6 @@
 "use client";
 import {
+  Autocomplete,
   Box,
   Button,
   FormControl,
@@ -9,6 +10,7 @@ import {
   OutlinedInput,
   Paper,
   Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -89,8 +91,13 @@ export default function NewProduct() {
     cantidad: "",
   });
   const [imageBase64, setImageBase64] = useState("");
-  const [category, setCategory] = useState<[]>([]);
-  const [measure, setMeasure] = useState<[]>([]);
+  const [category, setCategory] = useState<any>(['']);
+  const [measure, setMeasure] = useState<any>(['']);
+  const [inputValue, setInputValue] = React.useState('');
+  const [inputValue2, setInputValue2] = React.useState('');
+  const [valueMeasure, setValueMeasure] = React.useState<string | null>(measure[0]);
+  const [valueCategory, setValueCategory] = React.useState<string | null>(category[0]);
+
   const saveToFirebase = async () => {
     try {
       await createProduct(data.barCode, {
@@ -217,54 +224,54 @@ export default function NewProduct() {
               };
               const categorySelect = (
                 <Box>
-                  <Select
-                    onChange={(e: any) =>
-                      inputOnChange(input.field, e.target.value)
-                    }
-                    label='selecciona una opcion'
-                    value={data["category"]}
-                    sx={{
-                      height: "44.9px",
+                  <Autocomplete
+                    placeholder="Categoria"
+                    style={{
                       width: "100%",
                       borderRadius: "0.625rem",
                       background: "#2C3248",
                       boxShadow:
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
-                    style={{ color: "#FFF" }}
-                  >
-                    {category?.map((tag) => (
-                      <MenuItem key={tag} value={tag}>
-                        {tag}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                    value={valueCategory}
+                    onChange={(event: any, newValue: string | null) => {
+                      setValueCategory(newValue)
+                      inputOnChange(input.field, newValue ?? "")
+                    }}
+                    inputValue={inputValue2}
+                    onInputChange={(event, newInputValue) => {
+                      setInputValue2(newInputValue);
+                    }}
+                    options={category}
+                    renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                  />
                 </Box>
               );
               const measurementSelect = (
                 <Box>
-                  <Select
-                    onChange={(e: any) =>
-                      inputOnChange(input.field, e.target.value)
-                    }
-                    label='selecciona una opcion'
-                    value={data["measurement"]}
-                    sx={{
-                      height: "44.9px",
-                      width: "100%",
-                      borderRadius: "0.625rem",
-                      background: "#2C3248",
-                      boxShadow:
-                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                    style={{ color: "#FFF" }}
-                  >
-                    {measure?.map((tag) => (
-                      <MenuItem key={tag} value={tag}>
-                        {tag}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <Box >
+                    <Autocomplete
+                      placeholder="Unidades de medida"
+                      style={{
+                        width: "100%",
+                        borderRadius: "0.625rem",
+                        background: "#2C3248",
+                        boxShadow:
+                          "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                      }}
+                      value={valueMeasure}
+                      onChange={(event: any, newValue: string | null) => {
+                        setValueMeasure(newValue)
+                        inputOnChange(input.field, newValue ?? "")
+                      }}
+                      inputValue={inputValue}
+                      onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                      }}
+                      options={measure}
+                      renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                    />
+                  </Box>
                 </Box>
               );
               const amountInput = (
@@ -409,8 +416,10 @@ export default function NewProduct() {
                           onChange={(e) => {
                             inputOnChange(input.field, e.target.value);
                           }
-
                           }
+                          onBlur={(e) => {
+                            setData({ ...data, description: `${e.target.value}:` })
+                          }}
                           type={input.type}
                           sx={{
                             height: "44.9px",

@@ -17,10 +17,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { createClient, createInvoice, getAllClientsData, updateProductDataCantidad } from "@/firebase";
 import LinearBuffer from "./progress";
 import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
 import React from "react";
 import Autocomplete from '@mui/material/Autocomplete';
 
@@ -54,7 +50,6 @@ const DatosVenta = (props: any) => {
     numeroFactura,
     handleVenderClick,
   } = props;
-  const [value, setValue] = React.useState('1');
   const [options, setOptions] = useState([''])
   const [valueClient, setValueClient] = React.useState<string | null>(options[0]);
   const [inputValue, setInputValue] = React.useState('');
@@ -79,10 +74,6 @@ const DatosVenta = (props: any) => {
     descuento: 0,
     total: 0,
   });
-
-  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
-  };
 
   const getCurrentDateTime = () => {
     const now = new Date();
