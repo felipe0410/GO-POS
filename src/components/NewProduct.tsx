@@ -344,7 +344,8 @@ export default function NewProduct() {
                         borderRadius: "0.625rem",
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                        background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                        // background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                        background: "#69EAE2",
                         marginTop: "10px",
                       }}
                     >
