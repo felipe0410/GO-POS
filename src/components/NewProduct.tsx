@@ -337,7 +337,7 @@ export default function NewProduct() {
                   >
                     <Button
                       onClick={() => saveToFirebase()}
-                      disabled={!isNotEmpty(data)}
+                      // disabled={!isNotEmpty(data)}
                       sx={{
                         width: "45%",
                         height: "2.5rem",
