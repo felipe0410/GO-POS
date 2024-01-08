@@ -103,7 +103,9 @@ const Page = () => {
     }
   };
   useEffect(() => {
-    saveDataToLocalStorage('selectedItems', selectedItems)
+    if (selectedItems.length > 0) {
+      saveDataToLocalStorage('selectedItems', selectedItems)
+    }
   }, [selectedItems])
 
   useEffect(() => {

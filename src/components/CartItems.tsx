@@ -12,10 +12,20 @@ const CartItems = ({
   selectedItems: any;
 }) => {
   const [edit, setEdit] = useState(false)
+  const saveDataToLocalStorage = (key: string, data: any) => {
+    try {
+      const serializedData = JSON.stringify(data);
+      localStorage.setItem(key, serializedData);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+    }
+  };
+
   const handleDelete = (product: any) => {
     const updatedItems = selectedItems.filter(
       (item: any) => item.barCode !== product.barCode
     );
+    saveDataToLocalStorage('selectedItems', updatedItems)
     setSelectedItems(updatedItems);
   };
 

@@ -19,7 +19,7 @@ const Invoices = () => {
   const [filter, setfilter] = useState<any>();
   const [data, setData] = useState<undefined | any[]>(undefined);
 
-  const debouncedHandleSearchChange = debounce(() => {}, 300);
+  const debouncedHandleSearchChange = debounce(() => { }, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -75,7 +75,7 @@ const Invoices = () => {
       >
         <Box
           sx={{
-            padding: "40px 48px",
+            padding: { xs: '20px 20px', sm: "40px 48px" },
             height: "100%",
             textAlign: "-webkit-center",
           }}

@@ -6,10 +6,8 @@ import {
   FormControl,
   IconButton,
   InputAdornment,
-  MenuItem,
   OutlinedInput,
   Paper,
-  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -90,6 +88,7 @@ export default function NewProduct() {
     image: "",
     cantidad: "",
   });
+  console.log(data)
   const [imageBase64, setImageBase64] = useState("");
   const [category, setCategory] = useState<any>(['']);
   const [measure, setMeasure] = useState<any>(['']);
@@ -127,6 +126,7 @@ export default function NewProduct() {
     for (const value in fields) {
       if (
         fields.hasOwnProperty(value) &&
+        value !== "nota" &&
         typeof fields[value] === "string" &&
         fields[value].trim() === ""
       ) {
@@ -173,6 +173,18 @@ export default function NewProduct() {
     };
     measurementsData();
   }, []);
+
+  useEffect(() => {
+    const dataMeasurement = data?.measurement ?? ""
+    const dataCategory = data?.category ?? ""
+    if (dataCategory.length > 0 && valueCategory?.length === 0) {
+      setValueCategory(dataCategory)
+    }
+    if (dataMeasurement.length > 0 && valueMeasure?.length === 0) {
+      setValueMeasure(dataMeasurement)
+    }
+  }, [data?.category, data?.measurement, valueCategory?.length, valueMeasure?.length])
+
   return (
     <Box
       sx={{
@@ -262,7 +274,7 @@ export default function NewProduct() {
                       value={valueMeasure}
                       onChange={(event: any, newValue: string | null) => {
                         setValueMeasure(newValue)
-                        inputOnChange(input.field, newValue ?? "")
+                        inputOnChange("measurement", newValue ?? "")
                       }}
                       inputValue={inputValue}
                       onInputChange={(event, newInputValue) => {
