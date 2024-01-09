@@ -65,6 +65,10 @@ export default function Sidebar({
           section: "FACTURAS",
           id: "/register/invoices",
         },
+        {
+          section: "FACTURAS",
+          id: "/register/dashboard",
+        },
       ],
     },
     {
@@ -195,10 +199,10 @@ export default function Sidebar({
                     selectedSection === section.id
                       ? "#252836"
                       : section?.submenus
-                      ? selectedSection?.includes(slice(section.id))
-                        ? "#252836"
-                        : "transparent"
-                      : "transparent",
+                        ? selectedSection?.includes(slice(section.id))
+                          ? "#252836"
+                          : "transparent"
+                        : "transparent",
                   marginLeft: "12px",
                   padding: "12px",
                   borderRadius: "12px 0 0 12px",
