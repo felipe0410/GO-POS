@@ -25,7 +25,7 @@ const Invoices = () => {
 
   console.log(searchTerm);
 
-  const debouncedHandleSearchChange = debounce(() => {}, 300);
+  const debouncedHandleSearchChange = debounce(() => { }, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -131,7 +131,7 @@ const Invoices = () => {
       >
         <Box
           sx={{
-            padding: "40px 48px",
+            padding: { xs: '20px 20px', sm: "40px 48px" },
             height: "100%",
             textAlign: "-webkit-center",
           }}
@@ -140,7 +140,6 @@ const Invoices = () => {
             <Paper
               component='form'
               onSubmit={(e: any) => {
-                console.log(e);
                 e.preventDefault();
                 handleSearchChange(e.target[1].value);
               }}

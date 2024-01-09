@@ -18,6 +18,7 @@ import {
   getAllMeasurementsDataa,
   storage,
   updateProductData,
+  user,
 } from "@/firebase";
 import { inputsEdit } from "@/data/inputs";
 import { NumericFormat } from "react-number-format";
@@ -131,7 +132,7 @@ export default function EditModal(props: any) {
     if (fileRef.current?.files?.length) {
       const file = fileRef.current.files[0];
       const fileName = Date.now() + "_" + file.name;
-      const imgRef = ref(storage, "images/" + fileName);
+      const imgRef = ref(storage, `${user().decodedString}/` + fileName);
       previousImageUrlRef.current = product.image;
       uploadImageToFirebase(imgRef, file);
       setImageBase64("");
@@ -179,62 +180,6 @@ export default function EditModal(props: any) {
       }
     );
   };
-
-  // const uploadImage = (fileRef: React.RefObject<HTMLInputElement>) => {
-  //   if (fileRef.current?.files?.length) {
-  //     const file = fileRef.current.files[0];
-  //     const reader = new FileReader();
-  //     reader.onload = (event) => {
-  //       const base64String: any = event?.target?.result;
-  //       if (base64String) setImageBase64(base64String);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   } else {
-  //     console.error("No file selected");
-  //   }
-  // };
-
-  // const handleAcceptImage = (fileRef: any) => {
-  //   if (fileRef.current?.files?.length) {
-  //     const file = fileRef.current.files[0];
-  //     const fileName = Date.now() + "_" + file.name;
-  //     const imgRef = ref(storage, "images/" + fileName);
-  //     uploadImageToFirebase(imgRef, file);
-  //     setImageBase64("");
-  //   }
-  // };
-
-  // const uploadImageToFirebase = (imgRef: any, file: any) => {
-  //   setLoading(true);
-  //   const imgUpload = uploadBytesResumable(imgRef, file);
-  //   imgUpload.on(
-  //     "state_changed",
-  //     ({ state }) => {
-  //       switch (state) {
-  //         case "paused":
-  //           console.log("Upload is paused");
-  //           break;
-  //         case "running":
-  //           console.log("Upload is running");
-  //           break;
-  //         default:
-  //           break;
-  //       }
-  //     },
-  //     (err) => {
-  //       console.error(err);
-  //     },
-  //     async () => {
-  //       console.log(getDownloadURL);
-  //       const url = await getDownloadURL(imgUpload.snapshot.ref);
-  //       setProduct((prevState: any) => ({
-  //         ...prevState,
-  //         image: url,
-  //       }));
-  //       setLoading(false);
-  //     }
-  //   );
-  // };
 
   const handleCancel = () => {
     setImageBase64("");

@@ -3,15 +3,16 @@ import DatosVenta from "@/components/DatosVenta";
 import Factura from "@/app/vender/Factura";
 import IncompleteCartItem from "@/components/IncompleteCartItem";
 import { Box, IconButton, SwipeableDrawer, Button, Typography, Divider, InputBase, InputAdornment, Badge, BadgeProps, styled, useMediaQuery, useTheme, Tooltip, TooltipProps, tooltipClasses, Paper } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
+import React, {  useEffect, useState } from "react";
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
 import Chip from '@mui/material/Chip';
+import { getAllInvoicesData } from "@/firebase";
 
 
-const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSearchChange }: { selectedItems: any, setSelectedItems: any, searchTerm: any, handleSearchChange: any }) => {
+const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, filteredData, setSearchTerm }: { selectedItems: any, setSelectedItems: any, searchTerm: any, filteredData: any, setSearchTerm: any }) => {
     const [open, setOpen] = useState(false)
     const [nextStep, setNextStep] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -21,6 +22,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
     const [descuento, setDescuento] = useState(0);
     const [inputValue, setInputValue] = useState("");
     const [subtotal, setSubtotal] = useState(0);
+    const [dataInvocie, setDataInvoice] = useState([])
 
     const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
         <Tooltip {...props} classes={{ popper: className }} />
@@ -39,9 +41,8 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
     let totalUnidades = 0;
     selectedItems?.forEach((element: any) => {
         totalUnidades += element.cantidad;
-        console.log(totalUnidades)
     });
-    const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+    const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
     const generarNumeroFactura = () => {
         return String(contadorFactura).padStart(7, "0");
     };
@@ -54,9 +55,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
     const initialContadorFactura = storedContadorFactura
         ? parseInt(storedContadorFactura, 10)
         : 1;
-    const [contadorFactura, setContadorFactura] = useState(
-        initialContadorFactura
-    );
+    const [contadorFactura, setContadorFactura] = useState(initialContadorFactura);
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(e.target.value);
     };
@@ -66,7 +65,6 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
             let valorSinPorcentaje: number;
             const porcentajeComoNumero = Number(inputValue.replace("%", ""));
             valorSinPorcentaje = Math.ceil((porcentajeComoNumero / 100) * subtotal);
-            console.log(`Descuento: ${valorSinPorcentaje}`);
             setDescuento(valorSinPorcentaje);
         } else {
             setDescuento(Number(inputValue));
@@ -83,8 +81,13 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
     }));
 
     useEffect(() => {
-        localStorage.setItem("contadorFactura", contadorFactura.toString());
-    }, [contadorFactura]);
+        getAllInvoicesData(setDataInvoice)
+    }, [])
+
+    useEffect(() => {
+        setContadorFactura(dataInvocie.length)
+        localStorage.setItem("contadorFactura", (dataInvocie.length).toString());
+    }, [contadorFactura, dataInvocie]);
 
     useEffect(() => {
         const nuevoSubtotal: number = (selectedItems ?? []).reduce(
@@ -114,7 +117,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
                     style: {
                         background: "transparent",
                         border: "none",
-                        width: !matchesSM ? "30%" : "95%",
+                        width: !matchesSM ? "410px" : "95%",
                     },
                 }}
                 onClose={() => setOpen(false)}
@@ -133,7 +136,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
                         overflow: "hidden",
                         top: 0,
                         right: 0,
-                        width: { xs: '100%', sm: "25.5625rem" },
+                        width: { xs: '100%', lg: "25.5625rem" },
                         borderRadius: "10px 0px 0px 10px",
                     }}
                 >
@@ -146,7 +149,7 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
                             />
                         ) : (
                             <>
-                                <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                                <Box sx={{ display: { xs: 'block', lg: 'none' } }}>
                                     <Button sx={{ float: "right" }} onClick={() => setOpen(false)}>
                                         <CloseIcon sx={{ color: '#fff' }} />
                                     </Button>
@@ -260,43 +263,47 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
                                             </>
                                         </Box>
                                         <Box sx={{ height: "100%", marginTop: '20px' }}>
-                                            <Paper
-                                                component='form'
-                                                onSubmit={(e: any) => {
-                                                    e.preventDefault();
-                                                    handleSearchChange(e.target[1].value);
-                                                }}
-                                                sx={{
-                                                    display: "flex",
-                                                    alignItems: "center",
-                                                    color: "#fff",
-                                                    width: "100%",
-                                                    height: "2rem",
-                                                    borderRadius: "0.3125rem",
-                                                    background: "#2C3248",
-                                                }}
-                                            >
-                                                <InputBase
-                                                    sx={{
-                                                        ml: 1,
-                                                        flex: 1,
-                                                        color: "#fff",
+                                            <Box display={{ xs: 'flex', sm: "none" }}>
+                                                <Paper
+                                                    component='form'
+                                                    onSubmit={(e: any) => {
+                                                        e.preventDefault();
+                                                        filteredData(e.target[0].value);
                                                     }}
-                                                    placeholder='codigo de barras'
-                                                    value={searchTerm}
-                                                    onChange={(e) => handleSearchChange(e.target.value)}
-                                                />
-                                                <IconButton
                                                     sx={{
-                                                        marginTop: "2px",
-                                                        paddingTop: "0px",
-                                                        marginBottom: "4px",
-                                                        paddingBottom: "0px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        color: "#fff",
+                                                        width: "25rem",
+                                                        height: "2rem",
+                                                        borderRadius: "0.3125rem",
+                                                        background: "#2C3248",
                                                     }}
                                                 >
-                                                    <Box component={"img"} src={"/images/scan.svg"} />
-                                                </IconButton>
-                                            </Paper>
+                                                    <InputBase
+                                                        sx={{
+                                                            ml: 1,
+                                                            flex: 1,
+                                                            color: "#fff",
+                                                        }}
+                                                        placeholder='Buscar'
+                                                        value={searchTerm}
+                                                        onChange={(e) => {
+                                                            setSearchTerm(e.target.value)
+                                                        }}
+                                                    />
+                                                    <IconButton
+                                                        sx={{
+                                                            marginTop: "2px",
+                                                            paddingTop: "0px",
+                                                            marginBottom: "4px",
+                                                            paddingBottom: "0px",
+                                                        }}
+                                                    >
+                                                        <Box component={"img"} src={"/images/scan.svg"} />
+                                                    </IconButton>
+                                                </Paper>
+                                            </Box>
                                             <Box
                                                 sx={{
                                                     display: "flex",
@@ -610,11 +617,11 @@ const SlidebarVender = ({ selectedItems, setSelectedItems, searchTerm, handleSea
                                             </Box>
                                             <Box sx={{ textAlign: "center", marginTop: "1rem" }}>
                                                 <Button
-                                                    disabled={descuento > subtotal ? true : false}
+                                                    disabled={((descuento > subtotal) || subtotal === 0) ? true : false}
                                                     onClick={() => setNextStep(true)}
                                                     style={{
                                                         borderRadius: "0.5rem",
-                                                        background: descuento > subtotal ? "gray" : "#69EAE2",
+                                                        background: (descuento > subtotal || subtotal === 0) ? "gray" : "#69EAE2",
                                                         width: "7rem",
                                                     }}
                                                 >

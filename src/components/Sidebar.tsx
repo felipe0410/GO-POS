@@ -47,7 +47,7 @@ export default function Sidebar({
       section: "INICIO",
       icon: "/images/home.svg",
       icon2: "/images/homeSelected.svg",
-      id: "/home",
+      id: "/",
     },
     {
       section: "VENDER",
@@ -338,7 +338,6 @@ export default function Sidebar({
                 paddingLeft: "20px",
               }}
               onClick={async () => {
-                console.log("entre aqui");
                 try {
                   await removeCookieUser("user", "", {
                     expires: new Date(0),

@@ -24,7 +24,6 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     name: "",
     direction: "",
   });
-
   const setNuevaFactura = () => {
     setReciboPago(false);
     setSelectedItems([]);
@@ -66,6 +65,18 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
       return content;
     },
   });
+
+  const saveDataToLocalStorage = (key: string, data: any) => {
+    try {
+      const serializedData = JSON.stringify(data);
+      localStorage.setItem(key, serializedData);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+    }
+  };
+  useEffect(() => {
+    saveDataToLocalStorage('selectedItems', [])
+  }, [])
 
   return (
     <>

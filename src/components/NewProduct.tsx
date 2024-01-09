@@ -1,14 +1,14 @@
 "use client";
 import {
+  Autocomplete,
   Box,
   Button,
   FormControl,
   IconButton,
   InputAdornment,
-  MenuItem,
   OutlinedInput,
   Paper,
-  Select,
+  TextField,
   Typography,
 } from "@mui/material";
 import { styled } from "@mui/system";
@@ -88,9 +88,15 @@ export default function NewProduct() {
     image: "",
     cantidad: "",
   });
+  console.log(data)
   const [imageBase64, setImageBase64] = useState("");
-  const [category, setCategory] = useState<[]>([]);
-  const [measure, setMeasure] = useState<[]>([]);
+  const [category, setCategory] = useState<any>(['']);
+  const [measure, setMeasure] = useState<any>(['']);
+  const [inputValue, setInputValue] = React.useState('');
+  const [inputValue2, setInputValue2] = React.useState('');
+  const [valueMeasure, setValueMeasure] = React.useState<string | null>(measure[0]);
+  const [valueCategory, setValueCategory] = React.useState<string | null>(category[0]);
+
   const saveToFirebase = async () => {
     try {
       await createProduct(data.barCode, {
@@ -120,6 +126,7 @@ export default function NewProduct() {
     for (const value in fields) {
       if (
         fields.hasOwnProperty(value) &&
+        value !== "nota" &&
         typeof fields[value] === "string" &&
         fields[value].trim() === ""
       ) {
@@ -154,6 +161,8 @@ export default function NewProduct() {
     }
   };
 
+  const user = atob(localStorage?.getItem('user') ?? "")
+
   useEffect(() => {
     const measurementsData = async () => {
       try {
@@ -164,6 +173,18 @@ export default function NewProduct() {
     };
     measurementsData();
   }, []);
+
+  useEffect(() => {
+    const dataMeasurement = data?.measurement ?? ""
+    const dataCategory = data?.category ?? ""
+    if (dataCategory.length > 0 && valueCategory?.length === 0) {
+      setValueCategory(dataCategory)
+    }
+    if (dataMeasurement.length > 0 && valueMeasure?.length === 0) {
+      setValueMeasure(dataMeasurement)
+    }
+  }, [data?.category, data?.measurement, valueCategory?.length, valueMeasure?.length])
+
   return (
     <Box
       sx={{
@@ -215,54 +236,54 @@ export default function NewProduct() {
               };
               const categorySelect = (
                 <Box>
-                  <Select
-                    onChange={(e: any) =>
-                      inputOnChange(input.field, e.target.value)
-                    }
-                    label='selecciona una opcion'
-                    value={data["category"]}
-                    sx={{
-                      height: "44.9px",
+                  <Autocomplete
+                    placeholder="Categoria"
+                    style={{
                       width: "100%",
                       borderRadius: "0.625rem",
                       background: "#2C3248",
                       boxShadow:
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
-                    style={{ color: "#FFF" }}
-                  >
-                    {category?.map((tag) => (
-                      <MenuItem key={tag} value={tag}>
-                        {tag}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                    value={valueCategory}
+                    onChange={(event: any, newValue: string | null) => {
+                      setValueCategory(newValue)
+                      inputOnChange(input.field, newValue ?? "")
+                    }}
+                    inputValue={inputValue2}
+                    onInputChange={(event, newInputValue) => {
+                      setInputValue2(newInputValue);
+                    }}
+                    options={category}
+                    renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                  />
                 </Box>
               );
               const measurementSelect = (
                 <Box>
-                  <Select
-                    onChange={(e: any) =>
-                      inputOnChange(input.field, e.target.value)
-                    }
-                    label='selecciona una opcion'
-                    value={data["measurement"]}
-                    sx={{
-                      height: "44.9px",
-                      width: "100%",
-                      borderRadius: "0.625rem",
-                      background: "#2C3248",
-                      boxShadow:
-                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                    style={{ color: "#FFF" }}
-                  >
-                    {measure?.map((tag) => (
-                      <MenuItem key={tag} value={tag}>
-                        {tag}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <Box >
+                    <Autocomplete
+                      placeholder="Unidades de medida"
+                      style={{
+                        width: "100%",
+                        borderRadius: "0.625rem",
+                        background: "#2C3248",
+                        boxShadow:
+                          "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                      }}
+                      value={valueMeasure}
+                      onChange={(event: any, newValue: string | null) => {
+                        setValueMeasure(newValue)
+                        inputOnChange("measurement", newValue ?? "")
+                      }}
+                      inputValue={inputValue}
+                      onInputChange={(event, newInputValue) => {
+                        setInputValue(newInputValue);
+                      }}
+                      options={measure}
+                      renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                    />
+                  </Box>
                 </Box>
               );
               const amountInput = (
@@ -316,14 +337,15 @@ export default function NewProduct() {
                   >
                     <Button
                       onClick={() => saveToFirebase()}
-                      disabled={!isNotEmpty(data)}
+                      // disabled={!isNotEmpty(data)}
                       sx={{
                         width: "45%",
                         height: "2.5rem",
                         borderRadius: "0.625rem",
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                        background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                        // background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                        background: "#69EAE2",
                         marginTop: "10px",
                       }}
                     >
@@ -392,7 +414,7 @@ export default function NewProduct() {
                       categorySelect
                     ) : input.type === "img" ? (
                       <Box id='contianer img' sx={{ width: { xs: '200%', sm: '150%' }, height: '100%' }}>
-                        <ImgInput data={data} setData={setData} folderSaved={"images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
+                        <ImgInput data={data} setData={setData} folderSaved={user.length > 0 ? user : "images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
                       </Box>
                     ) : input.type === "amount" ? (
                       amountInput
@@ -407,8 +429,10 @@ export default function NewProduct() {
                           onChange={(e) => {
                             inputOnChange(input.field, e.target.value);
                           }
-
                           }
+                          onBlur={(e) => {
+                            setData({ ...data, description: `${e.target.value}:` })
+                          }}
                           type={input.type}
                           sx={{
                             height: "44.9px",

@@ -1,5 +1,6 @@
-import { Box, Typography, InputBase, Button } from "@mui/material";
-import React from "react";
+import { Box, Typography, InputBase, Button, IconButton, InputAdornment } from "@mui/material";
+import React, { useState } from "react";
+import { NumericFormat } from "react-number-format";
 
 const CartItems = ({
   product,
@@ -10,13 +11,26 @@ const CartItems = ({
   setSelectedItems: any;
   selectedItems: any;
 }) => {
+  const [edit, setEdit] = useState(false)
+  const saveDataToLocalStorage = (key: string, data: any) => {
+    try {
+      const serializedData = JSON.stringify(data);
+      localStorage.setItem(key, serializedData);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+    }
+  };
+
   const handleDelete = (product: any) => {
     const updatedItems = selectedItems.filter(
       (item: any) => item.barCode !== product.barCode
     );
+    saveDataToLocalStorage('selectedItems', updatedItems)
     setSelectedItems(updatedItems);
   };
 
+  const calcularTotal = (event: any) => {
+  };
   const handleOnChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     product: any
@@ -30,6 +44,39 @@ const CartItems = ({
       return updatedItems;
     });
   };
+
+  const handleOnChangePrice = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    product: any
+  ) => {
+    setSelectedItems((prevSelectedItems: any) => {
+      const cleanString = event.target.value.replace(/[\$,\s]/g, '');
+      const numberValue = parseFloat(cleanString)
+      const updatedItems = prevSelectedItems.map((item: any) =>
+        item.barCode === product.barCode
+          ? { ...item, price: event.target.value, acc: (numberValue > 0 ? numberValue : 0) * item.cantidad }
+          : item
+      );
+      return updatedItems;
+    });
+  };
+
+  const handleChange = (
+    event: any,
+    product: any
+  ) => {
+    const numericValue = Number(product.price.replace(/[^0-9.-]+/g, ''));
+    setSelectedItems((prevSelectedItems: any) => {
+      const updatedItems = prevSelectedItems.map((item: any) =>
+        item.barCode === product.barCode
+          ? { ...item, acc: (event.target.value * numericValue), cantidad: (event?.target?.value > 0 ? parseInt(event?.target?.value ?? 0) : 0) }
+          : item
+      );
+      return updatedItems;
+    });
+  };
+
+
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
@@ -44,7 +91,7 @@ const CartItems = ({
             height: "3rem",
           }}
         />
-        <Box marginLeft={1}>
+        <Box marginLeft={1} sx={{ width: '48%' }}>
           <Typography
             sx={{
               color: "#FFF",
@@ -53,7 +100,7 @@ const CartItems = ({
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
-              width: {xs:'7.5rem',sm:"10.2rem"},
+              width: { xs: '7.5rem', sm: "10.2rem" },
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -71,7 +118,56 @@ const CartItems = ({
               lineHeight: "140%",
             }}
           >
-            {product.price}
+            {edit ?
+              <Box id='container numeric'
+                sx={{
+                  display: 'flex',
+                  height: { xs: '1rem', sm: "1.5rem" },
+                  width: "90%",
+                  borderRadius: "0.5rem",
+                  border: "1px solid var(--Base-Dark-Line, #393C49)",
+                  background: "var(--Base-Form-BG, #2D303E)",
+                  paddingLeft: "5px",
+                }}
+              >
+                <NumericFormat
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    handleOnChangePrice(event, product)
+                  }
+                  value={product.price}
+                  prefix='$ '
+                  placeholder='Precio...'
+                  thousandSeparator
+                  customInput={InputBase}
+                  style={{ color: "#FFF" }}
+                />
+                <IconButton
+                  sx={{ paddingRight: "0px", marginRight: '-10px' }}
+                  onClick={(event) => calcularTotal(event)}
+                >
+                  <IconButton
+                    color='secondary'
+                    onClick={() => setEdit(false)}
+                  >
+                    <Box component={"img"} src={"/images/okay.svg"} />
+                  </IconButton>
+                </IconButton>
+              </Box>
+              : <>
+                <Typography sx={{ color: '#69EAE2' }}>
+                  {product.price}
+                  <IconButton
+                    sx={{ paddingTop: "2px", paddingRight: "2px" }}
+                    onClick={() => { setEdit(true); }}>
+                    <Box
+                      component={"img"}
+                      src={"/images/edit.svg"}
+                      sx={{ width: "0.9rem", height: "0.9rem" }}
+                    />
+                  </IconButton>
+                </Typography>
+              </>
+            }
           </Typography>
         </Box>
         <InputBase
@@ -87,6 +183,10 @@ const CartItems = ({
             background: "var(--Base-Form-BG, #2D303E)",
           }}
           value={product.cantidad}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            handleChange(event, product)
+          }
+          }
         />
         <Typography
           sx={{

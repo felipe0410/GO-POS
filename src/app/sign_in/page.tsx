@@ -4,7 +4,6 @@ import { Box, Typography, Button, FormControl, IconButton, InputAdornment, Outli
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
 import { useContext, useState } from "react"
-import { useCookies } from "react-cookie"
 import { styleSign_in } from "./style"
 import { loginUser } from "@/firebase"
 import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
@@ -70,6 +69,7 @@ const Loggin = () => {
         )
     }
 
+
     const logginUserr = async () => {
         try {
             const loggin: any = await loginUser(data.email, data.password)
@@ -112,9 +112,9 @@ const Loggin = () => {
         }
     }
 
-
     return (
         <Box sx={{ height: '100%' }}>
+            <SnackbarProvider />
             <Box id='box-second' sx={{
                 ...styleSign_in.boxSecond,
                 display: "flex",
@@ -130,7 +130,6 @@ const Loggin = () => {
                         justifyContent: "flex-start",
                         alignItems: "flex-end"
                     }}>
-                    <SnackbarProvider />
                     <Box sx={{
                         width: '70%',
                         height: '85%',

@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage";
+import { deleteObject, getStorage, ref } from "firebase/storage";
 import { getAnalytics } from "firebase/analytics";
 import {
   DocumentReference,
@@ -180,8 +180,8 @@ export const updateProductData = async (uid: any, newData: any) => {
   }
 };
 
-// Función para eliminar un producto
-export const deleteProduct = async (uid: any) => {
+export const updateProductDataCantidad = async (uid: any, newData: any) => {
+  console.log(uid)
   try {
     const establecimientoDocRef = doc(
       db,
@@ -194,6 +194,41 @@ export const deleteProduct = async (uid: any) => {
     const docSnapshot = await getDoc(productDocRef);
 
     if (docSnapshot.exists()) {
+      const existingData = docSnapshot.data();
+      if (existingData) {
+        const newCantidad = existingData.cantidad - newData.cantidad;
+
+        if (newCantidad >= 0) {
+          // Actualizar el documento con la nueva cantidad
+          await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
+          console.log("Documento actualizado con éxito.");
+        } else {
+          console.log("No hay suficiente cantidad para actualizar.");
+        }
+      }
+    } else {
+      console.log("El documento no existe.");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el documento: ", error);
+  }
+};
+
+
+// Función para eliminar un producto
+export const deleteProduct = async (uid: any, img: string) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const productDocRef = doc(productCollectionRef, uid);
+    const docSnapshot = await getDoc(productDocRef);
+    if (docSnapshot.exists()) {
+      const previousImageRef = ref(storage, img);
+      await deleteObject(previousImageRef);
       await deleteDoc(productDocRef);
       return true;
     } else {
@@ -234,7 +269,69 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
   }
 };
 
-//funcion para obtener las facturas
+export const createClient = async (uid: string, data: any) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      await setDoc(establecimientoDocRef, {});
+    }
+    const invoicesCollectionRef = collection(establecimientoDocRef, "clients");
+    const invoiceDocRef = doc(invoicesCollectionRef, uid);
+    await setDoc(invoiceDocRef, {
+      uid: uid,
+      user: `${user().decodedString}`,
+      ...data,
+    });
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar información en /clients: ", error);
+    return null;
+  }
+};
+
+export const getAllClientsData = (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const clientsCollectionRef = collection(establecimientoDocRef, "clients");
+    const orderedQuery = query(clientsCollectionRef, orderBy("name"));
+    getDocs(orderedQuery)
+      .then((querySnapshot) => {
+        const clientsData: any[] = [];
+        querySnapshot.forEach((doc) => {
+          clientsData.push({ id: doc.id, ...doc.data() });
+        });
+        callback(clientsData);
+      })
+      .catch((error) => {
+        console.error("Error fetching initial clients data:", error);
+        callback(null);
+      });
+    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot) => {
+      const clientsData: any[] = [];
+      querySnapshot.forEach((doc) => {
+        clientsData.push({ id: doc.id, ...doc.data() });
+      });
+      callback(clientsData);
+    });
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up clients data observer: ", error);
+    return null;
+  }
+};
+
 export const getAllInvoicesData = async (callback: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -244,28 +341,27 @@ export const getAllInvoicesData = async (callback: any) => {
     );
     const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
     const orderedQuery = query(invoiceCollectionRef, orderBy("invoice"));
-    getDocs(orderedQuery)
-      .then((querySnapshot) => {
-        const invoiceData: any[] = [];
-        querySnapshot.forEach((doc) => {
-          invoiceData.push({ id: doc.id, ...doc.data() });
-        });
 
-        callback(invoiceData);
-      })
-      .catch((error) => {
-        console.error("Error fetching initial data:", error);
-        callback(null);
-      });
+    // Obtener datos iniciales
+    const initialQuerySnapshot = await getDocs(orderedQuery);
+    const initialInvoiceData = initialQuerySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    callback(initialInvoiceData);
+
+    // Establecer observador para cambios en tiempo real
     const unsubscribe = onSnapshot(orderedQuery, (querySnapshot: any) => {
-      const invoiceData: any[] = [];
-      querySnapshot.forEach((doc: any) => {
-        invoiceData.push({ id: doc.id, ...doc.data() });
-      });
-      callback(invoiceData);
-      return invoiceData;
+      const updatedInvoiceData = querySnapshot.docs.map((doc: any) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      callback(updatedInvoiceData);
     });
-    // Return the unsubscribe function to stop observing changes
+
+    // Devolver la función para detener la observación de cambios
     return unsubscribe;
   } catch (error) {
     console.error("Error setting up data observer: ", error);
@@ -505,7 +601,6 @@ export const loginUser = async (email: any, password: any) => {
       password
     );
     const user = userCredential.user;
-    console.log(user);
     return user;
   } catch (error: any) {
     const errorCode = error.code;
@@ -561,7 +656,6 @@ export const saveDataUser = async (uid: any, userData: any) => {
 export const getEstablishmentData = async () => {
   try {
     const encodedUserUID = localStorage.getItem('user');
-    console.log(encodedUserUID)
     if (!encodedUserUID) {
       console.error('No se encontró un UID en el local storage');
       return null;

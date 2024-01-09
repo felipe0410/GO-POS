@@ -36,9 +36,10 @@ export default function DeleteModal(props: any) {
   const [open, setOpen] = React.useState(false);
   const { data } = props;
   const handleClose = () => setOpen(false);
-  const handleDelete = async (uid: string) => {
+
+  const handleDelete = async (uid: string, img: string) => {
     try {
-      await deleteProduct(uid);
+      await deleteProduct(uid, img);
       handleClose();
     } catch (error) {
       console.error("error al eliminar ", error);
@@ -100,7 +101,7 @@ export default function DeleteModal(props: any) {
           </Box>
           <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
             <Button
-              onClick={() => handleDelete(data?.uid)}
+              onClick={() => handleDelete(data?.uid, data?.image)}
               sx={{
                 width: "8.75rem",
                 height: "1.5625rem",

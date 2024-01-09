@@ -2,64 +2,27 @@
 import Header from "@/components/Header";
 import {
   Box,
-  FormControl,
   IconButton,
   InputBase,
-  InputLabel,
-  MenuItem,
+  Pagination,
   Paper,
-  Select,
   Typography,
-  styled,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import { getAllCategoriesData, getAllProductsData } from "@/firebase";
+import { getAllProductsData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
-import debounce from "debounce";
 import SlidebarVender from "./SlidebarVender";
-
-const BootstrapInput = styled(InputBase)(({ theme }) => ({
-  "label + &": {
-    marginTop: theme.spacing(3),
-  },
-  ".MuiSelect-icon": { color: "#69EAE2" },
-  "& .MuiInputBase-input": {
-    borderRadius: "0.5rem",
-    position: "relative",
-    backgroundColor: "#1F1D2B",
-    border: "1px solid #69EAE2",
-    fontSize: 16,
-    padding: "10px 26px 10px 12px",
-    transition: theme.transitions.create(["border-color", "box-shadow"]),
-    fontFamily: "Nunito",
-    "&:focus": {
-      borderRadius: "0.5rem",
-      borderColor: "#69EAE2",
-    },
-  },
-}));
 
 const Page = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
-  const [category, setCategory] = useState<[]>([]);
   const [filter, setfilter] = useState<any>();
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedItems, setSelectedItems] = useState<any>([]);
-
-  const debouncedHandleSearchChange = debounce(() => { }, 1000);
-
-  const handleSearchChange = async (event: any) => {
-    setSearchTerm(event);
-    debouncedHandleSearchChange();
-    filteredData(event)
-  };
-
-  const handleCategoryChange = (event: any) => {
-    setSelectedCategory(event.target.value);
-  };
-
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up('sm'));
   React.useEffect(() => {
     const getAllProducts = async () => {
       try {
@@ -73,7 +36,8 @@ const Page = () => {
 
 
   const filteredData = async (event: any) => {
-    const filterSearch: any = await data?.filter((item) => {
+    const foundProducts = data?.filter(producto => producto.barCode === event);
+    const filterSearch: any = data?.filter((item) => {
       if (searchTerm === "") {
         return true;
       }
@@ -82,7 +46,6 @@ const Page = () => {
       );
     });
     setfilter(filterSearch);
-    const foundProducts = data?.filter(producto => producto.barCode === event);
     let productAlreadyInList
     if (foundProducts?.length === 1) {
       const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
@@ -94,7 +57,7 @@ const Page = () => {
       const updatedItems = selectedItems?.map((item: any) => {
         if (item.barCode === newItem.barCode) {
           productAlreadyInList = true
-          return { ...item, cantidad: item.cantidad + 1 };
+          return { ...item, cantidad: item.cantidad + 1, acc: item.acc + newItem.acc };
         }
         productAlreadyInList = false
         return item;
@@ -107,26 +70,56 @@ const Page = () => {
     }
   }
 
+  const itemsPerPage = 12;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentDataPage = filter?.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filter?.length / itemsPerPage);
+
   useEffect(() => {
     filteredData("")
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
-  useEffect(() => {
-    const categoriesData = async () => {
-      try {
-        await getAllCategoriesData(setCategory);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const saveDataToLocalStorage = (key: string, data: any) => {
+    try {
+      const serializedData = JSON.stringify(data);
+      localStorage.setItem(key, serializedData);
+    } catch (error) {
+      console.error("Error saving data to localStorage:", error);
+    }
+  };
+  const getDataFromLocalStorage = (key: string) => {
+    try {
+      const serializedData = localStorage.getItem(key);
+      if (serializedData === null) {
+        return null;
       }
-    };
-    categoriesData();
-  }, []);
+      return JSON.parse(serializedData);
+    } catch (error) {
+      console.error("Error getting data from localStorage:", error);
+      return null;
+    }
+  };
+  useEffect(() => {
+    if (selectedItems?.length > 0) {
+      saveDataToLocalStorage('selectedItems', selectedItems)
+    }
+  }, [selectedItems])
+
+  useEffect(() => {
+    const localStorageSelectedItems = getDataFromLocalStorage('selectedItems')
+    if (localStorageSelectedItems?.length > 0) {
+      setSelectedItems(localStorageSelectedItems)
+    }
+  }, [])
+
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
       <Box
         id='conainer_vender'
-        sx={{ width: { xs: "100%", sm: "calc(100% - 25.5625rem)" } }}
+        sx={{ width: { xs: "100%", lg: "calc(100% - 25.5625rem)" } }}
       >
         <Header title='VENDER' />
         <Paper
@@ -141,7 +134,7 @@ const Page = () => {
           <Box
             sx={{
               padding: "40px 48px",
-              height: "100%",
+              height: { xs: "90%", sm: '105%' },
               textAlign: "-webkit-center",
             }}
           >
@@ -150,7 +143,7 @@ const Page = () => {
                 component='form'
                 onSubmit={(e: any) => {
                   e.preventDefault();
-                  handleSearchChange(e.target[1].value);
+                  filteredData(e.target[1].value);
                 }}
                 sx={{
                   display: "flex",
@@ -177,7 +170,9 @@ const Page = () => {
                   }}
                   placeholder='Buscar'
                   value={searchTerm}
-                  onChange={(e) => handleSearchChange(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                  }}
                 />
                 <IconButton
                   sx={{
@@ -209,35 +204,16 @@ const Page = () => {
               >
                 AGREGAR DESDE CATALOGO
               </Typography>
-              <FormControl sx={{ m: 1, minWidth: 170 }} variant='standard'>
-                <InputLabel id='category-label' style={{ color: "#69EAE2" }}>
-                  CATEGORIAS
-                </InputLabel>
-                <Select
-                  labelId='category-label'
-                  autoWidth
-                  input={<BootstrapInput />}
-                  style={{ color: "#FFF" }}
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                >
-                  <MenuItem value=''>
-                    <em>Categorias</em>
-                  </MenuItem>
-                  {category?.map((tag) => (
-                    <MenuItem key={tag} value={tag}>
-                      {tag}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
             </Box>
             <Box sx={{ marginTop: { sm: "1.56rem" }, height: "70%" }}>
               <VenderCards
-                filteredData={filter}
+                filteredData={currentDataPage}
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
               />
+              <Box id='pagination' sx={{ filter: "invert(1)", display: "flex", justifyContent: "center", marginTop: '20px', width: { xs: '115%', sm: "100%" }, marginLeft: { xs: '-15px', sm: '0' } }} >
+                <Pagination sx={{ color: "#fff" }} onChange={(e, page) => setCurrentPage(page)} count={totalPages} shape="circular" size={matches ? "large" : "small"} />
+              </Box>
             </Box>
           </Box>
         </Paper>
@@ -246,7 +222,9 @@ const Page = () => {
         selectedItems={selectedItems}
         setSelectedItems={setSelectedItems}
         searchTerm={searchTerm}
-        handleSearchChange={handleSearchChange} />
+        filteredData={filteredData}
+        setSearchTerm={setSearchTerm}
+      />
     </Box>
   );
 };

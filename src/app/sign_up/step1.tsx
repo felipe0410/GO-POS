@@ -71,6 +71,7 @@ const Step_one = () => {
 
     return (
         <Box sx={{ height: "100%", }}>
+            <SnackbarProvider />
             <Box sx={{
                 display: "flex",
                 alignItems: "center",
@@ -80,7 +81,6 @@ const Step_one = () => {
                 backgroundSize: 'cover',
                 backgroundPosition: "center",
             }}>
-                <SnackbarProvider />
                 <Box sx={{
                     display: "flex",
                     width: { lg: "56%" },
