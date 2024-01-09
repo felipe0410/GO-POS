@@ -132,7 +132,12 @@ const Invoices = () => {
             textAlign: "-webkit-center",
           }}
         >
-          <Box display={"flex"} sx={{ justifyContent: "space-between" }}>
+          <Box
+            sx={{
+              justifyContent: "space-between",
+              display: { lg: "flex", md: "block" },
+            }}
+          >
             <Paper
               component='form'
               onSubmit={(e: any) => {
@@ -165,6 +170,8 @@ const Invoices = () => {
               sx={{
                 display: "flex",
                 flexDirection: "row",
+                justifyContent: { md: "center", xs: "center" },
+                marginTop: { md: "10px", xs: "10px" },
               }}
             >
               <Box sx={{ textAlign: "start", marginRight: "20px" }}>
