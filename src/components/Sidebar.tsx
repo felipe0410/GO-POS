@@ -66,7 +66,7 @@ export default function Sidebar({
           id: "/register/invoices",
         },
         {
-          section: "FACTURAS",
+          section: "Analiticas",
           id: "/register/dashboard",
         },
       ],
