@@ -138,7 +138,7 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        if (chartRef.current) {
+        if (typeof window !== 'undefined' && chartRef.current && chartRefLine.current) {
             var chart = new ApexCharts(chartRef.current, options);
             chart.render();
             var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
