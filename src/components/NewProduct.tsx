@@ -111,6 +111,8 @@ export default function NewProduct() {
       });
       setData(DATA_DEFAULT);
       setImageBase64("");
+      setValueCategory("")
+      setValueMeasure("")
     } catch (error) {
       enqueueSnackbar("Error al guardar el producto", {
         variant: "error",
@@ -126,7 +128,7 @@ export default function NewProduct() {
     for (const value in fields) {
       if (
         fields.hasOwnProperty(value) &&
-        value !== "nota" &&
+        value !== "nota" && value !== "image" &&
         typeof fields[value] === "string" &&
         fields[value].trim() === ""
       ) {
@@ -158,6 +160,8 @@ export default function NewProduct() {
     } else {
       setData({ ...DATA_DEFAULT, barCode: data.barCode });
       setImageBase64("");
+      setValueCategory("")
+      setValueMeasure("")
     }
   };
 
@@ -337,15 +341,15 @@ export default function NewProduct() {
                   >
                     <Button
                       onClick={() => saveToFirebase()}
-                      // disabled={!isNotEmpty(data)}
+                      disabled={!isNotEmpty(data)}
                       sx={{
                         width: "45%",
                         height: "2.5rem",
                         borderRadius: "0.625rem",
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                        // background: !isNotEmpty(data) ? "gray" : "#69EAE2",
-                        background: "#69EAE2",
+                        background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                        // background: "#69EAE2",
                         marginTop: "10px",
                       }}
                     >
