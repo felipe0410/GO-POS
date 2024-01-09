@@ -7,7 +7,7 @@ import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import DateTimeComponent from "./DateTimeComponent";
+import ReactCalendar from "./ReactCalendar";
 
 const style = {
   position: "absolute" as "absolute",
@@ -22,7 +22,13 @@ const style = {
   textAlign: "-webkit-center",
 };
 
-const DateModal = ({ setSearchTerm }: { setSearchTerm: any }) => {
+const DateModal = ({
+  setSearchTerm,
+  setSelectedDate,
+}: {
+  setSearchTerm: any;
+  setSelectedDate: any;
+}) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -81,9 +87,10 @@ const DateModal = ({ setSearchTerm }: { setSearchTerm: any }) => {
                 />
               </Button>
             </Box>
-            <DateTimeComponent
+            <ReactCalendar
               setSearchTerm={setSearchTerm}
               handleClose={handleClose}
+              setSelectedDate={setSelectedDate}
             />
           </Box>
         </Fade>

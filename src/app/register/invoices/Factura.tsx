@@ -94,7 +94,9 @@ const Factura = ({ data }: { data: any }) => {
               </Typography>
               <Typography sx={facturaStyles.typographyVendedor}>
                 VENDEDOR:{" "}
-                <span style={facturaStyles.typographySpan}>Santiago x</span>
+                <span style={facturaStyles.typographySpan}>
+                  {establishmentData.name}
+                </span>
               </Typography>
             </Box>
             <Divider sx={{ color: "#000" }} />
