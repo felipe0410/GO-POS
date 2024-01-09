@@ -22,7 +22,7 @@ export const typographyPaperSearch = {
   display: "flex",
   alignItems: "center",
   color: "#fff",
-  width: "25rem",
+  width: { xs: "100%", md: "25rem", lg: "25rem" },
   height: "2rem",
   borderRadius: "0.3125rem",
   background: "#2C3248",

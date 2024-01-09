@@ -134,8 +134,8 @@ const Invoices = () => {
         >
           <Box
             sx={{
-              justifyContent: "space-between",
-              display: { lg: "flex", md: "block" },
+              justifyContent: { lg: "space-between" },
+              display: { lg: "flex", md: "block", xs: "block" },
             }}
           >
             <Paper
