@@ -23,9 +23,7 @@ const Invoices = () => {
   const [selectedDate, setSelectedDate] = useState<any>();
   const [totalVentasFecha, setTotalVentasFecha] = useState<number>(0);
 
-  console.log(searchTerm);
-
-  const debouncedHandleSearchChange = debounce(() => { }, 300);
+  const debouncedHandleSearchChange = debounce(() => {}, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -64,11 +62,9 @@ const Invoices = () => {
       const [fecha, hora] = item?.date.split(" ");
 
       if (Array.isArray(searchTerm)) {
-        // Filtrar por rango de fechas si searchTerm es un array
         const [fechaInicio, fechaFin] = searchTerm;
         return fecha >= fechaInicio && fecha <= fechaFin;
       } else {
-        // Filtrar por término de búsqueda normal
         return (
           fecha.includes(lowerSearchTerm) ||
           item.cliente.name.toLowerCase().includes(lowerSearchTerm) ||
@@ -131,7 +127,7 @@ const Invoices = () => {
       >
         <Box
           sx={{
-            padding: { xs: '20px 20px', sm: "40px 48px" },
+            padding: { xs: "20px 20px", sm: "40px 48px" },
             height: "100%",
             textAlign: "-webkit-center",
           }}
