@@ -137,15 +137,15 @@ const Dashboard = () => {
 
 
 
-    useEffect(() => {
-        if (typeof window !== 'undefined' && chartRef.current && chartRefLine.current) {
-            var chart = new ApexCharts(chartRef.current, options);
-            chart.render();
-            var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
-            chartLine.render();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // useEffect(() => {
+    //     if (typeof window !== 'undefined' && chartRef.current && chartRefLine.current) {
+    //         var chart = new ApexCharts(chartRef.current, options);
+    //         chart.render();
+    //         var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
+    //         chartLine.render();
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, []);
 
     return (
         <>
