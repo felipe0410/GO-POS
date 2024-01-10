@@ -14,11 +14,17 @@ import {
 import { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import { createClient, createInvoice, getAllClientsData, updateProductDataCantidad } from "@/firebase";
+import {
+  createClient,
+  createInvoice,
+  getAllClientsData,
+  updateProductDataCantidad,
+} from "@/firebase";
 import LinearBuffer from "./progress";
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 import React from "react";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
+import Slider from "./slider/Slider";
 
 interface UserData {
   name: string;
@@ -50,17 +56,20 @@ const DatosVenta = (props: any) => {
     numeroFactura,
     handleVenderClick,
   } = props;
-  const [options, setOptions] = useState([''])
-  const [valueClient, setValueClient] = React.useState<string | null>(options[0]);
-  const [inputValue, setInputValue] = React.useState('');
+  const [options, setOptions] = useState([""]);
+  const [valueClient, setValueClient] = React.useState<string | null>(
+    options[0]
+  );
+  const [inputValue, setInputValue] = React.useState("");
   const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [valorRecibido, setValorRecibido] = useState<number | null>(null);
   const [mostrarValorDevolver, setMostrarValorDevolver] = useState(false);
   const [datosGuardados, setDatosGuardados] = useState(false);
-  const [clientsData, setClientsData] = useState([])
+  const [clientsData, setClientsData] = useState([]);
   const [factura, setFactura] = useState({
     invoice: "",
     date: "",
+    status: "pendiente",
     vendedor: "xxx",
     cliente: {
       name: "",
@@ -100,6 +109,7 @@ const DatosVenta = (props: any) => {
     }
   };
 
+  console.log(factura);
   const datosGuardadosLocalStorage = () => {
     const dataWithDefaults = {
       name: data.name || "XXXX",
@@ -108,8 +118,9 @@ const DatosVenta = (props: any) => {
       identificacion: data.identificacion || "XXXX",
       celular: data.celular || "XXXX",
     };
+
     const datosCliente = JSON.stringify(dataWithDefaults);
-    selectedItems.map((e: any) => updateProductDataCantidad(e.barCode, e))
+    selectedItems.map((e: any) => updateProductDataCantidad(e.barCode, e));
     localStorage.setItem("cliente", datosCliente);
     localStorage.setItem("invoice", numeroFactura());
     setDatosGuardados(true);
@@ -130,19 +141,6 @@ const DatosVenta = (props: any) => {
     });
   };
 
-  const isNotEmpty = (fields: any) => {
-    for (const value in fields) {
-      if (
-        fields.hasOwnProperty(value) &&
-        typeof fields[value] === "string" &&
-        fields[value].trim() === ""
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
   const inputOnChange = (field: string, value: string) => {
     setData({ ...data, [field]: value });
   };
@@ -157,22 +155,23 @@ const DatosVenta = (props: any) => {
   };
 
   useEffect(() => {
-    getAllClientsData(setClientsData)
-  }, [])
+    getAllClientsData(setClientsData);
+  }, []);
   useEffect(() => {
     if (clientsData.length > 0) {
-      const array: any = []
-      clientsData.map((e: any) => { array.push(e.name) })
-      setOptions(array)
+      const array: any = [];
+      clientsData.map((e: any) => {
+        array.push(e.name);
+      });
+      setOptions(array);
     }
-  }, [clientsData])
-
-
+  }, [clientsData]);
 
   return loading ? (
     <LinearBuffer />
   ) : (
     <>
+      <Slider setFactura={setFactura} factura={factura} />
       <Typography
         sx={{
           color: "#69EAE2",
@@ -189,8 +188,7 @@ const DatosVenta = (props: any) => {
       </Typography>
       <Divider sx={{ background: "#69EAE2", width: "100%" }} />
 
-
-      <Box >
+      <Box>
         {datosGuardados ? (
           <>
             <IconButton
@@ -230,37 +228,47 @@ const DatosVenta = (props: any) => {
           </>
         ) : (
           <>
-            <Box >
+            <Box>
               <Autocomplete
-                placeholder="Clientes registrados"
+                placeholder='Clientes registrados'
                 style={{
-                  marginTop: '20px',
+                  marginTop: "20px",
                   color: "#FFF",
                   borderRadius: "0.5rem",
                   background: "#2C3248",
                   boxShadow:
                     "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  width: '100%'
+                  width: "100%",
                 }}
                 value={valueClient}
                 onChange={(event: any, newValue: string | null) => {
                   setValueClient(newValue);
-                  const clients: any = clientsData?.find((e: any) => e.name === newValue) ?? []
-                  Object.values(clients).length > 0 ? setData(clients) :
-                    setData({
-                      name: "",
-                      direccion: "",
-                      email: "",
-                      identificacion: "",
-                      celular: "",
-                    })
+                  const clients: any =
+                    clientsData?.find((e: any) => e.name === newValue) ?? [];
+                  Object.values(clients).length > 0
+                    ? setData(clients)
+                    : setData({
+                        name: "",
+                        direccion: "",
+                        email: "",
+                        identificacion: "",
+                        celular: "",
+                      });
                 }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                   setInputValue(newInputValue);
                 }}
                 options={options}
-                renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                renderInput={(params) => (
+                  <TextField
+                    placeholder='  clientes registrados'
+                    variant='standard'
+                    sx={{ filter: "invert(1)", paddingLeft: "15px" }}
+                    style={{ color: "red", filter: "invert(1)" }}
+                    {...params}
+                  />
+                )}
               />
             </Box>
             {dataInputs.map((input, index) => {
@@ -297,14 +305,20 @@ const DatosVenta = (props: any) => {
             })}
           </>
         )}
-        <Box sx={{ textAlign: "center", display: datosGuardados ? 'none' : 'flex', justifyContent: 'space-between' }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            display: datosGuardados ? "none" : "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <Button
             onClick={datosGuardadosLocalStorage}
             sx={{
               borderRadius: "0.5rem",
               background: "#69EAE2",
               marginTop: "1.5rem",
-              width: '45%'
+              width: "45%",
             }}
           >
             <Typography
@@ -323,14 +337,16 @@ const DatosVenta = (props: any) => {
           <Button
             disabled={Object.values(data).some((e) => e.length === 0)}
             onClick={() => {
-              createClient(data.identificacion, data)
-              datosGuardadosLocalStorage()
+              createClient(data.identificacion, data);
+              datosGuardadosLocalStorage();
             }}
             sx={{
               borderRadius: "0.5rem",
-              background: Object.values(data).some((e) => e.length === 0) ? "gray" : "#69EAE2",
+              background: Object.values(data).some((e) => e.length === 0)
+                ? "gray"
+                : "#69EAE2",
               marginTop: "1.5rem",
-              width: '45%'
+              width: "45%",
             }}
           >
             <Typography

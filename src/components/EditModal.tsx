@@ -333,7 +333,7 @@ export default function EditModal(props: any) {
                   ref={fileRef}
                   onChange={() => {
                     setUpload(true);
-                    setProductExist(false);
+                    setProductExist(true);
                     uploadImage(fileRef);
                   }}
                   type='file'
@@ -364,13 +364,13 @@ export default function EditModal(props: any) {
                     }}
                     display={
                       product.image.length > 0 && !productExist
-                        ? "flex"
-                        : "none"
+                        ? "none"
+                        : "flex"
                     }
                   >
                     <Button
                       sx={{
-                        display: productExist ? "none" : "block",
+                        display: "block",
                         borderRadius: "0.625rem",
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
@@ -396,6 +396,7 @@ export default function EditModal(props: any) {
                     </Button>
                     <Button
                       sx={{
+                        display: "block",
                         borderRadius: "0.625rem",
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",

@@ -30,16 +30,28 @@ export const inputs = [
     field: "description",
   },
   {
-    name: "AÑADIR FOTO",
-    type: "img",
-    width: "25%",
-    field: "image",
+    name: "PRECIO DE COMPRA",
+    type: "purchasePrice",
+    width: "45%",
+    field: "purchasePrice",
   },
   {
     name: "PRECIO",
     type: "amount",
     width: "45%",
     field: "price",
+  },
+  {
+    name: "AÑADIR FOTO",
+    type: "img",
+    width: "25%",
+    field: "image",
+  },
+  {
+    name: "CANTIDAD",
+    type: "cantidad",
+    width: "45%",
+    field: "cantidad",
   },
 ];
 

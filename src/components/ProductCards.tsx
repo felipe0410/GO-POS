@@ -24,7 +24,7 @@ const ProductCards = ({ filteredData }: { filteredData: any }) => {
           gridColumnGap: "1rem",
           height: "100%",
           justifyItems: "center",
-          marginTop: "1.5rem",
+          marginTop: "2.5rem",
         }}
       >
         <InventoryCard filteredData={filteredData} />

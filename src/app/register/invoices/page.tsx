@@ -1,6 +1,15 @@
 "use client";
 import Header from "@/components/Header";
-import { Box, IconButton, InputBase, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  InputBase,
+  Pagination,
+  Paper,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import {
   BoxStyles,
   typographyPaperSearch,
@@ -22,6 +31,14 @@ const Invoices = () => {
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<any>();
   const [totalVentasFecha, setTotalVentasFecha] = useState<number>(0);
+  const itemsPerPage = 8;
+  const [currentPage, setCurrentPage] = useState(1);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentDataPage = filter?.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filter?.length / itemsPerPage);
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
   const debouncedHandleSearchChange = debounce(() => {}, 300);
 
@@ -202,18 +219,36 @@ const Invoices = () => {
               </Box>
             </Box>
           </Box>
-          <Box sx={{ marginTop: "1.56rem", height: "100%" }}>
+          <Box sx={{ marginTop: "1.56rem", height: "80%" }}>
             <Box
               display={{ md: "none", lg: "block", xs: "none" }}
               sx={{ height: "100%" }}
             >
-              <InvoicesTable filteredData={filter} />
+              <InvoicesTable filteredData={currentDataPage} />
             </Box>
             <Box
               display={{ lg: "none", md: "block", xs: "block" }}
               sx={{ height: "100%" }}
             >
-              <InvoicesTableResponsive filteredData={filter} />
+              <InvoicesTableResponsive filteredData={currentDataPage} />
+            </Box>
+            <Box
+              id='pagination'
+              sx={{
+                filter: "invert(1)",
+                display: "flex",
+                justifyContent: "center",
+                width: { xs: "115%", sm: "100%" },
+                marginLeft: { xs: "-15px", sm: "0" },
+              }}
+            >
+              <Pagination
+                sx={{ color: "#fff" }}
+                onChange={(e, page) => setCurrentPage(page)}
+                count={totalPages}
+                shape='circular'
+                size={matches ? "large" : "small"}
+              />
             </Box>
           </Box>
         </Box>

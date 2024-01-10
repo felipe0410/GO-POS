@@ -196,7 +196,9 @@ export default function InvoicesTableResponsive({
                                 borderColor: "#69EAE2",
                               }}
                             >
-                              {row.status ? row.status : "CANCELADO"}
+                              {row.status
+                                ? row.status.toUpperCase()
+                                : "CANCELADO"}
                             </TableCell>
                           </TableRow>
                         </Table>

@@ -77,6 +77,7 @@ export default function NewProduct() {
     description: "",
     image: "",
     cantidad: "",
+    purchasePrice: "",
   };
   const [data, setData] = useState({
     productName: "",
@@ -87,20 +88,28 @@ export default function NewProduct() {
     description: "",
     image: "",
     cantidad: "",
+    purchasePrice: "",
   });
-  console.log(data)
   const [imageBase64, setImageBase64] = useState("");
-  const [category, setCategory] = useState<any>(['']);
-  const [measure, setMeasure] = useState<any>(['']);
-  const [inputValue, setInputValue] = React.useState('');
-  const [inputValue2, setInputValue2] = React.useState('');
-  const [valueMeasure, setValueMeasure] = React.useState<string | null>(measure[0]);
-  const [valueCategory, setValueCategory] = React.useState<string | null>(category[0]);
+  const [category, setCategory] = useState<any>([""]);
+  const [measure, setMeasure] = useState<any>([""]);
+  const [inputValue, setInputValue] = React.useState("");
+  const [inputValue2, setInputValue2] = React.useState("");
+  const [valueMeasure, setValueMeasure] = React.useState<string | null>(
+    measure[0]
+  );
+  const [valueCategory, setValueCategory] = React.useState<string | null>(
+    category[0]
+  );
+
+  const IMG_DEFAULT =
+    "https://firebasestorage.googleapis.com/v0/b/go-pos-add98.appspot.com/o/images%2Fimage-not-found-icon%20(1)%20(1).png?alt=media&token=d999eb4c-54a0-4489-9b23-e4a1a0ee65d9";
 
   const saveToFirebase = async () => {
     try {
       await createProduct(data.barCode, {
         ...data,
+        image: data.image === "" ? IMG_DEFAULT : data.image,
       });
       enqueueSnackbar("Producto guardado con exito", {
         variant: "success",
@@ -111,8 +120,8 @@ export default function NewProduct() {
       });
       setData(DATA_DEFAULT);
       setImageBase64("");
-      setValueCategory("")
-      setValueMeasure("")
+      setValueCategory("");
+      setValueMeasure("");
     } catch (error) {
       enqueueSnackbar("Error al guardar el producto", {
         variant: "error",
@@ -128,7 +137,9 @@ export default function NewProduct() {
     for (const value in fields) {
       if (
         fields.hasOwnProperty(value) &&
-        value !== "nota" && value !== "image" &&
+        value !== "nota" &&
+        value !== "image" &&
+        value !== "purchasePrice" &&
         typeof fields[value] === "string" &&
         fields[value].trim() === ""
       ) {
@@ -160,12 +171,12 @@ export default function NewProduct() {
     } else {
       setData({ ...DATA_DEFAULT, barCode: data.barCode });
       setImageBase64("");
-      setValueCategory("")
-      setValueMeasure("")
+      setValueCategory("");
+      setValueMeasure("");
     }
   };
 
-  const user = atob(localStorage?.getItem('user') ?? "")
+  const user = atob(localStorage?.getItem("user") ?? "");
 
   useEffect(() => {
     const measurementsData = async () => {
@@ -179,15 +190,20 @@ export default function NewProduct() {
   }, []);
 
   useEffect(() => {
-    const dataMeasurement = data?.measurement ?? ""
-    const dataCategory = data?.category ?? ""
+    const dataMeasurement = data?.measurement ?? "";
+    const dataCategory = data?.category ?? "";
     if (dataCategory.length > 0 && valueCategory?.length === 0) {
-      setValueCategory(dataCategory)
+      setValueCategory(dataCategory);
     }
     if (dataMeasurement.length > 0 && valueMeasure?.length === 0) {
-      setValueMeasure(dataMeasurement)
+      setValueMeasure(dataMeasurement);
     }
-  }, [data?.category, data?.measurement, valueCategory?.length, valueMeasure?.length])
+  }, [
+    data?.category,
+    data?.measurement,
+    valueCategory?.length,
+    valueMeasure?.length,
+  ]);
 
   return (
     <Box
@@ -222,8 +238,8 @@ export default function NewProduct() {
                 marginTop: "27px",
                 marginLeft: {
                   sm:
-                    input.width === "45%" && [3, 6].includes(index)
-                      ? index === 6
+                    input.width === "45%" && [3, 6, 8].includes(index)
+                      ? index === 8
                         ? "30%"
                         : "10%"
                       : "0",
@@ -241,7 +257,7 @@ export default function NewProduct() {
               const categorySelect = (
                 <Box>
                   <Autocomplete
-                    placeholder="Categoria"
+                    placeholder='Categoria'
                     style={{
                       width: "100%",
                       borderRadius: "0.625rem",
@@ -251,23 +267,31 @@ export default function NewProduct() {
                     }}
                     value={valueCategory}
                     onChange={(event: any, newValue: string | null) => {
-                      setValueCategory(newValue)
-                      inputOnChange(input.field, newValue ?? "")
+                      setValueCategory(newValue);
+                      inputOnChange(input.field, newValue ?? "");
                     }}
                     inputValue={inputValue2}
                     onInputChange={(event, newInputValue) => {
                       setInputValue2(newInputValue);
                     }}
                     options={category}
-                    renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                    renderInput={(params) => (
+                      <TextField
+                        placeholder='Categoria'
+                        variant='standard'
+                        sx={{ filter: "invert(1)", paddingLeft: "15px" }}
+                        style={{ color: "red", filter: "invert(1)" }}
+                        {...params}
+                      />
+                    )}
                   />
                 </Box>
               );
               const measurementSelect = (
                 <Box>
-                  <Box >
+                  <Box>
                     <Autocomplete
-                      placeholder="Unidades de medida"
+                      placeholder='Unidades de medida'
                       style={{
                         width: "100%",
                         borderRadius: "0.625rem",
@@ -277,46 +301,75 @@ export default function NewProduct() {
                       }}
                       value={valueMeasure}
                       onChange={(event: any, newValue: string | null) => {
-                        setValueMeasure(newValue)
-                        inputOnChange("measurement", newValue ?? "")
+                        setValueMeasure(newValue);
+                        inputOnChange("measurement", newValue ?? "");
                       }}
                       inputValue={inputValue}
                       onInputChange={(event, newInputValue) => {
                         setInputValue(newInputValue);
                       }}
                       options={measure}
-                      renderInput={(params) => <TextField placeholder="  clientes registrados" variant="standard" sx={{ filter: 'invert(1)', paddingLeft: '15px' }} style={{ color: 'red', filter: 'invert(1)' }}  {...params} />}
+                      renderInput={(params) => (
+                        <TextField
+                          placeholder='Unidades de medida'
+                          variant='standard'
+                          sx={{ filter: "invert(1)", paddingLeft: "15px" }}
+                          style={{ color: "red", filter: "invert(1)" }}
+                          {...params}
+                        />
+                      )}
                     />
                   </Box>
                 </Box>
               );
+              const priceInput = (
+                <NumericFormat
+                  onChange={(e: any) => {
+                    setData((prevData) => ({
+                      ...prevData,
+                      price: e.target.value,
+                    }));
+                  }}
+                  value={data.price}
+                  prefix='$ '
+                  thousandSeparator
+                  customInput={OutlinedInput}
+                  style={{ color: "#FFF" }}
+                  sx={{
+                    height: "44.9px",
+                    borderRadius: "0.625rem",
+                    background: "#2C3248",
+                    boxShadow:
+                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                  }}
+                />
+              );
+              const purchasePriceInput = (
+                <NumericFormat
+                  onChange={(e: any) => {
+                    setData((prevData) => ({
+                      ...prevData,
+                      purchasePrice: e.target.value,
+                    }));
+                  }}
+                  value={data.purchasePrice}
+                  prefix='$ '
+                  thousandSeparator
+                  customInput={OutlinedInput}
+                  style={{ color: "#FFF" }}
+                  sx={{
+                    height: "44.9px",
+                    borderRadius: "0.625rem",
+                    background: "#2C3248",
+                    boxShadow:
+                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                  }}
+                />
+              );
               const amountInput = (
                 <>
-                  <NumericFormat
-                    onChange={(e: any) => {
-                      setData((prevData) => ({
-                        ...prevData,
-                        price: e.target.value,
-                      }));
-                    }}
-                    value={data.price}
-                    prefix='$ '
-                    thousandSeparator
-                    customInput={OutlinedInput}
-                    style={{ color: "#FFF" }}
-                    sx={{
-                      height: "44.9px",
-                      borderRadius: "0.625rem",
-                      background: "#2C3248",
-                      boxShadow:
-                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                  />
-                  <Typography sx={{ ...styleTypography, marginTop: "10px" }}>
-                    {"CANTIDAD"}
-                  </Typography>
                   <OutlinedInput
-                    id="cantidad"
+                    id='cantidad'
                     value={data["cantidad"]}
                     onChange={(e) => inputOnChange("cantidad", e.target.value)}
                     type={"number"}
@@ -367,7 +420,7 @@ export default function NewProduct() {
                         GUARDAR
                       </Typography>
                     </Button>
-                    <Box sx={{ width: '45%' }}>
+                    <Box sx={{ width: "45%" }}>
                       <Calculatorr />
                     </Box>
                   </Box>
@@ -381,7 +434,6 @@ export default function NewProduct() {
                   onChange={(e) => inputOnChange("description", e.target.value)}
                 />
               );
-
               const qrBar = (
                 <OutlinedInput
                   value={data["barCode"]}
@@ -417,11 +469,28 @@ export default function NewProduct() {
                     ) : input.type === "category" ? (
                       categorySelect
                     ) : input.type === "img" ? (
-                      <Box id='contianer img' sx={{ width: { xs: '200%', sm: '150%' }, height: '100%' }}>
-                        <ImgInput data={data} setData={setData} folderSaved={user.length > 0 ? user : "images"} fiel={"image"} imageBase64={imageBase64} setImageBase64={setImageBase64} />
+                      <Box
+                        id='contianer img'
+                        sx={{
+                          width: { xs: "200%", sm: "150%" },
+                          height: "200px",
+                        }}
+                      >
+                        <ImgInput
+                          data={data}
+                          setData={setData}
+                          folderSaved={user.length > 0 ? user : "images"}
+                          fiel={"image"}
+                          imageBase64={imageBase64}
+                          setImageBase64={setImageBase64}
+                        />
                       </Box>
-                    ) : input.type === "amount" ? (
+                    ) : input.type === "cantidad" ? (
                       amountInput
+                    ) : input.type === "purchasePrice" ? (
+                      purchasePriceInput
+                    ) : input.type === "amount" ? (
+                      priceInput
                     ) : input.type === "textarea" ? (
                       descriptionInput
                     ) : input.type === "qrbar" ? (
@@ -432,10 +501,12 @@ export default function NewProduct() {
                           value={data["productName"]}
                           onChange={(e) => {
                             inputOnChange(input.field, e.target.value);
-                          }
-                          }
+                          }}
                           onBlur={(e) => {
-                            setData({ ...data, description: `${e.target.value}:` })
+                            setData({
+                              ...data,
+                              description: `${e.target.value}:`,
+                            });
                           }}
                           type={input.type}
                           sx={{

@@ -53,7 +53,7 @@ export default function InvoicesTable({ filteredData }: { filteredData: any }) {
         width: "100%",
         overflow: "hidden",
         background: "#1F1D2B",
-        height: "92%",
+        height: "87%",
         marginTop: "1em",
       }}
     >
@@ -140,7 +140,7 @@ export default function InvoicesTable({ filteredData }: { filteredData: any }) {
                     }}
                     align='center'
                   >
-                    {row.status ? row.status : "CANCELADO"}
+                    {row.status ? row.status.toUpperCase() : "CANCELADO"}
                   </TableCell>
                 </TableRow>
               );
