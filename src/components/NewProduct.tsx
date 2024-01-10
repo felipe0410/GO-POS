@@ -206,92 +206,59 @@ export default function NewProduct() {
   ]);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        height: "100%",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-      id='container'
-    >
+    <>
       <SnackbarProvider />
-      <Paper
-        style={{
-          borderRadius: "0.625rem",
-          background: "#1F1D2B",
-          boxShadow: "0px 1px 100px -50px #69EAE2",
+      <Box
+        sx={{
+          display: "flex",
+          height: "100%",
+          alignItems: "center",
+          justifyContent: "center",
         }}
+        id='container'
       >
-        <Box sx={{ padding: { xs: "15px", sm: "2rem 3.8rem 2rem 3.4rem" } }}>
-          <Box
-            id='container-inputs'
-            sx={{
-              display: "flex",
-              flexWrap: "wrap",
-              justifyContent: "space-between",
-            }}
-          >
-            {inputs.map((input, index) => {
-              const style = {
-                width: input.width,
-                marginTop: "27px",
-                marginLeft: {
-                  sm:
-                    input.width === "45%" && [3, 6, 8].includes(index)
-                      ? index === 8
-                        ? "30%"
-                        : "10%"
-                      : "0",
-                },
-              };
-              const styleTypography = {
-                color: "#FFF",
-                fontFamily: "Nunito",
-                fontSize: { xs: "10px", sm: "1rem" },
-                fontStyle: "normal",
-                fontWeight: 700,
-                lineHeight: "normal",
-                marginBottom: "5px",
-              };
-              const categorySelect = (
-                <Box>
-                  <Autocomplete
-                    placeholder='Categoria'
-                    style={{
-                      width: "100%",
-                      borderRadius: "0.625rem",
-                      background: "#2C3248",
-                      boxShadow:
-                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                    value={valueCategory}
-                    onChange={(event: any, newValue: string | null) => {
-                      setValueCategory(newValue);
-                      inputOnChange(input.field, newValue ?? "");
-                    }}
-                    inputValue={inputValue2}
-                    onInputChange={(event, newInputValue) => {
-                      setInputValue2(newInputValue);
-                    }}
-                    options={category}
-                    renderInput={(params) => (
-                      <TextField
-                        placeholder='Categoria'
-                        variant='standard'
-                        sx={{ filter: "invert(1)", paddingLeft: "15px" }}
-                        style={{ color: "red", filter: "invert(1)" }}
-                        {...params}
-                      />
-                    )}
-                  />
-                </Box>
-              );
-              const measurementSelect = (
-                <Box>
+        <Paper
+          style={{
+            borderRadius: "0.625rem",
+            background: "#1F1D2B",
+            boxShadow: "0px 1px 100px -50px #69EAE2",
+          }}
+        >
+          <Box sx={{ padding: { xs: "15px", sm: "2rem 3.8rem 2rem 3.4rem" } }}>
+            <Box
+              id='container-inputs'
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+              }}
+            >
+              {inputs.map((input, index) => {
+                const style = {
+                  width: input.width,
+                  marginTop: "27px",
+                  marginLeft: {
+                    sm:
+                      input.width === "45%" && [3, 6, 8].includes(index)
+                        ? index === 8
+                          ? "30%"
+                          : "10%"
+                        : "0",
+                  },
+                };
+                const styleTypography = {
+                  color: "#FFF",
+                  fontFamily: "Nunito",
+                  fontSize: { xs: "10px", sm: "1rem" },
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "normal",
+                  marginBottom: "5px",
+                };
+                const categorySelect = (
                   <Box>
                     <Autocomplete
-                      placeholder='Unidades de medida'
+                      placeholder='Categoria'
                       style={{
                         width: "100%",
                         borderRadius: "0.625rem",
@@ -299,19 +266,19 @@ export default function NewProduct() {
                         boxShadow:
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                       }}
-                      value={valueMeasure}
+                      value={valueCategory}
                       onChange={(event: any, newValue: string | null) => {
-                        setValueMeasure(newValue);
-                        inputOnChange("measurement", newValue ?? "");
+                        setValueCategory(newValue);
+                        inputOnChange(input.field, newValue ?? "");
                       }}
-                      inputValue={inputValue}
+                      inputValue={inputValue2}
                       onInputChange={(event, newInputValue) => {
-                        setInputValue(newInputValue);
+                        setInputValue2(newInputValue);
                       }}
-                      options={measure}
+                      options={category}
                       renderInput={(params) => (
                         <TextField
-                          placeholder='Unidades de medida'
+                          placeholder='Categoria'
                           variant='standard'
                           sx={{ filter: "invert(1)", paddingLeft: "15px" }}
                           style={{ color: "red", filter: "invert(1)" }}
@@ -320,59 +287,173 @@ export default function NewProduct() {
                       )}
                     />
                   </Box>
-                </Box>
-              );
-              const priceInput = (
-                <NumericFormat
-                  onChange={(e: any) => {
-                    setData((prevData) => ({
-                      ...prevData,
-                      price: e.target.value,
-                    }));
-                  }}
-                  value={data.price}
-                  prefix='$ '
-                  thousandSeparator
-                  customInput={OutlinedInput}
-                  style={{ color: "#FFF" }}
-                  sx={{
-                    height: "44.9px",
-                    borderRadius: "0.625rem",
-                    background: "#2C3248",
-                    boxShadow:
-                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                />
-              );
-              const purchasePriceInput = (
-                <NumericFormat
-                  onChange={(e: any) => {
-                    setData((prevData) => ({
-                      ...prevData,
-                      purchasePrice: e.target.value,
-                    }));
-                  }}
-                  value={data.purchasePrice}
-                  prefix='$ '
-                  thousandSeparator
-                  customInput={OutlinedInput}
-                  style={{ color: "#FFF" }}
-                  sx={{
-                    height: "44.9px",
-                    borderRadius: "0.625rem",
-                    background: "#2C3248",
-                    boxShadow:
-                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                />
-              );
-              const amountInput = (
-                <>
+                );
+                const measurementSelect = (
+                  <Box>
+                    <Box>
+                      <Autocomplete
+                        placeholder='Unidades de medida'
+                        style={{
+                          width: "100%",
+                          borderRadius: "0.625rem",
+                          background: "#2C3248",
+                          boxShadow:
+                            "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                        }}
+                        value={valueMeasure}
+                        onChange={(event: any, newValue: string | null) => {
+                          setValueMeasure(newValue);
+                          inputOnChange("measurement", newValue ?? "");
+                        }}
+                        inputValue={inputValue}
+                        onInputChange={(event, newInputValue) => {
+                          setInputValue(newInputValue);
+                        }}
+                        options={measure}
+                        renderInput={(params) => (
+                          <TextField
+                            placeholder='Unidades de medida'
+                            variant='standard'
+                            sx={{ filter: "invert(1)", paddingLeft: "15px" }}
+                            style={{ color: "red", filter: "invert(1)" }}
+                            {...params}
+                          />
+                        )}
+                      />
+                    </Box>
+                  </Box>
+                );
+                const priceInput = (
+                  <NumericFormat
+                    onChange={(e: any) => {
+                      setData((prevData) => ({
+                        ...prevData,
+                        price: e.target.value,
+                      }));
+                    }}
+                    value={data.price}
+                    prefix='$ '
+                    thousandSeparator
+                    customInput={OutlinedInput}
+                    style={{ color: "#FFF" }}
+                    sx={{
+                      height: "44.9px",
+                      borderRadius: "0.625rem",
+                      background: "#2C3248",
+                      boxShadow:
+                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    }}
+                  />
+                );
+                const purchasePriceInput = (
+                  <NumericFormat
+                    onChange={(e: any) => {
+                      setData((prevData) => ({
+                        ...prevData,
+                        purchasePrice: e.target.value,
+                      }));
+                    }}
+                    value={data.purchasePrice}
+                    prefix='$ '
+                    thousandSeparator
+                    customInput={OutlinedInput}
+                    style={{ color: "#FFF" }}
+                    sx={{
+                      height: "44.9px",
+                      borderRadius: "0.625rem",
+                      background: "#2C3248",
+                      boxShadow:
+                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                    }}
+                  />
+                );
+                const amountInput = (
+                  <>
+                    <OutlinedInput
+                      id='cantidad'
+                      value={data["cantidad"]}
+                      onChange={(e) =>
+                        inputOnChange("cantidad", e.target.value)
+                      }
+                      type={"number"}
+                      sx={{
+                        height: "44.9px",
+                        borderRadius: "0.625rem",
+                        background: "#2C3248",
+                        boxShadow:
+                          "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                      }}
+                      style={{ color: "#FFF" }}
+                    />
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        marginBottom: "2%",
+                        marginLeft: "auto",
+                        width: "100%",
+                        marginTop: "auto",
+                      }}
+                    >
+                      <Button
+                        onClick={() => saveToFirebase()}
+                        disabled={!isNotEmpty(data)}
+                        sx={{
+                          width: "45%",
+                          height: "2.5rem",
+                          borderRadius: "0.625rem",
+                          boxShadow:
+                            "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                          background: !isNotEmpty(data) ? "gray" : "#69EAE2",
+                          // background: "#69EAE2",
+                          marginTop: "10px",
+                        }}
+                      >
+                        <Typography
+                          sx={{
+                            color: "#1F1D2B",
+                            textAlign: "center",
+                            fontFamily: "Nunito",
+                            fontSize: { xs: "0.58rem", sm: "0.875rem" },
+                            fontStyle: "normal",
+                            fontWeight: 700,
+                            lineHeight: "normal",
+                          }}
+                        >
+                          GUARDAR
+                        </Typography>
+                      </Button>
+                      <Box sx={{ width: "45%" }}>
+                        <Calculatorr />
+                      </Box>
+                    </Box>
+                  </>
+                );
+                const descriptionInput = (
+                  <Input
+                    multiline={true}
+                    rows={3}
+                    value={data["description"]}
+                    onChange={(e) =>
+                      inputOnChange("description", e.target.value)
+                    }
+                  />
+                );
+                const qrBar = (
                   <OutlinedInput
-                    id='cantidad'
-                    value={data["cantidad"]}
-                    onChange={(e) => inputOnChange("cantidad", e.target.value)}
-                    type={"number"}
+                    value={data["barCode"]}
+                    endAdornment={
+                      <InputAdornment position='end'>
+                        <IconButton sx={{ paddingRight: "0px" }}>
+                          <Box component={"img"} src={"/images/scan.svg"} />
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    onChange={(e) => inputOnChange("barCode", e.target.value)}
+                    onBlur={() => {
+                      getDataProductForID();
+                    }}
+                    type={"text"}
                     sx={{
                       height: "44.9px",
                       borderRadius: "0.625rem",
@@ -382,158 +463,79 @@ export default function NewProduct() {
                     }}
                     style={{ color: "#FFF" }}
                   />
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      marginBottom: "2%",
-                      marginLeft: "auto",
-                      width: "100%",
-                      marginTop: "auto",
-                    }}
-                  >
-                    <Button
-                      onClick={() => saveToFirebase()}
-                      disabled={!isNotEmpty(data)}
-                      sx={{
-                        width: "45%",
-                        height: "2.5rem",
-                        borderRadius: "0.625rem",
-                        boxShadow:
-                          "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                        background: !isNotEmpty(data) ? "gray" : "#69EAE2",
-                        // background: "#69EAE2",
-                        marginTop: "10px",
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          color: "#1F1D2B",
-                          textAlign: "center",
-                          fontFamily: "Nunito",
-                          fontSize: { xs: "0.58rem", sm: "0.875rem" },
-                          fontStyle: "normal",
-                          fontWeight: 700,
-                          lineHeight: "normal",
-                        }}
-                      >
-                        GUARDAR
-                      </Typography>
-                    </Button>
-                    <Box sx={{ width: "45%" }}>
-                      <Calculatorr />
-                    </Box>
-                  </Box>
-                </>
-              );
-              const descriptionInput = (
-                <Input
-                  multiline={true}
-                  rows={3}
-                  value={data["description"]}
-                  onChange={(e) => inputOnChange("description", e.target.value)}
-                />
-              );
-              const qrBar = (
-                <OutlinedInput
-                  value={data["barCode"]}
-                  endAdornment={
-                    <InputAdornment position='end'>
-                      <IconButton sx={{ paddingRight: "0px" }}>
-                        <Box component={"img"} src={"/images/scan.svg"} />
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  onChange={(e) => inputOnChange("barCode", e.target.value)}
-                  onBlur={() => {
-                    getDataProductForID();
-                  }}
-                  type={"text"}
-                  sx={{
-                    height: "44.9px",
-                    borderRadius: "0.625rem",
-                    background: "#2C3248",
-                    boxShadow:
-                      "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                  }}
-                  style={{ color: "#FFF" }}
-                />
-              );
+                );
 
-              return (
-                <React.Fragment key={index * 123}>
-                  <FormControl sx={style} variant='outlined'>
-                    <Typography sx={styleTypography}>{input.name}</Typography>
-                    {input.type === "measurement" ? (
-                      measurementSelect
-                    ) : input.type === "category" ? (
-                      categorySelect
-                    ) : input.type === "img" ? (
-                      <Box
-                        id='contianer img'
-                        sx={{
-                          width: { xs: "200%", sm: "150%" },
-                          height: "200px",
-                        }}
-                      >
-                        <ImgInput
-                          data={data}
-                          setData={setData}
-                          folderSaved={user.length > 0 ? user : "images"}
-                          fiel={"image"}
-                          imageBase64={imageBase64}
-                          setImageBase64={setImageBase64}
-                        />
-                      </Box>
-                    ) : input.type === "cantidad" ? (
-                      amountInput
-                    ) : input.type === "purchasePrice" ? (
-                      purchasePriceInput
-                    ) : input.type === "amount" ? (
-                      priceInput
-                    ) : input.type === "textarea" ? (
-                      descriptionInput
-                    ) : input.type === "qrbar" ? (
-                      qrBar
-                    ) : (
-                      <>
-                        <OutlinedInput
-                          value={data["productName"]}
-                          onChange={(e) => {
-                            inputOnChange(input.field, e.target.value);
-                          }}
-                          onBlur={() => {
-                            setData((prevData) => {
-                              const descriptionPrefix = prevData.productName
-                                ? `${prevData.productName}:`
-                                : "";
-                              return {
-                                ...prevData,
-                                description: `${descriptionPrefix}${
-                                  prevData.description.split(":")[1] || ""
-                                }`,
-                              };
-                            });
-                          }}
-                          type={input.type}
+                return (
+                  <React.Fragment key={index * 123}>
+                    <FormControl sx={style} variant='outlined'>
+                      <Typography sx={styleTypography}>{input.name}</Typography>
+                      {input.type === "measurement" ? (
+                        measurementSelect
+                      ) : input.type === "category" ? (
+                        categorySelect
+                      ) : input.type === "img" ? (
+                        <Box
+                          id='contianer img'
                           sx={{
-                            height: "44.9px",
-                            borderRadius: "0.625rem",
-                            background: "#2C3248",
-                            boxShadow:
-                              "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                            width: { xs: "200%", sm: "150%" },
+                            height: "200px",
                           }}
-                          style={{ color: "#FFF" }}
-                        />
-                      </>
-                    )}
-                  </FormControl>
-                </React.Fragment>
-              );
-            })}
+                        >
+                          <ImgInput
+                            data={data}
+                            setData={setData}
+                            folderSaved={user.length > 0 ? user : "images"}
+                            fiel={"image"}
+                            imageBase64={imageBase64}
+                            setImageBase64={setImageBase64}
+                          />
+                        </Box>
+                      ) : input.type === "cantidad" ? (
+                        amountInput
+                      ) : input.type === "purchasePrice" ? (
+                        purchasePriceInput
+                      ) : input.type === "amount" ? (
+                        priceInput
+                      ) : input.type === "textarea" ? (
+                        descriptionInput
+                      ) : input.type === "qrbar" ? (
+                        qrBar
+                      ) : (
+                        <>
+                          <OutlinedInput
+                            value={data["productName"]}
+                            onChange={(e) => {
+                              inputOnChange(input.field, e.target.value);
+                            }}
+                            onBlur={() => {
+                              setData((prevData) => {
+                                const descriptionPrefix = prevData.productName
+                                  ? `${prevData.productName}:`
+                                  : "";
+                                return {
+                                  ...prevData,
+                                  description: `${descriptionPrefix}${
+                                    prevData.description.split(":")[1] || ""
+                                  }`,
+                                };
+                              });
+                            }}
+                            type={input.type}
+                            sx={{
+                              width: { xs: "200%", sm: "150%" },
+                              height: "200px",
+                            }}
+                          />
+                        </>
+                      )}
+                    </FormControl>
+                  </React.Fragment>
+                );
+              })}
+            </Box>
           </Box>
-        </Box>
-      </Paper>
-    </Box>
+        </Paper>
+      </Box>
+    </>
   );
 }
