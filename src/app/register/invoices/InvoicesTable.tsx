@@ -134,8 +134,8 @@ export default function InvoicesTable({ filteredData }: { filteredData: any }) {
                     sx={{
                       color:
                         row.status === undefined || row.status === "cancelado"
-                          ? "green"
-                          : "red",
+                          ? "#00C52B"
+                          : "#FF0404",
                       borderColor: "#69EAE2",
                     }}
                     align='center'

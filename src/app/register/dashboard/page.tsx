@@ -33,18 +33,19 @@ const Dashboard = () => {
     var options = {
         theme: { mode: 'dark' },
         colors: ["#BF56DC", "#69EAE2", "#37FD3F"],
-        series: [{
-            name: 'Ingresos',
-            data: [31, 40, 28, 51, 42, 109, 100]
-        },
-        {
-            name: 'Egresos',
-            data: [8, 20, 30, 32, 38, 5, 41]
-        },
-        {
-            name: 'Gastos',
-            data: [11, 32, 45, 32, 34, 52, 41]
-        }
+        series: [
+            {
+                name: 'Ingresos',
+                data: [31, 40, 28, 51, 42, 109, 100]
+            },
+            {
+                name: 'Egresos',
+                data: [8, 20, 30, 32, 38, 5, 41]
+            },
+            {
+                name: 'Gastos',
+                data: [11, 32, 45, 32, 34, 52, 41]
+            }
         ],
         chart: {
             height: 350,
@@ -137,15 +138,15 @@ const Dashboard = () => {
 
 
 
-    // useEffect(() => {
-    //     if (typeof window !== 'undefined' && chartRef.current && chartRefLine.current) {
-    //         var chart = new ApexCharts(chartRef.current, options);
-    //         chart.render();
-    //         var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
-    //         chartLine.render();
-    //     }
-    //     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // }, []);
+    useEffect(() => {
+        if (typeof window !== 'undefined' && chartRef.current && chartRefLine.current) {
+            var chart = new ApexCharts(chartRef.current, options);
+            chart.render();
+            var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
+            chartLine.render();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <>

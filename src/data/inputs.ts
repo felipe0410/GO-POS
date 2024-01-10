@@ -36,7 +36,7 @@ export const inputs = [
     field: "purchasePrice",
   },
   {
-    name: "PRECIO",
+    name: "PRECIO DE VENTA",
     type: "amount",
     width: "45%",
     field: "price",
