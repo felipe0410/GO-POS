@@ -294,7 +294,7 @@ export default function EditModal(props: any) {
               sx={{
                 overflowY: "hidden",
                 border: "solid 11px #fff",
-                width: "47%",
+                width: "50%",
                 alignSelf: "center",
                 background: {
                   xs: "linear-gradient(rgb(31 29 43 / 0%) 51%, #FFF 57%)",
@@ -303,18 +303,18 @@ export default function EditModal(props: any) {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                height: "95%",
+                height: "85%",
                 marginRight: { sm: "47px" },
                 borderRadius: "10px",
-                alignItems: "flex-end",
+                alignItems: "center",
               }}
             >
-              <Button component='label'>
+              <Button component='label' sx={{ padding: 0 }}>
                 <CreateTwoToneIcon
                   fontSize={"medium"}
                   sx={{
                     color: { xs: "#fff", sm: "#1F1D2B" },
-                    marginRight: "-30px",
+                    marginRight: "-100px",
                   }}
                 />
                 <input
@@ -347,14 +347,16 @@ export default function EditModal(props: any) {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
-                    width: "100%",
+                    width: "60%",
                     height: "100%",
                   }}
                 >
                   <img
-                    style={{ width: "100%" }}
                     src={imageBase64}
                     alt='Preview'
+                    style={{
+                      width: "80%",
+                    }}
                   />
                   <Box
                     sx={{
@@ -385,9 +387,9 @@ export default function EditModal(props: any) {
                           color: "#1F1D2B",
                           textAlign: "center",
                           fontFamily: "Nunito",
-                          fontSize: "0.7rem",
+                          fontSize: { lg: "0.7rem", xs: "0.5rem" },
                           fontStyle: "normal",
-                          fontWeight: 700,
+                          fontWeight: { lg: 700, xs: 900 },
                           lineHeight: "normal",
                         }}
                       >
@@ -409,9 +411,9 @@ export default function EditModal(props: any) {
                           color: "#1F1D2B",
                           textAlign: "center",
                           fontFamily: "Nunito",
-                          fontSize: "0.7rem",
+                          fontSize: { lg: "0.7rem", xs: "0.5rem" },
                           fontStyle: "normal",
-                          fontWeight: 700,
+                          fontWeight: { lg: 700, xs: 900 },
                           lineHeight: "normal",
                         }}
                       >

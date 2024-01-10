@@ -502,10 +502,17 @@ export default function NewProduct() {
                           onChange={(e) => {
                             inputOnChange(input.field, e.target.value);
                           }}
-                          onBlur={(e) => {
-                            setData({
-                              ...data,
-                              description: `${e.target.value}:`,
+                          onBlur={() => {
+                            setData((prevData) => {
+                              const descriptionPrefix = prevData.productName
+                                ? `${prevData.productName}:`
+                                : "";
+                              return {
+                                ...prevData,
+                                description: `${descriptionPrefix}${
+                                  prevData.description.split(":")[1] || ""
+                                }`,
+                              };
                             });
                           }}
                           type={input.type}
