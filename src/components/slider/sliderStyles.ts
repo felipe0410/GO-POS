@@ -1,11 +1,16 @@
 export const StylesSlider = {
   boxRegister2: {
+    backgroundColor: "#2C3248",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     fontFamily: "Nunito",
-    borderRadius: "30px",
     marginTop: "10px",
+    height: "48px",
+    borderRadius: "1.125rem",
+    border: " 0.3px solid #69EAE2",
+    boxShadow:
+      " 0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   },
   boxRegister3: {
     backgroundColor: "#1F1D2B",

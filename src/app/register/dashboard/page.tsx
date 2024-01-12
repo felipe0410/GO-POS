@@ -5,10 +5,19 @@ import { typographyTitle } from "./style";
 import { useEffect, useRef, useState } from "react";
 import ApexCharts from "apexcharts";
 import { getAllInvoicesData } from "@/firebase";
+import CalendarioMes from "./CalendarioMes";
+import CalendarioAno from "./CalendarioAno";
+import "react-datepicker/dist/react-datepicker.css";
+import CalendarioDias from "./CalendarioDias";
 
 const Dashboard = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
+  const [calendarioType, setCalendarioType] = useState<string>("");
+
+  const handleSelectChange = (event: any) => {
+    setCalendarioType(event.target.value);
+  };
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -29,6 +38,19 @@ const Dashboard = () => {
 
     setTotalVentasHoy(totalVentas);
   }, [data]);
+
+  const renderCalendario = () => {
+    switch (calendarioType) {
+      case "year":
+        return <CalendarioAno />;
+      case "mes":
+        return <CalendarioMes />;
+      case "dia":
+        return <CalendarioDias />;
+      default:
+        return null;
+    }
+  };
 
   useEffect(() => {
     const getAllInvoices = async () => {
@@ -197,24 +219,33 @@ const Dashboard = () => {
     },
   };
 
-  useEffect(() => {
-    if (
-      typeof window !== "undefined" &&
-      chartRef.current &&
-      chartRefLine.current
-    ) {
-      var chart = new ApexCharts(chartRef.current, options);
-      chart.render();
-      var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
-      chartLine.render();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     typeof window !== "undefined" &&
+  //     chartRef.current &&
+  //     chartRefLine.current
+  //   ) {
+  //     var chart = new ApexCharts(chartRef.current, options);
+  //     chart.render();
+  //     var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
+  //     chartLine.render();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <>
       <Header title='CAJA' />
       <Typography sx={typographyTitle}>FLUJO DE CAJA </Typography>
+      <div>
+        <select value={calendarioType} onChange={handleSelectChange}>
+          <option value=''>Seleccione Calendario</option>
+          <option value='year'>Calendario de Año</option>
+          <option value='mes'>Calendario de Mes</option>
+          <option value='dia'>Calendario de Día</option>
+        </select>
+        {renderCalendario()}
+      </div>
       <Box>
         <Typography
           align='center'

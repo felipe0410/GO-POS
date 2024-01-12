@@ -171,7 +171,6 @@ const DatosVenta = (props: any) => {
     <LinearBuffer />
   ) : (
     <>
-      <Slider setFactura={setFactura} factura={factura} />
       <Typography
         sx={{
           color: "#69EAE2",
@@ -508,6 +507,9 @@ const DatosVenta = (props: any) => {
             />
           </FormControl>
         )}
+        <Box sx={{ marginTop: "16px", textAlign: "-webkit-center" }}>
+          <Slider setFactura={setFactura} factura={factura} />
+        </Box>
       </Box>
       <Box sx={{ textAlign: "center" }}>
         <Button

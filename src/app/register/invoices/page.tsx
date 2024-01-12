@@ -76,7 +76,7 @@ const Invoices = () => {
         ? searchTerm[0].toLowerCase()
         : searchTerm.toLowerCase();
 
-      const [fecha, hora] = item?.date.split(" ");
+      const [fecha, hora] = item.date.split(" ");
 
       if (Array.isArray(searchTerm)) {
         const [fechaInicio, fechaFin] = searchTerm;

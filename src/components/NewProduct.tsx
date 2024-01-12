@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useEffect, useState } from "react";
-import { inputs } from "@/data/inputs";
+import { IMG_DEFAULT, inputs } from "@/data/inputs";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { NumericFormat } from "react-number-format";
 import { Input as BaseInput, InputProps } from "@mui/base/Input";
@@ -101,9 +101,6 @@ export default function NewProduct() {
   const [valueCategory, setValueCategory] = React.useState<string | null>(
     category[0]
   );
-
-  const IMG_DEFAULT =
-    "https://firebasestorage.googleapis.com/v0/b/go-pos-add98.appspot.com/o/images%2Fimage-not-found-icon%20(1)%20(1).png?alt=media&token=d999eb4c-54a0-4489-9b23-e4a1a0ee65d9";
 
   const saveToFirebase = async () => {
     try {

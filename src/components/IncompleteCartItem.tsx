@@ -1,5 +1,6 @@
 "use client";
-import { createIncompletedItems } from "@/firebase";
+import { IMG_DEFAULT } from "@/data/inputs";
+import { createIncompletedItems, createProduct } from "@/firebase";
 import { Box, Typography, InputBase, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
@@ -12,54 +13,71 @@ const IncompleteCartItem = ({
   const [incompletedItem, setIncompletedItem] = useState({
     productName: "",
     price: "",
-    nota: "",
     cantidad: 0,
     acc: 0,
     barCode: "",
+    category: "",
+    measurement: "",
+    description: "",
+    image: "",
+    purchasePrice: "",
   });
 
   const cleanedPrice = Number(incompletedItem.price.replace(/[$,]/g, ""));
 
-  const getCurrentDateTime = () => {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, "0");
-    const day = String(now.getDate()).padStart(2, "0");
-    const hours = String(now.getHours()).padStart(2, "0");
-    const minutes = String(now.getMinutes()).padStart(2, "0");
-    return `${year}${month}${day}${hours}${minutes}`;
-  };
-
-  const validationDisabled = incompletedItem.acc > 0 && incompletedItem.productName.length > 0
+  const validationDisabled =
+    incompletedItem.acc > 0 && incompletedItem.productName.length > 0;
   const handleOnChange = (
     event: React.ChangeEvent<HTMLInputElement>,
     field: any
   ) => {
-    const validationParseInt = parseInt(event.target.value)
-    const validation = field === 'cantidad'
-      ? Number.isNaN(validationParseInt)
-        ? 0
-        : validationParseInt
-      : event.target.value
-    console.log(validation)
+    const validationParseInt = parseInt(event.target.value);
+    const validation =
+      field === "cantidad"
+        ? Number.isNaN(validationParseInt)
+          ? 0
+          : validationParseInt
+        : event.target.value;
     setIncompletedItem({ ...incompletedItem, [field]: validation });
   };
 
   const pushIncompletedItem = async () => {
     try {
       setSelectedItems((prevData: any) => [incompletedItem, ...prevData]);
-      await createIncompletedItems(incompletedItem.barCode, incompletedItem);
-      console.log("se guardo con exito con el numero", incompletedItem.barCode);
-      setIncompletedItem({
-        productName: "",
-        price: "",
-        nota: "",
-        cantidad: 0,
-        acc: 0,
-        barCode: "",
-      });
+      if (incompletedItem.barCode) {
+        await createProduct(incompletedItem.barCode, incompletedItem);
+        console.log(
+          "se guardo con exito con el numero",
+          incompletedItem.barCode
+        );
+        setIncompletedItem({
+          productName: "",
+          price: "",
+          cantidad: 0,
+          acc: 0,
+          barCode: "",
+          category: "",
+          measurement: "",
+          description: "",
+          image: "",
+          purchasePrice: "",
+        });
+      } else {
+        setIncompletedItem({
+          productName: "",
+          price: "",
+          cantidad: 0,
+          acc: 0,
+          barCode: "",
+          category: "",
+          measurement: "",
+          description: "",
+          image: "",
+          purchasePrice: "",
+        });
+      }
     } catch (error) {
-      console.error("error al agregar items incompletos", error);
+      console.error("error al agregar items incompleto", error);
     }
   };
 
@@ -67,7 +85,6 @@ const IncompleteCartItem = ({
     setIncompletedItem((prevData) => ({
       ...prevData,
       acc: cleanedPrice * incompletedItem.cantidad,
-      barCode: getCurrentDateTime(),
     }));
   }, [incompletedItem.cantidad, cleanedPrice]);
 
@@ -79,15 +96,15 @@ const IncompleteCartItem = ({
           src={"/images/noImage.svg"}
           alt={"logo no imagen"}
           sx={{
-            width: { xs: '2.5rem', sm: "3rem" },
-            height: { xs: '2.9rem', sm: "3rem" },
+            width: { xs: "2.5rem", sm: "3rem" },
+            height: { xs: "2.9rem", sm: "3rem" },
           }}
         />
-        <Box marginLeft={1} sx={{ width: { xs: '43%', sm: "163.200px" } }}>
+        <Box marginLeft={1} sx={{ width: { xs: "43%", sm: "163.200px" } }}>
           <InputBase
             sx={{
               width: "90%",
-              height: { xs: '1rem', sm: "1.3rem" },
+              height: { xs: "1rem", sm: "1.3rem" },
               paddingLeft: "5px",
             }}
             style={{
@@ -113,7 +130,7 @@ const IncompleteCartItem = ({
             customInput={InputBase}
             style={{ color: "#FFF" }}
             sx={{
-              height: { xs: '1rem', sm: "1.5rem" },
+              height: { xs: "1rem", sm: "1.5rem" },
               width: "90%",
               borderRadius: "0.5rem",
               border: "1px solid var(--Base-Dark-Line, #393C49)",
@@ -164,9 +181,12 @@ const IncompleteCartItem = ({
         }}
       >
         <InputBase
+          onBlur={() =>
+            setIncompletedItem({ ...incompletedItem, image: IMG_DEFAULT })
+          }
           sx={{
-            width: { xs: '55%', sm: "12.27rem" },
-            height: { xs: '2rem', sm: "3rem" },
+            width: { xs: "55%", sm: "12.27rem" },
+            height: { xs: "2rem", sm: "3rem" },
             padding: "1rem",
           }}
           style={{
@@ -175,53 +195,68 @@ const IncompleteCartItem = ({
             border: "1px solid var(--Base-Dark-Line, #393C49)",
             background: "var(--Base-Form-BG, #2D303E)",
           }}
-          placeholder='Nota de la orden...'
+          placeholder='Codigo de barras'
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            handleOnChange(event, "nota")
+            handleOnChange(event, "barCode")
           }
+          value={incompletedItem.barCode}
         />
         <Button
           disabled={!validationDisabled}
           onClick={() => pushIncompletedItem()}
           variant='outlined'
           sx={{
-            height: { xs: '2rem', sm: "3rem" },
-            width: { xs: '2rem', sm: "3rem" },
+            height: { xs: "2rem", sm: "3rem" },
+            width: { xs: "2rem", sm: "3rem" },
             minWidth: 0,
             padding: 0,
-            marginLeft: { xs: '20px', sm: "1.6rem" },
-            filter: validationDisabled ? 'invert(0)' : 'invert(50%)'
+            marginLeft: { xs: "20px", sm: "1.6rem" },
+            filter: validationDisabled ? "invert(0)" : "invert(50%)",
           }}
           style={{
             borderRadius: "0.5rem",
             border: "1px solid var(--Accents-Red, #69EAE2)",
           }}
         >
-          <Box sx={{ width: '50%' }} component={"img"} src={"/images/okay.svg"} />
+          <Box
+            sx={{ width: "50%" }}
+            component={"img"}
+            src={"/images/okay.svg"}
+          />
         </Button>
         <Button
-          onClick={() => setIncompletedItem({
-            productName: "",
-            price: "",
-            nota: "",
-            cantidad: 0,
-            acc: 0,
-            barCode: "",
-          })}
+          onClick={() =>
+            setIncompletedItem({
+              productName: "",
+              price: "",
+              cantidad: 0,
+              acc: 0,
+              barCode: "",
+              category: "",
+              measurement: "",
+              description: "",
+              image: "",
+              purchasePrice: "",
+            })
+          }
           variant='outlined'
           sx={{
-            height: { xs: '2rem', sm: "3rem" },
-            width: { xs: '2rem', sm: "3rem" },
+            height: { xs: "2rem", sm: "3rem" },
+            width: { xs: "2rem", sm: "3rem" },
             minWidth: 0,
             padding: 0,
-            marginLeft: { xs: '2rem', sm: "1.6rem" },
+            marginLeft: { xs: "2rem", sm: "1.6rem" },
           }}
           style={{
             borderRadius: "0.5rem",
             border: "1px solid var(--Accents-Red, #FF7CA3)",
           }}
         >
-          <Box sx={{ width: '50%' }} component={"img"} src={"/images/deletePink.svg"} />
+          <Box
+            sx={{ width: "50%" }}
+            component={"img"}
+            src={"/images/deletePink.svg"}
+          />
         </Button>
       </Box>
     </Box>

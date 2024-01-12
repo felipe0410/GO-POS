@@ -259,64 +259,48 @@ const SlidebarVender = ({
                   <>
                     <Box
                       sx={{
-                        display: "flex",
-                        flexDirection: "row",
-                        justifyContent: "space-evenly",
+                        textAlignLast: "end",
                         width: "100%",
-                        marginTop: "1rem",
                       }}
                     >
-                      <Button
-                        style={{
-                          borderRadius: "0.5rem",
-                          background: "#69EAE2",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            color: "#1F1D2B",
-                            fontFamily: "Nunito",
-                            fontSize: { xs: "10px", sm: "0.875rem" },
-                            fontStyle: "normal",
-                            fontWeight: 600,
-                            lineHeight: "140%",
-                          }}
-                        >
-                          EN OFICINA
-                        </Typography>
-                      </Button>
-                      <Button
-                        variant='outlined'
-                        style={{
-                          borderRadius: "0.5rem",
-                          borderColor: "#69EAE2",
-                        }}
-                      >
+                      <>
                         <Typography
                           sx={{
                             color: "#69EAE2",
                             fontFamily: "Nunito",
-                            fontSize: { xs: "10px", sm: "0.875rem" },
+                            fontSize: "0.8125rem",
                             fontStyle: "normal",
-                            fontWeight: 600,
+                            fontWeight: 500,
                             lineHeight: "140%",
                           }}
                         >
-                          DOMICILIO
+                          # Productos
                         </Typography>
-                      </Button>
-                      <>
                         <Chip
+                          sx={{
+                            marginRight: "11px",
+                            backgroundColor: "#69EAE2",
+                            filter:
+                              "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+                          }}
                           label={
-                            <Typography>
-                              <span>#</span> {totalUnidades}
+                            <Typography
+                              sx={{
+                                color: "#2C3248",
+                                fontFamily: "Nunito",
+                                fontSize: "1.5rem",
+                                fontStyle: "normal",
+                                fontWeight: 500,
+                                lineHeight: "140%",
+                              }}
+                            >
+                              {totalUnidades}
                             </Typography>
                           }
-                          color='error'
                         />
                       </>
                     </Box>
-                    <Box sx={{ height: "100%", marginTop: "20px" }}>
+                    <Box sx={{ height: "100%", marginTop: "10px" }}>
                       <Box display={{ xs: "flex", sm: "none" }}>
                         <Paper
                           component='form'
@@ -362,7 +346,7 @@ const SlidebarVender = ({
                         sx={{
                           display: "flex",
                           flexDirection: "row",
-                          marginTop: "1.88rem",
+                          marginTop: "0.3rem",
                           justifyContent: "space-between",
                         }}
                       >

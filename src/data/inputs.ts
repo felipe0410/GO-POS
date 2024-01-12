@@ -132,3 +132,6 @@ export const dataInputs = [
     field: "celular",
   },
 ];
+
+export const IMG_DEFAULT =
+  "https://firebasestorage.googleapis.com/v0/b/go-pos-add98.appspot.com/o/images%2Fimage-not-found-icon%20(1)%20(1).png?alt=media&token=d999eb4c-54a0-4489-9b23-e4a1a0ee65d9";

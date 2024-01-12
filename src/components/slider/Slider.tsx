@@ -12,12 +12,17 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
   };
 
   return (
-    <Box sx={StylesSlider.boxRegister2}>
+    <Box
+      sx={{
+        ...StylesSlider.boxRegister2,
+        width: { lg: "85%", md: "50%", sm: "50%", xs: "95%" },
+      }}
+    >
       <Box sx={StylesSlider.boxRegister3}>
         <Box
           sx={{
             ...StylesSlider.boxRegister4,
-            color: !checked ? "#FFF" : "#000",
+            color: !checked ? "#69EAE2" : "#1F1D2B",
           }}
         >
           <Box sx={StylesSlider.boxButtonRegister}>
@@ -43,7 +48,7 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
                 <Typography
                   sx={{
                     ...StylesSlider.typographyRegister,
-                    color: checked ? "#FFF" : "#000",
+                    color: checked ? "#69EAE2" : "#1F1D2B",
                   }}
                   component='span'
                   align='center'
