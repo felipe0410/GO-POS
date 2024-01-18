@@ -7,8 +7,8 @@ export const StylesSlider = {
     fontFamily: "Nunito",
     marginTop: "10px",
     height: "48px",
-    borderRadius: "1.125rem",
-    border: " 0.3px solid #69EAE2",
+    borderRadius: "18px",
+    border: "0.3px solid #69EAE2",
     boxShadow:
       " 0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
   },

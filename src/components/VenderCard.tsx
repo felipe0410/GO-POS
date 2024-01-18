@@ -119,7 +119,7 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
         >
           <Box
             component={"img"}
-            src={product.image}
+            src={["", null].includes(product.image) ? "images/noImage.svg" : product.image}
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "6.5rem",

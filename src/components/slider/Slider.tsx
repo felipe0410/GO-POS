@@ -13,9 +13,11 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
 
   return (
     <Box
+      id='container slider'
       sx={{
         ...StylesSlider.boxRegister2,
-        width: { lg: "85%", md: "50%", sm: "50%", xs: "95%" },
+        width: "fit-content",
+        padding: "25px 14px",
       }}
     >
       <Box sx={StylesSlider.boxRegister3}>
@@ -26,7 +28,7 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
           }}
         >
           <Box sx={StylesSlider.boxButtonRegister}>
-            <Typography sx={StylesSlider.typographyLogin}>CANCELADO</Typography>
+            <Typography sx={StylesSlider.typographyLogin}>PENDIENTE</Typography>
           </Box>
           <Checkbox
             checked={checked}
@@ -53,7 +55,7 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
                   component='span'
                   align='center'
                 >
-                  PENDIENTE
+                  CANCELADO
                 </Typography>
               }
             />

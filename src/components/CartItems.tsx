@@ -83,7 +83,7 @@ const CartItems = ({
         <Box
           component={"img"}
           src={
-            product.image === undefined ? "/images/noImage.svg" : product.image
+            ["", null].includes(product.image) ? "images/noImage.svg" : product.image
           }
           alt={`imagen del producto ${product.productName}`}
           sx={{

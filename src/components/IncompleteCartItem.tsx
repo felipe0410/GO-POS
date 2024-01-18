@@ -4,6 +4,7 @@ import { createIncompletedItems, createProduct } from "@/firebase";
 import { Box, Typography, InputBase, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
+import { v4 as uuidv4 } from 'uuid';
 
 const IncompleteCartItem = ({
   setSelectedItems,
@@ -43,13 +44,9 @@ const IncompleteCartItem = ({
 
   const pushIncompletedItem = async () => {
     try {
-      setSelectedItems((prevData: any) => [incompletedItem, ...prevData]);
       if (incompletedItem.barCode) {
+        setSelectedItems((prevData: any) => [incompletedItem, ...prevData]);
         await createProduct(incompletedItem.barCode, incompletedItem);
-        console.log(
-          "se guardo con exito con el numero",
-          incompletedItem.barCode
-        );
         setIncompletedItem({
           productName: "",
           price: "",
@@ -63,6 +60,8 @@ const IncompleteCartItem = ({
           purchasePrice: "",
         });
       } else {
+
+        setSelectedItems((prevData: any) => [{ ...incompletedItem, barCode: uuidv4() }, ...prevData]);
         setIncompletedItem({
           productName: "",
           price: "",
@@ -80,7 +79,6 @@ const IncompleteCartItem = ({
       console.error("error al agregar items incompleto", error);
     }
   };
-
   useEffect(() => {
     setIncompletedItem((prevData) => ({
       ...prevData,

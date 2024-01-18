@@ -16,7 +16,7 @@ import { getAllProductsData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
 
-const Page = () => {
+const Page: any = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
@@ -36,39 +36,48 @@ const Page = () => {
 
 
   const filteredData = async (event: any) => {
-    const foundProducts = data?.filter(producto => producto.barCode === event);
-    const filterSearch: any = data?.filter((item) => {
-      if (searchTerm === "") {
-        return true;
-      }
-      return Object.values(item).some((value) =>
-        String(value).toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    });
-    setfilter(filterSearch);
-    let productAlreadyInList
-    if (foundProducts?.length === 1) {
-      const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
-      const newItem = {
-        ...foundProducts[0],
-        acc: cleanedPrice,
-        cantidad: 1,
-      };
-      const updatedItems = selectedItems?.map((item: any) => {
-        if (item.barCode === newItem.barCode) {
-          productAlreadyInList = true
-          return { ...item, cantidad: item.cantidad + 1, acc: item.acc + newItem.acc };
+    try {
+      const resolvedData = await data;
+      const foundProducts = resolvedData?.filter((producto) => producto.barCode === event);
+      const filterSearch: any = resolvedData?.filter((item) => {
+        if (searchTerm === "") {
+          return true;
         }
-        productAlreadyInList = false
-        return item;
+        return Object.values(item).some((value) =>
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        );
       });
-      if (!productAlreadyInList || selectedItems?.length === 0) {
-        await updatedItems.push(newItem);
+      setfilter(filterSearch);
+      if (foundProducts?.length === 1) {
+        const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
+        const newItem = {
+          ...foundProducts[0],
+          acc: cleanedPrice,
+          cantidad: 1,
+        };
+        const updatedItems = updateSelectedItems(newItem);
+        setSelectedItems(updatedItems);
+        setSearchTerm("");
       }
-      setSelectedItems(updatedItems);
-      setSearchTerm("")
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
     }
-  }
+  };
+
+  const updateSelectedItems = (newItem: any) => {
+    let productAlreadyInList = false;
+    const updatedItems = (selectedItems || []).map((item: any) => {
+      if (item.barCode === newItem.barCode) {
+        productAlreadyInList = true;
+        return { ...item, cantidad: item.cantidad + 1, acc: item.acc + newItem.acc };
+      }
+      return item;
+    });
+    if (!productAlreadyInList || !(selectedItems?.length)) {
+      return [...updatedItems, newItem];
+    }
+    return updatedItems;
+  };
 
   const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
