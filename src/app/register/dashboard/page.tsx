@@ -1,7 +1,7 @@
 "use client";
 import Header from "@/components/Header";
-import { Box, Typography } from "@mui/material";
-import { typographyTitle } from "./style";
+import { Box, MenuItem, Select, Typography } from "@mui/material";
+import { selectStyle, typographyTitle } from "./style";
 import { useEffect, useRef, useState } from "react";
 import ApexCharts from "apexcharts";
 import { getAllInvoicesData } from "@/firebase";
@@ -13,7 +13,11 @@ import CalendarioDias from "./CalendarioDias";
 const Dashboard = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
-  const [calendarioType, setCalendarioType] = useState<string>("");
+  const [calendarioType, setCalendarioType] = useState<string>(" ");
+  const [dateSearchTerm, setDateSearchTerm] = useState<string | string[]>("");
+  const [filter, setFilter] = useState<any>();
+  const [selectedDate, setSelectedDate] = useState<any>();
+  const [totalVentasFecha, setTotalVentasFecha] = useState<any>();
 
   const handleSelectChange = (event: any) => {
     setCalendarioType(event.target.value);
@@ -27,26 +31,29 @@ const Dashboard = () => {
     return `${year}-${month}-${day}`;
   };
 
-  useEffect(() => {
-    const ventasHoy = data?.filter((item) => {
-      const [fecha, hora] = item.date.split(" ");
-      const fechaHoy = getCurrentDateTime();
-      return fecha === fechaHoy;
-    });
-    const totalVentas =
-      ventasHoy?.reduce((total, factura) => total + factura.total, 0) || 0;
-
-    setTotalVentasHoy(totalVentas);
-  }, [data]);
-
   const renderCalendario = () => {
     switch (calendarioType) {
       case "year":
-        return <CalendarioAno />;
+        return (
+          <CalendarioAno
+            setDateSearchTerm={setDateSearchTerm}
+            setSelectedDate={setSelectedDate}
+          />
+        );
       case "mes":
-        return <CalendarioMes />;
+        return (
+          <CalendarioMes
+            setDateSearchTerm={setDateSearchTerm}
+            setSelectedDate={setSelectedDate}
+          />
+        );
       case "dia":
-        return <CalendarioDias />;
+        return (
+          <CalendarioDias
+            setDateSearchTerm={setDateSearchTerm}
+            setSelectedDate={setSelectedDate}
+          />
+        );
       default:
         return null;
     }
@@ -63,6 +70,74 @@ const Dashboard = () => {
     getAllInvoices();
   }, []);
 
+  useEffect(() => {
+    const [startDate, endDate] = Array.isArray(selectedDate)
+      ? selectedDate
+      : [selectedDate, selectedDate];
+
+    const facturasEnRango = filter?.filter((item: any) => {
+      const [fecha, hora] = item.date.split(" ");
+
+      if (startDate?.length === 4 && endDate?.length === 4) {
+        return fecha.startsWith(startDate) || fecha.startsWith(endDate);
+      } else if (startDate?.length === 7 && endDate?.length === 7) {
+        return (
+          (fecha.startsWith(startDate) && fecha <= endDate) ||
+          (fecha.startsWith(endDate) && fecha >= startDate)
+        );
+      } else if (startDate?.length === 10 && endDate?.length === 10) {
+        return fecha >= startDate && fecha <= endDate;
+      }
+      return false;
+    });
+
+    const totalVentasFechaFilter =
+      facturasEnRango?.reduce(
+        (total: any, factura: any) => total + factura.total,
+        0
+      ) || 0;
+
+    setTotalVentasFecha(totalVentasFechaFilter);
+  }, [filter, selectedDate]);
+
+  useEffect(() => {
+    const [startDate, endDate] = Array.isArray(selectedDate)
+      ? selectedDate
+      : [selectedDate, selectedDate];
+
+    const filteredData = data?.filter((item) => {
+      if (!dateSearchTerm || dateSearchTerm.length === 0) {
+        return true;
+      }
+
+      const [fecha, hora] = item.date.split(" ");
+
+      if (startDate?.length === 4 && endDate?.length === 4) {
+        return fecha.startsWith(startDate) || fecha.startsWith(endDate);
+      } else if (startDate?.length === 7 && endDate?.length === 7) {
+        return (
+          (fecha.startsWith(startDate) && fecha <= endDate) ||
+          (fecha.startsWith(endDate) && fecha >= startDate)
+        );
+      } else if (startDate?.length === 10 && endDate?.length === 10) {
+        return fecha >= startDate && fecha <= endDate;
+      }
+      return false;
+    });
+
+    setFilter(filteredData);
+
+    const ventasHoy = data?.filter((item) => {
+      const [fecha, hora] = item.date.split(" ");
+      const fechaHoy = getCurrentDateTime();
+      return fecha === fechaHoy;
+    });
+    const totalVentas =
+      ventasHoy?.reduce((total, factura) => total + factura.total, 0) || 0;
+
+    setTotalVentasHoy(totalVentas);
+  }, [data, dateSearchTerm, selectedDate]);
+
   const dataCards = [
     {
       title: "INGRESOS",
@@ -72,7 +147,11 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#BF56DC" },
       icon: "/dashboardVender/ingresos.svg",
-      value: `$ ${totalVentasHoy.toLocaleString("en-US")}`,
+      value: `$ ${
+        totalVentasFecha
+          ? totalVentasFecha.toLocaleString("en-US")
+          : totalVentasHoy.toLocaleString("en-US")
+      }`,
     },
     {
       title: "GASTOS",
@@ -92,7 +171,11 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#2EB0CC" },
       icon: "/dashboardVender/ganancia.svg",
-      value: `$ ${totalVentasHoy.toLocaleString("en-US")}`,
+      value: `$ ${
+        totalVentasFecha
+          ? totalVentasFecha.toLocaleString("en-US")
+          : totalVentasHoy.toLocaleString("en-US")
+      }`,
     },
   ];
 
@@ -236,16 +319,28 @@ const Dashboard = () => {
   return (
     <>
       <Header title='CAJA' />
-      <Typography sx={typographyTitle}>FLUJO DE CAJA </Typography>
-      <div>
-        <select value={calendarioType} onChange={handleSelectChange}>
-          <option value=''>Seleccione Calendario</option>
-          <option value='year'>Calendario de Año</option>
-          <option value='mes'>Calendario de Mes</option>
-          <option value='dia'>Calendario de Día</option>
-        </select>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <Typography sx={typographyTitle}>FLUJO DE CAJA </Typography>
+        <Select
+          style={{
+            color: "#69EAE2",
+          }}
+          sx={selectStyle}
+          value={calendarioType}
+          onChange={handleSelectChange}
+        >
+          <MenuItem value=' '>Seleccione Calendario</MenuItem>
+          <MenuItem value='year'>Calendario de Año</MenuItem>
+          <MenuItem value='mes'>Calendario de Mes</MenuItem>
+          <MenuItem value='dia'>Calendario de Día</MenuItem>
+        </Select>
         {renderCalendario()}
-      </div>
+      </Box>
       <Box>
         <Typography
           align='center'
@@ -258,7 +353,9 @@ const Dashboard = () => {
             lineHeight: "normal",
           }}
         >
-          ENERO
+          {`Fecha: ${
+            dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
+          }`}
         </Typography>
         <Box>
           <Box sx={{ display: "flex", justifyContent: "space-around" }}>
