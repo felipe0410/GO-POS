@@ -203,11 +203,10 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#BF56DC" },
       icon: "/dashboardVender/ingresos.svg",
-      value: `$ ${
-        totalVentasFecha
-          ? totalVentasFecha.toLocaleString("en-US")
-          : totalVentasHoy.toLocaleString("en-US")
-      }`,
+      value: `$ ${totalVentasFecha
+        ? totalVentasFecha.toLocaleString("en-US")
+        : totalVentasHoy.toLocaleString("en-US")
+        }`,
     },
     {
       title: "GASTOS",
@@ -227,11 +226,10 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#2EB0CC" },
       icon: "/dashboardVender/ganancia.svg",
-      value: `$ ${
-        totalVentasFecha
-          ? totalVentasFecha.toLocaleString("en-US")
-          : totalVentasHoy.toLocaleString("en-US")
-      }`,
+      value: `$ ${totalVentasFecha
+        ? totalVentasFecha.toLocaleString("en-US")
+        : totalVentasHoy.toLocaleString("en-US")
+        }`,
     },
   ];
 
@@ -273,9 +271,8 @@ const Dashboard = () => {
             lineHeight: "normal",
           }}
         >
-          {`Fecha: ${
-            dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
-          }`}
+          {`Fecha: ${dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
+            }`}
         </Typography>
         <Box>
           <Box sx={{ display: "flex", justifyContent: "space-around" }}>
@@ -350,11 +347,10 @@ const Dashboard = () => {
                 padding: "25px",
               }}
             >
-              {/* <Box id='chartLines' /> */}
-              <ChartBarline
+              {<ChartBarline
                 listaFechas={listaFechas}
                 totalVentasPorFecha={totalVentasPorFecha}
-              />
+              />}
             </Box>
             <Box
               sx={{
@@ -366,12 +362,10 @@ const Dashboard = () => {
                 padding: "25px",
               }}
             >
-              {/* <Box id='chartBarLines' /> */}
-
-              <ChartArea
+              {<ChartArea
                 listaFechas={listaFechas}
                 totalVentasPorFecha={totalVentasPorFecha}
-              />
+              />}
             </Box>
           </Box>
         </Box>

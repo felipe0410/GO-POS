@@ -1,4 +1,7 @@
+import dynamic from "next/dynamic";
 import Chart from "react-apexcharts";
+
+const ChartDynamic = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ChartBarline = ({
   listaFechas,
@@ -28,7 +31,7 @@ const ChartBarline = ({
     },
   ];
 
-  return <Chart options={options} series={series} type='bar' height={350} />;
+  return <ChartDynamic options={options} series={series} type='bar' height={350} />;
 };
 
 export default ChartBarline;

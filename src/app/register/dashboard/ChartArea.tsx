@@ -1,4 +1,7 @@
 import Chart from "react-apexcharts";
+import dynamic from "next/dynamic";
+
+const ChartDynamic = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 const ChartArea = ({
   listaFechas,
@@ -36,7 +39,7 @@ const ChartArea = ({
     },
   ];
 
-  return <Chart options={options} series={series} type='area' height={350} />;
+  return <ChartDynamic options={options} series={series} type='area' height={350} />;
 };
 
 export default ChartArea;
