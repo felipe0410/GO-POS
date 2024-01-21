@@ -11,6 +11,9 @@ const ChartArea = ({
   totalVentasPorFecha: any;
 }) => {
   const options = {
+    theme: {
+      mode: "dark" as const,
+    },
     chart: {
       id: "basic-bar",
       background: "#1F1D2B",
@@ -18,6 +21,9 @@ const ChartArea = ({
     },
     dataLabels: {
       enabled: true,
+      style: {
+        colors: ["#000"]
+      },
     },
     xaxis: {
       categories: listaFechas ? listaFechas : [],

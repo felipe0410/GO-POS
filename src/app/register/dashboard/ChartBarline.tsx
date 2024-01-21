@@ -11,13 +11,19 @@ const ChartBarline = ({
   totalVentasPorFecha: any;
 }) => {
   const options = {
+    theme: {
+      mode: "dark" as const,
+    },
     chart: {
       id: "basic-bar",
       background: "#1F1D2B",
       foreColor: "#FFF",
     },
     dataLabels: {
-      enabled: true,
+      enabled: false,
+      style: {
+        colors: ["#000"]
+      },
     },
     xaxis: {
       categories: listaFechas ? listaFechas : [],
