@@ -2,13 +2,14 @@
 import Header from "@/components/Header";
 import { Box, MenuItem, Select, Typography } from "@mui/material";
 import { selectStyle, typographyTitle } from "./style";
-import { useEffect, useRef, useState } from "react";
-import ApexCharts from "apexcharts";
+import { useEffect, useState } from "react";
 import { getAllInvoicesData } from "@/firebase";
 import CalendarioMes from "./CalendarioMes";
 import CalendarioAno from "./CalendarioAno";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarioDias from "./CalendarioDias";
+import ChartBarline from "./ChartBarline";
+import ChartArea from "./ChartArea";
 
 const Dashboard = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
@@ -18,6 +19,8 @@ const Dashboard = () => {
   const [filter, setFilter] = useState<any>();
   const [selectedDate, setSelectedDate] = useState<any>();
   const [totalVentasFecha, setTotalVentasFecha] = useState<any>();
+  const [listaFechas, setListaFechas] = useState<string[]>();
+  const [totalVentasPorFecha, setTotalVentasPorFecha] = useState<string[]>();
 
   const handleSelectChange = (event: any) => {
     setCalendarioType(event.target.value);
@@ -71,26 +74,13 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const [startDate, endDate] = Array.isArray(selectedDate)
-      ? selectedDate
-      : [selectedDate, selectedDate];
-
     const facturasEnRango = filter?.filter((item: any) => {
       const [fecha, hora] = item.date.split(" ");
-
-      if (startDate?.length === 4 && endDate?.length === 4) {
-        return fecha.startsWith(startDate) || fecha.startsWith(endDate);
-      } else if (startDate?.length === 7 && endDate?.length === 7) {
-        return (
-          (fecha.startsWith(startDate) && fecha <= endDate) ||
-          (fecha.startsWith(endDate) && fecha >= startDate)
-        );
-      } else if (startDate?.length === 10 && endDate?.length === 10) {
-        return fecha >= startDate && fecha <= endDate;
+      if (listaFechas) {
+        return listaFechas.some((listaFecha) => fecha.startsWith(listaFecha));
       }
       return false;
     });
-
     const totalVentasFechaFilter =
       facturasEnRango?.reduce(
         (total: any, factura: any) => total + factura.total,
@@ -98,35 +88,17 @@ const Dashboard = () => {
       ) || 0;
 
     setTotalVentasFecha(totalVentasFechaFilter);
-  }, [filter, selectedDate]);
+  }, [filter, listaFechas]);
 
   useEffect(() => {
-    const [startDate, endDate] = Array.isArray(selectedDate)
-      ? selectedDate
-      : [selectedDate, selectedDate];
-
     const filteredData = data?.filter((item) => {
-      if (!dateSearchTerm || dateSearchTerm.length === 0) {
-        return true;
-      }
-
       const [fecha, hora] = item.date.split(" ");
-
-      if (startDate?.length === 4 && endDate?.length === 4) {
-        return fecha.startsWith(startDate) || fecha.startsWith(endDate);
-      } else if (startDate?.length === 7 && endDate?.length === 7) {
-        return (
-          (fecha.startsWith(startDate) && fecha <= endDate) ||
-          (fecha.startsWith(endDate) && fecha >= startDate)
-        );
-      } else if (startDate?.length === 10 && endDate?.length === 10) {
-        return fecha >= startDate && fecha <= endDate;
+      if (listaFechas) {
+        return listaFechas.some((listaFecha) => fecha.startsWith(listaFecha));
       }
       return false;
     });
-
     setFilter(filteredData);
-
     const ventasHoy = data?.filter((item) => {
       const [fecha, hora] = item.date.split(" ");
       const fechaHoy = getCurrentDateTime();
@@ -136,7 +108,91 @@ const Dashboard = () => {
       ventasHoy?.reduce((total, factura) => total + factura.total, 0) || 0;
 
     setTotalVentasHoy(totalVentas);
-  }, [data, dateSearchTerm, selectedDate]);
+  }, [data, listaFechas]);
+
+  useEffect(() => {
+    if (selectedDate) {
+      const generarListaFechas = (selectedDate: string[]): string[] => {
+        const fechaInicio = new Date(selectedDate[0]);
+        const fechaFin = new Date(selectedDate[1]);
+        //ajustar zona horaria para que no inicie con la fecha anterior
+        const timeZoneOffset = fechaInicio.getTimezoneOffset();
+        const fechaInicioLocal = new Date(
+          fechaInicio.getTime() + timeZoneOffset * 60000
+        );
+        const fechaFinLocal = new Date(
+          fechaFin.getTime() + timeZoneOffset * 60000
+        );
+
+        const listaFechas: string[] = [];
+        let fechaActual = new Date(fechaInicioLocal);
+
+        while (fechaActual <= fechaFinLocal) {
+          const year = fechaActual.getFullYear();
+          const month = fechaActual.getMonth() + 1;
+          const day = fechaActual.getDate();
+
+          let fechaStr = `${year}`;
+
+          if (selectedDate[0].length > 4) {
+            fechaStr += `-${month.toString().padStart(2, "0")}`;
+            if (selectedDate[0].length > 7) {
+              fechaStr += `-${day.toString().padStart(2, "0")}`;
+            }
+          }
+          listaFechas.push(fechaStr);
+          if (selectedDate[0].length === 4) {
+            fechaActual.setFullYear(fechaActual.getFullYear() + 1);
+          } else if (selectedDate[0].length === 7) {
+            fechaActual.setMonth(fechaActual.getMonth() + 1);
+          } else {
+            fechaActual.setDate(fechaActual.getDate() + 1);
+          }
+        }
+        return listaFechas;
+      };
+      const listaNuevasFechas = generarListaFechas(selectedDate);
+      setListaFechas(listaNuevasFechas);
+    }
+  }, [selectedDate]);
+
+  useEffect(() => {
+    if (listaFechas) {
+      const totalVentasPorFechaTemp = listaFechas.map((fecha) => {
+        const [startDate, endDate] = Array.isArray(fecha)
+          ? fecha
+          : [fecha, fecha];
+
+        const facturasEnRango = filter?.filter((item: any) => {
+          const [itemFecha, hora] = item.date.split(" ");
+
+          if (startDate.length === 4 && endDate.length === 4) {
+            return (
+              itemFecha.startsWith(startDate) || itemFecha.startsWith(endDate)
+            );
+          } else if (startDate.length === 7 && endDate.length === 7) {
+            return (
+              (itemFecha.startsWith(startDate) && itemFecha <= endDate) ||
+              (itemFecha.startsWith(endDate) && itemFecha >= startDate)
+            );
+          } else if (startDate.length === 10 && endDate.length === 10) {
+            return itemFecha >= startDate && itemFecha <= endDate;
+          }
+          return false;
+        });
+
+        const totalVentasFechaFilter =
+          facturasEnRango?.reduce(
+            (total: any, factura: any) => total + factura.total,
+            0
+          ) || 0;
+
+        return totalVentasFechaFilter;
+      });
+
+      setTotalVentasPorFecha(totalVentasPorFechaTemp);
+    }
+  }, [filter, listaFechas]);
 
   const dataCards = [
     {
@@ -179,143 +235,6 @@ const Dashboard = () => {
     },
   ];
 
-  var options = {
-    theme: { mode: "dark" },
-    colors: ["#BF56DC", "#69EAE2", "#37FD3F"],
-    series: [
-      {
-        name: "Ingresos",
-        data: [31, 40, 28, 51, 42, 109, 100],
-      },
-      {
-        name: "Egresos",
-        data: [8, 20, 30, 32, 38, 5, 41],
-      },
-      {
-        name: "Gastos",
-        data: [11, 32, 45, 32, 34, 52, 41],
-      },
-    ],
-    chart: {
-      height: 350,
-      type: "area",
-      stacked: false,
-      background: "#1F1D2B",
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-    },
-    xaxis: {
-      type: "datetime",
-      categories: [
-        "2018-09-19T00:00:00.000Z",
-        "2018-09-19T01:30:00.000Z",
-        "2018-09-19T02:30:00.000Z",
-        "2018-09-19T03:30:00.000Z",
-        "2018-09-19T04:30:00.000Z",
-        "2018-09-19T05:30:00.000Z",
-        "2018-09-19T06:30:00.000Z",
-      ],
-    },
-    tooltip: {
-      x: {
-        format: "dd/MM/yy HH:mm",
-      },
-    },
-    grid: {
-      yaxis: {
-        lines: {
-          offsetX: 0,
-        },
-      },
-      xaxis: {
-        lines: {
-          show: true,
-        },
-      },
-      borderColor: "rgba(255, 255, 255, 0.26)",
-    },
-    fill: {
-      opacity: 1,
-    },
-  };
-  const chartRef = useRef(null);
-  const chartRefLine = useRef(null);
-
-  var optionsLine = {
-    colors: ["#69EAE2", "#D9D9D947"],
-    theme: { mode: "dark" },
-    dataLabels: {
-      enabled: false,
-    },
-    series: [
-      {
-        name: "PRODUCT A",
-        data: [44, 55, 41, 67, 22, 43, 21, 49],
-      },
-      {
-        name: "PRODUCT C",
-        data: [11, 17, 15, 15, 21, 14, 15, 13],
-      },
-    ],
-    chart: {
-      type: "bar",
-      height: 350,
-      stacked: true,
-      stackType: "100%",
-      background: "#1F1D2B",
-    },
-    responsive: [
-      {
-        breakpoint: 480,
-        options: {
-          legend: {
-            position: "bottom",
-            offsetX: -10,
-            offsetY: 0,
-          },
-        },
-      },
-    ],
-    xaxis: {
-      categories: [
-        "2011 Q1",
-        "2011 Q2",
-        "2011 Q3",
-        "2011 Q4",
-        "2012 Q1",
-        "2012 Q2",
-        "2012 Q3",
-        "2012 Q4",
-      ],
-    },
-    fill: {
-      opacity: 1,
-    },
-    legend: {
-      position: "right",
-      offsetX: 0,
-      offsetY: 50,
-    },
-  };
-
-  // useEffect(() => {
-  //   if (
-  //     typeof window !== "undefined" &&
-  //     chartRef.current &&
-  //     chartRefLine.current
-  //   ) {
-  //     var chart = new ApexCharts(chartRef.current, options);
-  //     chart.render();
-  //     var chartLine = new ApexCharts(chartRefLine.current, optionsLine);
-  //     chartLine.render();
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
   return (
     <>
       <Header title='CAJA' />
@@ -345,6 +264,7 @@ const Dashboard = () => {
         <Typography
           align='center'
           sx={{
+            marginTop: "1rem",
             color: "#69EAE2",
             fontFamily: "Nunito",
             fontSize: "40px",
@@ -414,27 +334,45 @@ const Dashboard = () => {
           </Box>
           <Box
             sx={{
-              width: "70%",
-              height: "400px",
-              borderRadius: "30px",
-              background: "#1F1D2B",
-              boxShadow: "0px 1px 100px -50px #69EAE2",
-              padding: "25px",
+              display: "flex",
+              flexDirection: "row",
+              marginTop: "2rem",
+              justifyContent: "space-evenly",
             }}
           >
-            <Box key={1} ref={chartRef} />
-          </Box>
-          <Box
-            sx={{
-              width: "70%",
-              height: "400px",
-              borderRadius: "30px",
-              background: "#1F1D2B",
-              boxShadow: "0px 1px 100px -50px #69EAE2",
-              padding: "25px",
-            }}
-          >
-            <Box key={1} ref={chartRefLine} />
+            <Box
+              sx={{
+                width: "35%",
+                height: "400px",
+                borderRadius: "30px",
+                background: "#1F1D2B",
+                boxShadow: "0px 1px 100px -50px #69EAE2",
+                padding: "25px",
+              }}
+            >
+              {/* <Box id='chartLines' /> */}
+              <ChartBarline
+                listaFechas={listaFechas}
+                totalVentasPorFecha={totalVentasPorFecha}
+              />
+            </Box>
+            <Box
+              sx={{
+                width: "55%",
+                height: "400px",
+                borderRadius: "30px",
+                background: "#1F1D2B",
+                boxShadow: "0px 1px 100px -50px #69EAE2",
+                padding: "25px",
+              }}
+            >
+              {/* <Box id='chartBarLines' /> */}
+
+              <ChartArea
+                listaFechas={listaFechas}
+                totalVentasPorFecha={totalVentasPorFecha}
+              />
+            </Box>
           </Box>
         </Box>
       </Box>
