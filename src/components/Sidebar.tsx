@@ -47,7 +47,7 @@ export default function Sidebar({
       section: "INICIO",
       icon: "/images/home.svg",
       icon2: "/images/homeSelected.svg",
-      id: "/",
+      id: "/home",
     },
     {
       section: "VENDER",

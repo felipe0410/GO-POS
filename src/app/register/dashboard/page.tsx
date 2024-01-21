@@ -232,7 +232,8 @@ const Dashboard = () => {
         }`,
     },
   ];
-
+  console.log(listaFechas)
+  console.log(totalVentasPorFecha)
   return (
     <>
       <Header title='CAJA' />

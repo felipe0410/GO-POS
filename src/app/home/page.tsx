@@ -198,7 +198,7 @@ export default function Home() {
         borderRadius: '20px',
         background: "linear-gradient(127deg, rgba(6, 11, 40, 0.74) 28.26%, rgba(20, 21, 41, 0.88) 54.06%, rgba(28, 27, 43, 0.97) 73.89%, #1F1D2B 91.2%)",
         backdropfilter: "blur(60px)",
-        height: '480px'
+        height: '482px'
       }}>
         <Box sx={{ display: 'flex' }}>
           <Box>
