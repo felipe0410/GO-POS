@@ -31,10 +31,10 @@ const ChartAreaIndex = ({
     colors: ["#2CD9FF", "#0075FF"],
   };
   const series = [
-    {
-      name: "Diciembre",
-      data: totalVentasPorFecha?.length > 0 ? totalVentasPorFecha : [],
-    },
+    // {
+    //   name: "Diciembre",
+    //   data: totalVentasPorFecha?.length > 0 ? totalVentasPorFecha : [],
+    // },
     {
       name: "Enero",
       data: totalVentasPorFecha?.length > 0 ? totalVentasPorFecha : [],

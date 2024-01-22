@@ -2,44 +2,65 @@
 import { Box, Divider, Typography } from "@mui/material";
 import * as React from "react";
 import ChartAreaIndex from "@/components/index/ChartAreaIndex";
+import { useEffect, useState } from "react";
+import { getAllClientsData, getAllInvoicesData } from "@/firebase";
+interface Cliente {
+  celular: string;
+  email: string;
+  identificacion: string;
+  direccion: string;
+  name: string;
+}
+
+interface Producto {
+  productName: string;
+  cantidad: number;
+  acc: number;
+  barCode: string;
+}
+
+interface Factura {
+  id: string;
+  user: string;
+  descuento: number;
+  status: string;
+  uid: string;
+  total: number;
+  vendedor: string;
+  cliente: Cliente;
+  subtotal: number;
+  compra: Producto[];
+  date: string;
+  invoice: string;
+}
+
+interface VentasPorFecha {
+  [fecha: string]: number;
+}
 
 export default function Home() {
-  const arrayFecha = [
-    "2024-01-14",
-    "2024-01-15",
-    "2024-01-16",
-    "2024-01-17",
-    "2024-01-18",
-    "2024-01-19",
-    "2024-01-20",
-    "2024-01-21"
-  ]
-  const value = [
-    0,
-    111000,
-    0,
-    360500,
-    0,
-    0,
-    292500,
-    0
-  ]
+  const [invoicesData, setInvoicesData] = useState([])
+  const [arraySumInvoices, setArraySumInvoices] = useState<number[]>([]);
+  const [arrayDate, setArrayDate] = useState<string[]>([]);
+  const [total, setTotal] = useState("0")
+  const [totalToday, setTotalToday] = useState("0")
+  const [dataClient, setDataClient] = useState([])
   const cardsHeader = [
     {
       tile: "Gananacias de hoy",
-      count: "$1'725,000",
+      count: `$ ${totalToday}`,
       percentage: "+55%",
       img: "/dashboard_home/cash.svg"
     },
     {
-      tile: "Nuevos Clientes",
-      count: "+15",
+      tile: "Clientes",
+      count: `+ ${dataClient.length}`,
       percentage: "-14%",
       img: "/dashboard_home/clients.svg"
     },
     {
       tile: "Ventas Totales",
-      count: "$3'270,000",
+      count: `$ ${total}`,
       percentage: "+8%",
       img: "/dashboard_home/rocket.svg"
     },
@@ -57,6 +78,63 @@ export default function Home() {
       </Box>
     );
   };
+
+  useEffect(() => {
+    const getData = async () => {
+      await getAllInvoicesData(setInvoicesData)
+      await getAllClientsData(setDataClient)
+    }
+    getData()
+  }, [])
+  useEffect(() => {
+    const fechaActual = new Date();
+    const fechaInicio = new Date(fechaActual.getFullYear(), fechaActual.getMonth() - 1, 21);
+    const fechaFin = new Date(fechaActual.getFullYear(), fechaActual.getMonth(), fechaActual.getDate());
+    const filterData = async () => {
+      const facturasFiltradas = await invoicesData.filter((invoice: any) => {
+        const fechaFactura = new Date(invoice.date);
+        return fechaFactura >= fechaInicio && fechaFactura <= fechaFin;
+      });
+      const sumarVentasPorFecha = (facturas: Factura[]): Record<string, number> => {
+        const resultados: Record<string, number> = {};
+        facturas.forEach(factura => {
+          const fecha = factura.date.split(' ')[0];
+          if (!resultados[fecha]) {
+            resultados[fecha] = 0;
+          }
+          resultados[fecha] += factura.total;
+        });
+        return resultados;
+      };
+      const result: VentasPorFecha = sumarVentasPorFecha(facturasFiltradas)
+      if (result) {
+        setArraySumInvoices(Object.values(result))
+        setArrayDate(Object.keys(result))
+      }
+    }
+    const totalVentas = invoicesData.reduce((acumulador, factura: Factura) => acumulador + factura.total, 0);
+    const formatter = new Intl.NumberFormat('es-CO', {
+      style: 'decimal',
+      maximumFractionDigits: 0, // Esto elimina los decimales, si necesitas decimales, ajusta este valor
+    });
+    const totalVentasFormateado = formatter.format(totalVentas);
+    setTotal(`${totalVentasFormateado}`)
+    const fechaHoy = new Date();
+    fechaHoy.setHours(0, 0, 0, 0); // Establece la hora al inicio del día
+    const sumaVentasHoy = invoicesData.reduce((acumulador, factura: Factura) => {
+      const fechaFactura = new Date(factura.date);
+      fechaFactura.setHours(0, 0, 0, 0); // Establece la hora al inicio del día para comparar solo la fecha
+      if (fechaFactura.getTime() === fechaHoy.getTime()) {
+        return acumulador + factura.total;
+      }
+      return acumulador;
+    }, 0);
+    const totalVentasHoyFormateado = formatter.format(sumaVentasHoy);
+    setTotalToday(totalVentasHoyFormateado)
+    filterData()
+  }, [invoicesData])
+
+
 
   return (
     <Box sx={{ width: '98%' }}>
@@ -265,8 +343,8 @@ export default function Home() {
           </Typography>
         </Box>
         <ChartAreaIndex
-          listaFechas={arrayFecha}
-          totalVentasPorFecha={value}
+          listaFechas={arrayDate}
+          totalVentasPorFecha={arraySumInvoices}
         />
       </Box>
     </Box>
