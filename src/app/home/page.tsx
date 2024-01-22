@@ -38,7 +38,7 @@ export default function Home() {
       img: "/dashboard_home/clients.svg"
     },
     {
-      tile: "Vemtas Totales",
+      tile: "Ventas Totales",
       count: "$3'270,000",
       percentage: "+8%",
       img: "/dashboard_home/rocket.svg"
@@ -77,14 +77,32 @@ export default function Home() {
               }}
             >
               <Box sx={{ width: '60%' }}>
-                <Typography>
+                <Typography
+                  sx={{
+                    color: "#A0AEC0",
+                    fontFamily: "Nunito",
+                    fontSize: "18px",
+                    fontStyle: "normal",
+                    fontWeight: 700,
+                    lineHeight: "100%",
+                  }}
+                >
                   {e.tile}
                 </Typography>
                 <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
-                  <Typography>
+                  <Typography
+                    sx={{
+                      color: "#FFF",
+                      fontFamily: "Nunito",
+                      fontSize: "20px",
+                      fontStyle: "normal",
+                      fontWeight: 400,
+                      lineHeight: "140%",
+                    }}
+                  >
                     {e.count}
                   </Typography>
-                  <Typography sx={{ color: e.percentage.includes('+') ? "green" : "red" }}>
+                  <Typography sx={{ color: e.percentage.includes('+') ? "#01B574" : "#E31A1A" }}>
                     {e.percentage}
                   </Typography>
                 </Box>
