@@ -165,7 +165,9 @@ export default function EditModal(props: any) {
         try {
           const url = await getDownloadURL(imgUpload.snapshot.ref);
           if (previousImageUrlRef.current) {
+            console.log('deleteObject(previousImageRef);:::>')
             const previousImageRef = ref(storage, previousImageUrlRef.current);
+            console.log('previousImageRef:::>', previousImageRef)
             await deleteObject(previousImageRef);
           }
           setProduct((prevState: any) => ({

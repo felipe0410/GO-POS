@@ -73,7 +73,9 @@ const SlidebarVender = ({
   });
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
   const generarNumeroFactura = () => {
-    return String(dataInvocie.length + 1).padStart(7, "0");
+    console.log(dataInvocie.length)
+    console.log(dataInvocie)
+    return String(dataInvocie.length + 20).padStart(7, "0");
   };
 
   const handleVenderClick = () => {
