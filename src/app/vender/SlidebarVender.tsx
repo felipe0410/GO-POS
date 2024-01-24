@@ -73,9 +73,18 @@ const SlidebarVender = ({
   });
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
   const generarNumeroFactura = () => {
-    console.log(dataInvocie.length)
-    console.log(dataInvocie)
-    return String(dataInvocie.length + 20).padStart(7, "0");
+    let maxInvoiceNumber = 0;
+    if (dataInvocie.length === 0) {
+      console.log("El array está vacío");
+    } else {
+      dataInvocie.forEach((item: any) => {
+        let currentInvoiceNumber = parseInt(item.invoice);
+        if (currentInvoiceNumber > maxInvoiceNumber) {
+          maxInvoiceNumber = currentInvoiceNumber;
+        }
+      });
+    }
+    return String(maxInvoiceNumber + 1).padStart(7, "0");
   };
 
   const handleVenderClick = () => {
