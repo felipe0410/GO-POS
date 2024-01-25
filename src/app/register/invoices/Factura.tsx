@@ -13,6 +13,7 @@ const Factura = ({ data }: { data: any }) => {
     nameEstablishment: "",
     name: "",
     direction: "",
+    img: ""
   });
 
   React.useEffect(() => {
@@ -50,7 +51,10 @@ const Factura = ({ data }: { data: any }) => {
               marginTop: "1rem",
             }}
           >
-            <Box sx={{ width: "16.1875rem" }}>
+            <Box sx={{ width: "16.1875rem", display: 'flex' }}>
+              <Box>
+                <Box sx={{ width: '60px', height: '60px', display: establishmentData?.img?.length > 0 ? 'block' : 'none' }} component={'img'} src={establishmentData.img} />
+              </Box>
               <Typography sx={facturaStyles.typographyTitle}>
                 {establishmentData.nameEstablishment}
               </Typography>
@@ -60,15 +64,16 @@ const Factura = ({ data }: { data: any }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-evenly",
+                marginBottom: '10px'
               }}
             >
               <Typography sx={facturaStyles.typographyNIT}>
-                {`NIT ${establishmentData.NIT_CC}`}
-              </Typography>
-              <Typography sx={facturaStyles.typographyNIT}>
-                {`CELULAR ${establishmentData.phone}`}
+                <span style={{ fontWeight: 900 }}>NIT</span>{`${establishmentData.NIT_CC}`}
               </Typography>
             </Box>
+            <Typography sx={facturaStyles.typographyNIT}>
+              <span style={{ fontWeight: 900 }}>CELULAR</span> {`${establishmentData.phone}`}
+            </Typography>
             <Typography
               sx={{
                 ...facturaStyles.typographyNIT,
@@ -79,9 +84,6 @@ const Factura = ({ data }: { data: any }) => {
             </Typography>
           </Box>
           <Box padding={1}>
-            <Typography sx={facturaStyles.typographyVenta}>
-              Venta # {data.invoice}
-            </Typography>
             <Box
               sx={{
                 display: "flex",
@@ -90,15 +92,18 @@ const Factura = ({ data }: { data: any }) => {
               }}
             >
               <Typography sx={facturaStyles.typographyVenta}>
+                Venta # {data.invoice}
+              </Typography>
+              <Typography sx={facturaStyles.typographyVenta}>
                 {data?.date}
               </Typography>
-              <Typography sx={facturaStyles.typographyVendedor}>
-                VENDEDOR:{" "}
-                <span style={facturaStyles.typographySpan}>
-                  {establishmentData.name}
-                </span>
-              </Typography>
             </Box>
+            <Typography sx={facturaStyles.typographyVendedor}>
+              VENDEDOR:{" "}
+              <span style={facturaStyles.typographySpan}>
+                {establishmentData.name}
+              </span>
+            </Typography>
             <Divider sx={{ color: "#000" }} />
             <Box>
               <Box
@@ -119,18 +124,19 @@ const Factura = ({ data }: { data: any }) => {
                     {data?.cliente.name}
                   </span>
                 </Typography>
-                <Typography
-                  sx={{
-                    ...facturaStyles.typographyVendedor,
-                    marginTop: "8px",
-                  }}
-                >
-                  CC/NIT:{" "}
-                  <span style={facturaStyles.typographySpan}>
-                    {data?.cliente.identificacion}
-                  </span>
-                </Typography>
+
               </Box>
+              <Typography
+                sx={{
+                  ...facturaStyles.typographyVendedor,
+                  marginTop: "8px",
+                }}
+              >
+                CC/NIT:{" "}
+                <span style={facturaStyles.typographySpan}>
+                  {data?.cliente.identificacion}
+                </span>
+              </Typography>
               <Box
                 sx={{
                   display: "flex",
@@ -149,18 +155,18 @@ const Factura = ({ data }: { data: any }) => {
                     {data?.cliente.direccion}
                   </span>
                 </Typography>
-                <Typography
-                  sx={{
-                    ...facturaStyles.typographyVendedor,
-                    marginTop: "3px",
-                  }}
-                >
-                  CELULAR:{" "}
-                  <span style={facturaStyles.typographySpan}>
-                    {data?.cliente.celular}
-                  </span>
-                </Typography>
               </Box>
+              <Typography
+                sx={{
+                  ...facturaStyles.typographyVendedor,
+                  marginTop: "3px",
+                }}
+              >
+                CELULAR:{" "}
+                <span style={facturaStyles.typographySpan}>
+                  {data?.cliente.celular}
+                </span>
+              </Typography>
               <Typography
                 sx={{
                   ...facturaStyles.typographyVendedor,
@@ -196,10 +202,10 @@ const Factura = ({ data }: { data: any }) => {
               <Typography
                 sx={{
                   ...facturaStyles.typographyResumenCompra,
-                  marginLeft: "75px",
+                  marginLeft: "30px",
                 }}
               >
-                CANTIDAD
+                UND
               </Typography>
               <Typography
                 sx={{
