@@ -82,6 +82,7 @@ const DatosVenta = (props: any) => {
     subtotal: 0,
     descuento: 0,
     total: 0,
+    cambio: 0,
   });
 
   const getCurrentDateTime = () => {
@@ -151,7 +152,13 @@ const DatosVenta = (props: any) => {
   };
 
   const calcularValorADevolver = () => {
-    return valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0;
+    const cambio = valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0
+    //  setFactura({ ...factura, cambio: cambio })
+    return cambio;
+  };
+  const calcularValorADevolverOnblur = () => {
+    const cambio = valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0
+    setFactura({ ...factura, cambio: cambio })
   };
 
   useEffect(() => {
@@ -247,12 +254,12 @@ const DatosVenta = (props: any) => {
                   Object.values(clients).length > 0
                     ? setData(clients)
                     : setData({
-                        name: "",
-                        direccion: "",
-                        email: "",
-                        identificacion: "",
-                        celular: "",
-                      });
+                      name: "",
+                      direccion: "",
+                      email: "",
+                      identificacion: "",
+                      celular: "",
+                    });
                 }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
@@ -456,7 +463,7 @@ const DatosVenta = (props: any) => {
             Valor Recibido
           </Typography>
           <NumericFormat
-            onBlur={() => setMostrarValorDevolver(true)}
+            onBlur={(e) => {setMostrarValorDevolver(true);calcularValorADevolverOnblur()}}
             onChange={(e) => handleChangeRecibido(e.target.value)}
             value={valorRecibido !== null ? `$ ${valorRecibido}` : ""}
             prefix='$ '

@@ -19,7 +19,6 @@ const Factura = ({ data }: { data: any }) => {
   React.useEffect(() => {
     if (data.invoice) JsBarcode("#barcode", data.invoice);
   }, [data.invoice]);
-
   React.useEffect(() => {
     const dataEstablesimente = async () => {
       const data: any = await getEstablishmentData();
@@ -51,10 +50,10 @@ const Factura = ({ data }: { data: any }) => {
               marginTop: "1rem",
             }}
           >
-            <Box sx={{ width: "16.1875rem", display: 'flex' }}>
-              <Box>
-                <Box sx={{ width: '60px', height: '60px', display: establishmentData?.img?.length > 0 ? 'block' : 'none' }} component={'img'} src={establishmentData.img} />
-              </Box>
+            <Box>
+              <Box sx={{ maxHeight: '60px', display: establishmentData?.img?.length > 0 ? 'block' : 'none' }} component={'img'} src={establishmentData.img} />
+            </Box>
+            <Box sx={{ width: "100%", display: 'flex', justifyContent: 'center' }}>
               <Typography sx={facturaStyles.typographyTitle}>
                 {establishmentData.nameEstablishment}
               </Typography>
@@ -278,6 +277,22 @@ const Factura = ({ data }: { data: any }) => {
               }}
             >
               <Typography sx={facturaStyles.typographyResumenCompra}>
+                cambio
+              </Typography>
+              <Typography sx={{ ...facturaStyles.typographyVenta, fontWeight: 900, fontSize: '0.85rem' }}>
+                {`$ ${(data?.cambio > 0 ? data?.cambio?.toLocaleString("en-US") : 0)}`}
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: "3px",
+              }}
+            >
+              <Typography sx={facturaStyles.typographyResumenCompra}>
                 Total
               </Typography>
               <Typography sx={facturaStyles.typographyVenta}>
@@ -288,6 +303,9 @@ const Factura = ({ data }: { data: any }) => {
               <svg id='barcode'></svg>
             </Box>
           </Box>
+          <Typography align="center" sx={facturaStyles.typographyVenta}>
+            {`Generado con GO-POS cel:3144098591`}
+          </Typography>
         </Box>
       </Box>
     </>

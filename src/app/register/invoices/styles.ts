@@ -89,7 +89,7 @@ export const facturaStyles = {
     fontFamily: "Nunito",
     fontSize: "0.8rem",
     fontStyle: "normal",
-    fontWeight: 700,
+    fontWeight: 500,
     lineHeight: "140%",
   },
   typographyVendedor: {
