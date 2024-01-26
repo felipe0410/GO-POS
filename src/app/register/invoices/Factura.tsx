@@ -299,6 +299,21 @@ const Factura = ({ data }: { data: any }) => {
                 {`$ ${data?.total.toLocaleString("en-US")}`}
               </Typography>
             </Box>
+            <Typography
+                sx={{
+                  background:'#8080804d',
+                  marginTop:'#000 solid',
+                  display: data?.nota?.length > 0 ? 'flex' : 'none',
+                  color: "#000",
+                  fontSize: "0.8rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontWeight: 900, }}>Nota:</span> {`${data?.nota ?? ""}`}
+              </Typography>
             <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
               <svg id='barcode'></svg>
             </Box>

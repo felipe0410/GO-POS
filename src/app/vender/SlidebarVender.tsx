@@ -52,6 +52,7 @@ const SlidebarVender = ({
   const [inputValue, setInputValue] = useState("");
   const [subtotal, setSubtotal] = useState(0);
   const [dataInvocie, setDataInvoice] = useState([]);
+  const [nota, setNota] = useState("")
 
   const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -93,6 +94,7 @@ const SlidebarVender = ({
       localStorage.setItem("contadorFactura", newContador.toString());
       return newContador;
     });
+    setNota('')
   };
 
   const storedContadorFactura = localStorage.getItem("contadorFactura");
@@ -265,6 +267,7 @@ const SlidebarVender = ({
                     reciboPago={reciboPago}
                     numeroFactura={generarNumeroFactura}
                     handleVenderClick={handleVenderClick}
+                    propsNota={nota}
                   />
                 ) : (
                   <>
@@ -638,6 +641,25 @@ const SlidebarVender = ({
                       </Box>
                       <Divider
                         sx={{ background: "#69EAE2", marginTop: "1rem" }}
+                      />
+                      <InputBase
+                        sx={{
+                          width: { xs: '74%', sm: "100%" },
+                          height: { xs: '2rem', sm: "3rem" },
+                          padding: "1rem",
+                        }}
+                        style={{
+                          marginTop: '10px',
+                          color: "#FFF",
+                          borderRadius: "0.5rem",
+                          border: "1px solid var(--Base-Dark-Line, #393C49)",
+                          background: "var(--Base-Form-BG, #2D303E)",
+                        }}
+                        placeholder='Nota de la orden...'
+                        value={nota}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                          setNota(event.target.value)
+                        }
                       />
                       <Box
                         sx={{

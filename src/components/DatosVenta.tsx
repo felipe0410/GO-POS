@@ -45,6 +45,7 @@ const DatosVenta = (props: any) => {
     email: "",
     identificacion: "",
     celular: "",
+    nota: ""
   });
   const {
     total,
@@ -56,6 +57,7 @@ const DatosVenta = (props: any) => {
     setReciboPago,
     numeroFactura,
     handleVenderClick,
+    propsNota
   } = props;
   const [options, setOptions] = useState([""]);
   const [valueClient, setValueClient] = React.useState<string | null>(
@@ -70,7 +72,7 @@ const DatosVenta = (props: any) => {
   const [factura, setFactura] = useState({
     invoice: "",
     date: "",
-    status: "pendiente",
+    status: "CANCELADO",
     vendedor: "xxx",
     cliente: {
       name: "",
@@ -84,6 +86,7 @@ const DatosVenta = (props: any) => {
     descuento: 0,
     total: 0,
     cambio: 0,
+    nota: propsNota ?? "",
   });
 
   const getCurrentDateTime = () => {

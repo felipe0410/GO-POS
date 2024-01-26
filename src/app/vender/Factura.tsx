@@ -688,14 +688,26 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   {`$ ${facturaData?.total.toLocaleString("en-US")}`}
                 </Typography>
               </Box>
-
+              <Typography
+                sx={{
+                  display: facturaData?.nota.length > 0 ? 'flex' : 'none',
+                  color: "#000",
+                  fontSize: "1rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontWeight: 900, }}>Nota:</span> {`${facturaData?.nota ?? ""}`}
+              </Typography>
               <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
                 <svg id='barcode'></svg>
               </Box>
             </Box>
           </Box>
         </Box>
-      </Box>
+      </Box >
     </>
   );
 };

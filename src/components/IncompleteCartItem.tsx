@@ -36,7 +36,7 @@ const IncompleteCartItem = ({
     const validation =
       field === "cantidad"
         ? Number.isNaN(validationParseInt)
-          ? 0
+          ? ""
           : validationParseInt
         : event.target.value;
     setIncompletedItem({ ...incompletedItem, [field]: validation });
