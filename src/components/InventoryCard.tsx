@@ -9,6 +9,8 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
+import { v4 as uuidv4 } from 'uuid';
+
 
 export default function InventoryCard({ filteredData }: { filteredData: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
@@ -20,7 +22,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
   return filteredData?.map((product: any) => {
     return (
       <Card
-        key={product.uid * 2}
+        key={uuidv4()}
         sx={{
           width: "15rem",
           maxHeight: "17.52rem",
@@ -42,8 +44,8 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           }}
         >
           <CardActions disableSpacing sx={{ padding: 0 }}>
-            <EditModal data={product} />
-            <DeleteModal data={product} />
+            <EditModal key={uuidv4()} data={product} />
+            <DeleteModal key={uuidv4()} data={product} />
           </CardActions>
         </Box>
         <Box
