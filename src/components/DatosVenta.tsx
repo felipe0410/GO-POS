@@ -25,6 +25,7 @@ import Box from "@mui/material/Box";
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import Slider from "./slider/Slider";
+import { v4 as uuidv4 } from 'uuid';
 
 interface UserData {
   name: string;
@@ -99,7 +100,11 @@ const DatosVenta = (props: any) => {
     try {
       handleVenderClick();
       setLoading(true);
-      await createInvoice(factura.invoice, {
+      const valueUuid = uuidv4();
+      const bloques = valueUuid.split('-');
+      const result = bloques.slice(0, 2).join('-');
+      localStorage.setItem('uidInvoice', `${factura.invoice}-${result}`)
+      await createInvoice(`${factura.invoice}-${result}`, {
         ...factura,
       });
       setLoading(false);
@@ -463,7 +468,7 @@ const DatosVenta = (props: any) => {
             Valor Recibido
           </Typography>
           <NumericFormat
-            onBlur={(e) => {setMostrarValorDevolver(true);calcularValorADevolverOnblur()}}
+            onBlur={(e) => { setMostrarValorDevolver(true); calcularValorADevolverOnblur() }}
             onChange={(e) => handleChangeRecibido(e.target.value)}
             value={valorRecibido !== null ? `$ ${valorRecibido}` : ""}
             prefix='$ '
