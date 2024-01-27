@@ -18,7 +18,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
       paddingBottom: "12px",
     },
   }));
-
+  console.log('entro aqui')
   return filteredData?.map((product: any) => {
     return (
       <Card
@@ -57,9 +57,13 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             overflow: "visible",
           }}
         >
+          <>
+            {console.log(product?.image)}
+            {console.log(product?.image?.length)}
+          </>
           <Box
             component={"img"}
-            src={product.image}
+            src={product?.image?.length > 0 ? product?.image : "/images/noImage.svg"}
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "6.5rem",

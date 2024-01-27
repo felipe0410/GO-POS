@@ -180,7 +180,7 @@ const IncompleteCartItem = ({
       >
         <InputBase
           onBlur={() =>
-            setIncompletedItem({ ...incompletedItem, image: IMG_DEFAULT })
+            setIncompletedItem({ ...incompletedItem })
           }
           sx={{
             width: { xs: "55%", sm: "12.27rem" },

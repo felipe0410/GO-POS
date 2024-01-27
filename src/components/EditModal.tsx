@@ -177,8 +177,10 @@ export default function EditModal(props: any) {
           console.error("Error getting download URL:", error);
         } finally {
           setLoading(false);
-          const previousImageRef = ref(storage, previousImageUrlRef.current);
-          await deleteObject(previousImageRef);
+          if (previousImageUrlRef.current) {
+            const previousImageRef = ref(storage, previousImageUrlRef.current);
+            await deleteObject(previousImageRef);
+          }
         }
       }
     );

@@ -112,6 +112,7 @@ export default function Home() {
         return resultados;
       };
       const result: VentasPorFecha = sumarVentasPorFecha(facturasFiltradas)
+      console.log(result)
       if (result) {
         setArraySumInvoices(Object.values(result))
         setArrayDate(Object.keys(result))

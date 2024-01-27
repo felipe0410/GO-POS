@@ -11,6 +11,7 @@ const CartItems = ({
   setSelectedItems: any;
   selectedItems: any;
 }) => {
+  console.log('entro aqui')
   const [edit, setEdit] = useState(false)
   const saveDataToLocalStorage = (key: string, data: any) => {
     try {
@@ -63,14 +64,13 @@ const CartItems = ({
       return updatedItems;
     });
   };
-
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box
           component={"img"}
           src={
-            ["", null].includes(product.image) ? "images/noImage.svg" : product.image
+            ["", null].includes(product.image) ? "/images/noImage.svg" : product.image
           }
           alt={`imagen del producto ${product.productName}`}
           sx={{
