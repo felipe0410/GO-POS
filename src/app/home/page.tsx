@@ -3,7 +3,7 @@ import { Box, Divider, Typography } from "@mui/material";
 import * as React from "react";
 import ChartAreaIndex from "@/components/index/ChartAreaIndex";
 import { useEffect, useState } from "react";
-import { getAllClientsData, getAllInvoicesData } from "@/firebase";
+import { getAllClientsData, getAllInvoicesData, getEstablishmentData } from "@/firebase";
 interface Cliente {
   celular: string;
   email: string;
@@ -45,6 +45,7 @@ export default function Home() {
   const [total, setTotal] = useState("0")
   const [totalToday, setTotalToday] = useState("0")
   const [dataClient, setDataClient] = useState([])
+  const [establishmentData, setEstablishmentData] = useState<any>({})
   const cardsHeader = [
     {
       tile: "Gananacias de hoy",
@@ -69,6 +70,7 @@ export default function Home() {
     return (
       <Box
         sx={{
+          marginY: '20px',
           borderRadius: "20px",
           background: "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, rgba(24, 24, 42, 0.93) 61.61%, #1F1D2B 91.2%)",
           backdropFilter: "blur(60px)",
@@ -83,6 +85,9 @@ export default function Home() {
     const getData = async () => {
       await getAllInvoicesData(setInvoicesData)
       await getAllClientsData(setDataClient)
+      const establishmentData = await getEstablishmentData() || {}
+      setEstablishmentData(establishmentData)
+      console.log(await getEstablishmentData())
     }
     getData()
   }, [])
@@ -134,66 +139,70 @@ export default function Home() {
     filterData()
   }, [invoicesData])
 
-
-
-  return (
-    <Box sx={{ width: '98%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        {cardsHeader.map((e, i) => {
-          return (
-            <Box
-              key={i * 98}
-              width={'31%'}
-              sx={{
-                padding: '5px 10px',
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-around",
-                borderRadius: "20px",
-                background: "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, #1F1D2B 91.2%)",
-                backdropFilter: "blur(60px)",
-              }}
-            >
-              <Box sx={{ width: '60%' }}>
+  const sectionHeader = (
+    <Box sx={{ display: { xs: 'block', sm: 'flex' }, justifyContent: 'space-between' }}>
+      {cardsHeader.map((e, i) => {
+        return (
+          <Box
+            key={i * 98}
+            width={{ sm: '31%' }}
+            sx={{
+              marginY: { xs: '20px', sm: 'auto' },
+              padding: '5px 10px',
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-around",
+              borderRadius: "20px",
+              background: "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, #1F1D2B 91.2%)",
+              backdropFilter: "blur(60px)",
+            }}
+          >
+            <Box sx={{ width: '60%' }}>
+              <Typography
+                sx={{
+                  color: "#A0AEC0",
+                  fontFamily: "Nunito",
+                  fontSize: { xs: '16px', sm: "18px" },
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "100%",
+                }}
+              >
+                {e.tile}
+              </Typography>
+              <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
                 <Typography
                   sx={{
-                    color: "#A0AEC0",
+                    color: "#FFF",
                     fontFamily: "Nunito",
-                    fontSize: "18px",
+                    fontSize: { xs: '16px', sm: "20px" },
                     fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "100%",
+                    fontWeight: 400,
+                    lineHeight: "140%",
                   }}
                 >
-                  {e.tile}
+                  {e.count}
                 </Typography>
-                <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
-                  <Typography
-                    sx={{
-                      color: "#FFF",
-                      fontFamily: "Nunito",
-                      fontSize: "20px",
-                      fontStyle: "normal",
-                      fontWeight: 400,
-                      lineHeight: "140%",
-                    }}
-                  >
-                    {e.count}
-                  </Typography>
-                  <Typography sx={{ color: e.percentage.includes('+') ? "#01B574" : "#E31A1A" }}>
-                    {e.percentage}
-                  </Typography>
-                </Box>
-              </Box>
-              <Box>
-                <Box component={'img'} src={e.img} />
+                <Typography sx={{ color: e.percentage.includes('+') ? "#01B574" : "#E31A1A" }}>
+                  {e.percentage}
+                </Typography>
               </Box>
             </Box>
-          )
-        })}
+            <Box>
+              <Box component={'img'} src={e.img} />
+            </Box>
+          </Box>
+        )
+      })}
+    </Box>
+  )
+  return (
+    <Box sx={{ width: { xs: '95%', sm: '98%' } }}>
+      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+        {sectionHeader}
       </Box>
-      <Divider sx={{ height: '1px', background: '#69EAE2', width: '100%', marginY: '20px' }} />
-      <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
+      <Divider sx={{ display: { xs: 'none', sm: 'block' }, height: '1px', background: '#69EAE2', width: '100%', marginY: '20px' }} />
+      <Box display={{ xs: 'block', sm: 'flex' }} sx={{ justifyContent: 'space-between' }}>
         <Container>
           <Box sx={{ display: 'flex', padding: '15px 40px' }}>
             <Box>
@@ -202,19 +211,19 @@ export default function Home() {
                   color: "#69EAE2",
                   textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
                   fontFamily: "Nunito",
-                  fontSize: "40px",
+                  fontSize: { xs: '24px', sm: "40px" },
                   fontStyle: "normal",
                   fontWeight: 700,
                   lineHeight: "normal",
                 }}
               >
-                HOLA CONTAINER !
+                HOLA {establishmentData?.name ?? 'user GO'} !
               </Typography>
               <Typography sx={{
                 color: "#69EAE2",
                 textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25), 0px 4px 4px rgba(0, 0, 0, 0.25)",
                 fontFamily: "Nunito",
-                fontSize: "20px",
+                fontSize: { xs: '14px', sm: "20px" },
                 fontStyle: "normal",
                 fontWeight: 700,
                 lineHeight: "normal",
@@ -222,9 +231,12 @@ export default function Home() {
                 Nos alegra verte de nuevo.
               </Typography>
             </Box>
-            <Box component={'img'} src="/dashboard_home/fox.png" />
+            <Box sx={{ width: { xs: '60%', sm: 'auto' } }}>
+              <Box width={'100%'} component={'img'} src="/dashboard_home/fox.png" />
+            </Box>
           </Box>
         </Container>
+        <Divider sx={{ display: { xs: 'block', sm: 'none' }, height: '1px', background: '#69EAE2', width: '100%', marginY: '20px' }} />
         <Container>
           <Box sx={{ padding: '20px', maxHeight: '280px' }}>
             <Box>
@@ -233,7 +245,7 @@ export default function Home() {
                   color: "#69EAE2",
                   textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
                   fontFamily: "Nunito",
-                  fontSize: "24px",
+                  fontSize: { xs: '20px', sm: "24px" },
                   fontStyle: "normal",
                   fontWeight: 500,
                   lineHeight: "140%",
@@ -250,14 +262,14 @@ export default function Home() {
                       sx={{
                         color: "var(--Gray-Gray-400, #A0AEC0)",
                         fontFamily: "Nunito",
-                        fontSize: "20px",
+                        fontSize: { xs: '14px', sm: "20px" },
                         fontStyle: "normal",
                         fontWeight: 500,
                         lineHeight: "100%"
                       }}>
                       {i + 1}. cuaderno Barbie X100H
                       <Box>
-                        <Typography
+                        < Typography
                           sx={{
                             color: "var(--Gray-Gray-300, #CBD5E0)",
                             fontFamily: "Nunito",
@@ -286,19 +298,25 @@ export default function Home() {
               })}
             </Box>
           </Box>
-        </Container>
-      </Box>
+        </Container >
+        <Box sx={{ display: { sm: 'none' } }}>
+          {sectionHeader}
+        </Box>
+      </Box >
+      <Divider sx={{ display: { xs: 'block', sm: 'none' }, height: '1px', background: '#69EAE2', width: '100%', marginY: '20px' }} />
       <Box sx={{
         marginTop: '20px',
         padding: '20px',
         borderRadius: '20px',
         background: "linear-gradient(127deg, rgba(6, 11, 40, 0.74) 28.26%, rgba(20, 21, 41, 0.88) 54.06%, rgba(28, 27, 43, 0.97) 73.89%, #1F1D2B 91.2%)",
         backdropfilter: "blur(60px)",
-        height: '482px'
+        height: { sm: '482px' },
+        marginBottom: '20px'
       }}>
         <Box sx={{ display: 'flex' }}>
           <Box>
             <Typography
+              align="center"
               sx={{
                 color: "var(--Secondary-Primary-White, #FFF)",
                 fontFamily: "Nunito",
@@ -327,14 +345,14 @@ export default function Home() {
           placeSelf: "center",
           width: "100%",
           textAlignLast: "center",
-          marginTop: '-50px'
+          marginTop: { sm: '-50px' }
         }}>
           <Typography
             sx={{
               color: "#69EAE2",
               textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
               fontFamily: "Nunito",
-              fontSize: "32px",
+              fontSize: { xs: '24px', sm: "32px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "normal",
@@ -347,6 +365,6 @@ export default function Home() {
           totalVentasPorFecha={arraySumInvoices}
         />
       </Box>
-    </Box>
+    </Box >
   )
 }
