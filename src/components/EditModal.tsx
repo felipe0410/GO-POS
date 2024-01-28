@@ -165,8 +165,9 @@ export default function EditModal(props: any) {
         try {
           const url = await getDownloadURL(imgUpload.snapshot.ref);
           if (previousImageUrlRef.current) {
+            console.log('deleteObject(previousImageRef);:::>')
             const previousImageRef = ref(storage, previousImageUrlRef.current);
-            await deleteObject(previousImageRef);
+            console.log('previousImageRef:::>', previousImageRef)
           }
           setProduct((prevState: any) => ({
             ...prevState,
@@ -176,6 +177,10 @@ export default function EditModal(props: any) {
           console.error("Error getting download URL:", error);
         } finally {
           setLoading(false);
+          if (previousImageUrlRef.current) {
+            const previousImageRef = ref(storage, previousImageUrlRef.current);
+            await deleteObject(previousImageRef);
+          }
         }
       }
     );

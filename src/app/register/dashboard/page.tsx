@@ -234,7 +234,6 @@ const Dashboard = () => {
       }`,
     },
   ];
-
   return (
     <>
       <Header title='CAJA' />

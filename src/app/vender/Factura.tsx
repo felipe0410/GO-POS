@@ -13,7 +13,8 @@ interface TuComponenteProps {
 }
 
 const Factura: React.FC<TuComponenteProps> = (props) => {
-  const numeroFactura = localStorage.getItem("invoice");
+  const barCode = localStorage.getItem('uidInvoice');
+  const numeroFactura = localStorage?.getItem('invoice') ?? "0000000"
   const [facturaData, setFacturaData] = useState<null | DocumentData>(null);
   const { setReciboPago, setSelectedItems, setNextStep } = props;
   const [establishmentData, setEstablishmentData] = useState({
@@ -33,14 +34,14 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
   useEffect(() => {
     const getInvoiceDataFull = async () => {
       try {
-        const data = await getInvoiceData(numeroFactura);
+        const data = await getInvoiceData(barCode);
         setFacturaData(data);
       } catch (error) {
         console.error("error", error);
       }
     };
     getInvoiceDataFull();
-  }, [numeroFactura]);
+  }, [barCode, numeroFactura]);
 
   useEffect(() => {
     if (numeroFactura) {
@@ -210,6 +211,17 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   {establishmentData?.nameEstablishment?.toUpperCase() ?? ""}
                 </Typography>
               </Box>
+              <Typography
+                sx={{
+                  color: "#000",
+                  fontSize: "0.8rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                }}
+              >
+                NIT:{establishmentData.NIT_CC}
+              </Typography>
               <Box
                 sx={{
                   display: "flex",
@@ -217,17 +229,6 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   justifyContent: "space-evenly",
                 }}
               >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
-                  NIT:{establishmentData.NIT_CC}
-                </Typography>
                 <Typography
                   sx={{
                     color: "#000",
@@ -284,30 +285,30 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 >
                   {facturaData?.date}
                 </Typography>
-                <Typography
-                  sx={{
-                    width: '60%',
+              </Box>
+              <Typography
+                sx={{
+                  width: '60%',
+                  color: "#000",
+                  fontSize: "0.85rem",
+                  fontStyle: "normal",
+                  fontWeight: 900,
+                  lineHeight: "140%",
+                }}
+              >
+                VENDEDOR:{" "}
+                <span
+                  style={{
                     color: "#000",
-                    fontSize: "0.85rem",
+                    fontSize: "0.8rem",
                     fontStyle: "normal",
-                    fontWeight: 900,
+                    fontWeight: 700,
                     lineHeight: "140%",
                   }}
                 >
-                  VENDEDOR:{" "}
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "140%",
-                    }}
-                  >
-                    {establishmentData.name}
-                  </span>
-                </Typography>
-              </Box>
+                  {establishmentData.name}
+                </span>
+              </Typography>
               <Divider sx={{ color: "#000" }} />
               <Box>
                 <Box
@@ -341,30 +342,30 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                       {facturaData?.cliente.name}
                     </span>
                   </Typography>
-                  <Typography
-                    sx={{
+                </Box>
+                <Typography
+                  sx={{
+                    color: "#000",
+                    fontSize: "0.8rem",
+                    fontStyle: "normal",
+                    fontWeight: 800,
+                    lineHeight: "140%",
+                    marginTop: "8px",
+                  }}
+                >
+                  CC/NIT:{" "}
+                  <span
+                    style={{
                       color: "#000",
                       fontSize: "0.8rem",
                       fontStyle: "normal",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       lineHeight: "140%",
-                      marginTop: "8px",
                     }}
                   >
-                    CC/NIT:{" "}
-                    <span
-                      style={{
-                        color: "#000",
-                        fontSize: "0.8rem",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {facturaData?.cliente.identificacion}
-                    </span>
-                  </Typography>
-                </Box>
+                    {facturaData?.cliente.identificacion}
+                  </span>
+                </Typography>
                 <Box
                   sx={{
                     display: "flex",
@@ -395,30 +396,30 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                       {facturaData?.cliente.direccion}
                     </span>
                   </Typography>
-                  <Typography
-                    sx={{
+                </Box>
+                <Typography
+                  sx={{
+                    color: "#000",
+                    fontSize: "0.8rem",
+                    fontStyle: "normal",
+                    fontWeight: 800,
+                    lineHeight: "140%",
+                    marginTop: "3px",
+                  }}
+                >
+                  CELULAR:{" "}
+                  <span
+                    style={{
                       color: "#000",
                       fontSize: "0.8rem",
                       fontStyle: "normal",
-                      fontWeight: 800,
+                      fontWeight: 700,
                       lineHeight: "140%",
-                      marginTop: "3px",
                     }}
                   >
-                    CELULAR:{" "}
-                    <span
-                      style={{
-                        color: "#000",
-                        fontSize: "0.8rem",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {facturaData?.cliente.celular}
-                    </span>
-                  </Typography>
-                </Box>
+                    {facturaData?.cliente.celular}
+                  </span>
+                </Typography>
                 <Typography
                   sx={{
                     color: "#000",
@@ -579,6 +580,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 >
                   Sub Total
                 </Typography>
+
                 <Typography
                   sx={{
                     color: "#000",
@@ -623,6 +625,37 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   {`$ ${facturaData?.descuento.toLocaleString("en-US")}`}
                 </Typography>
               </Box>
+              <Box sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: "8px",
+                borderBottom: "solid"
+              }}>
+                <Typography
+                  sx={{
+                    color: "#000",
+                    textAlign: "center",
+                    fontSize: "1rem",
+                    fontStyle: "normal",
+                    fontWeight: 900,
+                    lineHeight: "140%",
+                  }}
+                >
+                  Cambio
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "#000",
+                    fontSize: "1.1rem",
+                    fontStyle: "normal",
+                    fontWeight: 900,
+                    lineHeight: "140%",
+                  }}
+                >
+                  {`$ ${(facturaData?.cambio > 0 ? facturaData?.cambio?.toLocaleString("en-US") : 0)}`}
+                </Typography>
+              </Box>
               <Box
                 sx={{
                   display: "flex",
@@ -655,13 +688,26 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                   {`$ ${facturaData?.total.toLocaleString("en-US")}`}
                 </Typography>
               </Box>
+              <Typography
+                sx={{
+                  display: facturaData?.nota.length > 0 ? 'flex' : 'none',
+                  color: "#000",
+                  fontSize: "1rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontWeight: 900, }}>Nota:</span> {`${facturaData?.nota ?? ""}`}
+              </Typography>
               <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
                 <svg id='barcode'></svg>
               </Box>
             </Box>
           </Box>
         </Box>
-      </Box>
+      </Box >
     </>
   );
 };

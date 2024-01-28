@@ -32,7 +32,7 @@ export const BoxStyles = {
   boxGreen: {
     width: "100%",
     height: "2.2rem",
-    borderRadius: "0.625rem",
+    borderRadius: "0.8rem",
     border: "1px solid #42FF6B",
     background:
       "linear-gradient(270deg, rgba(102, 255, 138, 0.74) 0%, rgba(102, 255, 138, 0.61) 28.97%, rgba(102, 255, 138, 0.27) 70.56%, rgba(102, 255, 138, 0.00) 85.21%)",
@@ -40,7 +40,7 @@ export const BoxStyles = {
   boxOrange: {
     width: "100%",
     height: "2.2rem",
-    borderRadius: "0.625rem",
+    borderRadius: "0.8rem",
     border: "1px solid #FE280B",
     background:
       "linear-gradient(270deg, #FF5C00 4.58%, rgba(255, 92, 0, 0.69) 53.82%, rgba(255, 61, 0, 0.24) 84.83%, rgba(255, 0, 0, 0.00) 95.77%)",
@@ -74,11 +74,12 @@ export const facturaStyles = {
     fontStyle: "normal",
     fontWeight: 800,
     lineHeight: "110%",
+    alignSelf: 'center'
   },
   typographyNIT: {
     color: "#000",
     fontFamily: "Nunito",
-    fontSize: "0.75rem",
+    fontSize: "0.8rem",
     fontStyle: "normal",
     fontWeight: 600,
     lineHeight: "140%",
@@ -86,15 +87,15 @@ export const facturaStyles = {
   typographyVenta: {
     color: "#000",
     fontFamily: "Nunito",
-    fontSize: "0.75rem",
+    fontSize: "0.8rem",
     fontStyle: "normal",
-    fontWeight: 700,
+    fontWeight: 500,
     lineHeight: "140%",
   },
   typographyVendedor: {
     color: "#000",
     fontFamily: "Nunito",
-    fontSize: "0.625rem",
+    fontSize: "0.8rem",
     fontStyle: "normal",
     fontWeight: 800,
     lineHeight: "140%",
@@ -111,9 +112,9 @@ export const facturaStyles = {
   typographyProduct: {
     color: "#000",
     fontFamily: "Nunito",
-    fontSize: "0.625",
+    fontSize: "0.8rem",
     fontStyle: "normal",
-    fontWeight: 400,
+    fontWeight: 700,
     lineHeight: "140%",
     width: "10.2rem",
     overflow: "hidden",
@@ -124,9 +125,9 @@ export const facturaStyles = {
     color: "#000",
     textAlign: "center",
     fontFamily: "Nunito",
-    fontSize: "0.625",
+    fontSize: "0.8rem",
     fontStyle: "normal",
-    fontWeight: 400,
+    fontWeight: 700,
     lineHeight: "140%",
   },
   typographyACC: {
@@ -134,17 +135,17 @@ export const facturaStyles = {
     color: "#000",
     textAlign: "center",
     fontFamily: "Nunito",
-    fontSize: "0.625",
+    fontSize: "0.8rem",
     fontStyle: "normal",
-    fontWeight: 400,
+    fontWeight: 700,
     lineHeight: "140%",
   },
   typographySpan: {
     color: "#000",
     fontFamily: "Nunito",
-    fontSize: "0.625rem",
+    fontSize: "0.8rem",
     fontStyle: "normal",
-    fontWeight: 600,
+    fontWeight: 700,
     lineHeight: "140%",
   },
 };

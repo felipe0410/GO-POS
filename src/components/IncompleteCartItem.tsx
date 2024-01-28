@@ -36,7 +36,7 @@ const IncompleteCartItem = ({
     const validation =
       field === "cantidad"
         ? Number.isNaN(validationParseInt)
-          ? 0
+          ? ""
           : validationParseInt
         : event.target.value;
     setIncompletedItem({ ...incompletedItem, [field]: validation });
@@ -180,7 +180,7 @@ const IncompleteCartItem = ({
       >
         <InputBase
           onBlur={() =>
-            setIncompletedItem({ ...incompletedItem, image: IMG_DEFAULT })
+            setIncompletedItem({ ...incompletedItem })
           }
           sx={{
             width: { xs: "55%", sm: "12.27rem" },

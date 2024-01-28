@@ -133,7 +133,7 @@ export default function InvoicesTable({ filteredData }: { filteredData: any }) {
                   <TableCell
                     sx={{
                       color:
-                        row.status === undefined || row.status === "cancelado"
+                        row.status === undefined || row.status.toLowerCase() === "cancelado"
                           ? "#00C52B"
                           : "#FF0404",
                       borderColor: "#69EAE2",

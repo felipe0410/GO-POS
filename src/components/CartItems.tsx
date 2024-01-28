@@ -11,6 +11,7 @@ const CartItems = ({
   setSelectedItems: any;
   selectedItems: any;
 }) => {
+  console.log('entro aqui')
   const [edit, setEdit] = useState(false)
   const saveDataToLocalStorage = (key: string, data: any) => {
     try {
@@ -30,19 +31,6 @@ const CartItems = ({
   };
 
   const calcularTotal = (event: any) => {
-  };
-  const handleOnChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    product: any
-  ) => {
-    setSelectedItems((prevSelectedItems: any) => {
-      const updatedItems = prevSelectedItems.map((item: any) =>
-        item.barCode === product.barCode
-          ? { ...item, nota: event.target.value }
-          : item
-      );
-      return updatedItems;
-    });
   };
 
   const handleOnChangePrice = (
@@ -66,24 +54,23 @@ const CartItems = ({
     product: any
   ) => {
     const numericValue = Number(product.price.replace(/[^0-9.-]+/g, ''));
+    console.log()
     setSelectedItems((prevSelectedItems: any) => {
       const updatedItems = prevSelectedItems.map((item: any) =>
         item.barCode === product.barCode
-          ? { ...item, acc: (event.target.value * numericValue), cantidad: (event?.target?.value > 0 ? parseInt(event?.target?.value ?? 0) : 0) }
+          ? { ...item, acc: (Number.isInteger(parseInt(event?.target?.value ?? 0)) ? event.target.value * numericValue : 0), cantidad: (event?.target?.value > 0 ? parseInt(event?.target?.value ?? 0) : "") }
           : item
       );
       return updatedItems;
     });
   };
-
-
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
         <Box
           component={"img"}
           src={
-            ["", null].includes(product.image) ? "images/noImage.svg" : product.image
+            ["", null].includes(product.image) ? "/images/noImage.svg" : product.image
           }
           alt={`imagen del producto ${product.productName}`}
           sx={{
@@ -91,84 +78,86 @@ const CartItems = ({
             height: "3rem",
           }}
         />
-        <Box marginLeft={1} sx={{ width: '48%' }}>
-          <Typography
-            sx={{
-              color: "#FFF",
-              fontFamily: "Nunito",
-              fontSize: "0.875rem",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "140%",
-              width: { xs: '7.5rem', sm: "10.2rem" },
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {product.productName}
-          </Typography>
-          <Typography
-            sx={{
-              color: "#FFF",
-              fontFamily: "Nunito",
-              fontSize: "0.75rem",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "140%",
-            }}
-          >
-            {edit ?
-              <Box id='container numeric'
-                sx={{
-                  display: 'flex',
-                  height: { xs: '1rem', sm: "1.5rem" },
-                  width: "90%",
-                  borderRadius: "0.5rem",
-                  border: "1px solid var(--Base-Dark-Line, #393C49)",
-                  background: "var(--Base-Form-BG, #2D303E)",
-                  paddingLeft: "5px",
-                }}
-              >
-                <NumericFormat
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    handleOnChangePrice(event, product)
-                  }
-                  value={product.price}
-                  prefix='$ '
-                  placeholder='Precio...'
-                  thousandSeparator
-                  customInput={InputBase}
-                  style={{ color: "#FFF" }}
-                />
-                <IconButton
-                  sx={{ paddingRight: "0px", marginRight: '-10px' }}
-                  onClick={(event) => calcularTotal(event)}
+        <Box>
+          <Box marginLeft={1} sx={{ width: '48%' }}>
+            <Typography
+              sx={{
+                color: "#FFF",
+                fontFamily: "Nunito",
+                fontSize: "0.875rem",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "140%",
+                width: { xs: '7.5rem', sm: "10.2rem" },
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {product.productName}
+            </Typography>
+            <Typography
+              sx={{
+                color: "#FFF",
+                fontFamily: "Nunito",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "140%",
+              }}
+            >
+              {edit ?
+                <Box id='container numeric'
+                  sx={{
+                    display: 'flex',
+                    height: { xs: '1rem', sm: "1.5rem" },
+                    width: "90%",
+                    borderRadius: "0.5rem",
+                    border: "1px solid var(--Base-Dark-Line, #393C49)",
+                    background: "var(--Base-Form-BG, #2D303E)",
+                    paddingLeft: "5px",
+                  }}
                 >
+                  <NumericFormat
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      handleOnChangePrice(event, product)
+                    }
+                    value={product.price}
+                    prefix='$ '
+                    placeholder='Precio...'
+                    thousandSeparator
+                    customInput={InputBase}
+                    style={{ color: "#FFF" }}
+                  />
                   <IconButton
-                    color='secondary'
-                    onClick={() => setEdit(false)}
+                    sx={{ paddingRight: "0px", marginRight: '-10px' }}
+                    onClick={(event) => calcularTotal(event)}
                   >
-                    <Box component={"img"} src={"/images/okay.svg"} />
+                    <IconButton
+                      color='secondary'
+                      onClick={() => setEdit(false)}
+                    >
+                      <Box component={"img"} src={"/images/okay.svg"} />
+                    </IconButton>
                   </IconButton>
-                </IconButton>
-              </Box>
-              : <>
-                <Typography sx={{ color: '#69EAE2' }}>
-                  {product.price}
-                  <IconButton
-                    sx={{ paddingTop: "2px", paddingRight: "2px" }}
-                    onClick={() => { setEdit(true); }}>
-                    <Box
-                      component={"img"}
-                      src={"/images/edit.svg"}
-                      sx={{ width: "0.9rem", height: "0.9rem" }}
-                    />
-                  </IconButton>
-                </Typography>
-              </>
-            }
-          </Typography>
+                </Box>
+                : <>
+                  <Typography sx={{ color: '#69EAE2' }}>
+                    {product.price}
+                    <IconButton
+                      sx={{ paddingTop: "2px", paddingRight: "2px" }}
+                      onClick={() => { setEdit(true); }}>
+                      <Box
+                        component={"img"}
+                        src={"/images/edit.svg"}
+                        sx={{ width: "0.9rem", height: "0.9rem" }}
+                      />
+                    </IconButton>
+                  </Typography>
+                </>
+              }
+            </Typography>
+          </Box>
         </Box>
         <InputBase
           sx={{
@@ -200,7 +189,7 @@ const CartItems = ({
             alignSelf: "center",
           }}
         >
-          {`$ ${product.acc.toLocaleString("en-US")}`}
+          {`$ ${product?.acc?.toLocaleString("en-US")}`}
         </Typography>
       </Box>
       <Box
@@ -223,9 +212,7 @@ const CartItems = ({
             background: "var(--Base-Form-BG, #2D303E)",
           }}
           placeholder='Nota de la orden...'
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            handleOnChange(event, product)
-          }
+          value={product.barCode}
         />
         <Button
           onClick={() => handleDelete(product)}

@@ -13,12 +13,12 @@ const Factura = ({ data }: { data: any }) => {
     nameEstablishment: "",
     name: "",
     direction: "",
+    img: ""
   });
 
   React.useEffect(() => {
     if (data.invoice) JsBarcode("#barcode", data.invoice);
   }, [data.invoice]);
-
   React.useEffect(() => {
     const dataEstablesimente = async () => {
       const data: any = await getEstablishmentData();
@@ -50,7 +50,10 @@ const Factura = ({ data }: { data: any }) => {
               marginTop: "1rem",
             }}
           >
-            <Box sx={{ width: "16.1875rem" }}>
+            <Box>
+              <Box sx={{ maxHeight: '60px', display: establishmentData?.img?.length > 0 ? 'block' : 'none' }} component={'img'} src={establishmentData.img} />
+            </Box>
+            <Box sx={{ width: "100%", display: 'flex', justifyContent: 'center' }}>
               <Typography sx={facturaStyles.typographyTitle}>
                 {establishmentData.nameEstablishment}
               </Typography>
@@ -60,15 +63,16 @@ const Factura = ({ data }: { data: any }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-evenly",
+                marginBottom: '10px'
               }}
             >
               <Typography sx={facturaStyles.typographyNIT}>
-                {`NIT ${establishmentData.NIT_CC}`}
-              </Typography>
-              <Typography sx={facturaStyles.typographyNIT}>
-                {`CELULAR ${establishmentData.phone}`}
+                <span style={{ fontWeight: 900 }}>NIT</span>{`${establishmentData.NIT_CC}`}
               </Typography>
             </Box>
+            <Typography sx={facturaStyles.typographyNIT}>
+              <span style={{ fontWeight: 900 }}>CELULAR</span> {`${establishmentData.phone}`}
+            </Typography>
             <Typography
               sx={{
                 ...facturaStyles.typographyNIT,
@@ -79,9 +83,6 @@ const Factura = ({ data }: { data: any }) => {
             </Typography>
           </Box>
           <Box padding={1}>
-            <Typography sx={facturaStyles.typographyVenta}>
-              Venta # {data.invoice}
-            </Typography>
             <Box
               sx={{
                 display: "flex",
@@ -90,15 +91,18 @@ const Factura = ({ data }: { data: any }) => {
               }}
             >
               <Typography sx={facturaStyles.typographyVenta}>
+                Venta # {data.invoice}
+              </Typography>
+              <Typography sx={facturaStyles.typographyVenta}>
                 {data?.date}
               </Typography>
-              <Typography sx={facturaStyles.typographyVendedor}>
-                VENDEDOR:{" "}
-                <span style={facturaStyles.typographySpan}>
-                  {establishmentData.name}
-                </span>
-              </Typography>
             </Box>
+            <Typography sx={facturaStyles.typographyVendedor}>
+              VENDEDOR:{" "}
+              <span style={facturaStyles.typographySpan}>
+                {establishmentData.name}
+              </span>
+            </Typography>
             <Divider sx={{ color: "#000" }} />
             <Box>
               <Box
@@ -119,18 +123,19 @@ const Factura = ({ data }: { data: any }) => {
                     {data?.cliente.name}
                   </span>
                 </Typography>
-                <Typography
-                  sx={{
-                    ...facturaStyles.typographyVendedor,
-                    marginTop: "8px",
-                  }}
-                >
-                  CC/NIT:{" "}
-                  <span style={facturaStyles.typographySpan}>
-                    {data?.cliente.identificacion}
-                  </span>
-                </Typography>
+
               </Box>
+              <Typography
+                sx={{
+                  ...facturaStyles.typographyVendedor,
+                  marginTop: "8px",
+                }}
+              >
+                CC/NIT:{" "}
+                <span style={facturaStyles.typographySpan}>
+                  {data?.cliente.identificacion}
+                </span>
+              </Typography>
               <Box
                 sx={{
                   display: "flex",
@@ -149,18 +154,18 @@ const Factura = ({ data }: { data: any }) => {
                     {data?.cliente.direccion}
                   </span>
                 </Typography>
-                <Typography
-                  sx={{
-                    ...facturaStyles.typographyVendedor,
-                    marginTop: "3px",
-                  }}
-                >
-                  CELULAR:{" "}
-                  <span style={facturaStyles.typographySpan}>
-                    {data?.cliente.celular}
-                  </span>
-                </Typography>
               </Box>
+              <Typography
+                sx={{
+                  ...facturaStyles.typographyVendedor,
+                  marginTop: "3px",
+                }}
+              >
+                CELULAR:{" "}
+                <span style={facturaStyles.typographySpan}>
+                  {data?.cliente.celular}
+                </span>
+              </Typography>
               <Typography
                 sx={{
                   ...facturaStyles.typographyVendedor,
@@ -196,10 +201,10 @@ const Factura = ({ data }: { data: any }) => {
               <Typography
                 sx={{
                   ...facturaStyles.typographyResumenCompra,
-                  marginLeft: "75px",
+                  marginLeft: "30px",
                 }}
               >
-                CANTIDAD
+                UND
               </Typography>
               <Typography
                 sx={{
@@ -272,16 +277,50 @@ const Factura = ({ data }: { data: any }) => {
               }}
             >
               <Typography sx={facturaStyles.typographyResumenCompra}>
+                cambio
+              </Typography>
+              <Typography sx={{ ...facturaStyles.typographyVenta, fontWeight: 900, fontSize: '0.85rem' }}>
+                {`$ ${(data?.cambio > 0 ? data?.cambio?.toLocaleString("en-US") : 0)}`}
+              </Typography>
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginTop: "3px",
+              }}
+            >
+              <Typography sx={facturaStyles.typographyResumenCompra}>
                 Total
               </Typography>
               <Typography sx={facturaStyles.typographyVenta}>
                 {`$ ${data?.total.toLocaleString("en-US")}`}
               </Typography>
             </Box>
+            <Typography
+                sx={{
+                  background:'#8080804d',
+                  marginTop:'#000 solid',
+                  display: data?.nota?.length > 0 ? 'flex' : 'none',
+                  color: "#000",
+                  fontSize: "0.8rem",
+                  fontStyle: "normal",
+                  fontWeight: 700,
+                  lineHeight: "140%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <span style={{ fontWeight: 900, }}>Nota:</span> {`${data?.nota ?? ""}`}
+              </Typography>
             <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
               <svg id='barcode'></svg>
             </Box>
           </Box>
+          <Typography align="center" sx={facturaStyles.typographyVenta}>
+            {`Generado con GO-POS cel:3144098591`}
+          </Typography>
         </Box>
       </Box>
     </>
