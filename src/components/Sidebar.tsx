@@ -50,6 +50,12 @@ export default function Sidebar({
       id: "/",
     },
     {
+      section: "PERFIL",
+      icon: "/images/profile.svg",
+      icon2: "/images/profileSelected.svg",
+      id: "/profile",
+    },
+    {
       section: "VENDER",
       icon: "/images/vender.svg",
       icon2: "/images/venderSelected.svg",
@@ -199,10 +205,10 @@ export default function Sidebar({
                     selectedSection === section.id
                       ? "#252836"
                       : section?.submenus
-                        ? selectedSection?.includes(slice(section.id))
-                          ? "#252836"
-                          : "transparent"
-                        : "transparent",
+                      ? selectedSection?.includes(slice(section.id))
+                        ? "#252836"
+                        : "transparent"
+                      : "transparent",
                   marginLeft: "12px",
                   padding: "12px",
                   borderRadius: "12px 0 0 12px",

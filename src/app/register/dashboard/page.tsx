@@ -203,10 +203,11 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#BF56DC" },
       icon: "/dashboardVender/ingresos.svg",
-      value: `$ ${totalVentasFecha
-        ? totalVentasFecha.toLocaleString("en-US")
-        : totalVentasHoy.toLocaleString("en-US")
-        }`,
+      value: `$ ${
+        totalVentasFecha
+          ? totalVentasFecha.toLocaleString("en-US")
+          : totalVentasHoy.toLocaleString("en-US")
+      }`,
     },
     {
       title: "GASTOS",
@@ -226,10 +227,11 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#2EB0CC" },
       icon: "/dashboardVender/ganancia.svg",
-      value: `$ ${totalVentasFecha
-        ? totalVentasFecha.toLocaleString("en-US")
-        : totalVentasHoy.toLocaleString("en-US")
-        }`,
+      value: `$ ${
+        totalVentasFecha
+          ? totalVentasFecha.toLocaleString("en-US")
+          : totalVentasHoy.toLocaleString("en-US")
+      }`,
     },
   ];
 
@@ -238,7 +240,7 @@ const Dashboard = () => {
       <Header title='CAJA' />
       <Box
         sx={{
-          display: "flex",
+          display: { lg: "flex", md: "flex", xs: "block" },
           flexDirection: "row",
         }}
       >
@@ -271,16 +273,23 @@ const Dashboard = () => {
             lineHeight: "normal",
           }}
         >
-          {`Fecha: ${dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
-            }`}
+          {`Fecha: ${
+            dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
+          }`}
         </Typography>
         <Box>
-          <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+          <Box
+            sx={{
+              textAlign: { xs: "-webkit-center" },
+              display: { lg: "flex", md: "flex", xs: "block" },
+              justifyContent: "space-around",
+            }}
+          >
             {dataCards.map((e, index) => {
               return (
                 <Box
                   sx={{
-                    width: "30%",
+                    width: { lg: "30%", md: "30%", xs: "90%" },
                     maxWidth: "330px",
                   }}
                   key={index * 99}
@@ -331,30 +340,34 @@ const Dashboard = () => {
           </Box>
           <Box
             sx={{
-              display: "flex",
+              display: { lg: "flex", md: "flex", sm: "block", xs: "block" },
               flexDirection: "row",
               marginTop: "2rem",
               justifyContent: "space-evenly",
+              textAlign: { sm: "-webkit-center", xs: "-webkit-center" },
             }}
           >
             <Box
               sx={{
-                width: "35%",
+                width: { lg: "35%", md: "35%", sm: "85%", xs: "85%" },
                 height: "400px",
                 borderRadius: "30px",
                 background: "#1F1D2B",
                 boxShadow: "0px 1px 100px -50px #69EAE2",
                 padding: "25px",
+                marginBottom: { sm: "1.5rem", xs: "1.5rem" },
               }}
             >
-              {<ChartBarline
-                listaFechas={listaFechas}
-                totalVentasPorFecha={totalVentasPorFecha}
-              />}
+              {
+                <ChartBarline
+                  listaFechas={listaFechas}
+                  totalVentasPorFecha={totalVentasPorFecha}
+                />
+              }
             </Box>
             <Box
               sx={{
-                width: "55%",
+                width: { lg: "55%", md: "55%", sm: "85%", xs: "85%" },
                 height: "400px",
                 borderRadius: "30px",
                 background: "#1F1D2B",
@@ -362,10 +375,12 @@ const Dashboard = () => {
                 padding: "25px",
               }}
             >
-              {<ChartArea
-                listaFechas={listaFechas}
-                totalVentasPorFecha={totalVentasPorFecha}
-              />}
+              {
+                <ChartArea
+                  listaFechas={listaFechas}
+                  totalVentasPorFecha={totalVentasPorFecha}
+                />
+              }
             </Box>
           </Box>
         </Box>
