@@ -33,7 +33,7 @@ export const styleSign_in = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-around',
-        height: { xs: '65%', lg: '65%' },
+        height: { xs: '65%', lg: '50%' },
         width: '100%',
         marginBottom: { xs: 'auto', lg: '0' },
         marginTop: { xs: '10vh', lg: '0' },
@@ -73,10 +73,19 @@ export const styleSign_in = {
         color: { xs: '#FFF', lg: "#1F1D2B" },
         textAlign: "center",
         fontFamily: "Nunito",
-        fontSize: { xs: '10px', lg: "20px" },
+        fontSize: { xs: '10px', lg: "12px" },
         fontStyle: "normal",
         fontWeight: 500,
         lineHeight: "normal"
     }
+    // 
+
+//     font-family: Nunito;
+// font-size: 12px;
+// font-weight: 500;
+// line-height: 16px;
+// letter-spacing: 0em;
+// text-align: center;
+
 
 }
