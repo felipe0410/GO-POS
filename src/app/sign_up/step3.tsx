@@ -74,7 +74,7 @@ const Step_third = () => {
                         width: { xs: "80%", md: "70%" },
                         margin: "0 auto",
                         padding: "2% 4%",
-                        height: '70%',
+                        height: {xs:'70%',sm:'90%'},
                     }}
                 >
                     <Button
@@ -100,7 +100,7 @@ const Step_third = () => {
                             sx={{
                                 color: "#69EAE2",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: "20px", md: "55px" },
+                                fontSize: { xs: "20px", md: "50px" },
                                 fontStyle: "normal",
                                 fontWeight: { xs: 700, lg: 800 },
                                 lineHeight: "normal",
@@ -116,7 +116,7 @@ const Step_third = () => {
                                 color: "#FFF",
                                 textAlign: "center",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '13px', lg: "32px" },
+                                fontSize: { xs: '13px', lg: "24px" },
                                 fontStyle: "normal",
                                 fontWeight: 600,
                                 lineHeight: { lg: "30px" }

@@ -91,32 +91,28 @@ export default function Sidebar({
           section: "AGREGAR PRODUCTO",
           id: "/inventory/agregarProductos",
         },
-        {
-          section: "HISTORIAL",
-          id: "/inventory/historial",
-        },
       ],
     },
-    {
-      section: "AJUSTES",
-      icon: "/images/settings.svg",
-      icon2: "/images/inventarioSelected.svg",
-      id: "/settings/user",
-      submenus: [
-        {
-          section: "USUARIO",
-          id: "/settings/user",
-        },
-        {
-          section: "EMPLEADOS",
-          id: "/settings/employees",
-        },
-        {
-          section: "ESTABLECIMIENTO",
-          id: "/settings/establishment",
-        },
-      ],
-    },
+    // {
+    //   section: "AJUSTES",
+    //   icon: "/images/settings.svg",
+    //   icon2: "/images/inventarioSelected.svg",
+    //   id: "/settings/user",
+    //   submenus: [
+    //     {
+    //       section: "USUARIO",
+    //       id: "/settings/user",
+    //     },
+    //     {
+    //       section: "EMPLEADOS",
+    //       id: "/settings/employees",
+    //     },
+    //     {
+    //       section: "ESTABLECIMIENTO",
+    //       id: "/settings/establishment",
+    //     },
+    //   ],
+    // },
   ];
 
   const handleDrawerOpen = () => {
@@ -187,7 +183,7 @@ export default function Sidebar({
                 color: "#FFF",
                 textShadow: "0px 0px 20px #69EAE2",
                 fontFamily: "Nunito",
-                fontSize: open ? "3.75rem" : "3rem",
+                fontSize: open ? "3rem" : "2rem",
                 fontStyle: "normal",
                 fontWeight: 800,
                 lineHeight: "normal",
@@ -196,129 +192,137 @@ export default function Sidebar({
               GO
             </Typography>
           </Box>
-          {sections.map((section) => (
-            <React.Fragment key={section.id}>
-              <Box
-                sx={{
-                  marginY: { sm: "30px" },
-                  background:
-                    selectedSection === section.id
-                      ? "#252836"
-                      : section?.submenus
-                      ? selectedSection?.includes(slice(section.id))
+          <Box id='container_section'>
+            {sections.map((section) => (
+              <React.Fragment key={section.id}>
+                <Box
+                  sx={{
+                    marginY: { sm: "5px" },
+                    background:
+                      selectedSection === section.id
                         ? "#252836"
-                        : "transparent"
-                      : "transparent",
-                  marginLeft: "12px",
-                  padding: "12px",
-                  borderRadius: "12px 0 0 12px",
-                }}
-              >
-                <Link
-                  href={section.id}
-                  style={{ textDecoration: "none", color: "#1F1D2B" }}
+                        : section?.submenus
+                          ? selectedSection?.includes(slice(section.id))
+                            ? "#252836"
+                            : "transparent"
+                          : "transparent",
+                    marginLeft: "12px",
+                    padding: "8px",
+                    borderRadius: "12px 0 0 12px",
+                    '&:hover': {
+                      background: "#69eae214",
+                    },
+                  }}
                 >
-                  <ListItem
-                    sx={{
-                      width: open ? "100%" : "70%",
-                      padding: "5px",
-                      marginLeft: "5px",
-                      borderRadius: "0.5rem",
-                      background: selectedSection?.includes(section.id)
-                        ? "#69EAE2"
-                        : "auto",
-                      boxShadow: selectedSection?.includes(section.id)
-                        ? "0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
-                        : "auto",
-                    }}
-                    onClick={() => {
-                      handleSectionClick(section.id);
-                    }}
+                  <Link
+                    href={section.id}
+                    style={{ textDecoration: "none", color: "#1F1D2B" }}
                   >
-                    <Box
+                    <ListItem
                       sx={{
+                        width: open ? "100%" : "70%",
+                        padding: "5px",
+                        marginLeft: "5px",
                         borderRadius: "0.5rem",
-                        padding: "0px",
-                        display: "flex",
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          justifyContent: "center",
-                          paddingLeft: "8px",
-                        }}
-                      >
-                        <Box
-                          component={"img"}
-                          src={
-                            selectedSection?.includes(section.id)
-                              ? section.icon2
-                              : section.icon
-                          }
-                        />
-                      </ListItemIcon>
-                    </Box>
-                    <ListItemText
-                      primary={section.section}
-                      primaryTypographyProps={{
-                        color: !selectedSection?.includes(section.id)
+                        background: selectedSection?.includes(section.id)
                           ? "#69EAE2"
                           : "auto",
-                        fontFamily: "Nunito",
-                        fontSize: "0.875rem",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "normal",
-                        marginLeft: "10px",
+                        boxShadow: selectedSection?.includes(section.id)
+                          ? "0px 8px 24px 0px rgba(105, 234, 226, 0.34)"
+                          : "auto",
                       }}
-                      sx={{
-                        opacity: open ? 1 : 0,
-                      }}
-                    />
-                  </ListItem>
-                </Link>
-
-                {open &&
-                  section.submenus &&
-                  selectedSection?.includes(slice(section.id)) && (
-                    <List
-                      id='subCategory'
-                      sx={{
-                        marginLeft: "15px",
+                      onClick={() => {
+                        handleSectionClick(section.id);
                       }}
                     >
-                      {section.submenus.map((submenu) => (
-                        <Link
-                          href={submenu.id}
-                          key={submenu.id}
-                          style={{ textDecoration: "none", color: "#1F1D2B" }}
+                      <Box
+                        sx={{
+                          borderRadius: "0.5rem",
+                          padding: "0px",
+                          display: "flex",
+                        }}
+                      >
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            justifyContent: "center",
+                            paddingLeft: "8px",
+                          }}
                         >
-                          <ListItem>
-                            <ListItemText
-                              primary={submenu.section}
-                              primaryTypographyProps={{
-                                color: validation(submenu.id)
-                                  ? "#69EAE2"
-                                  : "#fff",
-                                fontFamily: "Nunito",
-                                fontSize: "0.875rem",
-                                fontStyle: "normal",
-                                fontWeight: 700,
-                                lineHeight: "normal",
-                              }}
-                              sx={{
-                                opacity: open ? 1 : 0,
-                              }}
-                            />
-                          </ListItem>
-                        </Link>
-                      ))}
-                    </List>
-                  )}
-              </Box>
-            </React.Fragment>
-          ))}
+                          <Box
+                            component={"img"}
+                            src={
+                              selectedSection?.includes(section.id)
+                                ? section.icon2
+                                : section.icon
+                            }
+                          />
+                        </ListItemIcon>
+                      </Box>
+                      <ListItemText
+                        primary={section.section}
+                        primaryTypographyProps={{
+                          color: !selectedSection?.includes(section.id)
+                            ? "#69EAE2"
+                            : "auto",
+                          fontFamily: "Nunito",
+                          fontSize: "14px",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "normal",
+                          marginLeft: "10px",
+                        }}
+                        sx={{
+                          opacity: open ? 1 : 0,
+                        }}
+                      />
+                    </ListItem>
+                  </Link>
+
+                  {open &&
+                    section.submenus &&
+                    selectedSection?.includes(slice(section.id)) && (
+                      <List
+                        id='subCategory'
+                        sx={{
+                          marginLeft: "15px",
+                        }}
+                      >
+                        {section.submenus.map((submenu) => (
+                          <Link
+                            href={submenu.id}
+                            key={submenu.id}
+                            style={{ textDecoration: "none", color: "#1F1D2B" }}
+                          >
+                            <ListItem>
+                              <ListItemText
+                                primary={submenu.section}
+                                primaryTypographyProps={{
+                                  color: validation(submenu.id)
+                                    ? "#69EAE2"
+                                    : "#fff",
+                                  fontFamily: "Nunito",
+                                  fontSize: "14px",
+                                  fontStyle: "normal",
+                                  fontWeight: 700,
+                                  lineHeight: "normal",
+                                }}
+                                sx={{
+                                  '&:hover': {
+                                    opacity: "80%",
+                                  },
+                                  opacity: open ? 1 : 0,
+                                }}
+                              />
+                            </ListItem>
+                          </Link>
+                        ))}
+                      </List>
+                    )}
+                </Box>
+              </React.Fragment>
+            ))}
+          </Box>
           <DrawerHeader>
             {open ? (
               <IconButton onClick={handleDrawerClose}>
@@ -338,7 +342,7 @@ export default function Sidebar({
             sx={{
               marginTop: "100%",
               position: "absolute",
-              bottom: "5px",
+              bottom: "15px",
               marginLeft: "15px",
             }}
           >

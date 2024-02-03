@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import { getAllProductsData } from "@/firebase";
+import { getAllProductsDataonSnapshot } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
 
@@ -23,16 +23,7 @@ const Page: any = () => {
   const [selectedItems, setSelectedItems] = useState<any>([]);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
-  React.useEffect(() => {
-    const getAllProducts = async () => {
-      try {
-        await getAllProductsData(setData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getAllProducts();
-  }, []);
+  console.log(selectedItems)
 
 
   const filteredData = async (event: any) => {
@@ -48,6 +39,7 @@ const Page: any = () => {
         );
       });
       setfilter(filterSearch);
+      console.log('foundProducts:::>', foundProducts)
       if (foundProducts?.length === 1) {
         const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
         const newItem = {
@@ -86,11 +78,6 @@ const Page: any = () => {
   const currentDataPage = filter?.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filter?.length / itemsPerPage);
 
-  useEffect(() => {
-    filteredData("")
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
   const saveDataToLocalStorage = (key: string, data: any) => {
     try {
       const serializedData = JSON.stringify(data);
@@ -112,6 +99,20 @@ const Page: any = () => {
     }
   };
   useEffect(() => {
+    filteredData("")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+  useEffect(() => {
+    const getAllProducts = async () => {
+      try {
+        await getAllProductsDataonSnapshot(setData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getAllProducts();
+  }, []);
+  useEffect(() => {
     if (selectedItems?.length > 0) {
       saveDataToLocalStorage('selectedItems', selectedItems)
     }
@@ -121,8 +122,10 @@ const Page: any = () => {
     const localStorageSelectedItems = getDataFromLocalStorage('selectedItems')
     if (localStorageSelectedItems?.length > 0) {
       setSelectedItems(localStorageSelectedItems)
+
     }
   }, [])
+
 
   return (
     <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>

@@ -34,7 +34,7 @@ const Loggin = () => {
                     type={showPassword ? 'text' : 'password'}
                     startAdornment={
                         <InputAdornment position="start" sx={{ marginRight: { lg: '20px' } }}>
-                            {showPassword ? <LockOpenIcon sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <HttpsRoundedIcon sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} />}
+                            {showPassword ? <LockOpenIcon sx={{ fontSize: { sm: '20px' }, color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <HttpsRoundedIcon sx={{ fontSize: { sm: '20px' }, color: { xs: '#1F1D2B', lg: '#fff' } }} />}
                         </InputAdornment>
                     }
                     endAdornment={
@@ -45,7 +45,7 @@ const Loggin = () => {
                                 onMouseDown={handleMouseDownPassword}
                                 edge="end"
                             >
-                                {showPassword ? <VisibilityOff sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <Visibility sx={{ color: { xs: '#1F1D2B', lg: '#fff' } }} />}
+                                {showPassword ? <VisibilityOff sx={{ fontSize: { sm: '20px' }, color: { xs: '#1F1D2B', lg: '#fff' } }} /> : <Visibility sx={{ fontSize: { sm: '20px' }, color: { xs: '#1F1D2B', lg: '#fff' } }} />}
                             </IconButton>
                         </InputAdornment>
                     }
@@ -54,10 +54,12 @@ const Loggin = () => {
                         fontFamily: "Nunito",
                         fontStyle: "normal",
                         fontWeight: 400,
+                        fontSize: '15px',
                         lineHeight: "normal",
                         borderRadius: "50px",
                         background: { xs: '#fff', lg: "#1F1D2B" },
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                        maxHeight: '35px',
                         color: { lg: "#fff" },
                         height: { xs: '35px', lg: 'auto' }
                     }}
@@ -153,7 +155,7 @@ const Loggin = () => {
                         <Typography sx={{
                             color: "#FFF",
                             fontFamily: "Nunito",
-                            fontSize: "64px",
+                            fontSize: "50px",
                             fontStyle: "normal",
                             fontWeight: 800,
                             lineHeight: "normal",
@@ -169,15 +171,29 @@ const Loggin = () => {
                         height: "90%",
                         display: 'flex',
                         flexDirection: "column",
-                        justifyContent: { xs: 'space-around', lg: "center" }
+                        justifyContent: { xs: 'space-around', lg: "center" },
+                        marginTop: 'auto'
                     }}>
                     <Box id='iniciar_sesion' sx={{ ...styleSign_in.containerField1 }}>
+                        <Typography sx={{
+                            display: { xs: 'block', sm: 'none' },
+                            color: "#69EAE2",
+                            fontFamily: "Nunito",
+                            fontSize: "25px",
+                            fontWeight: 800,
+                            lineHeight: "44px",
+                            letterSpacing: "0em",
+                            textAlign: "left",
+
+                        }}>
+                            ¡BIENVENIDO!
+                        </Typography>
                         <Typography
                             id='label'
                             sx={{
                                 color: { xs: '#FFF', lg: "#1F1D2B" },
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '20px', lg: '30px' },
+                                fontSize: { xs: '14px', lg: '24px' },
                                 fontStyle: "normal",
                                 fontWeight: { xs: 700, lg: 800 },
                                 lineHeight: 'normal'
@@ -192,12 +208,14 @@ const Loggin = () => {
                                         fontFamily: "Nunito",
                                         fontStyle: "normal",
                                         fontWeight: 400,
+                                        fontSize: '15px',
                                         lineHeight: "normal",
                                         width: '100%',
                                         borderRadius: "50px",
                                         background: { xs: '#FFF', lg: "#1F1D2B" },
                                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                                         color: { lg: "#fff" },
+                                        maxHeight: '35px',
                                         height: { xs: '35px', lg: 'auto' }
                                     }}
                                     id="user"
@@ -207,7 +225,7 @@ const Loggin = () => {
                                     onChange={(e) => setData({ ...data, 'email': e.target.value })}
                                     startAdornment={
                                         <InputAdornment position="start">
-                                            <PersonSharpIcon sx={{ color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: { lg: '10px' } }} />
+                                            <PersonSharpIcon sx={{ fontSize: { sm: '27px' }, color: { xs: '#1F1D2B', lg: "#fff" }, marginRight: { lg: '10px' } }} />
                                         </InputAdornment>
                                     }
                                 />
@@ -226,6 +244,7 @@ const Loggin = () => {
                         }}>
                             <Box sx={{ display: 'flex', alignItems: "center", }}>
                                 <Checkbox
+                                    sx={{ padding: 0 }}
                                     icon={<RadioButtonUncheckedIcon sx={{ color: { xs: '#fff', lg: "#1F1D2B" } }} />}
                                     checkedIcon={<CheckCircleIcon sx={{ color: { xs: '#fff', lg: "#1F1D2B" } }} />}
                                 />
@@ -233,22 +252,22 @@ const Loggin = () => {
                                     sx={{
                                         color: { xs: '#FFF', lg: "#1F1D2B" },
                                         fontFamily: "Nunito",
-                                        fontSize: { xs: '8px', lg: "14px" },
+                                        fontSize: { xs: '8px', lg: "12px" },
                                         fontStyle: "normal",
                                         fontWeight: 600,
                                         lineHeight: "normal",
                                     }}
                                 >
-                                    Recordar datos
+                                    Recordar contraseña
                                 </Typography>
                             </Box>
                             <Box>
                                 <Typography sx={{
                                     color: { xs: '#FFF', lg: "#1F1D2B" },
                                     fontFamily: "Nunito",
-                                    fontSize: { xs: '8px', lg: "14px" },
+                                    fontSize: { xs: '8px', lg: "12px" },
                                     fontStyle: "normal",
-                                    fontWeight: 600,
+                                    fontWeight: 900,
                                     lineHeight: "normal"
                                 }}>
                                     Olvide mi contraseña

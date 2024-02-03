@@ -9,7 +9,7 @@ export default function LogginLayout({ children }: { children: React.ReactNode }
                     height: '100%',
                     backgroundImage: { xs: 'url("images/loggin_responsive.png")', lg: 'url("images/loggin.png")' },
                     backgroundRepeat: 'no-repeat',
-                    backgroundSize: 'cover',
+                    backgroundSize: '100% 120%',
                     backgroundPosition: "center"
                 }}>
                     {children}

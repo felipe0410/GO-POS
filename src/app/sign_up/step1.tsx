@@ -49,7 +49,7 @@ const Step_one = () => {
                         borderRadius: "20px",
                         background: "#FFF",
                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                        height: { xs: '35px', lg: 'auto' }
+                        height: { xs: '35px', lg: '37px' }
                     }}
                     onChange={(e) => setData({ ...data, password: e.target.value })}
                     placeholder='Contraseña'
@@ -142,7 +142,7 @@ const Step_one = () => {
                                                         borderRadius: "20px",
                                                         background: "#FFF",
                                                         boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                                                        height: { xs: '35px', lg: 'auto' }
+                                                        height: { xs: '35px', lg: '37px' },
                                                     }}
                                                     id={input.label}
                                                     type={input.type}
@@ -156,6 +156,7 @@ const Step_one = () => {
                                         )}
                                         <Typography
                                             display={input.validation() ? "none" : "block"}
+                                            sx={{ fontSize: '0.7rem' }}
                                             color='error'
                                         >
                                             {input.msgErrror}
