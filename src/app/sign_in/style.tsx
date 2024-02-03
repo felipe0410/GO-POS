@@ -33,7 +33,7 @@ export const styleSign_in = {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'space-around',
-        height: { xs: '65%', lg: '46%' },
+        height: { xs: '65%', lg: '65%' },
         width: '100%',
         marginBottom: { xs: 'auto', lg: '0' },
         marginTop: { xs: '10vh', lg: '0' },

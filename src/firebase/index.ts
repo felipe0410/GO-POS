@@ -135,6 +135,39 @@ export const getAllProductsData = (callback: any) => {
     return null;
   }
 };
+
+export const getAllProductsDataonSnapshot = (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const orderedQuery = query(productCollectionRef, orderBy("productName"));
+
+    const unsubscribe = onSnapshot(orderedQuery, 
+      (querySnapshot) => {
+        const productsData: any[] = [];
+        querySnapshot.forEach((doc) => {
+          productsData.push({ id: doc.id, ...doc.data() });
+        });
+        callback(productsData);
+      },
+      (error) => {
+        console.error("Error listening to data:", error);
+        callback(null);
+      }
+    );
+
+    // Return the unsubscribe function to stop observing changes
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up data observer: ", error);
+    return null;
+  }
+};
+
 // Función para obtener datos de un producto específico
 export const getProductData = async (uid: any) => {
   try {

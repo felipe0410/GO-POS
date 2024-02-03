@@ -1,10 +1,10 @@
 "use client";
-import { IMG_DEFAULT } from "@/data/inputs";
-import { createIncompletedItems, createProduct } from "@/firebase";
+import { createProduct } from "@/firebase";
 import { Box, Typography, InputBase, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { v4 as uuidv4 } from 'uuid';
+import ImgInputSlidebar from "./inputIMGSlidebar";
 
 const IncompleteCartItem = ({
   setSelectedItems,
@@ -23,8 +23,9 @@ const IncompleteCartItem = ({
     image: "",
     purchasePrice: "",
   });
-
+  const [imageBase64, setImageBase64] = useState("");
   const cleanedPrice = Number(incompletedItem.price.replace(/[$,]/g, ""));
+  const user = atob(localStorage?.getItem("user") ?? "");
 
   const validationDisabled =
     incompletedItem.acc > 0 && incompletedItem.productName.length > 0;
@@ -89,15 +90,39 @@ const IncompleteCartItem = ({
   return (
     <Box sx={{ marginTop: "1.31rem" }}>
       <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <Box
-          component={"img"}
-          src={"/images/noImage.svg"}
-          alt={"logo no imagen"}
-          sx={{
-            width: { xs: "2.5rem", sm: "3rem" },
-            height: { xs: "2.9rem", sm: "3rem" },
-          }}
-        />
+        <Box id='container img' sx={{ maxWidth: '50px' }}>
+          {incompletedItem.barCode.length > 0
+            ?
+            <Box
+              component={"img"}
+              src={"/images/noImage.svg"}
+              alt={"logo no imagen"}
+              sx={{
+                width: { xs: "2.5rem", sm: "3rem" },
+                height: { xs: "2.9rem", sm: "3rem" },
+              }}
+            />
+            // <Box>
+            //   <ImgInputSlidebar
+            //     data={incompletedItem}
+            //     setData={setIncompletedItem}
+            //     folderSaved={user.length > 0 ? user : "images"}
+            //     fiel={"image"}
+            //     imageBase64={imageBase64}
+            //     setImageBase64={setImageBase64}
+            //   />
+            // </Box>
+            :
+            <Box
+              component={"img"}
+              src={"/images/noImage.svg"}
+              alt={"logo no imagen"}
+              sx={{
+                width: { xs: "2.5rem", sm: "3rem" },
+                height: { xs: "2.9rem", sm: "3rem" },
+              }}
+            />}
+        </Box>
         <Box marginLeft={1} sx={{ width: { xs: "43%", sm: "163.200px" } }}>
           <InputBase
             sx={{
