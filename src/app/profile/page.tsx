@@ -68,19 +68,44 @@ const Page = () => {
           sx={{ width: { lg: "35%", md: "35%", sm: "85%", xs: "85%" } }}
           mt={5}
         >
-          <Paper sx={{ ...cards, width: "100%" }}>
-            <ImgInput
-              data={data}
-              setData={setData}
-              folderSaved={user.length > 0 ? user : "images"}
-              imageBase64={imageBase64}
-              setImageBase64={setImageBase64}
-            />
-            <Box sx={{ padding: "1.5rem" }}>
+          <Paper sx={{ ...cards, width: "100%", position: "relative" }}>
+            <Box
+              sx={{
+                position: "absolute",
+                top: -85,
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 1,
+                width: 170,
+                height: 170,
+                overflow: "visible",
+              }}
+            >
+              <ImgInput
+                data={data}
+                setData={setData}
+                folderSaved={user.length > 0 ? user : "images"}
+                imageBase64={imageBase64}
+                setImageBase64={setImageBase64}
+                border='50%'
+              />
+            </Box>
+            <Box
+              sx={{
+                padding: "1.5rem",
+                textAlign: "start",
+                marginTop: {
+                  lg: "2rem",
+                  md: "2rem",
+                  sm: "100px",
+                  xs: "100px",
+                },
+              }}
+            >
               {profileInputs.map((input, index) => {
                 const style = {
                   width: input.width,
-                  marginTop: "27px",
+                  marginTop: input.field === "name" ? "70px" : "27px",
                 };
 
                 return (
@@ -178,9 +203,15 @@ const Page = () => {
                   ? "Registrando colaborador..."
                   : "Aun no tienes colaboradores"}
               </Typography>
-              <Box sx={{ marginTop: "2rem", padding: "3rem", width: "80%" }}>
+              <Box
+                sx={{
+                  marginTop: "2rem",
+                  padding: { lg: "3rem", md: "3rem", sm: "1rem", xs: "1rem" },
+                  width: { lg: "80%", md: "80%", sm: "100%", xs: "100%" },
+                }}
+              >
                 {addColabs ? (
-                  <Step1 />
+                  <Step1 setAddColabs={setAddColabs} />
                 ) : (
                   <Button onClick={handleColabs}>
                     <Typography sx={typographyColabsButton}>

@@ -6,18 +6,22 @@ import {
   typographyColabsButton,
 } from "./profileStyles";
 import Checkbox from "@mui/material/Checkbox";
+import { SnackbarProvider } from "notistack";
 
 const Step2 = ({
   step,
+  colabsData,
   setStep,
   handleCheckboxChange,
 }: {
   step: any;
   setStep: any;
+  colabsData: any;
   handleCheckboxChange: (job: string) => void;
 }) => {
   return (
     <Box>
+      <SnackbarProvider />
       <Typography sx={typographyStep2}>
         Ahora elige las tareas o secciones a las que tu colaborador puede tener
         acceso
@@ -34,6 +38,7 @@ const Step2 = ({
           Ventas
         </Typography>
         <Checkbox
+          checked={colabsData.jobs.includes("Ventas")}
           onChange={() => handleCheckboxChange("Ventas")}
           sx={{
             color: "#69EAE2",
@@ -55,6 +60,7 @@ const Step2 = ({
           Caja
         </Typography>
         <Checkbox
+          checked={colabsData.jobs.includes("Caja")}
           onChange={() => handleCheckboxChange("Caja")}
           sx={{
             color: "#69EAE2",
@@ -76,6 +82,7 @@ const Step2 = ({
           Inventario
         </Typography>
         <Checkbox
+          checked={colabsData.jobs.includes("Inventario")}
           onChange={() => handleCheckboxChange("Inventario")}
           sx={{
             color: "#69EAE2",
@@ -105,7 +112,17 @@ const Step2 = ({
             },
           }}
         >
-          <Typography sx={{ ...typographyColabsButton, fontSize: "1rem" }}>
+          <Typography
+            sx={{
+              ...typographyColabsButton,
+              fontSize: {
+                lg: "1rem",
+                md: "1rem",
+                sm: "0.85rem",
+                xs: "0.85rem",
+              },
+            }}
+          >
             VOLVER
           </Typography>
           <Box component={"img"} src={"/images/arrow2.svg"} />
@@ -122,8 +139,18 @@ const Step2 = ({
             },
           }}
         >
-          <Typography sx={{ ...typographyColabsButton, fontSize: "1rem" }}>
-            FINALIZAR
+          <Typography
+            sx={{
+              ...typographyColabsButton,
+              fontSize: {
+                lg: "1rem",
+                md: "1rem",
+                sm: "0.85rem",
+                xs: "0.85rem",
+              },
+            }}
+          >
+            SIGUIENTE
           </Typography>
           <Box component={"img"} src={"/images/arrow.svg"} />
         </Button>

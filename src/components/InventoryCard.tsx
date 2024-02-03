@@ -9,8 +9,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 export default function InventoryCard({ filteredData }: { filteredData: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
@@ -18,7 +17,6 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
       paddingBottom: "12px",
     },
   }));
-  console.log('entro aqui')
   return filteredData?.map((product: any) => {
     return (
       <Card
@@ -31,7 +29,6 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           overflow: "visible",
           textAlign: "-webkit-center",
         }}
-
       >
         <Box
           sx={{
@@ -57,13 +54,13 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             overflow: "visible",
           }}
         >
-          <>
-            {console.log(product?.image)}
-            {console.log(product?.image?.length)}
-          </>
           <Box
             component={"img"}
-            src={product?.image?.length > 0 ? product?.image : "/images/noImage.svg"}
+            src={
+              product?.image?.length > 0
+                ? product?.image
+                : "/images/noImage.svg"
+            }
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "6.5rem",
@@ -72,7 +69,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               left: "50%",
               transform: "translateX(-50%)",
             }}
-            loading="lazy"
+            loading='lazy'
           />
         </Box>
         <StyledCardContent
