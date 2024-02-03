@@ -73,7 +73,7 @@ const Step_second = () => {
                         width: { xs: "80%", md: "70%" },
                         margin: "0 auto",
                         padding: "2% 4%",
-                        height: '70%',
+                        height: { xs: '70%', sm: "90%" },
                     }}
                 >
                     <Button
@@ -102,8 +102,10 @@ const Step_second = () => {
                                 fontSize: { xs: "20px", md: "55px" },
                                 fontStyle: "normal",
                                 fontWeight: { xs: 700, lg: 800 },
-                                lineHeight: "normal",
+                                lineHeight: "60px",
                                 textAlignLast: "center",
+                                letterSpacing: "0em",
+
                             }}
                         >
                             Ya estas registrado ¡Bienvenido a GO!

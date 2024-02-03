@@ -193,7 +193,7 @@ const Loggin = () => {
                             sx={{
                                 color: { xs: '#FFF', lg: "#1F1D2B" },
                                 fontFamily: "Nunito",
-                                fontSize: { xs: '14px', lg: '16px' },
+                                fontSize: { xs: '14px', lg: '24px' },
                                 fontStyle: "normal",
                                 fontWeight: { xs: 700, lg: 800 },
                                 lineHeight: 'normal'
