@@ -66,7 +66,7 @@ const ContainerChildren = ({ childrenn, validationRoutes }: { childrenn: any, va
                         sx={{
                             height: "100%",
                             marginTop: validationRoutes ? "" : "64px",
-                            marginLeft: validationRoutes ? "" : { xs: '20px', sm: isOpen ? "284px" : '140px' },
+                            marginLeft: validationRoutes ? "" : { xs: '20px', sm: isOpen ? "250px" : '140px' },
                         }}
                     >
                         {childrenn}

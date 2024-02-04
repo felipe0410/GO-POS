@@ -28,6 +28,7 @@ import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import HelpIcon from "@mui/icons-material/Help";
 import Chip from "@mui/material/Chip";
 import { getAllInvoicesData } from "@/firebase";
+import SearchIcon from '@mui/icons-material/Search';
 
 const SlidebarVender = ({
   selectedItems,
@@ -170,7 +171,7 @@ const SlidebarVender = ({
           style: {
             background: "transparent",
             border: "none",
-            width: !matchesSM ? "410px" : "95%",
+            width: !matchesSM ? "510px" : "95%",
           },
         }}
         onClose={() => setOpen(false)}
@@ -189,7 +190,7 @@ const SlidebarVender = ({
             overflow: "hidden",
             top: 0,
             right: 0,
-            width: { xs: "100%", lg: "25.5625rem" },
+            width: { xs: "100%", sm: '50%', lg: "24rem" },
             borderRadius: "10px 0px 0px 10px",
           }}
         >
@@ -241,20 +242,70 @@ const SlidebarVender = ({
                     </IconButton>
                   </Box>
                 ) : null}
-                <Typography
-                  sx={{
-                    color: "#FFF",
-                    fontFamily: "Nunito",
-                    fontSize: { xs: "14px", sm: "1.25rem" },
-                    fontStyle: "normal",
-                    fontWeight: 800,
-                    lineHeight: "140%",
-                    marginTop: "0.5rem",
-                    marginLeft: "1rem",
-                  }}
-                >
-                  VENTA # {generarNumeroFactura()}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: "center" }}>
+                  <Typography
+                    sx={{
+                      width: '50%',
+                      color: "#FFF",
+                      fontFamily: "Nunito",
+                      fontSize: { xs: "14px", sm: "18px" },
+                      fontStyle: "normal",
+                      fontWeight: 800,
+                      lineHeight: "140%",
+                    }}
+                  >
+                    VENTA # {generarNumeroFactura()}
+                  </Typography>
+                  <Box
+                    sx={{
+                      textAlignLast: "end",
+                      width: "50%",
+                    }}
+                  >
+                    <Box sx={{
+                      display: 'flex',
+                      justifyContent: "flex-end",
+                      alignItems: 'center',
+                    }}>
+                      <Typography
+                        sx={{
+                          color: "#69EAE2",
+                          fontFamily: "Nunito",
+                          fontSize: "0.8125rem",
+                          fontStyle: "normal",
+                          fontWeight: 500,
+                          lineHeight: "140%",
+                          marginRight: '15px'
+                        }}
+                      >
+                        # Productos
+                      </Typography>
+                      <Chip
+                        sx={{
+                          marginRight: "11px",
+                          backgroundColor: "#69EAE2",
+                          filter:
+                            "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+                        }}
+                        label={
+                          <Typography
+                            sx={{
+                              color: "#2C3248",
+                              fontFamily: "Nunito",
+                              fontSize: "1.5rem",
+                              fontStyle: "normal",
+                              fontWeight: 500,
+                              lineHeight: "140%",
+                            }}
+                          >
+                            {totalUnidades}
+                          </Typography>
+                        }
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+
                 {nextStep ? (
                   <DatosVenta
                     total={subtotal - descuento}
@@ -271,49 +322,6 @@ const SlidebarVender = ({
                   />
                 ) : (
                   <>
-                    <Box
-                      sx={{
-                        textAlignLast: "end",
-                        width: "100%",
-                      }}
-                    >
-                      <>
-                        <Typography
-                          sx={{
-                            color: "#69EAE2",
-                            fontFamily: "Nunito",
-                            fontSize: "0.8125rem",
-                            fontStyle: "normal",
-                            fontWeight: 500,
-                            lineHeight: "140%",
-                          }}
-                        >
-                          # Productos
-                        </Typography>
-                        <Chip
-                          sx={{
-                            marginRight: "11px",
-                            backgroundColor: "#69EAE2",
-                            filter:
-                              "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
-                          }}
-                          label={
-                            <Typography
-                              sx={{
-                                color: "#2C3248",
-                                fontFamily: "Nunito",
-                                fontSize: "1.5rem",
-                                fontStyle: "normal",
-                                fontWeight: 500,
-                                lineHeight: "140%",
-                              }}
-                            >
-                              {totalUnidades}
-                            </Typography>
-                          }
-                        />
-                      </>
-                    </Box>
                     <Box sx={{ height: "100%", marginTop: "10px" }}>
                       <Box display={{ xs: "flex", sm: "none" }}>
                         <Paper
@@ -359,19 +367,17 @@ const SlidebarVender = ({
                       <Box
                         sx={{
                           display: "flex",
-                          flexDirection: "row",
-                          marginTop: "0.3rem",
-                          justifyContent: "space-between",
                         }}
                       >
                         <Typography
                           sx={{
                             color: "var(--White, #FFF)",
                             fontFamily: "Nunito",
-                            fontSize: { xs: "12px", sm: "1rem" },
+                            fontSize: { xs: "12px", sm: "16px" },
                             fontStyle: "normal",
                             fontWeight: 600,
                             lineHeight: "140%",
+                            width: '60%'
                           }}
                         >
                           Producto
@@ -380,11 +386,12 @@ const SlidebarVender = ({
                           sx={{
                             color: "var(--White, #FFF)",
                             fontFamily: "Nunito",
-                            fontSize: { xs: "12px", sm: "1rem" },
+                            fontSize: { xs: "12px", sm: "16px" },
                             fontStyle: "normal",
                             fontWeight: 600,
                             lineHeight: "140%",
-                            marginLeft: "100px",
+                            width: '15%',
+                            textAlign: "right"
                           }}
                         >
                           Cantidad
@@ -393,11 +400,13 @@ const SlidebarVender = ({
                           sx={{
                             color: "var(--White, #FFF)",
                             fontFamily: "Nunito",
-                            fontSize: { xs: "12px", sm: "1rem" },
+                            fontSize: { xs: "12px", sm: "16px" },
                             fontStyle: "normal",
                             fontWeight: 600,
                             lineHeight: "140%",
                             marginRight: "19px",
+                            width: '25%',
+                            textAlign: "right"
                           }}
                         >
                           Precio
@@ -408,10 +417,42 @@ const SlidebarVender = ({
                       <Divider
                         sx={{ background: "#69EAE2", marginTop: "10px" }}
                       />
+                      <Paper
+                        component='form'
+                        sx={{
+                          marginY: '20px',
+                          height: "25px",
+                          display: "flex",
+                          borderRadius: "5px",
+                          alignItems: "center",
+                          color: "#fff",
+                          background: "#2C3248",
+                        }}
+                      >
+                        <InputBase
+                          sx={{
+                            ml: 1,
+                            flex: 1,
+                            color: "#fff",
+                            fontSize: '16px'
+                          }}
+                          placeholder='Buscar en la factura'
+                        />
+                        <IconButton
+                          sx={{
+                            marginTop: "2px",
+                            paddingTop: "0px",
+                            marginBottom: "4px",
+                            paddingBottom: "0px",
+                          }}
+                        >
+                          <SearchIcon sx={{ color: '#F8F8F8', fontSize: '20px' }} />
+                        </IconButton>
+                      </Paper>
                       <Box
                         id='items-list'
                         sx={{
-                          maxHeight: "41%",
+                          maxHeight: "62%",
                           overflowY: "auto",
                           scrollBehavior: "smooth",
                         }}
@@ -432,15 +473,17 @@ const SlidebarVender = ({
                             AÑADE ITEMS A TU CARRITO
                           </Typography>
                         ) : (
-                          selectedItems?.map((product: any) => (
-                            <React.Fragment key={product.barCode}>
-                              <CartItems
-                                product={product}
-                                setSelectedItems={setSelectedItems}
-                                selectedItems={selectedItems}
-                              />
-                            </React.Fragment>
-                          ))
+                          <>
+                            {selectedItems?.map((product: any) => (
+                              <React.Fragment key={product.barCode}>
+                                <CartItems
+                                  product={product}
+                                  setSelectedItems={setSelectedItems}
+                                  selectedItems={selectedItems}
+                                />
+                              </React.Fragment>
+                            ))}
+                          </>
                         )}
                       </Box>
                       <Divider
@@ -459,7 +502,7 @@ const SlidebarVender = ({
                               color: "#FFF",
                               textAlign: "center",
                               fontFamily: "Nunito",
-                              fontSize: { xs: "14px", sm: "1rem" },
+                              fontSize: { xs: "14px", sm: "16px" },
                               fontStyle: "normal",
                               fontWeight: 500,
                               lineHeight: "140%",
@@ -472,7 +515,7 @@ const SlidebarVender = ({
                               color: "#FFF",
                               textAlign: "center",
                               fontFamily: "Nunito",
-                              fontSize: { xs: "14px", sm: "1rem" },
+                              fontSize: { xs: "14px", sm: "16px" },
                               fontStyle: "normal",
                               fontWeight: 500,
                               lineHeight: "140%",
@@ -488,32 +531,32 @@ const SlidebarVender = ({
                             marginBottom: "0.5rem",
                           }}
                         >
-                          <Typography
+                          {/* <Typography
                             sx={{
                               color: "#FFF",
                               textAlign: "center",
                               fontFamily: "Nunito",
-                              fontSize: { xs: "14px", sm: "1rem" },
+                              fontSize: { xs: "14px", sm: "16px" },
                               fontStyle: "normal",
                               fontWeight: 500,
                               lineHeight: "140%",
                             }}
                           >
                             Costo de envío
-                          </Typography>
-                          <Typography
+                          </Typography> */}
+                          {/* <Typography
                             sx={{
                               color: "#FFF",
                               textAlign: "center",
                               fontFamily: "Nunito",
-                              fontSize: { xs: "14px", sm: "1rem" },
+                              fontSize: { xs: "14px", sm: "16px" },
                               fontStyle: "normal",
                               fontWeight: 500,
                               lineHeight: "140%",
                             }}
                           >
                             $ 0
-                          </Typography>
+                          </Typography> */}
                         </Box>
                         <Box
                           sx={{
@@ -529,7 +572,7 @@ const SlidebarVender = ({
                                 color: "#69EAE2",
                                 textAlign: "center",
                                 fontFamily: "Nunito",
-                                fontSize: { xs: "14px", sm: "1rem" },
+                                fontSize: { xs: "14px", sm: "16px" },
                                 fontStyle: "normal",
                                 fontWeight: 500,
                                 lineHeight: "140%",
@@ -546,7 +589,7 @@ const SlidebarVender = ({
                                   color: "#FFF",
                                   textAlign: "center",
                                   fontFamily: "Nunito",
-                                  fontSize: { xs: "14px", sm: "1rem" },
+                                  fontSize: { xs: "14px", sm: "16px" },
                                   fontStyle: "normal",
                                   fontWeight: 500,
                                   lineHeight: "140%",
@@ -571,7 +614,7 @@ const SlidebarVender = ({
                                     color: "#69EAE2",
                                     textAlign: "center",
                                     fontFamily: "Nunito",
-                                    fontSize: { xs: "14px", sm: "1rem" },
+                                    fontSize: { xs: "14px", sm: "16px" },
                                     fontStyle: "normal",
                                     fontWeight: 500,
                                     lineHeight: "90%",
@@ -611,7 +654,7 @@ const SlidebarVender = ({
                                             color: "#69EAE2",
                                             textAlign: "center",
                                             fontFamily: "Nunito",
-                                            fontSize: "0.75rem",
+                                            fontSize: "16px",
                                             fontStyle: "normal",
                                             fontWeight: 500,
                                             lineHeight: "140%",
@@ -644,9 +687,10 @@ const SlidebarVender = ({
                       />
                       <InputBase
                         sx={{
-                          width: { xs: '74%', sm: "100%" },
-                          height: { xs: '2rem', sm: "3rem" },
-                          padding: "1rem",
+                          width: "100%",
+                          height: "37px",
+                          padding: "5px",
+                          fontSize: '16px'
                         }}
                         style={{
                           marginTop: '10px',
@@ -674,7 +718,7 @@ const SlidebarVender = ({
                             color: "#FFF",
                             textAlign: "center",
                             fontFamily: "Nunito",
-                            fontSize: { xs: "14px", sm: "1rem" },
+                            fontSize: { xs: "14px", sm: "16px" },
                             fontStyle: "normal",
                             fontWeight: 500,
                             lineHeight: "140%",
@@ -687,7 +731,7 @@ const SlidebarVender = ({
                             color: "#FFF",
                             textAlign: "center",
                             fontFamily: "Nunito",
-                            fontSize: { xs: "14px", sm: "1rem" },
+                            fontSize: { xs: "14px", sm: "16px" },
                             fontStyle: "normal",
                             fontWeight: 500,
                             lineHeight: "140%",
@@ -735,9 +779,9 @@ const SlidebarVender = ({
               </>
             )}
           </Box>
-        </Box>
-      </SwipeableDrawer>
-    </Box>
+        </Box >
+      </SwipeableDrawer >
+    </Box >
   );
 };
 

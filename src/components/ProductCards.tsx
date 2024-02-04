@@ -18,13 +18,12 @@ const ProductCards = ({ filteredData }: { filteredData: any }) => {
       <Box
         id='container card'
         sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
-          gridRowGap: "3rem",
-          gridColumnGap: "1rem",
+          display: "flex",
+          flexWrap: 'wrap',
           height: "100%",
           justifyItems: "center",
           marginTop: "2.5rem",
+          justifyContent: 'space-evenly'
         }}
       >
         <InventoryCard filteredData={filteredData} />

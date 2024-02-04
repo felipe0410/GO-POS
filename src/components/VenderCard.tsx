@@ -5,13 +5,10 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
-import { Dispatch, useCallback } from "react";
-import { SelectedProduct } from "@/app/vender/interface";
-import { VenderContext } from "@/app/vender/Context_vender";
 
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
   "&:last-child": {
-    paddingBottom: "12px",
+    paddingBottom: "5px",
   },
 }));
 const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, }: { filteredData: any; setSelectedItems: any, selectedItems: any }) => {
@@ -76,65 +73,68 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
       <Card
         key={product.uid}
         sx={{
-          width: "15rem",
+          width: { xs: '130px', sm: "190px" },
           maxHeight: "17.52rem",
           borderRadius: "0.32rem",
           background: "#2C3248",
           overflow: "visible",
           textAlign: "-webkit-center",
+          marginTop: '50px',
+          '&:hover': {
+            border: "1px solid #69EAE2"
+          },
         }}
       >
         <Box
           sx={{
-            position: "relative",
             display: "flex",
-            top: "2.3rem",
             justifyContent: "space-between",
             zIndex: 4,
           }}
         >
-          <Button sx={{ padding: 0 }} onClick={() => handleDecrement(product)}>
+          <Button sx={{ padding: 0, minWidth: 0, minHeight: 0 }} onClick={() => handleDecrement(product)}>
             <Box
               component={"img"}
               src={"/images/minus.svg"}
-              sx={{ width: "2rem", height: "2rem" }}
+              sx={{
+                width: "30px",
+              }}
             />
           </Button>
-
-          <Button sx={{ padding: 0 }} onClick={() => handleIncrement(product)}>
-            <Box
-              component={"img"}
-              src={"/images/plus.svg"}
-              sx={{ width: "2rem", height: "2rem" }}
-            />
-          </Button>
-        </Box>
-        <Box
-          sx={{
-            position: "relative",
-            height: "8rem",
-            marginTop: "-25%",
-            overflow: "visible",
-          }}
-        >
           <Box
             component={"img"}
             src={["", null].includes(product.image) ? "images/noImage.svg" : product.image}
             alt={`imagen del producto ${product.productName}`}
             sx={{
-              width: "6.5rem",
-              height: "7.5rem",
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
+              width: "60%",
+              height: { xs: '70px', sm: '120px' },
+              position: "relative",
+              top: { xs: '-10px', sm: "-30px" },
+              '&:hover': {
+                transform: "scale(1.7)"
+              },
             }}
             loading="lazy"
           />
+
+          <Button sx={{ padding: 0, minWidth: 0, minHeight: 0 }} onClick={() => handleIncrement(product)}>
+            <Box
+              component={"img"}
+              src={"/images/plus.svg"}
+              sx={{
+                width: "30px",
+              }}
+            />
+          </Button>
         </Box>
         <StyledCardContent
           sx={{
-            padding: 0,
-            width: "12rem",
+            marginTop: { xs: '-10px', sm: '-35px' },
+            padding: '5px',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <Typography
@@ -142,7 +142,7 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
               color: "#69EAE2",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.875rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "130%",
@@ -156,7 +156,7 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
               color: "var(--text-light, #ABBBC2)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.7rem",
+              fontSize: "13px",
               fontStyle: "normal",
               fontWeight: 200,
               lineHeight: "140%",
@@ -170,7 +170,7 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
               color: "var(--White, #FFF)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.875rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "140%",
@@ -184,23 +184,20 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
               color: "var(--text-light, #ABBBC2)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.736rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
             }}
           >
-            {product.cantidad}
-            {product.cantidad === "1"
-              ? " Unidad Disponible"
-              : " Unidades Disponibles"}
+            Existencias: <span style={{ fontWeight: '700', color: '#fff' }}>{product.cantidad}</span>
           </Typography>
           <Typography
             sx={{
               color: "#ABBBC2",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.865rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",

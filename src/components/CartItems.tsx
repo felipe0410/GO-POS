@@ -11,7 +11,6 @@ const CartItems = ({
   setSelectedItems: any;
   selectedItems: any;
 }) => {
-  console.log('entro aqui')
   const [edit, setEdit] = useState(false)
   const saveDataToLocalStorage = (key: string, data: any) => {
     try {
@@ -65,30 +64,29 @@ const CartItems = ({
     });
   };
   return (
-    <Box sx={{ marginTop: "1.31rem" }}>
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <Box
-          component={"img"}
-          src={
-            ["", null].includes(product.image) ? "/images/noImage.svg" : product.image
-          }
-          alt={`imagen del producto ${product.productName}`}
-          sx={{
-            width: "3rem",
-            height: "3rem",
-          }}
-        />
-        <Box>
-          <Box marginLeft={1} sx={{ width: '48%' }}>
+    <Box sx={{ marginTop: "10px" }}>
+      <Box display={'flex'}>
+        <Box sx={{ width: '60%', display: 'flex' }}>
+          <Box
+            component={"img"}
+            src={
+              ["", null].includes(product.image) ? "/images/noImage.svg" : product.image
+            }
+            alt={`imagen del producto ${product.productName}`}
+            sx={{
+              width: "37px",
+              height: "37px",
+            }}
+          />
+          <Box marginLeft={1} sx={{ width: '100%' }}>
             <Typography
               sx={{
                 color: "#FFF",
                 fontFamily: "Nunito",
-                fontSize: "0.875rem",
+                fontSize: "14px",
                 fontStyle: "normal",
                 fontWeight: 400,
                 lineHeight: "140%",
-                width: { xs: '7.5rem', sm: "10.2rem" },
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -97,10 +95,11 @@ const CartItems = ({
               {product.productName}
             </Typography>
             <Typography
+              width={'70%'}
               sx={{
                 color: "#FFF",
                 fontFamily: "Nunito",
-                fontSize: "0.75rem",
+                fontSize: "14px",
                 fontStyle: "normal",
                 fontWeight: 400,
                 lineHeight: "140%",
@@ -111,7 +110,6 @@ const CartItems = ({
                   sx={{
                     display: 'flex',
                     height: { xs: '1rem', sm: "1.5rem" },
-                    width: "90%",
                     borderRadius: "0.5rem",
                     border: "1px solid var(--Base-Dark-Line, #393C49)",
                     background: "var(--Base-Form-BG, #2D303E)",
@@ -142,7 +140,7 @@ const CartItems = ({
                   </IconButton>
                 </Box>
                 : <>
-                  <Typography sx={{ color: '#69EAE2' }}>
+                  <Typography sx={{ color: '#69EAE2', fontSize: '14px' }}>
                     {product.price}
                     <IconButton
                       sx={{ paddingTop: "2px", paddingRight: "2px" }}
@@ -159,78 +157,88 @@ const CartItems = ({
             </Typography>
           </Box>
         </Box>
-        <InputBase
-          sx={{
-            width: "3rem",
-            padding: "0.5rem",
-            textAlignLast: "center",
-          }}
-          style={{
-            color: "#FFF",
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Base-Dark-Line, #393C49)",
-            background: "var(--Base-Form-BG, #2D303E)",
-          }}
-          value={product.cantidad}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            handleChange(event, product)
-          }
-          }
-        />
-        <Typography
-          sx={{
-            color: "#FFF",
-            fontFamily: "Nunito",
-            fontSize: "0.75rem",
-            fontStyle: "normal",
-            fontWeight: 400,
-            lineHeight: "140%",
-            marginLeft: "1rem",
-            alignSelf: "center",
-          }}
-        >
-          {`$ ${product?.acc?.toLocaleString("en-US")}`}
-        </Typography>
+        <Box sx={{ width: '40%', display: 'flex' }}>
+          <Box width={'35%'} sx={{ textAlign: 'center' }}>
+            <InputBase
+              sx={{
+                width: { xs: '32px', sm: "50px" },
+                padding: { xs: '5px', sm: "6px" },
+                textAlignLast: "center",
+                fontSize: { xs: '13px', sm: '16px' },
+              }}
+              style={{
+                color: "#FFF",
+                borderRadius: "0.5rem",
+                border: "1px solid var(--Base-Dark-Line, #393C49)",
+                background: "var(--Base-Form-BG, #2D303E)",
+              }}
+              value={product.cantidad}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                handleChange(event, product)
+              }
+              }
+            />
+          </Box>
+          <Box sx={{ alignSelf: "center" }}>
+            <Typography
+              sx={{
+                alignSelf: "center",
+                color: "#FFF",
+                fontFamily: "Nunito",
+                fontSize: { xs: '13px', sm: "0.75rem" },
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "140%",
+                marginLeft: { sm: "1rem" },
+              }}
+            >
+              {`$ ${product?.acc?.toLocaleString("en-US")}`}
+            </Typography>
+          </Box>
+        </Box>
       </Box>
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
-          marginTop: "1rem",
         }}
       >
-        <InputBase
-          sx={{
-            width: { xs: '74%', sm: "16.6875rem" },
-            height: { xs: '2rem', sm: "3rem" },
-            padding: "1rem",
-          }}
-          style={{
-            color: "#FFF",
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Base-Dark-Line, #393C49)",
-            background: "var(--Base-Form-BG, #2D303E)",
-          }}
-          placeholder='Nota de la orden...'
-          value={product.barCode}
-        />
-        <Button
-          onClick={() => handleDelete(product)}
-          variant='outlined'
-          sx={{
-            height: { xs: '2rem', sm: "3rem" },
-            width: { xs: '2rem', sm: "3rem" },
-            minWidth: 0,
-            padding: 0,
-            marginLeft: "1.6rem",
-          }}
-          style={{
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Accents-Red, #FF7CA3)",
-          }}
-        >
-          <Box component={"img"} src={"/images/deletePink.svg"} />
-        </Button>
+        <Box sx={{ width: '73%' }}>
+          <InputBase
+            sx={{
+              width: "100%",
+              height: { xs: '17px', sm: "24px" },
+              fontSize: '12px',
+              padding: "5px",
+            }}
+            style={{
+              color: "#FFF",
+              borderRadius: "0.5rem",
+              border: "1px solid var(--Base-Dark-Line, #393C49)",
+              background: "var(--Base-Form-BG, #2D303E)",
+            }}
+            placeholder='Codigo de barras'
+            value={product.barCode}
+          />
+        </Box>
+        <Box sx={{ width: "23%", display: "flex", justifyContent: "flex-end" }}>
+          <Button
+            onClick={() => handleDelete(product)}
+            variant='outlined'
+            sx={{
+              height: "37px",
+              width: "37px",
+              minWidth: 0,
+              padding: 0,
+            }}
+            style={{
+              borderRadius: "0.5rem",
+              border: "1px solid var(--Accents-Red, #FF7CA3)",
+            }}
+          >
+            <Box component={"img"} src={"/images/deletePink.svg"} />
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

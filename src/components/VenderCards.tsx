@@ -20,7 +20,7 @@ const VenderCards = ({
       id='paper'
       elevation={0}
       style={{
-        height: "90%",
+        height: "100%",
         overflowX: "auto",
         maxWidth: "100%",
         background: "#1F1D2B",
@@ -29,9 +29,9 @@ const VenderCards = ({
       <Box
         id='container card'
         sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(230px, 1fr))", // Hace que las columnas se adapten al tamaño de la pantalla
-          gridRowGap: "3rem", // Espacio entre las filas
+          display: 'flex',
+          justifyContent: "space-around",
+          flexWrap: "wrap",
           height: "100%",
           justifyItems: "center",
           marginTop: "1.5rem",

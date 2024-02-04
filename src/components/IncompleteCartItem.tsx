@@ -1,6 +1,6 @@
 "use client";
 import { createProduct } from "@/firebase";
-import { Box, Typography, InputBase, Button } from "@mui/material";
+import { Box, Typography, InputBase, Button, IconButton, InputAdornment } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
 import { v4 as uuidv4 } from 'uuid';
@@ -88,47 +88,118 @@ const IncompleteCartItem = ({
   }, [incompletedItem.cantidad, cleanedPrice]);
 
   return (
-    <Box sx={{ marginTop: "1.31rem" }}>
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <Box id='container img' sx={{ maxWidth: '50px' }}>
-          {incompletedItem.barCode.length > 0
-            ?
-            <Box
-              component={"img"}
-              src={"/images/noImage.svg"}
-              alt={"logo no imagen"}
+    <>
+      <Typography
+        sx={{
+          marginTop: '10px',
+          fontFamily: "Nunito",
+          fontSize: "12px",
+          fontWeight: 600,
+          lineHeight: "17px",
+          letterSpacing: "0em",
+          textAlign: "left",
+          color: '#69EAE2'
+
+        }}
+      >
+        AGREGAR PRODUCTO NO REGISTRADO
+      </Typography>
+      <Box sx={{ marginTop: "10px", display: 'flex' }}>
+        <Box sx={{ display: 'flex', width: '60%' }}>
+          <Box id='container_img'
+            sx={{
+              maxWidth: '50px',
+              alignSelf: "end"
+            }}
+          >
+            {incompletedItem.barCode.length > 0
+              ?
+              <Box
+                component={"img"}
+                src={"/images/noImage.svg"}
+                alt={"logo no imagen"}
+                sx={{
+                  width: { xs: "2.5rem", sm: "37px" },
+                  height: { xs: "2.9rem", sm: "37px" },
+                }}
+              />
+              // <Box>
+              //   <ImgInputSlidebar
+              //     data={incompletedItem}
+              //     setData={setIncompletedItem}
+              //     folderSaved={user.length > 0 ? user : "images"}
+              //     fiel={"image"}
+              //     imageBase64={imageBase64}
+              //     setImageBase64={setImageBase64}
+              //   />
+              // </Box>
+              :
+              <Box
+                component={"img"}
+                src={"/images/noImage.svg"}
+                alt={"logo no imagen"}
+                sx={{
+                  width: { xs: "2.5rem", sm: "37px" },
+                  height: { xs: "2.9rem", sm: "37px" },
+                }}
+              />}
+          </Box>
+          <Box marginLeft={1} sx={{ width: "100%" }}>
+            <InputBase
               sx={{
-                width: { xs: "2.5rem", sm: "3rem" },
-                height: { xs: "2.9rem", sm: "3rem" },
+                width: "90%",
+                height: { xs: "1rem", sm: "20px" },
+                paddingLeft: "5px",
+                padding: "0px, 47px, 0px, 10px",
+                fontSize: '16px'
+              }}
+              style={{
+                color: "#FFF",
+                borderRadius: "0.5rem",
+                border: "1px solid  #393C49",
+                background: "var(--Base-Form-BG, #2D303E)",
+              }}
+              placeholder='Producto...'
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                handleOnChange(event, "productName")
+              }
+              value={incompletedItem.productName}
+            />
+            <NumericFormat
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                handleOnChange(event, "price")
+              }
+              value={incompletedItem.price}
+              prefix='$ '
+              placeholder='Precio...'
+              thousandSeparator
+              customInput={InputBase}
+              style={{ color: "#FFF" }}
+              sx={{
+                height: { xs: "1rem", sm: "24px" },
+                width: "90%",
+                borderRadius: "0.5rem",
+                padding: '0',
+                border: "1px solid var(--Base-Dark-Line, #393C49)",
+                background: "var(--Base-Form-BG, #2D303E)",
+                paddingLeft: "5px",
+                fontSize: '16px'
               }}
             />
-            // <Box>
-            //   <ImgInputSlidebar
-            //     data={incompletedItem}
-            //     setData={setIncompletedItem}
-            //     folderSaved={user.length > 0 ? user : "images"}
-            //     fiel={"image"}
-            //     imageBase64={imageBase64}
-            //     setImageBase64={setImageBase64}
-            //   />
-            // </Box>
-            :
-            <Box
-              component={"img"}
-              src={"/images/noImage.svg"}
-              alt={"logo no imagen"}
-              sx={{
-                width: { xs: "2.5rem", sm: "3rem" },
-                height: { xs: "2.9rem", sm: "3rem" },
-              }}
-            />}
+          </Box>
         </Box>
-        <Box marginLeft={1} sx={{ width: { xs: "43%", sm: "163.200px" } }}>
+        <Box
+          sx={{
+            width: '15%',
+            alignSelf: "center",
+            textAlign: "center",
+          }}
+        >
           <InputBase
             sx={{
-              width: "90%",
-              height: { xs: "1rem", sm: "1.3rem" },
-              paddingLeft: "5px",
+              width: "50px",
+              padding: { sm: "6px" },
+              textAlignLast: "center",
             }}
             style={{
               color: "#FFF",
@@ -136,153 +207,150 @@ const IncompleteCartItem = ({
               border: "1px solid var(--Base-Dark-Line, #393C49)",
               background: "var(--Base-Form-BG, #2D303E)",
             }}
-            placeholder='Producto...'
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              handleOnChange(event, "productName")
+              handleOnChange(event, "cantidad")
             }
-            value={incompletedItem.productName}
+            value={incompletedItem.cantidad}
           />
-          <NumericFormat
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              handleOnChange(event, "price")
-            }
-            value={incompletedItem.price}
-            prefix='$ '
-            placeholder='Precio...'
-            thousandSeparator
-            customInput={InputBase}
-            style={{ color: "#FFF" }}
+        </Box>
+        {/* _________________________________---- */}
+        <Box
+          id='count-value'
+          sx={{
+            width: '25%',
+            fontSize: "16px",
+          }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Box
             sx={{
-              height: { xs: "1rem", sm: "1.5rem" },
-              width: "90%",
+              placeSelf: "center",
+              alignSelf: "center",
+              textAlign: "center",
+            }}
+          >
+            <Typography
+              sx={{
+                color: "#FFF",
+                fontFamily: "Nunito",
+                fontSize: "0.75rem",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "140%",
+                marginLeft: "1rem",
+                alignSelf: "center",
+              }}
+            >
+              {`$ ${incompletedItem.acc.toLocaleString("en-US")}`}
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+      <Box sx={{ display: 'flex', marginTop: "10px" }}>
+        <Box sx={{ width: '60%' }}>
+          <InputBase
+            endAdornment={
+              <InputAdornment position='end'>
+                <Box sx={{ height: '15px' }} component={"img"} src={"/images/scan.svg"} />
+              </InputAdornment>
+            }
+            onBlur={() =>
+              setIncompletedItem({ ...incompletedItem })
+            }
+            sx={{
+              width: '92%',
+              height: { xs: "20px", sm: "24px" },
+              fontSize: "16px",
+              padding: "0px 7px",
+            }}
+            style={{
+              color: "#FFF",
               borderRadius: "0.5rem",
               border: "1px solid var(--Base-Dark-Line, #393C49)",
               background: "var(--Base-Form-BG, #2D303E)",
-              paddingLeft: "5px",
             }}
+            placeholder='Codigo de barras'
+            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+              handleOnChange(event, "barCode")
+            }
+            value={incompletedItem.barCode}
           />
         </Box>
-        <InputBase
+        <Box id='buttons'
           sx={{
-            width: "3rem",
-            padding: { sm: "0.5rem" },
-            textAlignLast: "center",
+            display: "flex",
+            flexDirection: "row",
+            width: '40%',
           }}
-          style={{
-            color: "#FFF",
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Base-Dark-Line, #393C49)",
-            background: "var(--Base-Form-BG, #2D303E)",
-          }}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            handleOnChange(event, "cantidad")
-          }
-          value={incompletedItem.cantidad}
-        />
-        <Box sx={{ marginLeft: "15px", placeSelf: "center" }}>
-          <Typography
-            sx={{
-              color: "#FFF",
-              fontFamily: "Nunito",
-              fontSize: "0.75rem",
-              fontStyle: "normal",
-              fontWeight: 400,
-              lineHeight: "140%",
-              marginLeft: "1rem",
-              alignSelf: "center",
-            }}
-          >
-            {`$ ${incompletedItem.acc.toLocaleString("en-US")}`}
-          </Typography>
+        >
+          <Box sx={{ width: '40%', textAlign: 'center' }}>
+            <Button
+              disabled={!validationDisabled}
+              onClick={() => pushIncompletedItem()}
+              variant='outlined'
+              sx={{
+                height: { xs: "35px", sm: "35px" },
+                width: { xs: "35px", sm: "35px" },
+                minWidth: 0,
+                padding: 0,
+                filter: validationDisabled ? "invert(0)" : "invert(50%)",
+              }}
+              style={{
+                borderRadius: "0.5rem",
+                border: "1px solid var(--Accents-Red, #69EAE2)",
+              }}
+            >
+              <Box
+                sx={{ width: "50%" }}
+                component={"img"}
+                src={"/images/okay.svg"}
+              />
+            </Button>
+          </Box>
+          <Box sx={{ width: '60%', textAlign: 'center' }}>
+            <Button
+              onClick={() =>
+                setIncompletedItem({
+                  productName: "",
+                  price: "",
+                  cantidad: 0,
+                  acc: 0,
+                  barCode: "",
+                  category: "",
+                  measurement: "",
+                  description: "",
+                  image: "",
+                  purchasePrice: "",
+                })
+              }
+              variant='outlined'
+              sx={{
+                height: { xs: "35px", sm: "35px" },
+                width: { xs: "35px", sm: "35px" },
+                minWidth: 0,
+                padding: 0,
+                marginLeft: { xs: "2rem", sm: "1.6rem" },
+              }}
+              style={{
+                borderRadius: "0.5rem",
+                border: "1px solid var(--Accents-Red, #FF7CA3)",
+              }}
+            >
+              <Box
+                sx={{ width: "50%" }}
+                component={"img"}
+                src={"/images/deletePink.svg"}
+              />
+            </Button>
+          </Box>
         </Box>
+
       </Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "row",
-          marginTop: "1rem",
-        }}
-      >
-        <InputBase
-          onBlur={() =>
-            setIncompletedItem({ ...incompletedItem })
-          }
-          sx={{
-            width: { xs: "55%", sm: "12.27rem" },
-            height: { xs: "2rem", sm: "3rem" },
-            padding: "1rem",
-          }}
-          style={{
-            color: "#FFF",
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Base-Dark-Line, #393C49)",
-            background: "var(--Base-Form-BG, #2D303E)",
-          }}
-          placeholder='Codigo de barras'
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            handleOnChange(event, "barCode")
-          }
-          value={incompletedItem.barCode}
-        />
-        <Button
-          disabled={!validationDisabled}
-          onClick={() => pushIncompletedItem()}
-          variant='outlined'
-          sx={{
-            height: { xs: "2rem", sm: "3rem" },
-            width: { xs: "2rem", sm: "3rem" },
-            minWidth: 0,
-            padding: 0,
-            marginLeft: { xs: "20px", sm: "1.6rem" },
-            filter: validationDisabled ? "invert(0)" : "invert(50%)",
-          }}
-          style={{
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Accents-Red, #69EAE2)",
-          }}
-        >
-          <Box
-            sx={{ width: "50%" }}
-            component={"img"}
-            src={"/images/okay.svg"}
-          />
-        </Button>
-        <Button
-          onClick={() =>
-            setIncompletedItem({
-              productName: "",
-              price: "",
-              cantidad: 0,
-              acc: 0,
-              barCode: "",
-              category: "",
-              measurement: "",
-              description: "",
-              image: "",
-              purchasePrice: "",
-            })
-          }
-          variant='outlined'
-          sx={{
-            height: { xs: "2rem", sm: "3rem" },
-            width: { xs: "2rem", sm: "3rem" },
-            minWidth: 0,
-            padding: 0,
-            marginLeft: { xs: "2rem", sm: "1.6rem" },
-          }}
-          style={{
-            borderRadius: "0.5rem",
-            border: "1px solid var(--Accents-Red, #FF7CA3)",
-          }}
-        >
-          <Box
-            sx={{ width: "50%" }}
-            component={"img"}
-            src={"/images/deletePink.svg"}
-          />
-        </Button>
-      </Box>
-    </Box>
+    </>
   );
 };
 
