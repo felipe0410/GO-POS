@@ -12,7 +12,10 @@ export const container = {
   flexDirection: "row",
   justifyContent: "space-between",
   width: "95%",
-  textAlign: { sm: "-webkit-center", xs: "-webkit-center" },
+  textAlign: {
+    sm: "-webkit-center",
+    xs: "-webkit-center",
+  },
 };
 
 export const typographyColab = {
@@ -55,7 +58,7 @@ export const typographyButton = {
 export const typographyColabsButton = {
   color: "#69EAE2",
   fontFamily: "Nunito",
-  fontSize: "1.5rem",
+  fontSize: { lg: "1.5rem", md: "1.5rem", sm: "1rem", xs: "1rem" },
   fontStyle: "normal",
   fontWeight: 400,
   lineHeight: "normal",
@@ -85,7 +88,12 @@ export const selectStyle = {
 export const typographyStep2 = {
   color: "#FFF",
   fontFamily: "Nunito",
-  fontSize: "1.25rem",
+  fontSize: {
+    lg: "1.25rem",
+    md: "1.25rem",
+    sm: "0.95rem",
+    xs: "0.95rem",
+  },
   fontStyle: "normal",
   fontWeight: 400,
   lineHeight: "normal",
@@ -96,7 +104,7 @@ export const jobsCardBoxes = {
   flexDirection: "row",
   justifyContent: "space-between",
   marginTop: "16px",
-  width: "65%",
+  width: { lg: "65%", md: "65%", sm: "90%", xs: "90%" },
   height: "2.5rem",
   borderRadius: "0.5rem",
   background: "#2C3248",

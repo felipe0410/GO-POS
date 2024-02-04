@@ -9,8 +9,7 @@ import Typography from "@mui/material/Typography";
 import { Box } from "@mui/material";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
-import { v4 as uuidv4 } from 'uuid';
-
+import { v4 as uuidv4 } from "uuid";
 
 export default function InventoryCard({ filteredData }: { filteredData: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
@@ -35,7 +34,6 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             border: "1px solid #69EAE2"
           },
         }}
-
       >
         <Box
           sx={{
@@ -63,7 +61,11 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
         >
           <Box
             component={"img"}
-            src={product?.image?.length > 0 ? product?.image : "/images/noImage.svg"}
+            src={
+              product?.image?.length > 0
+                ? product?.image
+                : "/images/noImage.svg"
+            }
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "50%",
@@ -76,7 +78,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
                 left: "25%",
               },
             }}
-            loading="lazy"
+            loading='lazy'
           />
         </Box>
         <StyledCardContent

@@ -214,7 +214,7 @@ export const updateProductData = async (uid: any, newData: any) => {
 };
 
 export const updateProductDataCantidad = async (uid: any, newData: any) => {
-  console.log(uid)
+  console.log(uid);
   try {
     const establecimientoDocRef = doc(
       db,
@@ -246,7 +246,6 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
     console.error("Error al actualizar el documento: ", error);
   }
 };
-
 
 // Función para eliminar un producto
 export const deleteProduct = async (uid: any, img: string) => {
@@ -688,25 +687,58 @@ export const saveDataUser = async (uid: any, userData: any) => {
 
 export const getEstablishmentData = async () => {
   try {
-    const encodedUserUID = localStorage.getItem('user');
+    const encodedUserUID = localStorage.getItem("user");
     if (!encodedUserUID) {
-      console.error('No se encontró un UID en el local storage');
+      console.error("No se encontró un UID en el local storage");
       return null;
     }
     const userUID = atob(encodedUserUID);
-    const userCollectionRef = collection(db, 'registeredEstablishments');
-    const establishmentDocRef = doc(userCollectionRef, userUID)
+    const userCollectionRef = collection(db, "registeredEstablishments");
+    const establishmentDocRef = doc(userCollectionRef, userUID);
     const docSnapshot = await getDoc(establishmentDocRef);
     if (docSnapshot.exists()) {
       const establishmentData = docSnapshot.data();
-      console.log('Data del establecimiento:', establishmentData);
+      console.log("Data del establecimiento:", establishmentData);
       return establishmentData;
     } else {
-      console.error('El documento del establecimiento no existe');
+      console.error("El documento del establecimiento no existe");
       return null;
     }
   } catch (error) {
-    console.error('Error al obtener la información del establecimiento:', error);
+    console.error(
+      "Error al obtener la información del establecimiento:",
+      error
+    );
+    return null;
+  }
+};
+
+export const createColabsData = async (uid: string, colabsData: any) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "registeredEstablishments",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      await setDoc(establecimientoDocRef, {});
+    }
+    const collaboratorsCollectionRef = collection(
+      establecimientoDocRef,
+      "collaborators"
+    );
+    const collaboratorsDocRef = doc(collaboratorsCollectionRef, uid);
+    await setDoc(collaboratorsDocRef, {
+      uid: uid,
+      ...colabsData,
+    });
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar información en la base de datos: ", error);
     return null;
   }
 };

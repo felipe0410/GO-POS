@@ -1,6 +1,8 @@
 import {
   Box,
   Button,
+  IconButton,
+  InputAdornment,
   MenuItem,
   OutlinedInput,
   Select,
@@ -10,24 +12,28 @@ import React, { useState } from "react";
 import { selectStyle, typographyColabsButton } from "./profileStyles";
 import StepProgress from "./StepProgress";
 import Step2 from "./Step2";
+import { VisibilityOff, Visibility } from "@mui/icons-material";
+import Step3 from "./Step3";
 
 interface ColabsData {
   status: string;
   name: string;
-  user: string;
+  mail: string;
   password: string;
   jobs: string[];
 }
 
-const Step1 = () => {
+const Step1 = ({ setAddColabs }: { setAddColabs: any }) => {
   const [colabsData, setColabsData] = useState<ColabsData>({
     status: " ",
     name: "",
-    user: "",
+    mail: "",
     password: "",
     jobs: [],
   });
   const [step, setStep] = useState(0);
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
 
   const inputOnChange = (field: string, value: string) => {
     setColabsData({ ...colabsData, [field]: value });
@@ -74,10 +80,10 @@ const Step1 = () => {
             style={{ color: "#FFF" }}
           />
           <OutlinedInput
-            placeholder='Correo/Usuario'
-            value={colabsData["user"]}
+            placeholder='Correo'
+            value={colabsData["mail"]}
             onChange={(e) => {
-              inputOnChange("user", e.target.value);
+              inputOnChange("mail", e.target.value);
             }}
             type='text'
             sx={{
@@ -104,12 +110,27 @@ const Step1 = () => {
             <MenuItem value='editor'>Editor Inventario</MenuItem>
           </Select>
           <OutlinedInput
+            endAdornment={
+              <InputAdornment position='end'>
+                <IconButton
+                  aria-label='toggle password visibility'
+                  onClick={handleClickShowPassword}
+                  edge='end'
+                >
+                  {showPassword ? (
+                    <Visibility sx={{ color: "#69EAE2" }} />
+                  ) : (
+                    <VisibilityOff sx={{ color: "#69EAE2" }} />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            }
             placeholder='Contraseña'
             value={colabsData["password"]}
             onChange={(e) => {
               inputOnChange("password", e.target.value);
             }}
-            type='password'
+            type={showPassword ? "text" : "password"}
             sx={{
               height: "44.9px",
               borderRadius: "0.625rem",
@@ -132,17 +153,36 @@ const Step1 = () => {
               },
             }}
           >
-            <Typography sx={{ ...typographyColabsButton, fontSize: "1rem" }}>
+            <Typography
+              sx={{
+                ...typographyColabsButton,
+                fontSize: {
+                  lg: "1rem",
+                  md: "1rem",
+                  sm: "0.85rem",
+                  xs: "0.85rem",
+                },
+              }}
+            >
               SIGUIENTE
             </Typography>
             <Box component={"img"} src={"/images/arrow.svg"} />
           </Button>
         </Box>
-      ) : (
+      ) : step === 1 ? (
         <Step2
+          colabsData={colabsData}
           step={step}
           setStep={setStep}
           handleCheckboxChange={handleCheckboxChange}
+        />
+      ) : (
+        <Step3
+          colabsData={colabsData}
+          setColabsData={setColabsData}
+          step={step}
+          setStep={setStep}
+          setAddColabs={setAddColabs}
         />
       )}
 
