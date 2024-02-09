@@ -87,7 +87,7 @@ export const facturaStyles = {
   typographyVenta: {
     color: "#000",
     fontFamily: "Nunito",
-    fontSize: "0.8rem",
+    fontSize: "20px",
     fontStyle: "normal",
     fontWeight: 500,
     lineHeight: "140%",

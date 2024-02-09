@@ -164,7 +164,7 @@ export default function Sidebar({
           style: {
             background: "transparent",
             border: "none",
-            width: !open ? "100px" : "auto",
+            width: !open ? "100px" : "auto", 
           },
         }}
       >

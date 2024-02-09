@@ -128,15 +128,15 @@ const Page: any = () => {
 
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", height: "80%" }}>
+    <Box sx={{ display: "flex", flexDirection: "row", height: "80%", marginLeft: '10px' }}>
       <Box
         id='conainer_vender'
-        sx={{ width: { xs: "100%", lg: "calc(100% - 25.5625rem)" } }}
+        sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
       >
         <Header title='VENDER' />
         <Paper
           id={"paper"}
-          sx={{ width: "95%", height: "100%", marginTop: "2rem" }}
+          sx={{ width: "95%", height: "100%", marginTop: "1rem" }}
           style={{
             borderRadius: "0.625rem",
             background: "#1F1D2B",
@@ -201,7 +201,7 @@ const Page: any = () => {
             <Box
               sx={{
                 textAlign: "start",
-                marginTop: "2.81rem",
+                marginTop: "1rem",
               }}
             >
               <Typography
@@ -217,7 +217,7 @@ const Page: any = () => {
                 AGREGAR DESDE CATALOGO
               </Typography>
             </Box>
-            <Box sx={{ marginTop: { sm: "1.56rem" }, height: "70%" }}>
+            <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
               <VenderCards
                 filteredData={currentDataPage}
                 setSelectedItems={setSelectedItems}

@@ -20,14 +20,19 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
   return filteredData?.map((product: any) => {
     return (
       <Card
+        id='card'
         key={uuidv4()}
         sx={{
-          width: "15rem",
+          width: "11rem",
           maxHeight: "17.52rem",
           borderRadius: "0.32rem",
           background: "#2C3248",
           overflow: "visible",
           textAlign: "-webkit-center",
+          marginBottom: '50px',
+          '&:hover': {
+            border: "1px solid #69EAE2"
+          },
         }}
       >
         <Box
@@ -63,11 +68,15 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             }
             alt={`imagen del producto ${product.productName}`}
             sx={{
-              width: "6.5rem",
-              height: "7.5rem",
+              width: "50%",
+              height: { xs: '130px', sm: '130px' },
               position: "absolute",
               left: "50%",
               transform: "translateX(-50%)",
+              '&:hover': {
+                transform: "scale(1.7)",
+                left: "25%",
+              },
             }}
             loading='lazy'
           />
@@ -75,7 +84,6 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
         <StyledCardContent
           sx={{
             padding: 0,
-            width: "12rem",
           }}
         >
           <Typography
@@ -83,7 +91,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               color: "#69EAE2",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.875rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "130%",
@@ -96,8 +104,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               marginTop: "1px",
               color: "var(--text-light, #ABBBC2)",
               textAlign: "center",
-              fontFamily: "Nunito",
-              fontSize: "0.7rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 200,
               lineHeight: "140%",
@@ -111,7 +118,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               color: "var(--White, #FFF)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.875rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "140%",
@@ -125,23 +132,20 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               color: "var(--text-light, #ABBBC2)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.736rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
             }}
           >
-            {product.cantidad}
-            {product.cantidad === "1"
-              ? " Unidad Disponible"
-              : " Unidades Disponibles"}
+            Existencias: <span style={{ color: '#fff', fontSize:'700' }}>{product.cantidad}</span>
           </Typography>
           <Typography
             sx={{
               color: "#ABBBC2",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: "0.865rem",
+              fontSize: { xs: '10px', sm: "14px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
