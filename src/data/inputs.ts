@@ -144,7 +144,7 @@ export const profileInputs = [
     name: "Status",
     type: "text",
     width: "100%",
-    field: "status",
+    field: "rol",
   },
   {
     name: "Correo",

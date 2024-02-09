@@ -8,7 +8,7 @@ import {
   Paper,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   cards,
   container,
@@ -22,23 +22,26 @@ import {
 import { profileInputs } from "@/data/inputs";
 import Step1 from "./Step1";
 import ImgInput from "@/components/inputIMG";
+import { getEstablishmentData, updateEstablishmentsData } from "@/firebase";
+import { SnackbarProvider } from "notistack";
+import { enqueueSnackbar } from "notistack";
 
 interface Data {
   name: string;
   direction: string;
   phone: string;
-  status: string;
+  rol: string;
   email: string;
   [key: string]: string;
 }
 
 const Page = () => {
   const [data, setData] = useState<Data>({
-    name: "Hola como estas",
-    direction: "Esta es una prueba",
-    phone: "1231231",
-    status: "EL AMO",
-    email: "sadasdasde1231wdas",
+    name: "",
+    direction: "",
+    phone: "",
+    rol: "",
+    email: "",
   });
   const [editOn, setEditOn] = useState<boolean>(false);
   const [addColabs, setAddColabs] = useState<boolean>(false);
@@ -52,7 +55,25 @@ const Page = () => {
   const handleEdit = () => {
     setEditOn(true);
   };
-  const handleChanges = () => {
+  const handleChanges = async () => {
+    try {
+      await updateEstablishmentsData(data);
+      enqueueSnackbar("Cambios guardados", {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    } catch (error) {
+      enqueueSnackbar("Error al guardar", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+    }
     setEditOn(false);
   };
 
@@ -60,8 +81,19 @@ const Page = () => {
     setAddColabs(true);
   };
 
+  useEffect(() => {
+    const dataEstablesimente = async () => {
+      const data: any = await getEstablishmentData();
+      if (data !== null) {
+        setData(data);
+      }
+    };
+    dataEstablesimente();
+  }, []);
+
   return (
     <>
+      <SnackbarProvider />
       <Header title='Perfil Personal' />
       <Box sx={container}>
         <Box

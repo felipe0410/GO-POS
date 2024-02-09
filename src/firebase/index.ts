@@ -146,7 +146,8 @@ export const getAllProductsDataonSnapshot = (callback: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const orderedQuery = query(productCollectionRef, orderBy("productName"));
 
-    const unsubscribe = onSnapshot(orderedQuery, 
+    const unsubscribe = onSnapshot(
+      orderedQuery,
       (querySnapshot) => {
         const productsData: any[] = [];
         querySnapshot.forEach((doc) => {
@@ -707,6 +708,45 @@ export const getEstablishmentData = async () => {
   } catch (error) {
     console.error(
       "Error al obtener la información del establecimiento:",
+      error
+    );
+    return null;
+  }
+};
+
+//actualizar datos del establecimiento
+export const updateEstablishmentsData = async (updatedFields: any) => {
+  try {
+    const encodedUserUID = localStorage.getItem("user");
+    if (!encodedUserUID) {
+      console.error("No se encontró un UID en el local storage");
+      return null;
+    }
+    const userUID = atob(encodedUserUID);
+    const userCollectionRef = collection(db, "registeredEstablishments");
+    const establishmentDocRef = doc(userCollectionRef, userUID);
+    const docSnapshot = await getDoc(establishmentDocRef);
+
+    if (docSnapshot.exists()) {
+      const currentData = docSnapshot.data();
+      const newData = {
+        ...currentData,
+        ...updatedFields,
+      };
+      await setDoc(establishmentDocRef, newData);
+      console.log(
+        "Datos del establecimiento actualizados correctamente:",
+        newData
+      );
+
+      return newData;
+    } else {
+      console.error("El documento del establecimiento no existe");
+      return null;
+    }
+  } catch (error) {
+    console.error(
+      "Error al obtener o actualizar la información del establecimiento:",
       error
     );
     return null;
