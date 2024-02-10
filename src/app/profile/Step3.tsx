@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { SnackbarProvider } from "notistack";
+import { enqueueSnackbar } from "notistack";
 import { Box, Typography, Button } from "@mui/material";
 import { typographyStep2, typographyColabsButton } from "./profileStyles";
 import ImgInput from "@/components/inputIMG";
-import { enqueueSnackbar } from "notistack";
 import { createColabsData, creteUser, saveDataUser } from "@/firebase";
 
 const Step3 = ({
