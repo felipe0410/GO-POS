@@ -45,7 +45,6 @@ const DatosVenta = (props: any) => {
     email: "",
     identificacion: "",
     celular: "",
-    nota: ""
   });
   const {
     total,
