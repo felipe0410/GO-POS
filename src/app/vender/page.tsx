@@ -23,8 +23,6 @@ const Page: any = () => {
   const [selectedItems, setSelectedItems] = useState<any>([]);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
-  console.log(selectedItems)
-
 
   const filteredData = async (event: any) => {
     try {
@@ -39,7 +37,6 @@ const Page: any = () => {
         );
       });
       setfilter(filterSearch);
-      console.log('foundProducts:::>', foundProducts)
       if (foundProducts?.length === 1) {
         const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
         const newItem = {

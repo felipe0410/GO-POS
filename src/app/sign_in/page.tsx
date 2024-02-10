@@ -5,7 +5,7 @@ import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
 import { useContext, useState } from "react"
 import { styleSign_in } from "./style"
-import { loginUser } from "@/firebase"
+import { getEstablishmentData, loginUser } from "@/firebase"
 import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
 import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -76,9 +76,12 @@ const Loggin = () => {
         try {
             const loggin: any = await loginUser(data.email, data.password)
             if (loggin?.uid) {
+                const dataUser: any = await getEstablishmentData()
+                console.log(dataUser?.uidEstablishments)
                 const oneDay = 24 * 60 * 60 * 1000;
                 const expirationDate = new Date(Date.now() + oneDay);
-                const encodedUid = btoa(loggin.uid);
+                const encodedUid = btoa(dataUser?.uidEstablishments ?? loggin.uid);
+
                 await setCookie('user', encodedUid, {
                     expires: expirationDate
                 });

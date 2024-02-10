@@ -77,7 +77,6 @@ const SlidebarVender = ({
   const generarNumeroFactura = () => {
     let maxInvoiceNumber = 0;
     if (dataInvocie.length === 0) {
-      console.log("El array está vacío");
     } else {
       dataInvocie.forEach((item: any) => {
         let currentInvoiceNumber = parseInt(item.invoice);
@@ -194,6 +193,14 @@ const SlidebarVender = ({
             borderRadius: "10px 0px 0px 10px",
           }}
         >
+          <Box sx={{ display: { xs: "block", lg: "none" } }}>
+            <Button
+              sx={{ float: "right" }}
+              onClick={() => setOpen(false)}
+            >
+              <CloseIcon sx={{ color: "#fff" }} />
+            </Button>
+          </Box>
           <Box
             id='principal container'
             padding={3}
@@ -207,14 +214,6 @@ const SlidebarVender = ({
               />
             ) : (
               <>
-                <Box sx={{ display: { xs: "block", lg: "none" } }}>
-                  <Button
-                    sx={{ float: "right" }}
-                    onClick={() => setOpen(false)}
-                  >
-                    <CloseIcon sx={{ color: "#fff" }} />
-                  </Button>
-                </Box>
                 {nextStep ? (
                   <Box>
                     <IconButton
@@ -271,7 +270,7 @@ const SlidebarVender = ({
                         sx={{
                           color: "#69EAE2",
                           fontFamily: "Nunito",
-                          fontSize: "0.8125rem",
+                          fontSize: { xs: '12px', sm: "0.8125rem" },
                           fontStyle: "normal",
                           fontWeight: 500,
                           lineHeight: "140%",
@@ -335,7 +334,7 @@ const SlidebarVender = ({
                             alignItems: "center",
                             color: "#fff",
                             width: "25rem",
-                            height: "2rem",
+                            height: "1.3rem",
                             borderRadius: "0.3125rem",
                             background: "#2C3248",
                           }}
@@ -346,7 +345,7 @@ const SlidebarVender = ({
                               flex: 1,
                               color: "#fff",
                             }}
-                            placeholder='Buscar'
+                            placeholder='Escanear'
                             value={searchTerm}
                             onChange={(e) => {
                               setSearchTerm(e.target.value);

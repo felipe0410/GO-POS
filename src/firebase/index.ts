@@ -146,7 +146,7 @@ export const getAllProductsDataonSnapshot = (callback: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const orderedQuery = query(productCollectionRef, orderBy("productName"));
 
-    const unsubscribe = onSnapshot(orderedQuery, 
+    const unsubscribe = onSnapshot(orderedQuery,
       (querySnapshot) => {
         const productsData: any[] = [];
         querySnapshot.forEach((doc) => {
@@ -260,8 +260,8 @@ export const deleteProduct = async (uid: any, img: string) => {
     const docSnapshot = await getDoc(productDocRef);
     if (docSnapshot.exists()) {
       const previousImageRef = ref(storage, img);
-      await deleteObject(previousImageRef);
       await deleteDoc(productDocRef);
+      await deleteObject(previousImageRef);
       return true;
     } else {
       return false;

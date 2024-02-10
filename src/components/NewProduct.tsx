@@ -106,7 +106,7 @@ export default function NewProduct() {
     try {
       await createProduct(data.barCode, {
         ...data,
-        image: data.image === "" ? IMG_DEFAULT : data.image,
+        image: data.image === "" ? "images/noImage.svg" : data.image,
       });
       enqueueSnackbar("Producto guardado con exito", {
         variant: "success",
@@ -511,9 +511,8 @@ export default function NewProduct() {
                                   : "";
                                 return {
                                   ...prevData,
-                                  description: `${descriptionPrefix}${
-                                    prevData.description.split(":")[1] || ""
-                                  }`,
+                                  description: `${descriptionPrefix}${prevData.description.split(":")[1] || ""
+                                    }`,
                                 };
                               });
                             }}
