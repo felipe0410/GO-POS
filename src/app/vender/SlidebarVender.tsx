@@ -29,6 +29,8 @@ import HelpIcon from "@mui/icons-material/Help";
 import Chip from "@mui/material/Chip";
 import { getAllInvoicesData } from "@/firebase";
 import SearchIcon from '@mui/icons-material/Search';
+import Mark from 'mark.js';
+
 
 const SlidebarVender = ({
   selectedItems,
@@ -129,6 +131,19 @@ const SlidebarVender = ({
       padding: "0 4px",
     },
   }));
+
+  const handleSearch = (event: any) => {
+    const keyword = event.target.value;
+    const context: any = document.querySelector('#items-list');
+    const instance = new Mark(context);
+    instance.unmark({
+      done: () => {
+        instance.mark(keyword, {
+        });
+      }
+    });
+  };
+
 
   useEffect(() => {
     getAllInvoicesData(setDataInvoice);
@@ -436,6 +451,7 @@ const SlidebarVender = ({
                             fontSize: '16px'
                           }}
                           placeholder='Buscar en la factura'
+                          onChange={handleSearch}
                         />
                         <IconButton
                           sx={{
