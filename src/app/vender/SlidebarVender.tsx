@@ -223,7 +223,7 @@ const SlidebarVender = ({
           <Box
             id='principal container'
             padding={3}
-            sx={{ height: "100%", width: "100%", overflow: "auto" }}
+            sx={{ height: "92%", width: "100%", overflow: "auto" }}
           >
             {reciboPago ? (
               <Factura
@@ -430,7 +430,7 @@ const SlidebarVender = ({
                               fontSize: '16px'
                             }}
                             value={!checked ? searchTerm : search}
-                            placeholder={checked?'Ingresa el codigo del producto':'Buscar en la factura'}
+                            placeholder={!checked ? 'Ingresa el codigo del producto' : 'Buscar en la factura'}
                             onChange={(e) => {
                               if (checked) {
                                 handleSearch(e);
