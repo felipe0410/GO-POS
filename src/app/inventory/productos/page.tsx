@@ -11,6 +11,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import Chip from "@mui/material/Chip";
 import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useState } from "react";
@@ -43,9 +44,13 @@ const Page = () => {
 
   }, 300);
   const handleSearchChange = (event: any) => {
-    setSearchTerm(event);
-    debouncedHandleSearchChange()
+    let value = event
+    value = value.replace(/\s+/g, '');
+    value = value.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    setSearchTerm(value);
+    debouncedHandleSearchChange();
   };
+
 
   React.useEffect(() => {
     const getAllProducts = async () => {
@@ -60,11 +65,29 @@ const Page = () => {
 
 
 
+  const filteredData = async (event: any) => {
+    try {
+      const resolvedData = await data;
+      const filterSearch: any = resolvedData?.filter((item) => {
+        if (searchTerm === "") {
+          return true;
+        }
+        return Object.values(item).some((value) =>
+          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+      setfilter(filterSearch);
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+    }
+  };
+
   useEffect(() => {
     const filteredData = data?.filter((item) => {
       if (searchTerm === "") {
         return true;
       }
+      console.log(Object.values(item))
       return Object.values(item).some((value) =>
         String(value).toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -102,8 +125,45 @@ const Page = () => {
               marginTop: "0.6rem",
             }}
           >
-            Aqui encontraras tus productos en stock y su numero de existencias.
+            Aqui encontraras tus productos en stock y su numero de existencias
           </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
+            <Typography
+              sx={{
+                color: "#69EAE2",
+                fontFamily: "Nunito",
+                fontSize: { xs: '14px', sm: "20px" },
+                fontStyle: "normal",
+                fontWeight: 500,
+                lineHeight: "140%",
+                marginRight: '15px'
+              }}
+            >
+              Total Productos registrados :
+            </Typography>
+            <Chip
+              sx={{
+                marginRight: "11px",
+                backgroundColor: "#69EAE2",
+                filter:
+                  "drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25)) drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25))",
+              }}
+              label={
+                <Typography
+                  sx={{
+                    color: "#2C3248",
+                    fontFamily: "Nunito",
+                    fontSize: { xs: '20px', sm: "1.5rem" },
+                    fontStyle: "normal",
+                    fontWeight: 500,
+                    lineHeight: "140%",
+                  }}
+                >
+                  {data?.length ?? 0}
+                </Typography>
+              }
+            />
+          </Box>
         </Box>
         <Paper
           id={"paper"}
@@ -131,7 +191,11 @@ const Page = () => {
               <Box display={"flex"}>
                 <Paper
                   component='form'
-                  onSubmit={(e: any) => { console.log(e); e.preventDefault(); handleSearchChange(e.target[1].value) }}
+                  onSubmit={(e: any) => {
+                    console.log(e);
+                    e.preventDefault();
+                    handleSearchChange(e.target[1].value)
+                  }}
                   sx={{
                     display: "flex",
                     alignItems: "center",
@@ -157,9 +221,6 @@ const Page = () => {
                       color: "#fff",
                     }}
                     placeholder='Buscar'
-                    onBlur={(e) => {
-                      handleSearchChange(e.target.value); e.preventDefault();
-                    }}
                   />
                 </Paper>
                 <IconButton

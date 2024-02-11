@@ -69,13 +69,13 @@ export const inputsEdit = [
     field: "productName",
   },
   {
-    name: "SELECCIONAR CATEGORÍA",
+    name: "CATEGORÍA",
     type: "category",
     width: "45%",
     field: "category",
   },
   {
-    name: "SELECCIONAR MEDIDA",
+    name: "MEDIDA",
     type: "measurement",
     width: "45%",
     field: "measurement",

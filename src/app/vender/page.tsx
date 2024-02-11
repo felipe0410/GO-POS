@@ -26,14 +26,17 @@ const Page: any = () => {
 
   const filteredData = async (event: any) => {
     try {
+      let value2 = event
+      value2 = value2.replace(/\s+/g, '');
+      value2 = value2.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       const resolvedData = await data;
-      const foundProducts = resolvedData?.filter((producto) => producto.barCode === event);
+      const foundProducts = resolvedData?.filter((producto) => producto.barCode === value2);
       const filterSearch: any = resolvedData?.filter((item) => {
         if (searchTerm === "") {
           return true;
         }
         return Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+          String(value).toLowerCase().includes(value2.toLowerCase())
         );
       });
       setfilter(filterSearch);

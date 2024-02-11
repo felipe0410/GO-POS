@@ -90,7 +90,7 @@ export default function DeleteModal(props: any) {
             </Typography>
             <Box
               component={"img"}
-              src={data?.image}
+              src={data?.image.length > 0 ? data?.image : '/images/noImage.svg'}
               alt={`imagen del producto ${data?.productName}`}
               sx={{
                 marginTop: "8px",
@@ -103,7 +103,7 @@ export default function DeleteModal(props: any) {
             <Button
               onClick={() => handleDelete(data?.uid, data?.image)}
               sx={{
-                width: "8.75rem",
+                width: "40%",
                 height: "1.5625rem",
                 borderRadius: "0.625rem",
                 background: "#69eae2ab",
@@ -130,7 +130,7 @@ export default function DeleteModal(props: any) {
             <Button
               onClick={() => handleCancel()}
               sx={{
-                width: "8.75rem",
+                width: "40%",
                 height: "1.5625rem",
                 borderRadius: "0.625rem",
                 background: "#ff0404c7",

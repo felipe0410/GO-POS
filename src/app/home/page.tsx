@@ -216,7 +216,7 @@ export default function Home() {
                   lineHeight: "normal",
                 }}
               >
-                HOLA {establishmentData?.name ?? 'user GO'} !
+                Hola {establishmentData?.name ?? 'user GO'} !
               </Typography>
               <Typography sx={{
                 color: "#69EAE2",

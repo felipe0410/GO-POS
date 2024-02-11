@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/system";
 import React, { useEffect, useState } from "react";
-import { IMG_DEFAULT, inputs } from "@/data/inputs";
+import { inputs } from "@/data/inputs";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { NumericFormat } from "react-number-format";
 import { Input as BaseInput, InputProps } from "@mui/base/Input";
@@ -25,6 +25,7 @@ import {
 } from "@/firebase";
 import Calculatorr from "./modalCalculator";
 import ImgInput from "./inputIMG";
+import Revenue from "@/app/inventory/agregarProductos/revenue";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -421,6 +422,7 @@ export default function NewProduct() {
                         </Typography>
                       </Button>
                       <Box sx={{ width: "45%" }}>
+                        {/* <Revenue /> */}
                         <Calculatorr />
                       </Box>
                     </Box>
