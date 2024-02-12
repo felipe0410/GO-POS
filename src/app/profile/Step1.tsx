@@ -14,6 +14,7 @@ import StepProgress from "./StepProgress";
 import Step2 from "./Step2";
 import { VisibilityOff, Visibility } from "@mui/icons-material";
 import Step3 from "./Step3";
+import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
 interface ColabsData {
   status: string;
@@ -43,6 +44,54 @@ const Step1 = ({ setAddColabs }: { setAddColabs: any }) => {
     setColabsData({ ...colabsData, status: event.target.value });
   };
 
+  const validatePassword = (password: string) => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  };
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleNextStep = () => {
+    const { name, mail, status, password } = colabsData;
+    if (!name || !mail || !status || !password) {
+      enqueueSnackbar("Por favor completa todos los campos", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+      return;
+    }
+    if (!validateEmail(mail)) {
+      enqueueSnackbar("Por favor ingresa un correo válido", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+      return;
+    }
+    if (!validatePassword(password)) {
+      enqueueSnackbar(
+        'La contraseña debe contener una letra mayuscula, un simbolo "%$&..." y debe tener una longitud de 8 caracteres',
+        {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        }
+      );
+      return;
+    }
+    setStep(step + 1);
+  };
+
   const handleCheckboxChange = (job: string) => {
     const isChecked = colabsData.jobs.includes(job);
     if (isChecked) {
@@ -60,6 +109,7 @@ const Step1 = ({ setAddColabs }: { setAddColabs: any }) => {
 
   return (
     <>
+      <SnackbarProvider />
       {step === 0 ? (
         <Box sx={{ display: "flex", flexDirection: "column" }}>
           <OutlinedInput
@@ -141,7 +191,7 @@ const Step1 = ({ setAddColabs }: { setAddColabs: any }) => {
             style={{ color: "#FFF" }}
           />
           <Button
-            onClick={() => setStep(step + 1)}
+            onClick={() => handleNextStep()}
             sx={{
               display: "flex",
               flexDirection: "column",

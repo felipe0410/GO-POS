@@ -26,6 +26,7 @@ import DateModal from "./DateModal";
 
 const Invoices = () => {
   const [searchTerm, setSearchTerm] = useState<any>();
+  const [editInvoice, setEditInvoice] = useState<boolean>(false);
   const [filter, setfilter] = useState<any>();
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
@@ -149,94 +150,106 @@ const Invoices = () => {
             textAlign: "-webkit-center",
           }}
         >
-          <Box
-            sx={{
-              justifyContent: { lg: "space-between" },
-              display: { lg: "flex", md: "block", xs: "block" },
-            }}
-          >
-            <Paper
-              component='form'
-              onSubmit={(e: any) => {
-                e.preventDefault();
-                handleSearchChange(e.target[1].value);
-              }}
-              sx={typographyPaperSearch}
-            >
-              <IconButton type='button' sx={{ p: "10px" }} aria-label='search'>
-                <SearchIcon sx={{ color: "#fff" }} />
-              </IconButton>
-              <InputBase
-                sx={{
-                  ml: 1,
-                  flex: 1,
-                  color: "#fff",
-                }}
-                placeholder='Buscar'
-                onBlur={(e) => {
-                  handleSearchChange(e.target.value);
-                  e.preventDefault();
-                }}
-              />
-              <DateModal
-                setSearchTerm={setSearchTerm}
-                setSelectedDate={setSelectedDate}
-              />
-            </Paper>
+          {!editInvoice && (
             <Box
               sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: { md: "center", xs: "center" },
-                marginTop: { md: "10px", xs: "10px" },
+                justifyContent: { lg: "space-between" },
+                display: { lg: "flex", md: "block", xs: "block" },
               }}
             >
-              <Box sx={{ textAlign: "start", marginRight: "20px" }}>
-                <Typography
-                  variant='caption'
-                  sx={BoxStyles.typographyCaptionStyles}
+              <Paper
+                component='form'
+                onSubmit={(e: any) => {
+                  e.preventDefault();
+                  handleSearchChange(e.target[1].value);
+                }}
+                sx={typographyPaperSearch}
+              >
+                <IconButton
+                  type='button'
+                  sx={{ p: "10px" }}
+                  aria-label='search'
                 >
-                  {`Fecha: ${getCurrentDateTime()}`}
-                </Typography>
-                <Box sx={BoxStyles.boxGreen}>
-                  <Typography sx={BoxStyles.typographyBoxStyles}>
-                    {`$ ${totalVentasHoy.toLocaleString("en-US")}`}
+                  <SearchIcon sx={{ color: "#fff" }} />
+                </IconButton>
+                <InputBase
+                  sx={{
+                    ml: 1,
+                    flex: 1,
+                    color: "#fff",
+                  }}
+                  placeholder='Buscar'
+                  onBlur={(e) => {
+                    handleSearchChange(e.target.value);
+                    e.preventDefault();
+                  }}
+                />
+                <DateModal
+                  setSearchTerm={setSearchTerm}
+                  setSelectedDate={setSelectedDate}
+                />
+              </Paper>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: { md: "center", xs: "center" },
+                  marginTop: { md: "10px", xs: "10px" },
+                }}
+              >
+                <Box sx={{ textAlign: "start", marginRight: "20px" }}>
+                  <Typography
+                    variant='caption'
+                    sx={BoxStyles.typographyCaptionStyles}
+                  >
+                    {`Fecha: ${getCurrentDateTime()}`}
                   </Typography>
+                  <Box sx={BoxStyles.boxGreen}>
+                    <Typography sx={BoxStyles.typographyBoxStyles}>
+                      {`$ ${totalVentasHoy.toLocaleString("en-US")}`}
+                    </Typography>
+                  </Box>
                 </Box>
-              </Box>
-              <Box sx={{ textAlign: "start", minWidth: "5rem" }}>
-                <Typography
-                  variant='caption'
-                  sx={BoxStyles.typographyCaptionStyles}
-                >
-                  {`Fecha: ${selectedDate ? selectedDate : " "}`}
-                </Typography>
-                <Box sx={BoxStyles.boxOrange}>
-                  <Typography sx={BoxStyles.typographyBoxStyles}>
-                    {`$ ${totalVentasFecha.toLocaleString("en-US")}`}
+                <Box sx={{ textAlign: "start", minWidth: "5rem" }}>
+                  <Typography
+                    variant='caption'
+                    sx={BoxStyles.typographyCaptionStyles}
+                  >
+                    {`Fecha: ${selectedDate ? selectedDate : " "}`}
                   </Typography>
+                  <Box sx={BoxStyles.boxOrange}>
+                    <Typography sx={BoxStyles.typographyBoxStyles}>
+                      {`$ ${totalVentasFecha.toLocaleString("en-US")}`}
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </Box>
-          </Box>
+          )}
           <Box sx={{ marginTop: "1.56rem", height: "80%" }}>
             <Box
               display={{ md: "none", lg: "block", xs: "none" }}
               sx={{ height: "100%" }}
             >
-              <InvoicesTable filteredData={currentDataPage} />
+              <InvoicesTable
+                filteredData={currentDataPage}
+                setEditInvoice={setEditInvoice}
+              />
             </Box>
             <Box
               display={{ lg: "none", md: "block", xs: "block" }}
               sx={{ height: "100%" }}
             >
-              <InvoicesTableResponsive filteredData={currentDataPage} />
+              <InvoicesTableResponsive
+                filteredData={currentDataPage}
+                setEditInvoice={setEditInvoice}
+              />
             </Box>
             <Box
               id='pagination'
               sx={{
                 filter: "invert(1)",
-                display: "flex",
+                display: editInvoice ? "none" : "flex",
                 justifyContent: "center",
                 width: { xs: "115%", sm: "100%" },
                 marginLeft: { xs: "-15px", sm: "0" },

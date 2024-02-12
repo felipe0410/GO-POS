@@ -15,8 +15,10 @@ import FacturaModal from "./FacturaModal";
 
 export default function InvoicesTableResponsive({
   filteredData,
+  setEditInvoice,
 }: {
   filteredData: any;
+  setEditInvoice: any;
 }) {
   const [expandedRow, setExpandedRow] = React.useState<string | null>(null);
 

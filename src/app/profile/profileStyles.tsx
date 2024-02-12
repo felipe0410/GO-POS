@@ -22,7 +22,7 @@ export const typographyColab = {
   textAlign: "center",
   color: "#69EAE2",
   fontFamily: "Nunito",
-  fontSize: "2rem",
+  fontSize: { lg: "2rem", md: "2rem", sm: "1.5rem", xs: "1.5rem" },
   fontStyle: "normal",
   fontWeight: 700,
   lineHeight: "normal",

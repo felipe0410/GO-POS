@@ -74,7 +74,7 @@ export const facturaStyles = {
     fontStyle: "normal",
     fontWeight: 800,
     lineHeight: "110%",
-    alignSelf: 'center'
+    alignSelf: "center",
   },
   typographyNIT: {
     color: "#000",
@@ -148,4 +148,72 @@ export const facturaStyles = {
     fontWeight: 700,
     lineHeight: "140%",
   },
+};
+
+export const editStyles = {
+  backTypography: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: "24px",
+    fontStyle: "normal",
+    fontWeight: 700,
+    lineHeight: "140%",
+  },
+  ventaTypography: {
+    color: "#FFF",
+    fontFamily: "Nunito",
+    fontSize: "20px",
+    fontStyle: "normal",
+    fontWeight: 700,
+    lineHeight: "140%",
+    textAlign: "start",
+    marginTop: "1.5rem",
+    marginLeft: "2rem",
+  },
+  encabezadoTypography: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: "18px",
+    fontStyle: "normal",
+    fontWeight: 800,
+    lineHeight: "140%",
+    marginTop: "0.6rem",
+  },
+  inputstypography: {
+    color: "#FFF",
+    fontFamily: "Nunito",
+    fontSize: { xs: "10px", sm: "1rem" },
+    fontStyle: "normal",
+    fontWeight: 700,
+    lineHeight: "normal",
+    marginBottom: "5px",
+  },
+  productosTypography: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: "17.5px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "140%",
+  },
+  typographyButton: {
+    color: "#1F1D2B",
+    fontFamily: "Nunito",
+    fontSize: "1rem",
+    fontStyle: "normal",
+    fontWeight: 700,
+    lineHeight: "normal",
+  },
+};
+
+export const selectStyle = {
+  width: "100%",
+  textAlign: "start",
+  marginBottom: "1rem",
+  ".MuiSelect-icon": { color: "#69EAE2" },
+  height: "44.9px",
+  borderRadius: "0.5rem",
+  background: "#2C3248",
+  boxShadow:
+    "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
 };

@@ -42,22 +42,32 @@ const Step3 = ({
           colabsData.mail,
           colabsData.password
         );
-        const userData = {
-          ...colabsData,
-          uidEstablishments: user,
-        };
-        await Promise.all([
-          saveDataUser(creation.uid, userData),
-          createColabsData(creation.uid, userData),
-        ]);
-        enqueueSnackbar("Usuario creado con exito", {
-          variant: "success",
-          anchorOrigin: {
-            vertical: "bottom",
-            horizontal: "right",
-          },
-          onClose: handleCloseSnackbar,
-        });
+        if (creation?.errorCode === "auth/email-already-in-use") {
+          enqueueSnackbar("El correo ya esta en uso", {
+            variant: "error",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "right",
+            },
+          });
+        } else {
+          const userData = {
+            ...colabsData,
+            uidEstablishments: user,
+          };
+          await Promise.all([
+            saveDataUser(creation.uid, userData),
+            createColabsData(creation.uid, userData),
+          ]);
+          enqueueSnackbar("Usuario creado con exito", {
+            variant: "success",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "right",
+            },
+            onClose: handleCloseSnackbar,
+          });
+        }
       } catch (error) {
         console.error("Error al crear usuario:", error);
         enqueueSnackbar("Ocurrió un error al crear el usuario", {

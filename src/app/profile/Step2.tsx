@@ -6,7 +6,7 @@ import {
   typographyColabsButton,
 } from "./profileStyles";
 import Checkbox from "@mui/material/Checkbox";
-import { SnackbarProvider } from "notistack";
+import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
 const Step2 = ({
   step,
@@ -19,6 +19,21 @@ const Step2 = ({
   colabsData: any;
   handleCheckboxChange: (job: string) => void;
 }) => {
+  const handleNextStep = () => {
+    const { jobs } = colabsData;
+    if (!jobs || jobs.length === 0) {
+      enqueueSnackbar("Por favor escoge una o varias opciones", {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+      return;
+    }
+    setStep(step + 1);
+  };
+
   return (
     <Box>
       <SnackbarProvider />
@@ -128,7 +143,7 @@ const Step2 = ({
           <Box component={"img"} src={"/images/arrow2.svg"} />
         </Button>
         <Button
-          onClick={() => setStep(step + 1)}
+          onClick={() => handleNextStep()}
           sx={{
             display: "flex",
             flexDirection: "column",

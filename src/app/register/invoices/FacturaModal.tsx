@@ -28,10 +28,10 @@ const FacturaModal = ({ data }: { data: any }) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
   const componentRef: any = React.useRef();
 
   const handleDescargarPDF = () => {
+    const [date, hour] = data.date.split(" ");
     const content = componentRef.current;
     const pdf = new jsPDF({
       unit: "px",
@@ -40,7 +40,7 @@ const FacturaModal = ({ data }: { data: any }) => {
     });
     pdf.html(content, {
       callback: () => {
-        pdf.save("mi_factura.pdf");
+        pdf.save(`${data.cliente.name}_${date}`);
       },
     });
   };

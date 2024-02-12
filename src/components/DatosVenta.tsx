@@ -25,7 +25,7 @@ import Box from "@mui/material/Box";
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import Slider from "./slider/Slider";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 interface UserData {
   name: string;
@@ -45,7 +45,6 @@ const DatosVenta = (props: any) => {
     email: "",
     identificacion: "",
     celular: "",
-    nota: ""
   });
   const {
     total,
@@ -57,7 +56,7 @@ const DatosVenta = (props: any) => {
     setReciboPago,
     numeroFactura,
     handleVenderClick,
-    propsNota
+    propsNota,
   } = props;
   const [options, setOptions] = useState([""]);
   const [valueClient, setValueClient] = React.useState<string | null>(
@@ -104,9 +103,9 @@ const DatosVenta = (props: any) => {
       handleVenderClick();
       setLoading(true);
       const valueUuid = uuidv4();
-      const bloques = valueUuid.split('-');
-      const result = bloques.slice(0, 2).join('-');
-      localStorage.setItem('uidInvoice', `${factura.invoice}-${result}`)
+      const bloques = valueUuid.split("-");
+      const result = bloques.slice(0, 2).join("-");
+      localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
       await createInvoice(`${factura.invoice}-${result}`, {
         ...factura,
       });
@@ -118,7 +117,6 @@ const DatosVenta = (props: any) => {
     }
   };
 
-  console.log(factura);
   const datosGuardadosLocalStorage = () => {
     const dataWithDefaults = {
       name: data.name || "XXXX",
@@ -160,13 +158,15 @@ const DatosVenta = (props: any) => {
   };
 
   const calcularValorADevolver = () => {
-    const cambio = valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0
+    const cambio =
+      valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0;
     //  setFactura({ ...factura, cambio: cambio })
     return cambio;
   };
   const calcularValorADevolverOnblur = () => {
-    const cambio = valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0
-    setFactura({ ...factura, cambio: cambio })
+    const cambio =
+      valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0;
+    setFactura({ ...factura, cambio: cambio });
   };
 
   useEffect(() => {
@@ -262,12 +262,12 @@ const DatosVenta = (props: any) => {
                   Object.values(clients).length > 0
                     ? setData(clients)
                     : setData({
-                      name: "",
-                      direccion: "",
-                      email: "",
-                      identificacion: "",
-                      celular: "",
-                    });
+                        name: "",
+                        direccion: "",
+                        email: "",
+                        identificacion: "",
+                        celular: "",
+                      });
                 }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
@@ -471,7 +471,10 @@ const DatosVenta = (props: any) => {
             Valor Recibido
           </Typography>
           <NumericFormat
-            onBlur={(e) => { setMostrarValorDevolver(true); calcularValorADevolverOnblur() }}
+            onBlur={(e) => {
+              setMostrarValorDevolver(true);
+              calcularValorADevolverOnblur();
+            }}
             onChange={(e) => handleChangeRecibido(e.target.value)}
             value={valorRecibido !== null ? `$ ${valorRecibido}` : ""}
             prefix='$ '
