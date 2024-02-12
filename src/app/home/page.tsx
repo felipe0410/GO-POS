@@ -87,7 +87,6 @@ export default function Home() {
       await getAllClientsData(setDataClient)
       const establishmentData = await getEstablishmentData() || {}
       setEstablishmentData(establishmentData)
-      console.log(await getEstablishmentData())
     }
     getData()
   }, [])
@@ -112,7 +111,6 @@ export default function Home() {
         return resultados;
       };
       const result: VentasPorFecha = sumarVentasPorFecha(facturasFiltradas)
-      console.log(result)
       if (result) {
         setArraySumInvoices(Object.values(result))
         setArrayDate(Object.keys(result))
@@ -218,7 +216,7 @@ export default function Home() {
                   lineHeight: "normal",
                 }}
               >
-                HOLA {establishmentData?.name ?? 'user GO'} !
+                Hola {establishmentData?.name ?? 'user GO'} !
               </Typography>
               <Typography sx={{
                 color: "#69EAE2",

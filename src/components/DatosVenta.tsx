@@ -65,7 +65,7 @@ const DatosVenta = (props: any) => {
   const [inputValue, setInputValue] = React.useState("");
   const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [valorRecibido, setValorRecibido] = useState<number | null>(null);
-  const [mostrarValorDevolver, setMostrarValorDevolver] = useState(false);
+  const [mostrarValorDevolver, setMostrarValorDevolver] = useState(true);
   const [datosGuardados, setDatosGuardados] = useState(false);
   const [clientsData, setClientsData] = useState([]);
   const [factura, setFactura] = useState({
@@ -190,7 +190,7 @@ const DatosVenta = (props: any) => {
         sx={{
           color: "#69EAE2",
           fontFamily: "Nunito",
-          fontSize: "1.25rem",
+          fontSize: { xs: "20px", sm: "1.25rem" },
           fontStyle: "normal",
           fontWeight: 800,
           lineHeight: "140%",
@@ -245,6 +245,9 @@ const DatosVenta = (props: any) => {
             <Box>
               <Autocomplete
                 placeholder='Clientes registrados'
+                sx={{
+                  height: { xs: "35px", sm: "auto" },
+                }}
                 style={{
                   marginTop: "20px",
                   color: "#FFF",
@@ -288,7 +291,7 @@ const DatosVenta = (props: any) => {
             {dataInputs.map((input, index) => {
               const style = {
                 width: input.width,
-                marginTop: "27px",
+                marginTop: { xs: "15px", sm: "27px" },
                 marginLeft: {
                   sm:
                     input.width === "45%" && [4].includes(index) ? "10%" : "0",
@@ -304,7 +307,7 @@ const DatosVenta = (props: any) => {
                       }
                       placeholder={input.name}
                       type={input.type}
-                      sx={{ height: "2.5rem" }}
+                      sx={{ height: { xs: "30px", sm: "2.5rem" } }}
                       style={{
                         color: "#FFF",
                         borderRadius: "0.5rem",
@@ -382,7 +385,7 @@ const DatosVenta = (props: any) => {
         sx={{
           color: "#69EAE2",
           fontFamily: "Nunito",
-          fontSize: "1.25rem",
+          fontSize: { xs: "20px", sm: "1.25rem" },
           fontStyle: "normal",
           fontWeight: 800,
           lineHeight: "140%",
@@ -429,7 +432,7 @@ const DatosVenta = (props: any) => {
           sx={{
             color: "#69EAE2",
             fontFamily: "Nunito",
-            fontSize: "1rem",
+            fontSize: { xs: "16px", sm: "1rem" },
             fontStyle: "normal",
             fontWeight: 800,
             lineHeight: "140%",
@@ -441,7 +444,7 @@ const DatosVenta = (props: any) => {
           sx={{
             color: "#69EAE2",
             fontFamily: "Nunito",
-            fontSize: "1rem",
+            fontSize: { xs: "16px", sm: "1rem" },
             fontStyle: "normal",
             fontWeight: 800,
             lineHeight: "140%",
@@ -462,7 +465,7 @@ const DatosVenta = (props: any) => {
             sx={{
               color: "#69EAE2",
               fontFamily: "Nunito",
-              fontSize: "1rem",
+              fontSize: { xs: "16px", sm: "1rem" },
               fontStyle: "normal",
               fontWeight: 300,
               lineHeight: "140%",
@@ -472,7 +475,6 @@ const DatosVenta = (props: any) => {
           </Typography>
           <NumericFormat
             onBlur={(e) => {
-              setMostrarValorDevolver(true);
               calcularValorADevolverOnblur();
             }}
             onChange={(e) => handleChangeRecibido(e.target.value)}
@@ -481,7 +483,7 @@ const DatosVenta = (props: any) => {
             thousandSeparator
             customInput={OutlinedInput}
             sx={{
-              height: "2.5rem",
+              height: { xs: "30px", sm: "2.5rem" },
               width: "100%",
               color: "#FFF",
               borderRadius: "0.5rem",
@@ -500,7 +502,7 @@ const DatosVenta = (props: any) => {
               sx={{
                 color: "#69EAE2",
                 fontFamily: "Nunito",
-                fontSize: "1rem",
+                fontSize: { xs: "16px", sm: "1rem" },
                 fontStyle: "normal",
                 fontWeight: 300,
                 lineHeight: "140%",
@@ -508,21 +510,33 @@ const DatosVenta = (props: any) => {
             >
               Valor A Devolver
             </Typography>
-            <NumericFormat
-              value={calcularValorADevolver()}
-              prefix='$ '
-              thousandSeparator
-              customInput={OutlinedInput}
+            <Box
               sx={{
-                height: "2.5rem",
-                width: "100%",
-                color: "#FFF",
-                borderRadius: "0.5rem",
                 background: "#2C3248",
-                boxShadow:
-                  "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                borderRadius: "8px",
+                paddingY: { xs: "0", sm: "10px" },
+                paddingLeft: "13px",
+                color: "#FFF",
+                boxShadow: "0px 4px 4px 0px #00000040",
               }}
-            />
+            >
+              <NumericFormat
+                displayType='text'
+                value={calcularValorADevolver()}
+                prefix='$ '
+                thousandSeparator
+                customInput={OutlinedInput}
+                sx={{
+                  height: { xs: "30px", sm: "2.5rem" },
+                  width: "100%",
+                  color: "#FFF",
+                  borderRadius: "0.5rem",
+                  background: "#2C3248",
+                  boxShadow:
+                    "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                }}
+              />
+            </Box>
           </FormControl>
         )}
         <Box sx={{ marginTop: "16px", textAlign: "-webkit-center" }}>

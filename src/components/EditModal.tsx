@@ -454,7 +454,7 @@ export default function EditModal(props: any) {
                 >
                   <Box
                     component={"img"}
-                    src={product.image}
+                    src={product?.image.length > 0 ? product?.image : "/images/noImage.svg"}
                     alt={`imagen del producto ${product.productName}`}
                     sx={{
                       display: !imageBase64 ? "block" : "none",
@@ -501,7 +501,6 @@ export default function EditModal(props: any) {
                       onChange={(e: any) =>
                         inputOnChange("category", e.target.value)
                       }
-                      label='selecciona una opcion'
                       value={product["category"]}
                       sx={{
                         height: "38px",
@@ -551,6 +550,7 @@ export default function EditModal(props: any) {
                         price: e.target.value,
                       }));
                     }}
+                    placeholder="Precio"
                     value={data.price}
                     prefix='$ '
                     thousandSeparator
@@ -569,6 +569,7 @@ export default function EditModal(props: any) {
                     value={product["cantidad"]}
                     onChange={(e) => inputOnChange("cantidad", e.target.value)}
                     type={"number"}
+                    placeholder="Cantidad"
                     sx={{
                       height: "38px",
                       borderRadius: "0.625rem",
@@ -581,6 +582,7 @@ export default function EditModal(props: any) {
                   <Input
                     multiline={true}
                     rows={1}
+                    placeholder="Descripcion"
                     value={product["description"]}
                     onChange={(e) =>
                       inputOnChange("description", e.target.value)
@@ -635,6 +637,7 @@ export default function EditModal(props: any) {
                             onChange={(e) =>
                               inputOnChange(input.field, e.target.value)
                             }
+                            placeholder="Producto"
                             type={input.type}
                             sx={{
                               height: "38px",

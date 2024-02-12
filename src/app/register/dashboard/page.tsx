@@ -10,9 +10,13 @@ import "react-datepicker/dist/react-datepicker.css";
 import CalendarioDias from "./CalendarioDias";
 import ChartBarline from "./ChartBarline";
 import ChartArea from "./ChartArea";
+import { getAllProductsData } from "@/firebase";
+
 
 const Dashboard = () => {
+  const [product, setProduct] = useState<undefined | any[]>(undefined);
   const [data, setData] = useState<undefined | any[]>(undefined);
+
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
   const [calendarioType, setCalendarioType] = useState<string>(" ");
   const [dateSearchTerm, setDateSearchTerm] = useState<string | string[]>("");
@@ -65,6 +69,7 @@ const Dashboard = () => {
   useEffect(() => {
     const getAllInvoices = async () => {
       try {
+        await getAllProductsData(setProduct)
         await getAllInvoicesData(setData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -194,6 +199,7 @@ const Dashboard = () => {
     }
   }, [filter, listaFechas]);
 
+
   const dataCards = [
     {
       title: "INGRESOS",
@@ -203,11 +209,10 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#BF56DC" },
       icon: "/dashboardVender/ingresos.svg",
-      value: `$ ${
-        totalVentasFecha
-          ? totalVentasFecha.toLocaleString("en-US")
-          : totalVentasHoy.toLocaleString("en-US")
-      }`,
+      value: `$ ${totalVentasFecha
+        ? totalVentasFecha.toLocaleString("en-US")
+        : totalVentasHoy.toLocaleString("en-US")
+        }`,
     },
     {
       title: "GASTOS",
@@ -227,13 +232,70 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#2EB0CC" },
       icon: "/dashboardVender/ganancia.svg",
-      value: `$ ${
-        totalVentasFecha
-          ? totalVentasFecha.toLocaleString("en-US")
-          : totalVentasHoy.toLocaleString("en-US")
-      }`,
+      value: `$ ${totalVentasFecha
+        ? totalVentasFecha.toLocaleString("en-US")
+        : totalVentasHoy.toLocaleString("en-US")
+        }`,
     },
   ];
+  const [calculations, setCalculations] = useState({
+    formattedTotalInventoryValue: "0",
+    formattedTotalInvestmentValue: "0",
+    expectedProfit: "0",
+    profitPercentage: "0"
+  })
+  const cardsHeader = [
+    {
+      tile: "Total inventario",
+      count: `$ ${calculations.formattedTotalInventoryValue}`,
+      percentage: "+55%",
+      img: "/dashboard_home/cash.svg"
+    },
+    {
+      tile: "Ganancia esperada",
+      count: `$ ${calculations.expectedProfit}`,
+      percentage: `+ ${calculations.profitPercentage}`,
+      img: "/dashboard_home/clients.svg"
+    },
+    {
+      tile: "Total inversión",
+      count: `$ ${calculations.formattedTotalInvestmentValue} `,
+      percentage: "+8%",
+      img: "/dashboard_home/rocket.svg"
+    },
+  ]
+  useEffect(() => {
+    if (Array.isArray(product) && product.length > 0) {
+      const totalInventoryValue = product.reduce((acc, item) => {
+        const price = item.price ? Number(item.price.replace(/[$,]/g, '')) : 0;
+        const cantidad = typeof item.cantidad === 'number' ? item.cantidad : 0;
+        const totalItemValue = price * cantidad;
+        return acc + totalItemValue;
+      }, 0);
+  
+      const totalInvestmentValue = product.reduce((acc, item) => {
+        const purchasePrice = item.purchasePrice ? Number(item.purchasePrice.replace(/[$,]/g, '')) : 0;
+        const cantidad = typeof item.cantidad === 'number' ? item.cantidad : 0;
+        const totalItemInvestment = purchasePrice * cantidad;
+        return acc + totalItemInvestment;
+      }, 0);
+  
+      const expectedProfit = totalInventoryValue - totalInvestmentValue;
+      const profitPercentage = totalInvestmentValue > 0 ? Math.round(((totalInventoryValue / totalInvestmentValue) - 1) * 100) : 0;  
+      const formattedTotalInventoryValue = totalInventoryValue.toLocaleString('es-ES');
+      const formattedTotalInvestmentValue = totalInvestmentValue.toLocaleString('es-ES');
+      const formattedExpectedProfit = expectedProfit.toLocaleString('es-ES');
+  
+      setCalculations({
+        formattedTotalInventoryValue: formattedTotalInventoryValue,
+        formattedTotalInvestmentValue: formattedTotalInvestmentValue,
+        expectedProfit: formattedExpectedProfit,
+        profitPercentage: `${profitPercentage}%` // Asegúrate de agregar el signo de porcentaje aquí si es necesario
+      });
+    }
+  }, [product]);
+  
+
   return (
     <>
       <Header title='CAJA' />
@@ -259,23 +321,77 @@ const Dashboard = () => {
         </Select>
         {renderCalendario()}
       </Box>
-      <Box>
-        <Typography
-          align='center'
-          sx={{
-            marginTop: "1rem",
-            color: "#69EAE2",
-            fontFamily: "Nunito",
-            fontSize: "40px",
-            fontStyle: "normal",
-            fontWeight: 700,
-            lineHeight: "normal",
-          }}
-        >
-          {`Fecha: ${
-            dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
+      <Typography
+        align='center'
+        sx={{
+          marginTop: "1rem",
+          color: "#69EAE2",
+          fontFamily: "Nunito",
+          fontSize: "40px",
+          fontStyle: "normal",
+          fontWeight: 700,
+          lineHeight: "normal",
+        }}
+      >
+        {`Fecha: ${dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
           }`}
-        </Typography>
+      </Typography>
+      <Box sx={{ display: { xs: 'block', sm: 'flex' }, justifyContent: 'space-between' }}>
+        {cardsHeader.map((e, i) => {
+          return (
+            <Box
+              key={i * 98}
+              width={{ sm: '31%' }}
+              sx={{
+                marginY: { xs: '20px', sm: 'auto' },
+                padding: '5px 10px',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-around",
+                borderRadius: "20px",
+                background: "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, #1F1D2B 91.2%)",
+                backdropFilter: "blur(60px)",
+              }}
+            >
+              <Box sx={{ width: '60%' }}>
+                <Typography
+                  sx={{
+                    color: "#A0AEC0",
+                    fontFamily: "Nunito",
+                    fontSize: { xs: '16px', sm: "18px" },
+                    fontStyle: "normal",
+                    fontWeight: 700,
+                    lineHeight: "100%",
+                  }}
+                >
+                  {e.tile}
+                </Typography>
+                <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
+                  <Typography
+                    sx={{
+                      color: "#FFF",
+                      fontFamily: "Nunito",
+                      fontSize: { xs: '16px', sm: "20px" },
+                      fontStyle: "normal",
+                      fontWeight: 400,
+                      lineHeight: "140%",
+                    }}
+                  >
+                    {e.count}
+                  </Typography>
+                  <Typography sx={{ color: e.percentage.includes('+') ? "#01B574" : "#E31A1A" }}>
+                    {e.percentage}
+                  </Typography>
+                </Box>
+              </Box>
+              <Box>
+                <Box component={'img'} src={e.img} />
+              </Box>
+            </Box>
+          )
+        })}
+      </Box>
+      <Box>
         <Box>
           <Box
             sx={{

@@ -29,6 +29,9 @@ import HelpIcon from "@mui/icons-material/Help";
 import Chip from "@mui/material/Chip";
 import { getAllInvoicesData } from "@/firebase";
 import SearchIcon from '@mui/icons-material/Search';
+import Mark from 'mark.js';
+import Slider from "./sliderScan";
+
 
 const SlidebarVender = ({
   selectedItems,
@@ -43,6 +46,7 @@ const SlidebarVender = ({
   filteredData: any;
   setSearchTerm: any;
 }) => {
+  const [search, setSearch] = useState<any>("")
   const [open, setOpen] = useState(false);
   const [nextStep, setNextStep] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,6 +58,7 @@ const SlidebarVender = ({
   const [subtotal, setSubtotal] = useState(0);
   const [dataInvocie, setDataInvoice] = useState([]);
   const [nota, setNota] = useState("")
+  const [checked, setChecked] = useState<boolean>(false);
 
   const LightTooltip = styled(({ className, ...props }: TooltipProps) => (
     <Tooltip {...props} classes={{ popper: className }} />
@@ -77,7 +82,6 @@ const SlidebarVender = ({
   const generarNumeroFactura = () => {
     let maxInvoiceNumber = 0;
     if (dataInvocie.length === 0) {
-      console.log("El array está vacío");
     } else {
       dataInvocie.forEach((item: any) => {
         let currentInvoiceNumber = parseInt(item.invoice);
@@ -131,9 +135,23 @@ const SlidebarVender = ({
     },
   }));
 
+  const handleSearch = (event: any) => {
+    const keyword = event.target.value;
+    const context: any = document.querySelector('#items-list');
+    const instance = new Mark(context);
+    instance.unmark({
+      done: () => {
+        instance.mark(keyword, {
+        });
+      }
+    });
+  };
+
+
   useEffect(() => {
     getAllInvoicesData(setDataInvoice);
-  }, []);
+    matchesSM ? setChecked(false) : setChecked(true)
+  }, [matchesSM]);
 
   useEffect(() => {
     const nuevoSubtotal: number = (selectedItems ?? []).reduce(
@@ -194,10 +212,18 @@ const SlidebarVender = ({
             borderRadius: "10px 0px 0px 10px",
           }}
         >
+          <Box sx={{ display: { xs: "block", lg: "none" } }}>
+            <Button
+              sx={{ float: "right" }}
+              onClick={() => setOpen(false)}
+            >
+              <CloseIcon sx={{ color: "#fff" }} />
+            </Button>
+          </Box>
           <Box
             id='principal container'
             padding={3}
-            sx={{ height: "100%", width: "100%", overflow: "auto" }}
+            sx={{ height: "92%", width: "100%", overflow: "auto" }}
           >
             {reciboPago ? (
               <Factura
@@ -207,14 +233,6 @@ const SlidebarVender = ({
               />
             ) : (
               <>
-                <Box sx={{ display: { xs: "block", lg: "none" } }}>
-                  <Button
-                    sx={{ float: "right" }}
-                    onClick={() => setOpen(false)}
-                  >
-                    <CloseIcon sx={{ color: "#fff" }} />
-                  </Button>
-                </Box>
                 {nextStep ? (
                   <Box>
                     <IconButton
@@ -271,7 +289,7 @@ const SlidebarVender = ({
                         sx={{
                           color: "#69EAE2",
                           fontFamily: "Nunito",
-                          fontSize: "0.8125rem",
+                          fontSize: { xs: '12px', sm: "0.8125rem" },
                           fontStyle: "normal",
                           fontWeight: 500,
                           lineHeight: "140%",
@@ -323,47 +341,6 @@ const SlidebarVender = ({
                 ) : (
                   <>
                     <Box sx={{ height: "100%", marginTop: "10px" }}>
-                      <Box display={{ xs: "flex", sm: "none" }}>
-                        <Paper
-                          component='form'
-                          onSubmit={(e: any) => {
-                            e.preventDefault();
-                            filteredData(e.target[0].value);
-                          }}
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            color: "#fff",
-                            width: "25rem",
-                            height: "2rem",
-                            borderRadius: "0.3125rem",
-                            background: "#2C3248",
-                          }}
-                        >
-                          <InputBase
-                            sx={{
-                              ml: 1,
-                              flex: 1,
-                              color: "#fff",
-                            }}
-                            placeholder='Buscar'
-                            value={searchTerm}
-                            onChange={(e) => {
-                              setSearchTerm(e.target.value);
-                            }}
-                          />
-                          <IconButton
-                            sx={{
-                              marginTop: "2px",
-                              paddingTop: "0px",
-                              marginBottom: "4px",
-                              paddingBottom: "0px",
-                            }}
-                          >
-                            <Box component={"img"} src={"/images/scan.svg"} />
-                          </IconButton>
-                        </Paper>
-                      </Box>
                       <Box
                         sx={{
                           display: "flex",
@@ -417,38 +394,56 @@ const SlidebarVender = ({
                       <Divider
                         sx={{ background: "#69EAE2", marginTop: "10px" }}
                       />
-                      <Paper
-                        component='form'
-                        sx={{
-                          marginY: '20px',
-                          height: "25px",
-                          display: "flex",
-                          borderRadius: "5px",
-                          alignItems: "center",
-                          color: "#fff",
-                          background: "#2C3248",
-                        }}
-                      >
-                        <InputBase
+                      <Box sx={{
+                        marginY: '20px',
+                        height: "25px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        borderRadius: "5px",
+                        alignItems: "center",
+                        color: "#fff",
+                        background: "#2C3248",
+                      }}>
+                        <Paper
+                          component='form'
+                          onSubmit={(e: any) => {
+                            e.preventDefault()
+                            !checked && (filteredData(e.target[0].value))
+                          }
+                          }
                           sx={{
-                            ml: 1,
-                            flex: 1,
+                            marginY: '20px',
+                            height: "25px",
+                            display: "flex",
+                            borderRadius: "5px",
+                            alignItems: "center",
                             color: "#fff",
-                            fontSize: '16px'
-                          }}
-                          placeholder='Buscar en la factura'
-                        />
-                        <IconButton
-                          sx={{
-                            marginTop: "2px",
-                            paddingTop: "0px",
-                            marginBottom: "4px",
-                            paddingBottom: "0px",
+                            background: "#2C3248",
+                            width: '100%',
                           }}
                         >
-                          <SearchIcon sx={{ color: '#F8F8F8', fontSize: '20px' }} />
-                        </IconButton>
-                      </Paper>
+                          <InputBase
+                            sx={{
+                              ml: 1,
+                              flex: 1,
+                              color: "#fff",
+                              fontSize: '16px'
+                            }}
+                            value={!checked ? searchTerm : search}
+                            placeholder={!checked ? 'Ingresa el codigo del producto' : 'Buscar en la factura'}
+                            onChange={(e) => {
+                              if (checked) {
+                                handleSearch(e);
+                                setSearch(e.target.value);
+                              } else {
+                                setSearchTerm(e.target.value);
+                              }
+                            }}
+
+                          />
+                        </Paper>
+                        {matchesSM ? <Slider checked={checked} setChecked={setChecked} /> : <SearchIcon sx={{ color: '#F8F8F8', fontSize: '20px' }} />}
+                      </Box>
                       <Box
                         id='items-list'
                         sx={{

@@ -49,12 +49,12 @@ export default function Sidebar({
       icon2: "/images/homeSelected.svg",
       id: "/home",
     },
-    {
-      section: "PERFIL",
-      icon: "/images/profile.svg",
-      icon2: "/images/profileSelected.svg",
-      id: "/profile",
-    },
+    // {
+    //   section: "PERFIL",
+    //   icon: "/images/profile.svg",
+    //   icon2: "/images/profileSelected.svg",
+    //   id: "/profile",
+    // },
     {
       section: "VENDER",
       icon: "/images/vender.svg",

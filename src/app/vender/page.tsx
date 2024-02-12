@@ -23,23 +23,23 @@ const Page: any = () => {
   const [selectedItems, setSelectedItems] = useState<any>([]);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
-  console.log(selectedItems)
-
 
   const filteredData = async (event: any) => {
     try {
+      let value2 = event
+      value2 = value2.replace(/\s+/g, '');
+      value2 = value2.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       const resolvedData = await data;
-      const foundProducts = resolvedData?.filter((producto) => producto.barCode === event);
+      const foundProducts = resolvedData?.filter((producto) => producto.barCode === value2);
       const filterSearch: any = resolvedData?.filter((item) => {
         if (searchTerm === "") {
           return true;
         }
         return Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(searchTerm.toLowerCase())
+          String(value).toLowerCase().includes(value2.toLowerCase())
         );
       });
       setfilter(filterSearch);
-      console.log('foundProducts:::>', foundProducts)
       if (foundProducts?.length === 1) {
         const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
         const newItem = {
