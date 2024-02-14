@@ -192,7 +192,8 @@ const Invoices = () => {
               </Paper>
               <Box
                 sx={{
-                  display: (dataUser?.status ?? "") === 'admin' ? "flex" : 'none',
+                  // display: (dataUser?.status ?? "") === 'admin' ? "flex" : 'none',
+                  display: 'flex',
                   flexDirection: "row",
                   justifyContent: { md: "center", xs: "center" },
                   marginTop: { md: "10px", xs: "10px" },
