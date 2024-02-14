@@ -17,9 +17,9 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
     },
   }));
 
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
   const display = (dataUser?.jobs ?? []).includes("Inventario") || (dataUser?.status === "admin")
-  
+
   return filteredData?.map((product: any) => {
     return (
       <Card

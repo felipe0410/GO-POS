@@ -42,7 +42,7 @@ export default function Sidebar({
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
   const permissions = dataUser?.status === "admin" ? ["Vender", "Inventario", "Caja"] : dataUser?.jobs ?? []
 
   const sections = [

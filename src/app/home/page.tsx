@@ -47,7 +47,7 @@ export default function Home() {
   const [totalToday, setTotalToday] = useState("0")
   const [dataClient, setDataClient] = useState([])
   const [establishmentData, setEstablishmentData] = useState<any>({})
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
   const listJobs = dataUser?.jobs ?? []
   const status = dataUser?.status ?? ""
   const validation = listJobs.length === 3 || status === "admin"

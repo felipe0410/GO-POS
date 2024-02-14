@@ -48,7 +48,7 @@ const Invoices = () => {
     debouncedHandleSearchChange();
   };
 
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
   useEffect(() => {
     const getAllInvoices = async () => {
       try {
