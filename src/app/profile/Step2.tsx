@@ -53,8 +53,8 @@ const Step2 = ({
           Ventas
         </Typography>
         <Checkbox
-          checked={colabsData.jobs.includes("Ventas")}
-          onChange={() => handleCheckboxChange("Ventas")}
+          checked={colabsData.jobs.includes("Vender")}
+          onChange={() => handleCheckboxChange("Vender")}
           sx={{
             color: "#69EAE2",
             "&.Mui-checked": {

@@ -42,6 +42,9 @@ export default function Sidebar({
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const permissions = dataUser?.status === "admin" ? ["Vender", "Inventario", "Caja"] : dataUser?.jobs ?? []
+
   const sections = [
     {
       section: "INICIO",
@@ -93,27 +96,68 @@ export default function Sidebar({
         },
       ],
     },
-    // {
-    //   section: "AJUSTES",
-    //   icon: "/images/settings.svg",
-    //   icon2: "/images/inventarioSelected.svg",
-    //   id: "/settings/user",
-    //   submenus: [
-    //     {
-    //       section: "USUARIO",
-    //       id: "/settings/user",
-    //     },
-    //     {
-    //       section: "EMPLEADOS",
-    //       id: "/settings/employees",
-    //     },
-    //     {
-    //       section: "ESTABLECIMIENTO",
-    //       id: "/settings/establishment",
-    //     },
-    //   ],
-    // },
+    {
+      section: "AJUSTES",
+      icon: "/images/settings.svg",
+      icon2: "/images/inventarioSelected.svg",
+      id: "/settings/user",
+      submenus: [
+        {
+          section: "USUARIO",
+          id: "/settings/user",
+        },
+        {
+          section: "EMPLEADOS",
+          id: "/settings/employees",
+        },
+        {
+          section: "ESTABLECIMIENTO",
+          id: "/settings/establishment",
+        },
+      ],
+    },
   ];
+
+  const permissionMap: any = {
+    'Vender': ['/vender'],
+    'Inventario': ['/inventory/productos', '/inventory/agregarProductos'],
+    'Caja': ['/register/invoices', '/register/dashboard'],
+  };
+
+  const filterSectionsByPermissions = (sections: any, permissions: any) => {
+    return sections.filter((section: any) => {
+      if (section.section === 'INICIO' || section.section === 'PERFIL') {
+        return true;
+      }
+      for (const permission of permissions) {
+        if (permissionMap[permission] && permissionMap[permission].includes(section.id)) {
+          return true;
+        }
+      }
+      if (section.submenus) {
+        section.submenus = section.submenus.filter((submenu: any) => {
+          for (const permission of permissions) {
+            if (permissionMap[permission] && permissionMap[permission].includes(submenu.id)) {
+              return true;
+            }
+          }
+          return false;
+        });
+        return section.submenus.length > 0;
+      }
+
+      return false;
+    });
+  };
+
+  const sectionsWithDefaultSubsections = sections.map(section => {
+    if (section.section === 'CAJA' && section.submenus) {
+      section.submenus = section.submenus.filter(submenu => submenu.section === 'FACTURAS');
+    }
+    return section;
+  });
+
+  const filteredSections = filterSectionsByPermissions(sectionsWithDefaultSubsections, permissions);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -164,7 +208,8 @@ export default function Sidebar({
           style: {
             background: "transparent",
             border: "none",
-            width: !open ? "100px" : "auto", 
+            width: !open ? "100px" : "auto",
+            minWidth: open ? "160px" : 'auto'
           },
         }}
       >
@@ -193,7 +238,7 @@ export default function Sidebar({
             </Typography>
           </Box>
           <Box id='container_section'>
-            {sections.map((section) => (
+            {(filteredSections).map((section: any) => (
               <React.Fragment key={section.id}>
                 <Box
                   sx={{
@@ -288,7 +333,7 @@ export default function Sidebar({
                           marginLeft: "15px",
                         }}
                       >
-                        {section.submenus.map((submenu) => (
+                        {section.submenus.map((submenu: any) => (
                           <Link
                             href={submenu.id}
                             key={submenu.id}

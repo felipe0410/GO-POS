@@ -46,9 +46,8 @@ const Page = () => {
   const [editOn, setEditOn] = useState<boolean>(false);
   const [addColabs, setAddColabs] = useState<boolean>(false);
   const [imageBase64, setImageBase64] = useState("");
-
+  const userData = JSON.parse(localStorage?.getItem('dataUser') ?? "")
   const user = atob(localStorage?.getItem("user") ?? "");
-
   const inputOnChange = (field: string, value: string) => {
     setData({ ...data, [field]: value });
   };
@@ -83,6 +82,7 @@ const Page = () => {
 
   useEffect(() => {
     const dataEstablesimente = async () => {
+      // getEstablishmentDataLoggin()
       const data: any = await getEstablishmentData();
       if (data !== null) {
         setData(data);

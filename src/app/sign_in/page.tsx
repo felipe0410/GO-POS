@@ -3,9 +3,9 @@ import { VisibilityOff, Visibility } from "@mui/icons-material"
 import { Box, Typography, Button, FormControl, IconButton, InputAdornment, OutlinedInput } from "@mui/material"
 import Link from "next/link"
 import { SnackbarProvider, enqueueSnackbar } from "notistack"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useState } from "react"
 import { styleSign_in } from "./style"
-import { getEstablishmentData, getEstablishmentDataLoggin, loginUser } from "@/firebase"
+import { getEstablishmentDataLoggin, loginUser } from "@/firebase"
 import HttpsRoundedIcon from '@mui/icons-material/HttpsRounded';
 import PersonSharpIcon from '@mui/icons-material/PersonSharp';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -15,7 +15,6 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { GlobalContext } from "../globalContex"
 
 const Loggin = () => {
-    const [dataEstablishments, setDataEstablishments] = useState<any>({})
     const { setCookie } = useContext(GlobalContext) || {};
     const [showPassword, setShowPassword] = useState(false);
     const [data, setData] = useState({
@@ -76,18 +75,28 @@ const Loggin = () => {
     const logginUserr = async () => {
         try {
             const loggin: any = await loginUser(data.email, data.password)
-
             if (loggin?.uid) {
                 const dataUser: any = await getEstablishmentDataLoggin(loggin.uid)
-                setDataEstablishments(dataUser)
                 const oneDay = 24 * 60 * 60 * 1000;
                 const expirationDate = new Date(Date.now() + oneDay);
                 const encodedUid = btoa(dataUser?.uidEstablishments ?? loggin.uid);
-
                 await setCookie('user', encodedUid, {
                     expires: expirationDate
                 });
                 localStorage.setItem("user", encodedUid)
+                const allDataUser = {
+                    jobs: dataUser?.jobs ?? [],
+                    uid: btoa(dataUser?.uid ?? ""),
+                    status: dataUser?.status ?? dataUser?.rol ?? "admin",
+                    img: dataUser?.img ?? "",
+                    name: dataUser?.name ?? "",
+                    uidEstablishments: btoa(dataUser?.uidEstablishments ?? dataUser.uid)
+                }
+                const allDataUserString = JSON.stringify(allDataUser);
+                localStorage.setItem("dataUser", allDataUserString)
+                await setCookie('dataUser', allDataUserString, {
+                    expires: expirationDate
+                });
                 enqueueSnackbar('Autenticacion exitosa', {
                     variant: 'success',
                     anchorOrigin: {
@@ -118,20 +127,6 @@ const Loggin = () => {
             console.log(error)
         }
     }
-
-    // useEffect(() => {
-    //     const getEstablishmentData = async () => {
-    //         console.log(dataEstablishments)
-    //         const oneDay = 24 * 60 * 60 * 1000;
-    //         const expirationDate = new Date(Date.now() + oneDay);
-    //         console.log(dataEstablishments?.uidEstablishments)
-    //         const encodedUid = btoa(dataEstablishments?.uidEstablishments);
-    //         await setCookie('user', encodedUid, {
-    //             expires: expirationDate
-    //         });
-    //     }
-    //     getEstablishmentData()
-    // }, [dataEstablishments])
 
 
     return (

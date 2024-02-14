@@ -4,6 +4,7 @@ import * as React from "react";
 import ChartAreaIndex from "@/components/index/ChartAreaIndex";
 import { useEffect, useState } from "react";
 import { getAllClientsData, getAllInvoicesData, getEstablishmentData } from "@/firebase";
+import { stat } from "fs";
 interface Cliente {
   celular: string;
   email: string;
@@ -46,22 +47,26 @@ export default function Home() {
   const [totalToday, setTotalToday] = useState("0")
   const [dataClient, setDataClient] = useState([])
   const [establishmentData, setEstablishmentData] = useState<any>({})
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const listJobs = dataUser?.jobs ?? []
+  const status = dataUser?.status ?? ""
+  const validation = listJobs.length === 3 || status === "admin"
   const cardsHeader = [
     {
       tile: "Gananacias de hoy",
-      count: `$ ${totalToday}`,
+      count: `$ ${validation ? totalToday : "------------"}`,
       percentage: "+55%",
       img: "/dashboard_home/cash.svg"
     },
     {
       tile: "Clientes",
-      count: `+ ${dataClient.length}`,
+      count: `+ ${validation ? dataClient.length : "------------"}`,
       percentage: "-14%",
       img: "/dashboard_home/clients.svg"
     },
     {
       tile: "Ventas Totales",
-      count: `$ ${total}`,
+      count: `$ ${validation ? total : "------------"}`,
       percentage: "+8%",
       img: "/dashboard_home/rocket.svg"
     },
@@ -359,10 +364,12 @@ export default function Home() {
             Enero
           </Typography>
         </Box>
-        <ChartAreaIndex
-          listaFechas={arrayDate}
-          totalVentasPorFecha={arraySumInvoices}
-        />
+        <Box id='container_chart' sx={{ filter: validation ? 'blur(0px)' : 'blur(100px)' }}>
+          <ChartAreaIndex
+            listaFechas={arrayDate}
+            totalVentasPorFecha={arraySumInvoices}
+          />
+        </Box>
       </Box>
     </Box >
   )

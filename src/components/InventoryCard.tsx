@@ -16,6 +16,10 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
       paddingBottom: "12px",
     },
   }));
+
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
+  const display = (dataUser?.jobs ?? []).includes("Inventario") || (dataUser?.status === "admin")
+  
   return filteredData?.map((product: any) => {
     return (
       <Card
@@ -28,7 +32,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           background: "#2C3248",
           overflow: "visible",
           textAlign: "-webkit-center",
-          marginBottom: '50px',
+          marginBottom: '65px',
           '&:hover': {
             border: "1px solid #69EAE2"
           },
@@ -37,7 +41,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
         <Box
           sx={{
             position: "relative",
-            display: "flex",
+            display: display ? "flex" : 'none',
             justifyContent: "flex-end",
             marginBottom: "-6%",
             marginRight: "3%",
@@ -137,7 +141,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               lineHeight: "140%",
             }}
           >
-            Existencias: <span style={{ color: '#fff', fontSize:'700' }}>{product.cantidad}</span>
+            Existencias: <span style={{ color: '#fff', fontSize: '700' }}>{product.cantidad}</span>
           </Typography>
           <Typography
             sx={{

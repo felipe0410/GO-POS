@@ -41,13 +41,14 @@ const Invoices = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const debouncedHandleSearchChange = debounce(() => {}, 300);
+  const debouncedHandleSearchChange = debounce(() => { }, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
     debouncedHandleSearchChange();
   };
 
+  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "")
   useEffect(() => {
     const getAllInvoices = async () => {
       try {
@@ -191,7 +192,7 @@ const Invoices = () => {
               </Paper>
               <Box
                 sx={{
-                  display: "flex",
+                  display: (dataUser?.status ?? "") === 'admin' ? "flex" : 'none',
                   flexDirection: "row",
                   justifyContent: { md: "center", xs: "center" },
                   marginTop: { md: "10px", xs: "10px" },

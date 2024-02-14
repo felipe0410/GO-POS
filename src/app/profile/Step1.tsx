@@ -32,6 +32,7 @@ const Step1 = ({ setAddColabs }: { setAddColabs: any }) => {
     password: "",
     jobs: [],
   });
+
   const [step, setStep] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword((show) => !show);
