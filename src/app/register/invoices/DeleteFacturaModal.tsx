@@ -6,10 +6,10 @@ import Modal from "@mui/material/Modal";
 import Fade from "@mui/material/Fade";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import Factura from "./Factura";
 import { IconButton, Typography } from "@mui/material";
 import { deleteInvoice } from "@/firebase";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { deleteInvoiceStyle } from "./styles";
 
 const style = {
   position: "absolute" as "absolute",
@@ -104,7 +104,26 @@ const DeleteFacturaModal = ({ data }: { data: any }) => {
               </Button>
             </Box>
             <Box>
-              <Factura data={data} />
+              <Typography sx={deleteInvoiceStyle.mainTypography}>
+                ¿Estas seguro de que quieres eliminar esta factura?
+              </Typography>
+              <Typography sx={deleteInvoiceStyle.subtitleTypogrephy}>
+                Factura{" "}
+                <span style={deleteInvoiceStyle.spanTypography}>
+                  {data.invoice}
+                </span>{" "}
+                del dia{" "}
+                <span style={deleteInvoiceStyle.spanTypography}>
+                  {data.date}
+                </span>
+              </Typography>
+              <Box sx={{ textAlign: "center", marginTop: "5px" }}>
+                <Box
+                  component={"img"}
+                  src={"/images/deleteImage.png"}
+                  sx={{ width: "131px", height: "153px" }}
+                />
+              </Box>
             </Box>
             <Box
               sx={{
@@ -115,7 +134,7 @@ const DeleteFacturaModal = ({ data }: { data: any }) => {
               }}
             >
               <Button
-                onClick={() => handleClose()}
+                onClick={() => deleteInvoiceData(data.uid)}
                 sx={{
                   width: "8.4375rem",
                   height: "2.1875rem",
@@ -132,11 +151,11 @@ const DeleteFacturaModal = ({ data }: { data: any }) => {
                     lineHeight: "140%",
                   }}
                 >
-                  CANCELAR
+                  SI, ElIMINAR
                 </Typography>
               </Button>
               <Button
-                onClick={() => deleteInvoiceData(data.uid)}
+                onClick={() => handleClose()}
                 sx={{
                   width: "8.4375rem",
                   height: "2.1875rem",
@@ -153,7 +172,7 @@ const DeleteFacturaModal = ({ data }: { data: any }) => {
                     lineHeight: "140%",
                   }}
                 >
-                  SÍ, ELIMINAR
+                  CANCELAR
                 </Typography>
               </Button>
             </Box>

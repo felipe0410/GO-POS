@@ -118,6 +118,7 @@ const EditInvoice = ({
           vertical: "bottom",
           horizontal: "right",
         },
+        onExited: handleBack,
       });
     } catch (error) {
       enqueueSnackbar("Error al guardar cambios", {

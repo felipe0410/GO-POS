@@ -217,3 +217,31 @@ export const selectStyle = {
   boxShadow:
     "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
 };
+
+export const deleteInvoiceStyle = {
+  mainTypography: {
+    color: "#FFF",
+    fontFamily: "Nunito",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "140%",
+    textAlign: "center",
+  },
+  subtitleTypogrephy: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "140%",
+    textAlign: "center",
+  },
+  spanTypography: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: 900,
+  },
+};
