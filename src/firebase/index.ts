@@ -146,7 +146,8 @@ export const getAllProductsDataonSnapshot = (callback: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const orderedQuery = query(productCollectionRef, orderBy("productName"));
 
-    const unsubscribe = onSnapshot(orderedQuery,
+    const unsubscribe = onSnapshot(
+      orderedQuery,
       (querySnapshot) => {
         const productsData: any[] = [];
         querySnapshot.forEach((doc) => {
@@ -297,6 +298,62 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /invoices: ", error);
+    return null;
+  }
+};
+
+//funcion para actualizar datos de factura
+export const updateInvoice = async (uid: string, invoiceData: any) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      console.error("El establecimiento no existe.");
+      return null;
+    }
+
+    const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
+    const invoiceDocRef = doc(invoicesCollectionRef, uid);
+
+    await updateDoc(invoiceDocRef, invoiceData);
+    return uid;
+  } catch (error) {
+    console.error("Error al actualizar información en /invoices: ", error);
+    return null;
+  }
+};
+
+// funcion para eliminar la factura
+export const deleteInvoice = async (uid: string) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      console.error("El establecimiento no existe.");
+      return null;
+    }
+
+    const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
+    const invoiceDocRef = doc(invoicesCollectionRef, uid);
+
+    await deleteDoc(invoiceDocRef);
+    return uid;
+  } catch (error) {
+    console.error("Error al eliminar la factura de la base de datos: ", error);
     return null;
   }
 };

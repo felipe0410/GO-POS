@@ -10,6 +10,7 @@ import TableRow from "@mui/material/TableRow";
 import { Box, IconButton } from "@mui/material";
 import FacturaModal from "./FacturaModal";
 import EditInvoice from "./EditInvoice";
+import DeleteFacturaModal from "./DeleteFacturaModal";
 
 interface Column {
   id: "iconos" | "clientName" | "invoice" | "date" | "hora" | "estado";
@@ -126,16 +127,22 @@ export default function InvoicesTable({
                     <TableRow hover role='checkbox' tabIndex={-1} key={row.uid}>
                       <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>
                         <Box sx={{ display: "flex", flexDirection: "row" }}>
-                          {/* <IconButton
-                            sx={{ padding: "8px 3px" }}
-                            onClick={() => newDataObject(row)}
-                          >
-                            <Box
-                              component={"img"}
-                              src={"/images/edit.svg"}
-                              sx={{ width: "1rem", height: "1rem" }}
-                            />
-                          </IconButton> */}
+                          {JSON.parse(localStorage.getItem("dataUser") ?? "{}")
+                            .status === "admin" && (
+                            <>
+                              <IconButton
+                                sx={{ padding: "8px 3px" }}
+                                onClick={() => newDataObject(row)}
+                              >
+                                <Box
+                                  component={"img"}
+                                  src={"/images/edit.svg"}
+                                  sx={{ width: "1rem", height: "1rem" }}
+                                />
+                              </IconButton>
+                              <DeleteFacturaModal data={row} />
+                            </>
+                          )}
                           <FacturaModal data={row} />
                         </Box>
                       </TableCell>
