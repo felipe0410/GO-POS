@@ -151,14 +151,13 @@ export default function Sidebar({
   };
 
   const sectionsWithDefaultSubsections = sections.map(section => {
-    if (section.section === 'CAJA' && section.submenus) {
+    if (section.section === 'CAJA' && section.submenus && dataUser?.status !== "admin") {
       section.submenus = section.submenus.filter(submenu => submenu.section === 'FACTURAS');
     }
     return section;
   });
 
   const filteredSections = filterSectionsByPermissions(sectionsWithDefaultSubsections, permissions);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };

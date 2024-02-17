@@ -59,7 +59,6 @@ const Invoices = () => {
     };
     getAllInvoices();
   }, []);
-
   const getCurrentDateTime = () => {
     const now = new Date();
     const year = now.getFullYear();
