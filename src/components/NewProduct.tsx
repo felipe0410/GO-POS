@@ -107,7 +107,7 @@ export default function NewProduct() {
     try {
       await createProduct(data.barCode, {
         ...data,
-        image: data.image === "" ? "images/noImage.svg" : data.image,
+        image: data.image === "" ? "/images/noImage.svg" : data.image,
       });
       enqueueSnackbar("Producto guardado con exito", {
         variant: "success",

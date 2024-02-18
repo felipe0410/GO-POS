@@ -62,11 +62,14 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             overflow: "visible",
           }}
         >
+          <>
+            {console.log(product?.image)}
+          </>
           <Box
             component={"img"}
             src={
               product?.image?.length > 0
-                ? product?.image
+                ? product?.image === "images/noImage.svg" ? `/${product?.image}` : product?.image
                 : "/images/noImage.svg"
             }
             alt={`imagen del producto ${product.productName}`}
