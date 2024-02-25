@@ -10,12 +10,14 @@ import { Box } from "@mui/material";
 // import EditModal from "./EditModal";
 import { v4 as uuidv4 } from "uuid";
 
-export default function InventoryCard({ filteredData }: { filteredData: any }) {
+export default function CardProduct({ filteredData }: { filteredData: any }) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
     "&:last-child": {
       paddingBottom: "12px",
     },
   }));
+
+  console.log(filteredData);
 
   return filteredData?.map((product: any) => {
     return (
@@ -62,9 +64,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           <Box
             component={"img"}
             src={
-              product?.image?.length > 0
-                ? product?.image
-                : "/images/noImage.svg"
+              !product?.image === null ? product?.image : "/images/noImage.svg"
             }
             alt={`imagen del producto ${product.productName}`}
             sx={{

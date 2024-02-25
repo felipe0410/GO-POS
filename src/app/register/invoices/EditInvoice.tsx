@@ -260,16 +260,30 @@ const EditInvoice = ({
                       CANCELADO
                     </MenuItem>
                   </Select>
+                  <Typography
+                    sx={{
+                      ...editStyles.productosTypography,
+                      color: "#FFF",
+                    }}
+                  >
+                    Disponible pronto
+                  </Typography>
                   <IconButton
-                    sx={{ padding: "8px 3px", marginTop: "10px" }}
+                    sx={{ padding: "8px 3px" }}
                     onClick={() => setEditProducts(true)}
+                    disabled
                   >
                     <Box
                       component={"img"}
-                      src={"/images/edit.svg"}
+                      src={"/images/editGray.svg"}
                       sx={{ width: "1.2rem", height: "1.2rem" }}
                     />
-                    <Typography sx={editStyles.productosTypography}>
+                    <Typography
+                      sx={{
+                        ...editStyles.productosTypography,
+                        textAlign: "center",
+                      }}
+                    >
                       Editar productos facturados
                     </Typography>
                   </IconButton>

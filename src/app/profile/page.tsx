@@ -18,13 +18,21 @@ import {
   typographyButton,
   typographyColabsButton,
   typographyUntitled,
+  colabsList,
+  typographyTitleTable,
 } from "./profileStyles";
 import { profileInputs } from "@/data/inputs";
 import Step1 from "./Step1";
 import ImgInput from "@/components/inputIMG";
-import { getEstablishmentData, updateEstablishmentsData } from "@/firebase";
+import {
+  getAllColabsData,
+  getEstablishmentData,
+  updateEstablishmentsData,
+} from "@/firebase";
 import { SnackbarProvider } from "notistack";
 import { enqueueSnackbar } from "notistack";
+import ColabsList from "./ColabsList";
+import AddIcon from "@mui/icons-material/Add";
 
 interface Data {
   name: string;
@@ -35,6 +43,17 @@ interface Data {
   [key: string]: string;
 }
 
+export interface ColabData {
+  uid: string;
+  name: string;
+  jobs: [];
+  password: string;
+  img: string;
+  uidEstablishments: string;
+  mail: string;
+  status: string;
+}
+
 const Page = () => {
   const [data, setData] = useState<Data>({
     name: "",
@@ -43,10 +62,11 @@ const Page = () => {
     rol: "",
     email: "",
   });
+  const [colabsData, setColabsData] = useState<ColabData[]>([]);
   const [editOn, setEditOn] = useState<boolean>(false);
   const [addColabs, setAddColabs] = useState<boolean>(false);
   const [imageBase64, setImageBase64] = useState("");
-  const userData = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
+  const userData = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
   const user = atob(localStorage?.getItem("user") ?? "");
   const inputOnChange = (field: string, value: string) => {
     setData({ ...data, [field]: value });
@@ -89,6 +109,30 @@ const Page = () => {
       }
     };
     dataEstablesimente();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribePromise = getAllColabsData((colabsData) => {
+      const transformedData: ColabData[] = colabsData.map((data: any) => ({
+        uid: data.uid,
+        name: data.name,
+        jobs: data.jobs,
+        password: data.password,
+        img: data.img,
+        uidEstablishments: data.uidEstablishments,
+        mail: data.mail,
+        status: data.status,
+      }));
+      setColabsData(transformedData);
+    });
+
+    return () => {
+      unsubscribePromise.then((unsubscribe) => {
+        if (unsubscribe) {
+          unsubscribe();
+        }
+      });
+    };
   }, []);
 
   return (
@@ -230,28 +274,85 @@ const Page = () => {
           <Typography sx={typographyColab}>TUS COLABORADORES</Typography>
           <Paper sx={{ ...cards, width: "100%" }}>
             <Box padding={4} sx={{ textAlign: "-webkit-center" }}>
-              <Typography sx={typographyUntitled}>
-                {addColabs
-                  ? "Registrando colaborador..."
-                  : "Aun no tienes colaboradores"}
-              </Typography>
-              <Box
-                sx={{
-                  marginTop: "2rem",
-                  padding: { lg: "3rem", md: "3rem", sm: "1rem", xs: "1rem" },
-                  width: { lg: "80%", md: "80%", sm: "100%", xs: "100%" },
-                }}
-              >
-                {addColabs ? (
-                  <Step1 setAddColabs={setAddColabs} />
-                ) : (
-                  <Button onClick={handleColabs}>
-                    <Typography sx={typographyColabsButton}>
-                      Agregar Colaboradores
-                    </Typography>
-                  </Button>
-                )}
-              </Box>
+              {addColabs ? (
+                <>
+                  <Typography sx={typographyUntitled}>
+                    {addColabs && "Registrando colaborador..."}
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      marginTop: "2rem",
+                      padding: {
+                        lg: "3rem",
+                        md: "3rem",
+                        sm: "1rem",
+                        xs: "1rem",
+                      },
+                      width: { lg: "80%", md: "80%", sm: "100%", xs: "100%" },
+                    }}
+                  >
+                    <Step1 setAddColabs={setAddColabs} />
+                  </Box>
+                </>
+              ) : colabsData.length > 0 ? (
+                <>
+                  <Box sx={{ textAlign: "start" }}>
+                    <Button onClick={handleColabs}>
+                      <Typography sx={colabsList.typographyButtonList}>
+                        Agregar Colaboradores
+                      </Typography>
+                      <AddIcon sx={{ color: "#69EAE2" }} />
+                    </Button>
+                  </Box>
+                  <Box
+                    sx={{
+                      marginTop: "1.4rem",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                    }}
+                  >
+                    <Typography sx={typographyTitleTable}>Nombre</Typography>
+                    <Typography sx={typographyTitleTable}>Estatus</Typography>
+                  </Box>
+                  <Box sx={{ maxHeight: "438px", overflowY: "auto" }}>
+                    {colabsData.map((collaborator) => (
+                      <ColabsList key={collaborator.uid} data={collaborator} />
+                    ))}
+                  </Box>
+                </>
+              ) : (
+                <>
+                  <Typography sx={typographyUntitled}>
+                    {addColabs
+                      ? "Registrando colaborador..."
+                      : "Aun no tienes colaboradores"}
+                  </Typography>
+                  <Box
+                    sx={{
+                      marginTop: "2rem",
+                      padding: {
+                        lg: "3rem",
+                        md: "3rem",
+                        sm: "1rem",
+                        xs: "1rem",
+                      },
+                      width: { lg: "80%", md: "80%", sm: "100%", xs: "100%" },
+                    }}
+                  >
+                    {addColabs ? (
+                      <Step1 setAddColabs={setAddColabs} />
+                    ) : (
+                      <Button onClick={handleColabs}>
+                        <Typography sx={typographyColabsButton}>
+                          Agregar Colaboradores
+                        </Typography>
+                      </Button>
+                    )}
+                  </Box>
+                </>
+              )}
             </Box>
           </Paper>
         </Box>

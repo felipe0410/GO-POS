@@ -2,6 +2,7 @@
 import { Box, Button, Divider, Typography } from "@mui/material";
 import React, { useState } from "react";
 import { editStyles } from "./styles";
+import ContainerCards from "./ContainerCards";
 
 const styleViewActive = {
   borderRadius: "0.625rem",
@@ -13,6 +14,8 @@ const styleViewActive = {
 
 const EditProducts = ({ data }: { data: any }) => {
   const [isTable, setIsTable] = useState(false);
+
+  const compras = data.compra;
 
   return (
     <Box>
@@ -81,7 +84,9 @@ const EditProducts = ({ data }: { data: any }) => {
         </Typography>
       </Box>
       <Divider sx={{ background: "#69EAE2", marginTop: "0.5rem" }} />
-      <Box sx={{ marginTop: "1rem" }}></Box>
+      <Box sx={{ marginTop: "1rem" }}>
+        <ContainerCards filteredData={compras} />
+      </Box>
     </Box>
   );
 };

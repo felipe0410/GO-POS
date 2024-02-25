@@ -28,6 +28,15 @@ export const typographyColab = {
   lineHeight: "normal",
 };
 
+export const typographyTitleTable = {
+  color: "#69EAE2",
+  fontFamily: "Nunito",
+  fontSize: "16px",
+  fontStyle: "normal",
+  fontWeight: 400,
+  lineHeight: "normal",
+};
+
 export const styleTypography = {
   color: "#69EAE2",
   fontFamily: "Nunito",
@@ -99,6 +108,16 @@ export const typographyStep2 = {
   lineHeight: "normal",
 };
 
+export const typographyButtonsEdit = {
+  color: "#1F1D2B",
+  textAlign: "center",
+  fontFamily: "Nunito",
+  fontSize: { lg: "0.7rem", xs: "0.5rem" },
+  fontStyle: "normal",
+  fontWeight: { lg: 700, xs: 900 },
+  lineHeight: "normal",
+};
+
 export const jobsCardBoxes = {
   display: "flex",
   flexDirection: "row",
@@ -110,4 +129,23 @@ export const jobsCardBoxes = {
   background: "#2C3248",
   boxShadow:
     "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+};
+
+export const colabsList = {
+  typographyButtonList: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: "14px",
+    fontStyle: "normal",
+    fontWeight: 400,
+    lineHeight: "normal",
+  },
+  typographyName: {
+    color: "#A0AEC0",
+    fontFamily: "Nunito",
+    fontSize: "16px",
+    fontStyle: "normal",
+    fontWeight: 500,
+    lineHeight: "normal",
+  },
 };

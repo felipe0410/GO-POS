@@ -189,7 +189,7 @@ export const editStyles = {
     marginBottom: "5px",
   },
   productosTypography: {
-    color: "#69EAE2",
+    color: "#8e918f",
     fontFamily: "Nunito",
     fontSize: "17.5px",
     fontStyle: "normal",

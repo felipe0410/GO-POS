@@ -25,6 +25,7 @@ import {
   getAuth,
   signInWithEmailAndPassword,
 } from "firebase/auth";
+import { ColabData } from "@/app/profile/page";
 
 interface User {
   decodedString: string;
@@ -835,6 +836,7 @@ export const updateEstablishmentsData = async (updatedFields: any) => {
   }
 };
 
+//funcion para crear colaboradores
 export const createColabsData = async (uid: string, colabsData: any) => {
   try {
     const establecimientoDocRef: DocumentReference = doc(
@@ -862,5 +864,87 @@ export const createColabsData = async (uid: string, colabsData: any) => {
   } catch (error) {
     console.error("Error al guardar información en la base de datos: ", error);
     return null;
+  }
+};
+
+//funcion para obtener los colaboradores
+export const getAllColabsData = async (
+  callback: (colabsData: ColabData[]) => void
+) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "registeredEstablishments",
+      `${user().decodedString}`
+    );
+
+    const collaboratorsCollectionRef = collection(
+      establecimientoDocRef,
+      "collaborators"
+    );
+
+    const unsubscribe = onSnapshot(collaboratorsCollectionRef, (snapshot) => {
+      const colabsData = snapshot.docs.map((doc) => doc.data() as ColabData);
+      callback(colabsData);
+    });
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error al obtener información de colaboradores: ", error);
+    return null;
+  }
+};
+
+//funcion para eliminar un colaborador
+export const deleteColabData = async (colabId: string) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "registeredEstablishments",
+      `${user().decodedString}`
+    );
+
+    const collaboratorsCollectionRef = collection(
+      establecimientoDocRef,
+      "collaborators"
+    );
+
+    const colabDocRef = doc(collaboratorsCollectionRef, colabId);
+    await deleteDoc(colabDocRef);
+
+    console.log("Colaborador eliminado exitosamente.");
+
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar el colaborador: ", error);
+    return false;
+  }
+};
+
+//funcion para actualizar colaborador
+export const updateColabData = async (
+  colabId: string,
+  newData: Partial<ColabData>
+) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "registeredEstablishments",
+      `${user().decodedString}`
+    );
+
+    const collaboratorsCollectionRef = collection(
+      establecimientoDocRef,
+      "collaborators"
+    );
+
+    const colabDocRef = doc(collaboratorsCollectionRef, colabId);
+    await updateDoc(colabDocRef, newData);
+
+    console.log("Datos del colaborador actualizados exitosamente.");
+
+    return true;
+  } catch (error) {
+    console.error("Error al actualizar los datos del colaborador: ", error);
+    return false;
   }
 };
