@@ -141,7 +141,7 @@ const Page = () => {
       <Header title='Perfil Personal' />
       <Box sx={container}>
         <Box
-          sx={{ width: { lg: "35%", md: "35%", sm: "85%", xs: "85%" } }}
+          sx={{ width: { lg: "35%", md: "35%", sm: "95%", xs: "95%" } }}
           mt={5}
         >
           <Paper sx={{ ...cards, width: "100%", position: "relative" }}>
@@ -205,7 +205,14 @@ const Page = () => {
                           style={{ color: "#FFF" }}
                         />
                       ) : (
-                        <Typography sx={typographyProfile}>
+                        <Typography
+                          sx={{
+                            ...typographyProfile,
+                            overflow: "hidden",
+                            whiteSpace: "nowrap",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
                           {data[input.field]}
                         </Typography>
                       )}
@@ -267,7 +274,7 @@ const Page = () => {
         </Box>
         <Box
           sx={{
-            width: { lg: "60%", md: "60%", sm: "85%", xs: "85%" },
+            width: { lg: "60%", md: "60%", sm: "95%", xs: "95%" },
             marginTop: { sm: "2rem", xs: "2rem" },
           }}
         >
@@ -307,14 +314,43 @@ const Page = () => {
                   </Box>
                   <Box
                     sx={{
-                      marginTop: "1.4rem",
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-around",
+                      display: {
+                        lg: "block",
+                        md: "block",
+                        sm: "none",
+                        xs: "none",
+                      },
                     }}
                   >
-                    <Typography sx={typographyTitleTable}>Nombre</Typography>
-                    <Typography sx={typographyTitleTable}>Estatus</Typography>
+                    <Box
+                      sx={{
+                        marginTop: "1.4rem",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-around",
+                      }}
+                    >
+                      <Typography sx={typographyTitleTable}>Nombre</Typography>
+                      <Typography sx={typographyTitleTable}>Estatus</Typography>
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      display: {
+                        lg: "none",
+                        md: "none",
+                        sm: "block",
+                        xs: "block",
+                      },
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        sx={{ ...typographyTitleTable, marginTop: "0.8rem" }}
+                      >
+                        Nombre/Status
+                      </Typography>
+                    </Box>
                   </Box>
                   <Box sx={{ maxHeight: "438px", overflowY: "auto" }}>
                     {colabsData.map((collaborator) => (

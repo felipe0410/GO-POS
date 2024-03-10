@@ -40,7 +40,7 @@ export const typographyTitleTable = {
 export const styleTypography = {
   color: "#69EAE2",
   fontFamily: "Nunito",
-  fontSize: "1.25rem",
+  fontSize: { lg: "1.25rem", md: "1.25rem", sm: "1rem", xs: "1rem" },
   fontStyle: "normal",
   fontWeight: 400,
   lineHeight: "normal",
@@ -49,7 +49,7 @@ export const styleTypography = {
 export const typographyProfile = {
   color: "#FFF",
   fontFamily: "Nunito",
-  fontSize: "1.25rem",
+  fontSize: { lg: "1.25rem", md: "1.25rem", sm: "1rem", xs: "1rem" },
   fontStyle: "normal",
   fontWeight: 400,
   lineHeight: "normal",
@@ -135,7 +135,7 @@ export const colabsList = {
   typographyButtonList: {
     color: "#69EAE2",
     fontFamily: "Nunito",
-    fontSize: "14px",
+    fontSize: { lg: "14px", md: "14px", sm: "12px", xs: "12px" },
     fontStyle: "normal",
     fontWeight: 400,
     lineHeight: "normal",
@@ -143,7 +143,15 @@ export const colabsList = {
   typographyName: {
     color: "#A0AEC0",
     fontFamily: "Nunito",
-    fontSize: "16px",
+    fontSize: { lg: "16px", md: "16px", sm: "15px", xs: "15px" },
+    fontStyle: "normal",
+    fontWeight: 500,
+    lineHeight: "normal",
+  },
+  typographyStatus: {
+    color: "#69EAE2",
+    fontFamily: "Nunito",
+    fontSize: { lg: "16px", md: "16px", sm: "13px", xs: "13px" },
     fontStyle: "normal",
     fontWeight: 500,
     lineHeight: "normal",

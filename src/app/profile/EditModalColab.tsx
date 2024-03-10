@@ -70,7 +70,6 @@ const MenuProps = {
 
 export default function EditModalColab(props: any) {
   const { data, setColabData } = props;
-  console.log(data);
   const [open, setOpen] = React.useState(false);
   const [upload, setUpload] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
