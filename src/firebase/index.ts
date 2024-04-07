@@ -49,7 +49,6 @@ export const user: () => User = () => {
 //     window.location.href = "/inventory/productos";
 //   }
 // };
-
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Your web app's Firebase configuration
