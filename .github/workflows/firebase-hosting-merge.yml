@@ -18,7 +18,7 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
         with:
-          token: "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"
+          token: ${{secrets.PERSONAL_TOKEN_GITHUB}}
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
