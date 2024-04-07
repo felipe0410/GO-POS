@@ -40,6 +40,7 @@ export const user: () => User = () => {
   }
   return { decodedString };
 };
+
 // export const rediret = (pathname: string) => {
 //   if (user().decodedString?.length === 0 && pathname !== "/sign_in") {
 //     window.location.href = "/sign_in";
