@@ -38,7 +38,7 @@ jobs:
       - name: Deploy
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          repoToken: "${{secrets.PERSONAL_TOKEN_GITHUB}}"
           firebaseServiceAccount: "${{ secrets.HOSTING_DEPLOYMENT }}"
           expires: 10d
           projectId: go-pos-add98
