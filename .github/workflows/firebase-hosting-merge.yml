@@ -3,6 +3,7 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - main
+      
 env:
   NEXT_PUBLIC_FIREBASE_APIKEY: ${{secrets.NEXT_PUBLIC_FIREBASE_APIKEY}}
   NEXT_PUBLIC_FIREBASE_AUTHDOMAIN: ${{secrets.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN}}
