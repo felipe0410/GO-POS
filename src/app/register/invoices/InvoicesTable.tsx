@@ -11,6 +11,7 @@ import { Box, IconButton } from "@mui/material";
 import FacturaModal from "./FacturaModal";
 import EditInvoice from "./EditInvoice";
 import DeleteFacturaModal from "./DeleteFacturaModal";
+import ModalInvoiceLetter from "./modalInvoiceLetter";
 
 interface Column {
   id: "iconos" | "clientName" | "invoice" | "date" | "hora" | "estado";
@@ -144,6 +145,7 @@ export default function InvoicesTable({
                             </>
                           )}
                           <FacturaModal data={row} />
+                          <ModalInvoiceLetter data={row} /> 
                         </Box>
                       </TableCell>
                       <TableCell
