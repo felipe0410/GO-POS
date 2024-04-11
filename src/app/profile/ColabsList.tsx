@@ -31,7 +31,7 @@ const StyledChipStatus = styled(Chip)(
       `
 );
 
-const ColabsList = ({ data }: { data: any }) => {
+const ColabsList = ({ data, isAdmin }: { data: any; isAdmin: boolean }) => {
   const [colabData, setColabData] = useState({
     uid: "",
     name: "",
@@ -71,7 +71,7 @@ const ColabsList = ({ data }: { data: any }) => {
       <Box sx={{ width: "20%" }}>
         {colabData.img ? (
           <img
-            className='responsive-image'
+            className="responsive-image"
             alt={`img from colab ${colabData.name}`}
             src={colabData.img}
             style={{
@@ -79,11 +79,11 @@ const ColabsList = ({ data }: { data: any }) => {
             }}
           />
         ) : (
-          <div className='responsive-div'>
+          <div className="responsive-div">
             <img
               alt={`img from colab ${colabData.name}`}
-              src='/images/noPerson.png'
-              className='responsive-no-img'
+              src="/images/noPerson.png"
+              className="responsive-no-img"
               style={{
                 borderRadius: "50%",
               }}
@@ -115,7 +115,7 @@ const ColabsList = ({ data }: { data: any }) => {
                 boxShadow:
                   "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
               }}
-              variant='outlined'
+              variant="outlined"
               label={getStatusLabel(colabData.status)}
             />
           </Box>
@@ -149,7 +149,7 @@ const ColabsList = ({ data }: { data: any }) => {
                 height: "20px",
               }}
               key={index * 123}
-              variant='outlined'
+              variant="outlined"
               label={job.toUpperCase()}
             />
           ))}
@@ -165,7 +165,7 @@ const ColabsList = ({ data }: { data: any }) => {
       <Box
         sx={{
           width: "10%",
-          display: "flex",
+          display: isAdmin ? "flex" : "none",
           flexDirection: "row",
           justifyContent: "space-evenly",
           marginTop: "0.5rem",

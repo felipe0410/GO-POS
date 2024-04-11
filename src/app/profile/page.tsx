@@ -27,6 +27,7 @@ import ImgInput from "@/components/inputIMG";
 import {
   getAllColabsData,
   getEstablishmentData,
+  getEstablishmentDataLoggin,
   updateEstablishmentsData,
 } from "@/firebase";
 import { SnackbarProvider } from "notistack";
@@ -67,6 +68,13 @@ const Page = () => {
   const [addColabs, setAddColabs] = useState<boolean>(false);
   const [imageBase64, setImageBase64] = useState("");
   const userData = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
+  const dataUser = async () => {
+    const establishmentData = await getEstablishmentDataLoggin(
+      atob(userData.uid)
+    );
+    return establishmentData;
+  };
+
   const user = atob(localStorage?.getItem("user") ?? "");
   const inputOnChange = (field: string, value: string) => {
     setData({ ...data, [field]: value });
@@ -102,11 +110,25 @@ const Page = () => {
 
   useEffect(() => {
     const dataEstablesimente = async () => {
-      // getEstablishmentDataLoggin()
       const data: any = await getEstablishmentData();
-      if (data !== null) {
-        setData(data);
-      }
+      dataUser()
+        .then((userData: any) => {
+          if (userData.mail.length > 0) {
+            setData({
+              name: userData.name,
+              direction: "centro",
+              phone: "30000",
+              rol: userData.status,
+              email: userData.mail,
+            });
+          } else if (data !== null) {
+            setData(data);
+          }
+        })
+        .catch((error) => {
+          setData(data);
+          console.error("Error al obtener los datos del usuario:", error);
+        });
     };
     dataEstablesimente();
   }, []);
@@ -134,11 +156,10 @@ const Page = () => {
       });
     };
   }, []);
-
   return (
     <>
       <SnackbarProvider />
-      <Header title='Perfil Personal' />
+      <Header title="Perfil Personal" />
       <Box sx={container}>
         <Box
           sx={{ width: { lg: "35%", md: "35%", sm: "95%", xs: "95%" } }}
@@ -163,7 +184,7 @@ const Page = () => {
                 folderSaved={user.length > 0 ? user : "images"}
                 imageBase64={imageBase64}
                 setImageBase64={setImageBase64}
-                border='50%'
+                border="50%"
               />
             </Box>
             <Box
@@ -186,7 +207,7 @@ const Page = () => {
 
                 return (
                   <React.Fragment key={index * 123}>
-                    <FormControl sx={style} variant='outlined'>
+                    <FormControl sx={style} variant="outlined">
                       <Typography sx={styleTypography}>{input.name}</Typography>
                       {editOn ? (
                         <OutlinedInput
@@ -305,7 +326,10 @@ const Page = () => {
               ) : colabsData.length > 0 ? (
                 <>
                   <Box sx={{ textAlign: "start" }}>
-                    <Button onClick={handleColabs}>
+                    <Button
+                      sx={{ display: data.rol == "admin" ? "block" : "none" }}
+                      onClick={handleColabs}
+                    >
                       <Typography sx={colabsList.typographyButtonList}>
                         Agregar Colaboradores
                       </Typography>
@@ -354,7 +378,11 @@ const Page = () => {
                   </Box>
                   <Box sx={{ maxHeight: "438px", overflowY: "auto" }}>
                     {colabsData.map((collaborator) => (
-                      <ColabsList key={collaborator.uid} data={collaborator} />
+                      <ColabsList
+                        key={collaborator.uid}
+                        data={collaborator}
+                        isAdmin={data.rol == "admin"}
+                      />
                     ))}
                   </Box>
                 </>

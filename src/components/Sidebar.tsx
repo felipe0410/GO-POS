@@ -42,8 +42,11 @@ export default function Sidebar({
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
-  const permissions = dataUser?.status === "admin" ? ["Vender", "Inventario", "Caja"] : dataUser?.jobs ?? []
+  const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
+  const permissions =
+    dataUser?.status === "admin"
+      ? ["Vender", "Inventario", "Caja"]
+      : dataUser?.jobs ?? [];
 
   const sections = [
     {
@@ -52,12 +55,12 @@ export default function Sidebar({
       icon2: "/images/homeSelected.svg",
       id: "/home",
     },
-    // {
-    //   section: "PERFIL",
-    //   icon: "/images/profile.svg",
-    //   icon2: "/images/profileSelected.svg",
-    //   id: "/profile",
-    // },
+    {
+      section: "PERFIL",
+      icon: "/images/profile.svg",
+      icon2: "/images/profileSelected.svg",
+      id: "/profile",
+    },
     {
       section: "VENDER",
       icon: "/images/vender.svg",
@@ -119,25 +122,31 @@ export default function Sidebar({
   ];
 
   const permissionMap: any = {
-    'Vender': ['/vender'],
-    'Inventario': ['/inventory/productos', '/inventory/agregarProductos'],
-    'Caja': ['/register/invoices', '/register/dashboard'],
+    Vender: ["/vender"],
+    Inventario: ["/inventory/productos", "/inventory/agregarProductos"],
+    Caja: ["/register/invoices", "/register/dashboard"],
   };
 
   const filterSectionsByPermissions = (sections: any, permissions: any) => {
     return sections.filter((section: any) => {
-      if (section.section === 'INICIO' || section.section === 'PERFIL') {
+      if (section.section === "INICIO" || section.section === "PERFIL") {
         return true;
       }
       for (const permission of permissions) {
-        if (permissionMap[permission] && permissionMap[permission].includes(section.id)) {
+        if (
+          permissionMap[permission] &&
+          permissionMap[permission].includes(section.id)
+        ) {
           return true;
         }
       }
       if (section.submenus) {
         section.submenus = section.submenus.filter((submenu: any) => {
           for (const permission of permissions) {
-            if (permissionMap[permission] && permissionMap[permission].includes(submenu.id)) {
+            if (
+              permissionMap[permission] &&
+              permissionMap[permission].includes(submenu.id)
+            ) {
               return true;
             }
           }
@@ -150,14 +159,23 @@ export default function Sidebar({
     });
   };
 
-  const sectionsWithDefaultSubsections = sections.map(section => {
-    if (section.section === 'CAJA' && section.submenus && dataUser?.status !== "admin") {
-      section.submenus = section.submenus.filter(submenu => submenu.section === 'FACTURAS');
+  const sectionsWithDefaultSubsections = sections.map((section) => {
+    if (
+      section.section === "CAJA" &&
+      section.submenus &&
+      dataUser?.status !== "admin"
+    ) {
+      section.submenus = section.submenus.filter(
+        (submenu) => submenu.section === "FACTURAS"
+      );
     }
     return section;
   });
 
-  const filteredSections = filterSectionsByPermissions(sectionsWithDefaultSubsections, permissions);
+  const filteredSections = filterSectionsByPermissions(
+    sectionsWithDefaultSubsections,
+    permissions
+  );
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -197,9 +215,9 @@ export default function Sidebar({
         <MenuRoundedIcon sx={{ color: "#69EAE2", fontSize: "35px" }} />
       </Button>
       <SwipeableDrawer
-        id='Drawer'
+        id="Drawer"
         variant={matchesSM ? "persistent" : "permanent"}
-        anchor='left'
+        anchor="left"
         open={open}
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
@@ -208,7 +226,7 @@ export default function Sidebar({
             background: "transparent",
             border: "none",
             width: !open ? "100px" : "auto",
-            minWidth: open ? "160px" : 'auto'
+            minWidth: open ? "160px" : "auto",
           },
         }}
       >
@@ -221,7 +239,7 @@ export default function Sidebar({
         >
           <Box>
             <Typography
-              align='center'
+              align="center"
               sx={{
                 animation: "myAnim 2s ease 0s 1 normal forwards",
                 color: "#FFF",
@@ -236,8 +254,8 @@ export default function Sidebar({
               GO
             </Typography>
           </Box>
-          <Box id='container_section'>
-            {(filteredSections).map((section: any) => (
+          <Box id="container_section">
+            {filteredSections.map((section: any) => (
               <React.Fragment key={section.id}>
                 <Box
                   sx={{
@@ -246,14 +264,14 @@ export default function Sidebar({
                       selectedSection === section.id
                         ? "#252836"
                         : section?.submenus
-                          ? selectedSection?.includes(slice(section.id))
-                            ? "#252836"
-                            : "transparent"
-                          : "transparent",
+                        ? selectedSection?.includes(slice(section.id))
+                          ? "#252836"
+                          : "transparent"
+                        : "transparent",
                     marginLeft: "12px",
                     padding: "8px",
                     borderRadius: "12px 0 0 12px",
-                    '&:hover': {
+                    "&:hover": {
                       background: "#69eae214",
                     },
                   }}
@@ -327,7 +345,7 @@ export default function Sidebar({
                     section.submenus &&
                     selectedSection?.includes(slice(section.id)) && (
                       <List
-                        id='subCategory'
+                        id="subCategory"
                         sx={{
                           marginLeft: "15px",
                         }}
@@ -352,7 +370,7 @@ export default function Sidebar({
                                   lineHeight: "normal",
                                 }}
                                 sx={{
-                                  '&:hover': {
+                                  "&:hover": {
                                     opacity: "80%",
                                   },
                                   opacity: open ? 1 : 0,
