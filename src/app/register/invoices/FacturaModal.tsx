@@ -65,7 +65,7 @@ const FacturaModal = ({ data }: { data: any }) => {
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{
-          backdrop: {
+          backdrop: { 
             timeout: 500,
           },
         }}

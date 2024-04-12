@@ -133,7 +133,7 @@ export const facturaStyles = {
   typographyACC: {
     width: "70px",
     color: "#000",
-    textAlign: "center",
+    textAlign: "right",
     fontFamily: "Nunito",
     fontSize: "0.8rem",
     fontStyle: "normal",
