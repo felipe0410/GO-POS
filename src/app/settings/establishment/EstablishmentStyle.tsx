@@ -3,7 +3,7 @@ export const cards = {
   background:
     "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, rgba(24, 24, 42, 0.93) 61.61%, #1F1D2B 91.2%)",
   backdropFilter: "blur(60px)",
-  minHeight: "34.75rem",
+  minHeight: "31.75rem",
 };
 
 export const container = {
@@ -58,7 +58,7 @@ export const typographyProfile = {
 export const typographyButton = {
   color: "#69EAE2",
   fontFamily: "Nunito",
-  fontSize: "1rem",
+  fontSize:{ sm: "1rem", xs: '0.6rem' },
   fontStyle: "normal",
   fontWeight: 700,
   lineHeight: "normal",
