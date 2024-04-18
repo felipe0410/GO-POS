@@ -264,7 +264,7 @@ const Page = () => {
                       borderRadius: "0.625rem",                              
                       marginTop: "10px",                      
                     }}
-                    style={{position: 'absolute', top: 0 , right: 12}}
+                    style={{position: 'absolute', top: 1 , right: 12}}
                   >
                     <Typography sx={typographyButton} style={{textDecoration: '0.5px solid underline'}} >Editar Datos</Typography>
                   </Button>
