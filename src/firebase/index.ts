@@ -946,3 +946,56 @@ export const updateColabData = async (
     return false;
   }
 };
+
+
+export const saveSettings = async (settingsData: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    // Asegurarse de referenciar un documento específico en la colección 'settings'
+    const settingsCollectionRef = collection(establecimientoDocRef, "settings");
+    const settingsDocRef = doc(settingsCollectionRef, "GeneralSettings"); // 'uniqueSettingsId' debería ser un ID constante o generado
+
+    await setDoc(settingsDocRef, {
+      ...settingsData,
+      user: `${user().decodedString}`
+    }, { merge: true });
+    console.log('Configuración guardada con éxito!');
+    return true;
+  } catch (error) {
+    console.error("Error al guardar configuración: ", error);
+    return false;
+  }
+};
+
+export const fetchAndStoreSettings = async () => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const settingsCollectionRef = collection(establecimientoDocRef, "settings");
+    const settingsDocRef = doc(settingsCollectionRef, "GeneralSettings"); // Asumiendo un ID constante
+
+    const docSnap = await getDoc(settingsDocRef);
+    if (docSnap.exists()) {
+      const settingsData = docSnap.data();
+      localStorage.setItem('settingsData', JSON.stringify(settingsData));
+      console.log('Configuración almacenada en Local Storage con éxito!');
+      return true;
+    } else {
+      console.log('Configuración no encontrada, creando con valores predeterminados...');
+      const defaultSettings = { numberOfDigitsToGenerateCode: 8 };
+      await saveSettings(defaultSettings);
+      localStorage.setItem('settingsData', JSON.stringify(defaultSettings));
+      return true;
+    }
+  } catch (error) {
+    console.error("Error al recuperar o crear la configuración: ", error);
+    return false;
+  }
+};

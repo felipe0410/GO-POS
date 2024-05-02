@@ -26,6 +26,7 @@ import {
 import Calculatorr from "./modalCalculator";
 import ImgInput from "./inputIMG";
 import Revenue from "@/app/inventory/agregarProductos/revenue";
+import GenerateBarCode from "@/app/inventory/agregarProductos/modal/Barcode";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -203,6 +204,34 @@ export default function NewProduct() {
     valueMeasure?.length,
   ]);
 
+  const getNum = () => {
+    const settingsData = localStorage.getItem("settingsData");
+    if (settingsData) {
+      const settings = JSON.parse(settingsData);
+      if (settings.numberOfDigitsToGenerateCode) {
+        return settings.numberOfDigitsToGenerateCode;
+      }
+    }
+    return null;
+  };
+
+  const generateCode = async (): Promise<string> => {
+    const numDigitos: number = await getNum();
+    if (numDigitos < 1) {
+      throw new Error("El número de dígitos debe ser al menos 1");
+    }
+    let numeroAleatorio = "";
+    numeroAleatorio += Math.floor(Math.random() * 9) + 1;
+    for (let i = 1; i < numDigitos; i++) {
+      numeroAleatorio += Math.floor(Math.random() * 10);
+    }
+    setData((prevData) => ({
+      ...prevData,
+      barCode: numeroAleatorio,
+    }));
+    return numeroAleatorio;
+  };
+
   return (
     <>
       <SnackbarProvider />
@@ -213,7 +242,7 @@ export default function NewProduct() {
           alignItems: "center",
           justifyContent: "center",
         }}
-        id='container'
+        id="container"
       >
         <Paper
           style={{
@@ -224,7 +253,7 @@ export default function NewProduct() {
         >
           <Box sx={{ padding: { xs: "15px", sm: "2rem 3.8rem 2rem 3.4rem" } }}>
             <Box
-              id='container-inputs'
+              id="container-inputs"
               sx={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -256,7 +285,7 @@ export default function NewProduct() {
                 const categorySelect = (
                   <Box>
                     <Autocomplete
-                      placeholder='Categoria'
+                      placeholder="Categoria"
                       style={{
                         width: "100%",
                         borderRadius: "0.625rem",
@@ -276,8 +305,8 @@ export default function NewProduct() {
                       options={category}
                       renderInput={(params) => (
                         <TextField
-                          placeholder='Categoria'
-                          variant='standard'
+                          placeholder="Categoria"
+                          variant="standard"
                           sx={{ filter: "invert(1)", paddingLeft: "15px" }}
                           style={{ color: "red", filter: "invert(1)" }}
                           {...params}
@@ -290,7 +319,7 @@ export default function NewProduct() {
                   <Box>
                     <Box>
                       <Autocomplete
-                        placeholder='Unidades de medida'
+                        placeholder="Unidades de medida"
                         style={{
                           width: "100%",
                           borderRadius: "0.625rem",
@@ -310,8 +339,8 @@ export default function NewProduct() {
                         options={measure}
                         renderInput={(params) => (
                           <TextField
-                            placeholder='Unidades de medida'
-                            variant='standard'
+                            placeholder="Unidades de medida"
+                            variant="standard"
                             sx={{ filter: "invert(1)", paddingLeft: "15px" }}
                             style={{ color: "red", filter: "invert(1)" }}
                             {...params}
@@ -330,7 +359,7 @@ export default function NewProduct() {
                       }));
                     }}
                     value={data.price}
-                    prefix='$ '
+                    prefix="$ "
                     thousandSeparator
                     customInput={OutlinedInput}
                     style={{ color: "#FFF" }}
@@ -352,7 +381,7 @@ export default function NewProduct() {
                       }));
                     }}
                     value={data.purchasePrice}
-                    prefix='$ '
+                    prefix="$ "
                     thousandSeparator
                     customInput={OutlinedInput}
                     style={{ color: "#FFF" }}
@@ -368,7 +397,7 @@ export default function NewProduct() {
                 const amountInput = (
                   <>
                     <OutlinedInput
-                      id='cantidad'
+                      id="cantidad"
                       value={data["cantidad"]}
                       onChange={(e) =>
                         inputOnChange("cantidad", e.target.value)
@@ -442,9 +471,15 @@ export default function NewProduct() {
                   <OutlinedInput
                     value={data["barCode"]}
                     endAdornment={
-                      <InputAdornment position='end'>
+                      <InputAdornment position="end">
                         <IconButton sx={{ paddingRight: "0px" }}>
-                          <Box component={"img"} src={"/images/scan.svg"} />
+                          <Box
+                            component={"img"}
+                            src={"/images/scan.svg"}
+                            onClick={() => {
+                              generateCode();
+                            }}
+                          />
                         </IconButton>
                       </InputAdornment>
                     }
@@ -466,15 +501,26 @@ export default function NewProduct() {
 
                 return (
                   <React.Fragment key={index * 123}>
-                    <FormControl sx={style} variant='outlined'>
-                      <Typography sx={styleTypography}>{input.name}</Typography>
+                    <FormControl sx={style} variant="outlined">
+                      <Typography
+                        sx={{
+                          ...styleTypography,
+                          display: "flex",
+                          alignItems: "center",
+                        }}
+                      >
+                        {input.name}
+                        <Box display={index == 0 ? "block" : "none"}>
+                          <GenerateBarCode />
+                        </Box>
+                      </Typography>
                       {input.type === "measurement" ? (
                         measurementSelect
                       ) : input.type === "category" ? (
                         categorySelect
                       ) : input.type === "img" ? (
                         <Box
-                          id='contianer img'
+                          id="contianer img"
                           sx={{
                             width: { xs: "200%", sm: "150%" },
                             height: "200px",
@@ -513,8 +559,9 @@ export default function NewProduct() {
                                   : "";
                                 return {
                                   ...prevData,
-                                  description: `${descriptionPrefix}${prevData.description.split(":")[1] || ""
-                                    }`,
+                                  description: `${descriptionPrefix}${
+                                    prevData.description.split(":")[1] || ""
+                                  }`,
                                 };
                               });
                             }}
