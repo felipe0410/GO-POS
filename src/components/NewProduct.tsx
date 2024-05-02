@@ -25,7 +25,7 @@ import {
 } from "@/firebase";
 import Calculatorr from "./modalCalculator";
 import ImgInput from "./inputIMG";
-import Revenue from "@/app/inventory/agregarProductos/revenue";
+import Revenue from "@/app/inventory/agregarProductos/modal/revenue";
 import GenerateBarCode from "@/app/inventory/agregarProductos/modal/Barcode";
 
 const Input = React.forwardRef(function CustomInput(
