@@ -1,5 +1,6 @@
 "use client"
-import { createContext, useState, ReactNode } from 'react';
+import { fetchAndStoreSettings } from '@/firebase';
+import { createContext, useState, ReactNode, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
 
 type interfaceGlobalContex = {
@@ -27,6 +28,10 @@ export const GlobalContextProvider: React.FC<GlobalContextProviderProps> = ({ ch
         await removeCookie('user', { path: '/' })
         window.location.href = "/sign_in"
     }
+    useEffect(() => {
+        fetchAndStoreSettings()
+    }, [])
+    
     return (
         <GlobalContext.Provider value={{ isOpen, setIsOpen, step, setStep, setCookie, removeCookieUser, cookies, updateCookies }}>
             {children}
