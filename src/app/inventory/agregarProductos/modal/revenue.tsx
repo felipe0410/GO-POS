@@ -32,12 +32,12 @@ const ModalContent = styled(Paper)(
     background-color: #1f1d2b;
     border-radius: 0.625rem;
     padding: ${!theme.breakpoints.down("sm") ? "35px" : "25px"};
-    width: ${!theme.breakpoints.down("sm") ? "52.125rem" : "30rem"};
+    width: ${!theme.breakpoints.down("sm") ? "52.125rem" : "22rem"};
     height: 20rem;
   `
 );
 
-export default function GenerateBarCode() {
+export default function Revenue() {
   const [open, setOpen] = React.useState(false);
   const [num, setNum] = React.useState(8);
   const handleClose = () => setOpen(false);
@@ -92,7 +92,7 @@ export default function GenerateBarCode() {
                 lineHeight: "32.74px",
               }}
             >
-              Ajustes de la generacion automatica de codigo de barras
+              ¿Cual quieres que sea tu ganancia?
             </Typography>
             <Typography
               sx={{
@@ -105,26 +105,13 @@ export default function GenerateBarCode() {
                 marginY: { xs: "12px", sm: "20px" },
               }}
             >
-              El programa genera codigos de barras automaticos de 8 digitos,
-              pero puedes cambiarlo.
-            </Typography>
-            <Typography
-              sx={{
-                fontFamily: "Nunito",
-                fontSize: { xs: "12px", sm: "16px" },
-                fontWeight: 400,
-                lineHeight: "21.82px",
-                textAlign: "center",
-                color: "#69EAE2",
-              }}
-            >
-              ¿Cuantos digitos te gustaria que tuviera tu codigo de barras?
+              Define el porcentaje o valor en pesos  de tu ganancia.
             </Typography>
           </Box>
-
           <InputBase
             type="number"
             onChange={(e) => setNum(Number(e.target.value))}
+            endAdornment={<CustomizedSwitches />}
             value={num}
             sx={{
               background: "#2C3248",
@@ -132,7 +119,7 @@ export default function GenerateBarCode() {
               color: "#fff",
               boxShadow: "0px 4px 4px 0px #00000040",
               padding: "5px 20px",
-              width: "20%",
+              width: "50%",
               margin: "10px auto",
               textAlignLast: "center",
             }}
