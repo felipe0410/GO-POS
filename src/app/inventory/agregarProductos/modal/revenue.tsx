@@ -10,6 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useEffect } from "react";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import CustomizedSwitches from "./swith";
+import { NumericFormat } from "react-number-format";
 
 const Modal = styled(BaseModal)`
   position: fixed;
@@ -39,28 +40,78 @@ const ModalContent = styled(Paper)(
 
 export default function Revenue() {
   const [open, setOpen] = React.useState(false);
+  const [revenue, setRevenue] = React.useState({
+    prefix: "",
+    value: "",
+  });
+  console.log("%crevenue", "color:green", revenue);
   const [num, setNum] = React.useState(8);
+  const [isActive, setIsActive] = React.useState(false);
   const handleClose = () => setOpen(false);
 
   const handleCancel = () => {
     handleClose();
+  };
+  console.log("%crevenue", "color.red", revenue);
+
+  const handleOnChangePrice = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setRevenue(() => {
+      const cleanString = event.target.value.replace(/[\$,\s%]/g, "");
+      const numberValue = parseFloat(cleanString);
+      const prefix = !isActive ? "%" : "$";
+      return {
+        prefix,
+        value: `${numberValue}`,
+      };
+    });
   };
 
   useEffect(() => {
     const settingsData = localStorage.getItem("settingsData");
     if (settingsData) {
       const settings = JSON.parse(settingsData);
-      if (settings.numberOfDigitsToGenerateCode) {
-        setNum(settings.numberOfDigitsToGenerateCode);
+      if (settings.revenue) {
+        setIsActive(settings?.revenue?.prefix === "%");
+        setRevenue({
+          prefix: settings?.revenue?.prefix ?? "",
+          value: `${settings?.revenue?.value ?? ""}`,
+        });
       }
     }
   }, []);
 
+  useEffect(() => {
+    setRevenue({ ...revenue, prefix: !isActive ? "%" : "$" });
+  }, [isActive]);
+
   return (
     <Box>
-      <IconButton sx={{ padding: "8px 3px" }} onClick={() => setOpen(true)}>
-        <SettingsIcon sx={{ color: "#69EAE2" }} />
-      </IconButton>
+      <Button
+        onClick={() => setOpen(true)}
+        sx={{
+          width: "100%",
+          height: "2.5rem",
+          borderRadius: "0.625rem",
+          boxShadow:
+            "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+          background: "#69EAE2",
+          marginTop: "10px",
+        }}
+      >
+        <Typography
+          sx={{
+            color: "#1F1D2B",
+            textAlign: "center",
+            fontFamily: "Nunito",
+            fontSize: { xs: "0.58rem", sm: "0.875rem" },
+            fontStyle: "normal",
+            fontWeight: 700,
+            lineHeight: "normal",
+          }}
+        >
+          CALCULAR GANANCIA
+        </Typography>
+      </Button>
       <Modal open={open} onClose={handleClose}>
         <ModalContent
           sx={{
@@ -105,37 +156,48 @@ export default function Revenue() {
                 marginY: { xs: "12px", sm: "20px" },
               }}
             >
-              Define el porcentaje o valor en pesos  de tu ganancia.
+              Define el porcentaje o valor en pesos de tu ganancia.
             </Typography>
           </Box>
-          <InputBase
-            type="number"
-            onChange={(e) => setNum(Number(e.target.value))}
-            endAdornment={<CustomizedSwitches />}
-            value={num}
-            sx={{
-              background: "#2C3248",
-              borderRadius: "10px",
-              color: "#fff",
-              boxShadow: "0px 4px 4px 0px #00000040",
-              padding: "5px 20px",
-              width: "50%",
-              margin: "10px auto",
-              textAlignLast: "center",
-            }}
-          />
-
+          <>
+            <NumericFormat
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                handleOnChangePrice(event)
+              }
+              endAdornment={
+                <CustomizedSwitches
+                  setIsActive={setIsActive}
+                  isActive={isActive}
+                />
+              }
+              value={revenue.value ?? 0}
+              prefix={!isActive ? "% " : "$ "}
+              placeholder="Precio..."
+              thousandSeparator={isActive}
+              customInput={InputBase}
+              style={{
+                background: "#2C3248",
+                borderRadius: "10px",
+                color: "#fff",
+                boxShadow: "0px 4px 4px 0px #00000040",
+                padding: "5px 20px",
+                width: "80%",
+                margin: "10px auto",
+                textAlignLast: "center",
+              }}
+            />
+          </>
           <Box sx={{ display: "flex", justifyContent: "space-evenly" }}>
             <Button
               onClick={() => {
                 try {
-                  saveSettings({ numberOfDigitsToGenerateCode: num });
+                  saveSettings({ revenue });
                   const existingSettings = JSON.parse(
                     localStorage.getItem("settingsData") || "{}"
                   );
                   const updatedSettings = {
                     ...existingSettings,
-                    ...{ numberOfDigitsToGenerateCode: num },
+                    ...{ revenue },
                   };
                   localStorage.setItem(
                     "settingsData",

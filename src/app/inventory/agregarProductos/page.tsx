@@ -8,7 +8,7 @@ import Header from "@/components/Header";
 const Page = () => {
   return (
     <>
-      <Header title='INVENTARIO' />
+      <Header title="INVENTARIO" />
       <Box sx={{ marginTop: "2rem" }}>
         <Box>
           <Typography
@@ -36,6 +36,9 @@ const Page = () => {
           >
             Completa los campos para añadir nuevos productos a tu inventario.
           </Typography>
+          <Box>
+            <Typography sx={{}}>Ganancia configurada: 30.000 $</Typography>
+          </Box>
         </Box>
         <Box
           sx={{
@@ -58,7 +61,11 @@ const Page = () => {
           <Box sx={{ width: { sm: "65%" } }}>
             <NewProduct />
           </Box>
-          <Box id='NewProductSidebar' display={{ xs: "none", sm: "block" }} sx={{ width: "35%", height: '100%' }}>
+          <Box
+            id="NewProductSidebar"
+            display={{ xs: "none", sm: "block" }}
+            sx={{ width: "35%", height: "100%" }}
+          >
             <NewProductSidebar />
           </Box>
         </Box>

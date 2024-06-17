@@ -79,7 +79,7 @@ export default function NewProduct() {
     description: "",
     image: "",
     cantidad: "",
-    purchasePrice: "",
+    purchasePrice: "0",
   };
   const [data, setData] = useState({
     productName: "",
@@ -90,13 +90,17 @@ export default function NewProduct() {
     description: "",
     image: "",
     cantidad: "",
-    purchasePrice: "",
+    purchasePrice: "0",
   });
   const [imageBase64, setImageBase64] = useState("");
   const [category, setCategory] = useState<any>([""]);
   const [measure, setMeasure] = useState<any>([""]);
   const [inputValue, setInputValue] = React.useState("");
   const [inputValue2, setInputValue2] = React.useState("");
+  const [revenue, setRevenue] = React.useState({
+    prefix: "",
+    value: "",
+  });
   const [valueMeasure, setValueMeasure] = React.useState<string | null>(
     measure[0]
   );
@@ -231,6 +235,24 @@ export default function NewProduct() {
     }));
     return numeroAleatorio;
   };
+
+  const getDataRevenue = () => {
+    const settingsData = localStorage.getItem("settingsData");
+    if (settingsData) {
+      const settings = JSON.parse(settingsData);
+      if (settings.revenue) {
+        setRevenue({
+          prefix: settings?.revenue?.prefix ?? "",
+          value: `${settings?.revenue?.value ?? ""}`,
+        });
+      }
+      return settings;
+    }
+  };
+
+  useEffect(() => {
+    getDataRevenue();
+  }, []);
 
   return (
     <>
@@ -375,9 +397,24 @@ export default function NewProduct() {
                 const purchasePriceInput = (
                   <NumericFormat
                     onChange={(e: any) => {
+                      const revenuee = getDataRevenue();
+                      console.log("%crevenuee::>:", "color:red", revenuee);
+                      const cleanString = e.target.value.replace(
+                        /[\$,\s%]/g,
+                        ""
+                      );
+                      const numberValue = parseFloat(cleanString);
+                      const value =
+                        revenuee.revenue.value.length > 0
+                          ? revenuee.revenue.prefix === "$"
+                            ? parseFloat(revenuee.revenue.value) + numberValue
+                            : (1 + parseFloat(revenuee.revenue.value) * 0.01) *
+                              numberValue
+                          : data.price;
                       setData((prevData) => ({
                         ...prevData,
                         purchasePrice: e.target.value,
+                        price: `${value}`,
                       }));
                     }}
                     value={data.purchasePrice}
@@ -451,8 +488,8 @@ export default function NewProduct() {
                         </Typography>
                       </Button>
                       <Box sx={{ width: "45%" }}>
-                        {/* <Revenue /> */}
-                        <Calculatorr />
+                        <Revenue />
+                        {/* <Calculatorr /> */}
                       </Box>
                     </Box>
                   </>

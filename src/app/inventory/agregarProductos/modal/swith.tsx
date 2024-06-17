@@ -57,7 +57,7 @@ const IOSSwitch = styled((props) => (
     width: 27,
     height: 20,
     borderRadius: "10px",
-    marginTop:'1px'
+    marginTop: "1px",
   },
   "& .MuiSwitch-track": {
     borderRadius: 13,
@@ -69,8 +69,13 @@ const IOSSwitch = styled((props) => (
   },
 }));
 
-export default function CustomizedSwitches() {
-  const [isActive, setIsActive] = React.useState(false);
+export default function CustomizedSwitches({
+  setIsActive,
+  isActive,
+}: {
+  setIsActive: any;
+  isActive: any;
+}) {
   const handleChange = (
     event: any,
     checked: boolean | ((prevState: boolean) => boolean)
