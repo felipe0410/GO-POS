@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import Slider from "react-slick";
-import { Box, Typography, Paper, IconButton } from "@mui/material";
+import { Box, Typography, Paper } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getAllCategoriesData } from "@/firebase";
 
 interface CarouselCategoriasProps {
   onCategorySelect: (category: string) => void;
+  selectedCategory: string | null;
 }
 
 const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
   onCategorySelect,
+  selectedCategory,
 }) => {
   const [categories, setCategories] = useState<string[]>([]);
 
@@ -76,9 +78,10 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
                 sx={{
                   padding: "8px",
                   textAlign: "center",
-                  backgroundColor: "#69EAE2",
-                  color: "#1F1D2B",
-                  border: "1px solid #69EAE2",
+                  backgroundColor:
+                    selectedCategory === category ? "#69EAE2" : "#1F1D2B", // Cambiar color si está seleccionada
+                  color: selectedCategory === category ? "#1F1D2B" : "#fff",
+                  // border: "1px solid #69EAE2",
                   borderRadius: "5px",
                   display: "flex",
                   alignItems: "center",
@@ -86,8 +89,13 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
                   margin: "0 10px",
                   cursor: "pointer",
                   "&:hover": {
-                    backgroundColor: "#69EAE2",
-                    color: "#1F1D2B",
+                    backgroundColor: !(selectedCategory === category)
+                      ? "#69EAE2"
+                      : "#69eae247",
+                    color: !(selectedCategory === category)
+                      ? "#1F1D2B"
+                      : "#fff",
+                    opacity: "80%",
                   },
                 }}
               >

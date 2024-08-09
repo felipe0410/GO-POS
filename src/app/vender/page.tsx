@@ -24,30 +24,42 @@ const Page: any = () => {
   const [filter, setfilter] = useState<any>();
   const [selectedItems, setSelectedItems] = useState<any>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Nuevo estado para la categoría seleccionada
+
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const filteredData = async (event: any) => {
+  const filteredData = async (
+    event: any,
+    removeCategoryFilter: boolean = false
+  ) => {
     try {
-      let value2 = event;
-      value2 = value2.replace(/\s+/g, "");
+      let value2 = event.trim();
       value2 = value2.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       const resolvedData = await data;
+
+      if (removeCategoryFilter) {
+        setSelectedCategory(null);
+      }
+
+      const filterSearch: any = resolvedData?.filter((item) => {
+        if (searchTerm === "") {
+          if (!selectedCategory) {
+            return true;
+          }
+          return item.category === selectedCategory;
+        } else {
+          return Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(value2.toLowerCase())
+          );
+        }
+      });
+
+      setfilter(filterSearch);
+
       const foundProducts = resolvedData?.filter(
         (producto) => producto.barCode === value2
       );
-      const filterSearch: any = resolvedData?.filter((item) => {
-        if (searchTerm === "" && !selectedCategory) {
-          return true;
-        }
-        if (selectedCategory && item.category !== selectedCategory) {
-          return false;
-        }
-        return Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(value2.toLowerCase())
-        );
-      });
-      setfilter(filterSearch);
+
       if (foundProducts?.length === 1) {
         const cleanedPrice = Number(
           foundProducts[0].price.replace(/[$,]/g, "")
@@ -186,7 +198,12 @@ const Page: any = () => {
                 justifyContent: "space-between",
               }}
             >
-              <Box display={"flex"}>
+              <Box
+                display={"flex"}
+                sx={{
+                  width: "85%",
+                }}
+              >
                 <Paper
                   component="form"
                   onSubmit={(e: any) => {
@@ -249,7 +266,7 @@ const Page: any = () => {
                   margin: "0 10px",
                   cursor: "pointer",
                   fontWeight: 700,
-                  fontSize: "10px",
+                  fontSize: { xs: "8px", sm: "12px" },
                   "&:hover": {
                     backgroundColor: "#69EAE2",
                     color: "#1F1D2B",
@@ -280,7 +297,10 @@ const Page: any = () => {
               </Typography>
             </Box>
             <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
-              <CarouselCategorias onCategorySelect={handleCategorySelect} />
+              <CarouselCategorias
+                onCategorySelect={handleCategorySelect}
+                selectedCategory={selectedCategory}
+              />
               <VenderCards
                 filteredData={currentDataPage}
                 setSelectedItems={setSelectedItems}
