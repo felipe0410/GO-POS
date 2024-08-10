@@ -2,6 +2,7 @@
 import Header from "@/components/Header";
 import {
   Box,
+  Button,
   IconButton,
   InputBase,
   Pagination,
@@ -15,33 +16,54 @@ import React, { useEffect, useState } from "react";
 import { getAllProductsDataonSnapshot } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
+import CarouselCategorias from "@/components/CarouselCategorias";
 
 const Page: any = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
   const [selectedItems, setSelectedItems] = useState<any>([]);
-  const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.up('sm'));
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Nuevo estado para la categoría seleccionada
 
-  const filteredData = async (event: any) => {
+  const theme = useTheme();
+  const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const filteredData = async (
+    event: any,
+    removeCategoryFilter: boolean = false
+  ) => {
     try {
-      let value2 = event
-      value2 = value2.replace(/\s+/g, '');
+      let value2 = event.trim();
       value2 = value2.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       const resolvedData = await data;
-      const foundProducts = resolvedData?.filter((producto) => producto.barCode === value2);
+
+      if (removeCategoryFilter) {
+        setSelectedCategory(null);
+      }
+
       const filterSearch: any = resolvedData?.filter((item) => {
         if (searchTerm === "") {
-          return true;
+          if (!selectedCategory) {
+            return true;
+          }
+          return item.category === selectedCategory;
+        } else {
+          return Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(value2.toLowerCase())
+          );
         }
-        return Object.values(item).some((value) =>
-          String(value).toLowerCase().includes(value2.toLowerCase())
-        );
       });
+
       setfilter(filterSearch);
+
+      const foundProducts = resolvedData?.filter(
+        (producto) => producto.barCode === value2
+      );
+
       if (foundProducts?.length === 1) {
-        const cleanedPrice = Number(foundProducts[0].price.replace(/[$,]/g, ""));
+        const cleanedPrice = Number(
+          foundProducts[0].price.replace(/[$,]/g, "")
+        );
         const newItem = {
           ...foundProducts[0],
           acc: cleanedPrice,
@@ -61,14 +83,29 @@ const Page: any = () => {
     const updatedItems = (selectedItems || []).map((item: any) => {
       if (item.barCode === newItem.barCode) {
         productAlreadyInList = true;
-        return { ...item, cantidad: item.cantidad + 1, acc: item.acc + newItem.acc };
+        return {
+          ...item,
+          cantidad: item.cantidad + 1,
+          acc: item.acc + newItem.acc,
+        };
       }
       return item;
     });
-    if (!productAlreadyInList || !(selectedItems?.length)) {
+    if (!productAlreadyInList || !selectedItems?.length) {
       return [...updatedItems, newItem];
     }
     return updatedItems;
+  };
+
+  const handleCategorySelect = (category: string) => {
+    setSelectedCategory(category);
+    filteredData("");
+  };
+
+  const handleResetFilter = () => {
+    setSelectedCategory(null);
+    setSearchTerm("");
+    filteredData("");
   };
 
   const itemsPerPage = 12;
@@ -99,9 +136,9 @@ const Page: any = () => {
     }
   };
   useEffect(() => {
-    filteredData("")
+    filteredData("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, selectedCategory]);
   useEffect(() => {
     const getAllProducts = async () => {
       try {
@@ -114,26 +151,31 @@ const Page: any = () => {
   }, []);
   useEffect(() => {
     if (selectedItems?.length > 0) {
-      saveDataToLocalStorage('selectedItems', selectedItems)
+      saveDataToLocalStorage("selectedItems", selectedItems);
     }
-  }, [selectedItems])
+  }, [selectedItems]);
 
   useEffect(() => {
-    const localStorageSelectedItems = getDataFromLocalStorage('selectedItems')
+    const localStorageSelectedItems = getDataFromLocalStorage("selectedItems");
     if (localStorageSelectedItems?.length > 0) {
-      setSelectedItems(localStorageSelectedItems)
-
+      setSelectedItems(localStorageSelectedItems);
     }
-  }, [])
-
+  }, []);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "row", height: "80%", marginLeft: '10px' }}>
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        height: "80%",
+        marginLeft: "10px",
+      }}
+    >
       <Box
-        id='conainer_vender'
+        id="conainer_vender"
         sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
       >
-        <Header title='VENDER' />
+        <Header title="VENDER" />
         <Paper
           id={"paper"}
           sx={{ width: "95%", height: "100%", marginTop: "1rem" }}
@@ -146,57 +188,94 @@ const Page: any = () => {
           <Box
             sx={{
               padding: "40px 48px",
-              height: { xs: "90%", sm: '105%' },
+              height: { xs: "90%", sm: "105%" },
               textAlign: "-webkit-center",
             }}
           >
-            <Box display={"flex"}>
-              <Paper
-                component='form'
-                onSubmit={(e: any) => {
-                  e.preventDefault();
-                  filteredData(e.target[1].value);
-                }}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Box
+                display={"flex"}
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  color: "#fff",
-                  width: "25rem",
-                  height: "2rem",
-                  borderRadius: "0.3125rem",
-                  background: "#2C3248",
+                  width: "85%",
                 }}
               >
-                <IconButton
-                  type='button'
-                  sx={{ p: "10px" }}
-                  aria-label='search'
-                >
-                  <SearchIcon sx={{ color: "#fff" }} />
-                </IconButton>
-                <InputBase
+                <Paper
+                  component="form"
+                  onSubmit={(e: any) => {
+                    e.preventDefault();
+                    filteredData(e.target[1].value);
+                  }}
                   sx={{
-                    ml: 1,
-                    flex: 1,
+                    display: "flex",
+                    alignItems: "center",
                     color: "#fff",
-                  }}
-                  placeholder='Buscar'
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value)
-                  }}
-                />
-                <IconButton
-                  sx={{
-                    marginTop: "2px",
-                    paddingTop: "0px",
-                    marginBottom: "4px",
-                    paddingBottom: "0px",
+                    width: "25rem",
+                    height: "2rem",
+                    borderRadius: "0.3125rem",
+                    background: "#2C3248",
                   }}
                 >
-                  <Box component={"img"} src={"/images/scan.svg"} />
-                </IconButton>
-              </Paper>
+                  <IconButton
+                    type="button"
+                    sx={{ p: "10px" }}
+                    aria-label="search"
+                  >
+                    <SearchIcon sx={{ color: "#fff" }} />
+                  </IconButton>
+                  <InputBase
+                    sx={{
+                      ml: 1,
+                      flex: 1,
+                      color: "#fff",
+                    }}
+                    placeholder="Buscar"
+                    value={searchTerm}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value);
+                    }}
+                  />
+                  <IconButton
+                    sx={{
+                      marginTop: "2px",
+                      paddingTop: "0px",
+                      marginBottom: "4px",
+                      paddingBottom: "0px",
+                    }}
+                  >
+                    <Box component={"img"} src={"/images/scan.svg"} />
+                  </IconButton>
+                </Paper>
+              </Box>
+              <Button
+                onClick={handleResetFilter}
+                sx={{
+                  padding: "8px",
+                  textAlign: "center",
+                  backgroundColor: "#69EAE2",
+                  color: "#1F1D2B",
+                  border: "1px solid #69EAE2",
+                  borderRadius: "20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  margin: "0 10px",
+                  cursor: "pointer",
+                  fontWeight: 700,
+                  fontSize: { xs: "8px", sm: "12px" },
+                  "&:hover": {
+                    backgroundColor: "#69EAE2",
+                    color: "#1F1D2B",
+                    opacity: "70%",
+                  },
+                }}
+              >
+                RESTABLECER
+              </Button>
             </Box>
             <Box
               sx={{
@@ -218,13 +297,33 @@ const Page: any = () => {
               </Typography>
             </Box>
             <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
+              <CarouselCategorias
+                onCategorySelect={handleCategorySelect}
+                selectedCategory={selectedCategory}
+              />
               <VenderCards
                 filteredData={currentDataPage}
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
               />
-              <Box id='pagination' sx={{ filter: "invert(1)", display: "flex", justifyContent: "center", marginTop: '20px', width: { xs: '115%', sm: "100%" }, marginLeft: { xs: '-15px', sm: '0' } }} >
-                <Pagination sx={{ color: "#fff" }} onChange={(e, page) => setCurrentPage(page)} count={totalPages} shape="circular" size={matches ? "large" : "small"} />
+              <Box
+                id="pagination"
+                sx={{
+                  filter: "invert(1)",
+                  display: "flex",
+                  justifyContent: "center",
+                  marginTop: "20px",
+                  width: { xs: "115%", sm: "100%" },
+                  marginLeft: { xs: "-15px", sm: "0" },
+                }}
+              >
+                <Pagination
+                  sx={{ color: "#fff" }}
+                  onChange={(e, page) => setCurrentPage(page)}
+                  count={totalPages}
+                  shape="circular"
+                  size={matches ? "large" : "small"}
+                />
               </Box>
             </Box>
           </Box>
