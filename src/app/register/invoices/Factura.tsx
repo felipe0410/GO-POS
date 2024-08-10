@@ -13,7 +13,7 @@ const Factura = ({ data }: { data: any }) => {
     nameEstablishment: "",
     name: "",
     direction: "",
-    img: ""
+    img: "",
   });
 
   React.useEffect(() => {
@@ -51,9 +51,19 @@ const Factura = ({ data }: { data: any }) => {
             }}
           >
             <Box>
-              <Box sx={{ maxHeight: '60px', display: establishmentData?.img?.length > 0 ? 'block' : 'none' }} component={'img'} src={establishmentData.img} />
+              <Box
+                sx={{
+                  maxHeight: "60px",
+                  display:
+                    establishmentData?.img?.length > 0 ? "block" : "none",
+                }}
+                component={"img"}
+                src={establishmentData.img}
+              />
             </Box>
-            <Box sx={{ width: "100%", display: 'flex', justifyContent: 'center' }}>
+            <Box
+              sx={{ width: "100%", display: "flex", justifyContent: "center" }}
+            >
               <Typography sx={facturaStyles.typographyTitle}>
                 {establishmentData.nameEstablishment}
               </Typography>
@@ -63,15 +73,17 @@ const Factura = ({ data }: { data: any }) => {
                 display: "flex",
                 flexDirection: "row",
                 justifyContent: "space-evenly",
-                marginBottom: '10px'
+                marginBottom: "10px",
               }}
             >
               <Typography sx={facturaStyles.typographyNIT}>
-                <span style={{ fontWeight: 900 }}>NIT</span>{`${establishmentData.NIT_CC}`}
+                <span style={{ fontWeight: 900 }}>NIT</span>
+                {`${establishmentData.NIT_CC}`}
               </Typography>
             </Box>
             <Typography sx={facturaStyles.typographyNIT}>
-              <span style={{ fontWeight: 900 }}>CELULAR</span> {`${establishmentData.phone}`}
+              <span style={{ fontWeight: 900 }}>CELULAR</span>{" "}
+              {`${establishmentData.phone}`}
             </Typography>
             <Typography
               sx={{
@@ -123,7 +135,6 @@ const Factura = ({ data }: { data: any }) => {
                     {data?.cliente.name}
                   </span>
                 </Typography>
-
               </Box>
               <Typography
                 sx={{
@@ -279,8 +290,16 @@ const Factura = ({ data }: { data: any }) => {
               <Typography sx={facturaStyles.typographyResumenCompra}>
                 cambio
               </Typography>
-              <Typography sx={{ ...facturaStyles.typographyVenta, fontWeight: 900, fontSize: '0.85rem' }}>
-                {`$ ${(data?.cambio > 0 ? data?.cambio?.toLocaleString("en-US") : 0)}`}
+              <Typography
+                sx={{
+                  ...facturaStyles.typographyVenta,
+                  fontWeight: 900,
+                  fontSize: "0.85rem",
+                }}
+              >
+                {`$ ${
+                  data?.cambio > 0 ? data?.cambio?.toLocaleString("en-US") : 0
+                }`}
               </Typography>
             </Box>
 
@@ -300,23 +319,31 @@ const Factura = ({ data }: { data: any }) => {
               </Typography>
             </Box>
             <Typography
-                sx={{
-                  background:'#8080804d',
-                  marginTop:'#000 solid',
-                  display: data?.nota?.length > 0 ? 'flex' : 'none',
-                  color: "#000",
-                  fontSize: "0.8rem",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "140%",
-                  justifyContent: "space-between",
-                }}
-              >
-                <span style={{ fontWeight: 900, }}>Nota:</span> {`${data?.nota ?? ""}`}
-              </Typography>
+              sx={{
+                background: "#8080804d",
+                marginTop: "#000 solid",
+                display: data?.nota?.length > 0 ? "flex" : "none",
+                color: "#000",
+                fontSize: "0.8rem",
+                fontStyle: "normal",
+                fontWeight: 700,
+                lineHeight: "140%",
+                justifyContent: "space-between",
+              }}
+            >
+              <span style={{ fontWeight: 900 }}>Nota:</span>{" "}
+              {`${data?.nota ?? ""}`}
+            </Typography>
             <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
-              <svg id='barcode'></svg>
+              <svg id="barcode"></svg>
             </Box>
+            <Divider sx={{ background: "#000", marginTop: "20px" }} />
+            <Typography sx={{ color: "#000", fontWeight: 700 }}>
+              Nombre:
+            </Typography>
+            <Typography sx={{ color: "#000", fontWeight: 700 }}>
+              Cedula:
+            </Typography>
           </Box>
           <Typography align="center" sx={facturaStyles.typographyVenta}>
             {`Generado con GO-POS cel:3144098591`}

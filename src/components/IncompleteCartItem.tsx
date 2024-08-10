@@ -1,9 +1,16 @@
 "use client";
 import { createProduct } from "@/firebase";
-import { Box, Typography, InputBase, Button, IconButton, InputAdornment } from "@mui/material";
+import {
+  Box,
+  Typography,
+  InputBase,
+  Button,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 import ImgInputSlidebar from "./inputIMGSlidebar";
 
 const IncompleteCartItem = ({
@@ -61,8 +68,10 @@ const IncompleteCartItem = ({
           purchasePrice: "",
         });
       } else {
-
-        setSelectedItems((prevData: any) => [{ ...incompletedItem, barCode: uuidv4() }, ...prevData]);
+        setSelectedItems((prevData: any) => [
+          { ...incompletedItem, barCode: uuidv4() },
+          ...prevData,
+        ]);
         setIncompletedItem({
           productName: "",
           price: "",
@@ -91,29 +100,28 @@ const IncompleteCartItem = ({
     <>
       <Typography
         sx={{
-          marginTop: '10px',
+          marginTop: "10px",
           fontFamily: "Nunito",
           fontSize: "12px",
           fontWeight: 600,
           lineHeight: "17px",
           letterSpacing: "0em",
           textAlign: "left",
-          color: '#69EAE2'
-
+          color: "#69EAE2",
         }}
       >
         AGREGAR PRODUCTO NO REGISTRADO
       </Typography>
-      <Box sx={{ marginTop: "10px", display: 'flex' }}>
-        <Box sx={{ display: 'flex', width: '60%' }}>
-          <Box id='container_img'
+      <Box sx={{ marginTop: "10px", display: "flex" }}>
+        <Box sx={{ display: "flex", width: "60%" }}>
+          <Box
+            id="container_img"
             sx={{
-              maxWidth: '50px',
-              alignSelf: "end"
+              maxWidth: "50px",
+              alignSelf: "end",
             }}
           >
-            {incompletedItem.barCode.length > 0
-              ?
+            {incompletedItem.barCode.length > 0 ? (
               <Box
                 component={"img"}
                 src={"/images/noImage.svg"}
@@ -123,17 +131,7 @@ const IncompleteCartItem = ({
                   height: { xs: "2.9rem", sm: "37px" },
                 }}
               />
-              // <Box>
-              //   <ImgInputSlidebar
-              //     data={incompletedItem}
-              //     setData={setIncompletedItem}
-              //     folderSaved={user.length > 0 ? user : "images"}
-              //     fiel={"image"}
-              //     imageBase64={imageBase64}
-              //     setImageBase64={setImageBase64}
-              //   />
-              // </Box>
-              :
+            ) : (
               <Box
                 component={"img"}
                 src={"/images/noImage.svg"}
@@ -142,7 +140,8 @@ const IncompleteCartItem = ({
                   width: { xs: "2.5rem", sm: "37px" },
                   height: { xs: "2.9rem", sm: "37px" },
                 }}
-              />}
+              />
+            )}
           </Box>
           <Box marginLeft={1} sx={{ width: "100%" }}>
             <InputBase
@@ -151,7 +150,7 @@ const IncompleteCartItem = ({
                 height: { xs: "1rem", sm: "20px" },
                 paddingLeft: "5px",
                 padding: "0px, 47px, 0px, 10px",
-                fontSize: '16px'
+                fontSize: "16px",
               }}
               style={{
                 color: "#FFF",
@@ -159,7 +158,7 @@ const IncompleteCartItem = ({
                 border: "1px solid  #393C49",
                 background: "var(--Base-Form-BG, #2D303E)",
               }}
-              placeholder='Producto...'
+              placeholder="Producto..."
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                 handleOnChange(event, "productName")
               }
@@ -170,8 +169,8 @@ const IncompleteCartItem = ({
                 handleOnChange(event, "price")
               }
               value={incompletedItem.price}
-              prefix='$ '
-              placeholder='Precio...'
+              prefix="$ "
+              placeholder="Precio..."
               thousandSeparator
               customInput={InputBase}
               style={{ color: "#FFF" }}
@@ -179,18 +178,18 @@ const IncompleteCartItem = ({
                 height: { xs: "1rem", sm: "24px" },
                 width: "90%",
                 borderRadius: "0.5rem",
-                padding: '0',
+                padding: "0",
                 border: "1px solid var(--Base-Dark-Line, #393C49)",
                 background: "var(--Base-Form-BG, #2D303E)",
                 paddingLeft: "5px",
-                fontSize: '16px'
+                fontSize: "16px",
               }}
             />
           </Box>
         </Box>
         <Box
           sx={{
-            width: '15%',
+            width: "15%",
             alignSelf: "center",
             textAlign: "center",
           }}
@@ -213,11 +212,10 @@ const IncompleteCartItem = ({
             value={incompletedItem.cantidad}
           />
         </Box>
-        {/* _________________________________---- */}
         <Box
-          id='count-value'
+          id="count-value"
           sx={{
-            width: '25%',
+            width: "25%",
             fontSize: "16px",
           }}
           style={{
@@ -250,19 +248,21 @@ const IncompleteCartItem = ({
           </Box>
         </Box>
       </Box>
-      <Box sx={{ display: 'flex', marginTop: "10px" }}>
-        <Box sx={{ width: '60%' }}>
+      <Box sx={{ display: "flex", marginTop: "10px" }}>
+        <Box sx={{ width: "60%" }}>
           <InputBase
             endAdornment={
-              <InputAdornment position='end'>
-                <Box sx={{ height: '15px' }} component={"img"} src={"/images/scan.svg"} />
+              <InputAdornment position="end">
+                <Box
+                  sx={{ height: "15px" }}
+                  component={"img"}
+                  src={"/images/scan.svg"}
+                />
               </InputAdornment>
             }
-            onBlur={() =>
-              setIncompletedItem({ ...incompletedItem })
-            }
+            onBlur={() => setIncompletedItem({ ...incompletedItem })}
             sx={{
-              width: '92%',
+              width: "92%",
               height: { xs: "20px", sm: "24px" },
               fontSize: "16px",
               padding: "0px 7px",
@@ -273,25 +273,26 @@ const IncompleteCartItem = ({
               border: "1px solid var(--Base-Dark-Line, #393C49)",
               background: "var(--Base-Form-BG, #2D303E)",
             }}
-            placeholder='Codigo de barras'
+            placeholder="Codigo de barras"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
               handleOnChange(event, "barCode")
             }
             value={incompletedItem.barCode}
           />
         </Box>
-        <Box id='buttons'
+        <Box
+          id="buttons"
           sx={{
             display: "flex",
             flexDirection: "row",
-            width: '40%',
+            width: "40%",
           }}
         >
-          <Box sx={{ width: '40%', textAlign: 'center' }}>
+          <Box sx={{ width: "40%", textAlign: "center" }}>
             <Button
               disabled={!validationDisabled}
               onClick={() => pushIncompletedItem()}
-              variant='outlined'
+              variant="outlined"
               sx={{
                 height: { xs: "35px", sm: "35px" },
                 width: { xs: "35px", sm: "35px" },
@@ -311,7 +312,7 @@ const IncompleteCartItem = ({
               />
             </Button>
           </Box>
-          <Box sx={{ width: '60%', textAlign: 'center' }}>
+          <Box sx={{ width: "60%", textAlign: "center" }}>
             <Button
               onClick={() =>
                 setIncompletedItem({
@@ -327,7 +328,7 @@ const IncompleteCartItem = ({
                   purchasePrice: "",
                 })
               }
-              variant='outlined'
+              variant="outlined"
               sx={{
                 height: { xs: "35px", sm: "35px" },
                 width: { xs: "35px", sm: "35px" },
@@ -348,7 +349,6 @@ const IncompleteCartItem = ({
             </Button>
           </Box>
         </Box>
-
       </Box>
     </>
   );
