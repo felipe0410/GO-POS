@@ -125,7 +125,7 @@ export default function InvoicesTable({
                   const [date, hora] = row.date.split(" ");
                   const newDate = date.replaceAll("-", "/");
                   return (
-                    <TableRow hover role='checkbox' tabIndex={-1} key={row.uid}>
+                    <TableRow hover role='checkbox' tabIndex={-1} key={row?.uid??'xxxx'}>
                       <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>
                         <Box sx={{ display: "flex", flexDirection: "row" }}>
                           {JSON.parse(localStorage.getItem("dataUser") ?? "{}")
@@ -152,13 +152,13 @@ export default function InvoicesTable({
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
                         align='left'
                       >
-                        {row.cliente.name}
+                        {row?.cliente?.name??'xxx'}
                       </TableCell>
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
                         align='center'
                       >
-                        {row.invoice}
+                        {row?.invoice??'xxxx'}
                       </TableCell>
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
@@ -183,7 +183,7 @@ export default function InvoicesTable({
                         }}
                         align='center'
                       >
-                        {row.status ? row.status.toUpperCase() : "CANCELADO"}
+                        {row?.status ? row.status.toUpperCase() : "CANCELADO"}
                       </TableCell>
                     </TableRow>
                   );

@@ -1,4 +1,4 @@
-import DatosVenta from "@/components/DatosVenta";
+import DatosVenta from "@/app/vender/SlidebarVender/DatosVenta";
 import Factura from "@/app/vender/Factura";
 import {
   Box,
@@ -28,12 +28,14 @@ const SlidebarVender = ({
   searchTerm,
   filteredData,
   setSearchTerm,
+  typeInvoice,
 }: {
   selectedItems: any;
   setSelectedItems: any;
   searchTerm: any;
   filteredData: any;
   setSearchTerm: any;
+  typeInvoice: string;
 }) => {
   const [search, setSearch] = useState<any>("");
   const [open, setOpen] = useState(false);
@@ -192,9 +194,25 @@ const SlidebarVender = ({
                 setReciboPago={setReciboPago}
                 setSelectedItems={setSelectedItems}
                 setNextStep={setNextStep}
+                typeInvoice={typeInvoice}
               />
             ) : (
               <>
+                <SearchSection
+                  search={search}
+                  setSearch={setSearch}
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  handleSearch={handleSearch}
+                  filteredData={filteredData}
+                  checked={checked}
+                  setChecked={setChecked}
+                  matchesSM={matchesSM}
+                  setNextStep={setNextStep}
+                  nextStep={nextStep}
+                  descuento={descuento}
+                  subtotal={subtotal}
+                />
                 {nextStep ? (
                   <DatosVenta
                     total={subtotal - descuento}
@@ -208,20 +226,10 @@ const SlidebarVender = ({
                     numeroFactura={generarNumeroFactura}
                     handleVenderClick={handleVenderClick}
                     propsNota={nota}
+                    typeInvoice={typeInvoice}
                   />
                 ) : (
                   <>
-                    <SearchSection
-                      search={search}
-                      setSearch={setSearch}
-                      searchTerm={searchTerm}
-                      setSearchTerm={setSearchTerm}
-                      handleSearch={handleSearch}
-                      filteredData={filteredData}
-                      checked={checked}
-                      setChecked={setChecked}
-                      matchesSM={matchesSM}
-                    />
                     <ProductList
                       selectedItems={selectedItems}
                       setSelectedItems={setSelectedItems}

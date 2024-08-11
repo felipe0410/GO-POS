@@ -18,7 +18,6 @@ import {
   typographyButton,
 } from "./EstablishmentStyle";
 import { profileInputs } from "@/data/inputs";
-import ImgInput from "@/components/inputIMG";
 import {
   getEstablishmentData,
   getEstablishmentDataLoggin,
@@ -26,7 +25,7 @@ import {
 } from "@/firebase";
 import { SnackbarProvider } from "notistack";
 import { enqueueSnackbar } from "notistack";
-
+import ImgInputSettings from "@/components/inputIMG-Settings";
 
 interface Data {
   name: string;
@@ -57,6 +56,7 @@ const Page = () => {
     establishment: "",
     NIT: "",
     email: "",
+    img: "",
   });
 
   const [editOn, setEditOn] = useState<boolean>(false);
@@ -98,20 +98,21 @@ const Page = () => {
     setEditOn(false);
   };
 
-
   useEffect(() => {
     const dataEstablesimente = async () => {
       const data: any = await getEstablishmentData();
       dataUser()
         .then((userData: any) => {
+          console.log(userData);
           if (userData.mail.length > 0) {
             setData({
               name: userData.name,
               direction: "centro",
               phone: "30000",
-              establishment: 'pruea',
+              establishment: "pruea",
               NIT: userData.status,
               email: userData.mail,
+              img: userData.img,
             });
           } else if (data !== null) {
             setData(data);
@@ -123,18 +124,21 @@ const Page = () => {
         });
     };
     dataEstablesimente();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
- 
+
   return (
     <>
       <SnackbarProvider />
       <Header title="Ajustes del establecimiento" />
-      <Box sx={container} >
+      <Box sx={container}>
         <Box
-          sx={{ width: { lg: "54.5rem", md: "38rem", sm: "35rem", xs: "32rem" } }}
+          sx={{
+            width: { lg: "54.5rem", md: "38rem", sm: "35rem", xs: "32rem" },
+          }}
           mt={5}
         >
-          <Paper sx={{ ...cards, width: "100%", position: "relative"  }}>
+          <Paper sx={{ ...cards, width: "100%", position: "relative" }}>
             <Box
               sx={{
                 position: "absolute",
@@ -142,12 +146,12 @@ const Page = () => {
                 left: "50%",
                 transform: "translateX(-50%)",
                 zIndex: 1,
-                width: {sm: 170, xs: 145},
-                height: {sm: 170, xs: 145},
-                overflow: "visible",    
+                width: { sm: 170, xs: 145 },
+                height: { sm: 170, xs: 145 },
+                overflow: "visible",
               }}
             >
-              <ImgInput
+              <ImgInputSettings
                 data={data}
                 setData={setData}
                 folderSaved={user.length > 0 ? user : "images"}
@@ -155,41 +159,48 @@ const Page = () => {
                 setImageBase64={setImageBase64}
                 border="50%"
               />
-                
-              <Box sx={{
-                position: 'absolute',              
-                top: {lg: 405, md: 415, sm: 410, xs: 460},
-                left: {lg: 390, md: 270, sm: 270, xs: 160}
-                }}>
 
-             <Avatar alt="robot-image"
-              src="/images/robot.png/" 
-              variant="square" 
-              sx={{ width: {lg:'170px', sm:'150px', xs: '120px'}, height: {lg:'260px', sm: '230px', xs: '180px'} }}/>
-              |</Box>
-            </Box>           
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: { lg: 405, md: 415, sm: 410, xs: 460 },
+                  left: { lg: 390, md: 270, sm: 270, xs: 160 },
+                }}
+              >
+                <Avatar
+                  alt="robot-image"
+                  src="/images/robot.png/"
+                  variant="square"
+                  sx={{
+                    width: { lg: "170px", sm: "150px", xs: "120px" },
+                    height: { lg: "260px", sm: "230px", xs: "180px" },
+                  }}
+                />
+                |
+              </Box>
+            </Box>
             <Box
               sx={{
-                display: 'flex',
-                flexDirection: {md: 'row', xs: 'column' },
-                flexWrap: 'wrap',
-                gap: '1rem',
-                justifyContent: 'space-between',
+                display: "flex",
+                flexDirection: { md: "row", xs: "column" },
+                flexWrap: "wrap",
+                gap: "1rem",
+                justifyContent: "space-between",
                 padding: "1.5rem",
                 textAlign: "start",
                 marginTop: {
                   lg: "2rem",
                   md: "2rem",
                   sm: "100px",
-                  xs: "100px",                  
+                  xs: "100px",
                 },
               }}
             >
               {profileInputs.map((input, index) => {
-                const style = {                                                 
-                  width: { sm: '45%', xs: '100%' },
-                  marginTop: {sm:'90px', xs:'75px'},
-                  marginBottom: {sm:'-73px', xs:'-75px'} 
+                const style = {
+                  width: { sm: "45%", xs: "100%" },
+                  marginTop: { sm: "90px", xs: "75px" },
+                  marginBottom: { sm: "-73px", xs: "-75px" },
                 };
 
                 return (
@@ -238,13 +249,21 @@ const Page = () => {
                 >
                   <Button
                     onClick={handleChanges}
-                    sx={{                    
+                    sx={{
                       height: "2.5rem",
-                      borderRadius: "0.625rem",                              
+                      borderRadius: "0.625rem",
                       marginTop: "10px",
-                    }} style= {{ position: "absolute", top: 0, right: 12  }}
+                      "&:hover": { opacity: "80%" },
+                    }}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: 12,
+                      background: "#004d00",
+                      border: "solid #ffffff 1px",
+                    }}
                   >
-                    <Typography sx={typographyButton} style={{textDecoration: '0.5px solid underline'}}>
+                    <Typography sx={typographyButton} style={{color:'#fff'}}>
                       Guardar Cambios
                     </Typography>
                   </Button>
@@ -254,25 +273,30 @@ const Page = () => {
                   sx={{
                     display: "flex",
                     justifyContent: "flex-end",
-                    marginTop: "10px",                  
+                    marginTop: "10px",
                   }}
                 >
                   <Button
                     onClick={handleEdit}
                     sx={{
                       height: "2.5rem",
-                      borderRadius: "0.625rem",                              
-                      marginTop: "10px",                      
+                      borderRadius: "0.625rem",
+                      marginTop: "10px",
                     }}
-                    style={{position: 'absolute', top: 1 , right: 12}}
+                    style={{ position: "absolute", top: 1, right: 12 }}
                   >
-                    <Typography sx={typographyButton} style={{textDecoration: '0.5px solid underline'}} >Editar Datos</Typography>
+                    <Typography
+                      sx={typographyButton}
+                      style={{ textDecoration: "0.5px solid underline" }}
+                    >
+                      Editar Datos
+                    </Typography>
                   </Button>
                 </Box>
               )}
             </Box>
           </Paper>
-        </Box>        
+        </Box>
       </Box>
     </>
   );

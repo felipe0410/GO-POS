@@ -10,13 +10,14 @@ interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
   setSelectedItems: (arg0: []) => void;
   setNextStep: (arg0: boolean) => void;
+  typeInvoice: string;
 }
 
 const Factura: React.FC<TuComponenteProps> = (props) => {
   const barCode = localStorage.getItem("uidInvoice");
   const numeroFactura = localStorage?.getItem("invoice") ?? "0000000";
   const [facturaData, setFacturaData] = useState<null | DocumentData>(null);
-  const { setReciboPago, setSelectedItems, setNextStep } = props;
+  const { setReciboPago, setSelectedItems, setNextStep, typeInvoice } = props;
   const [establishmentData, setEstablishmentData] = useState({
     phone: "",
     NIT_CC: "",
@@ -76,7 +77,9 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     }
   };
   useEffect(() => {
+    typeInvoice === "quickSale" && setNuevaFactura();
     saveDataToLocalStorage("selectedItems", []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

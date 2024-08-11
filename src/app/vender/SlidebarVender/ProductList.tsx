@@ -12,7 +12,7 @@ const ProductList: React.FC<ProductListProps> = ({
   selectedItems,
   setSelectedItems,
 }) => (
-  <Box sx={{ height: "76%", marginTop: "10px" }}>
+  <Box sx={{ height: "62%", marginTop: "10px" }}>
     <Box sx={{ display: "flex" }}>
       <Typography
         sx={{
@@ -63,10 +63,10 @@ const ProductList: React.FC<ProductListProps> = ({
     <Box
       id="items-list"
       sx={{
-        maxHeight: {xs:'54%',sm:"67%"},
+        maxHeight: { xs: "54%", sm: "57%" },
         overflowY: "auto",
         scrollBehavior: "smooth",
-        minHeight: {xs:'54%',sm:"67%"},
+        minHeight: { xs: "54%", sm: "57%" },
         display: !(selectedItems?.length === 0) ? "block" : "flex",
         flexDirection: "column",
         justifyContent: "center",
