@@ -94,6 +94,7 @@ const DatosVenta = (props: any) => {
     cambio: 0,
     nota: propsNota ?? "",
   });
+  console.log(typeInvoice);
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -110,10 +111,12 @@ const DatosVenta = (props: any) => {
       handleVenderClick();
       setLoading(true);
       const valueUuid = uuidv4();
+      console.log("valueUuid:::>", valueUuid);
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
       localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
-      typeInvoice === "quickSale"
+      console.log("factura :::> ", factura);
+      !(typeInvoice === "quickSale")
         ? await createInvoice(`${factura.invoice}-${result}`, {
             ...factura,
           })
@@ -187,6 +190,7 @@ const DatosVenta = (props: any) => {
     let newTotal = 0;
 
     if (existingInvoice) {
+      // Primero, actualizamos las cantidades de los productos que ya existen
       updatedItems = existingInvoice.compra.map(
         (item: { barCode: any; cantidad: any; acc: any }) => {
           const foundItem = newItems.find(
@@ -201,18 +205,21 @@ const DatosVenta = (props: any) => {
         }
       );
 
+      // Luego, agregamos los productos que no estaban en la factura existente
       newItems.forEach((newItem) => {
-        if (
-          !existingInvoice.compra.find(
-            (item: { barCode: any }) => item.barCode === newItem.barCode
-          )
-        ) {
+        const existingProduct = existingInvoice.compra.find(
+          (item: { barCode: any }) => item.barCode === newItem.barCode
+        );
+
+        if (!existingProduct) {
           updatedItems.push(newItem);
         }
       });
 
+      // Calculamos el nuevo total
       newTotal = updatedItems.reduce((total, item) => total + item.acc, 0);
 
+      // Actualizamos la factura existente
       await updateInvoice(quickSaleId, {
         compra: updatedItems,
         subtotal: newTotal,
@@ -220,8 +227,8 @@ const DatosVenta = (props: any) => {
         date: new Date().toISOString(),
       });
     } else {
+      // Si no existe una factura previa, simplemente creamos una nueva
       newTotal = newItems.reduce((total, item) => total + item.acc, 0);
-
       await createInvoice(quickSaleId, {
         typeInvoice: "VENTA RAPIDA",
         compra: newItems,
@@ -235,9 +242,12 @@ const DatosVenta = (props: any) => {
   };
 
   useEffect(() => {
-    typeInvoice === "quickSale"
-      ? setDatosGuardados(true)
-      : getAllClientsData(setClientsData);
+    if (typeInvoice === "quickSale") {
+      datosGuardadosLocalStorage();
+      setDatosGuardados(true);
+    } else {
+      getAllClientsData(setClientsData);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [typeInvoice]);
   useEffect(() => {

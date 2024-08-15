@@ -132,7 +132,7 @@ const Factura = ({ data }: { data: any }) => {
                 >
                   CLIENTE:{" "}
                   <span style={facturaStyles.typographySpan}>
-                    {data?.cliente.name}
+                    {data?.cliente?.name ?? ""}
                   </span>
                 </Typography>
               </Box>
@@ -144,7 +144,7 @@ const Factura = ({ data }: { data: any }) => {
               >
                 CC/NIT:{" "}
                 <span style={facturaStyles.typographySpan}>
-                  {data?.cliente.identificacion}
+                  {data?.cliente?.identificacion ?? ""}
                 </span>
               </Typography>
               <Box
@@ -162,7 +162,7 @@ const Factura = ({ data }: { data: any }) => {
                 >
                   DIRECCION:{" "}
                   <span style={facturaStyles.typographySpan}>
-                    {data?.cliente.direccion}
+                    {data?.cliente?.direccion ?? ""}
                   </span>
                 </Typography>
               </Box>
@@ -174,7 +174,7 @@ const Factura = ({ data }: { data: any }) => {
               >
                 CELULAR:{" "}
                 <span style={facturaStyles.typographySpan}>
-                  {data?.cliente.celular}
+                  {data?.cliente?.celular ?? ""}
                 </span>
               </Typography>
               <Typography
@@ -185,7 +185,7 @@ const Factura = ({ data }: { data: any }) => {
               >
                 EMAIL:{" "}
                 <span style={facturaStyles.typographySpan}>
-                  {data?.cliente.email}
+                  {data?.cliente?.email ?? ""}
                 </span>
               </Typography>
             </Box>
@@ -276,7 +276,7 @@ const Factura = ({ data }: { data: any }) => {
                 Descuento
               </Typography>
               <Typography sx={facturaStyles.typographyVenta}>
-                {`$ ${data?.descuento.toLocaleString("en-US")}`}
+                {`$ ${data?.descuento?.toLocaleString("en-US") ?? 0}`}
               </Typography>
             </Box>
             <Box
@@ -334,8 +334,10 @@ const Factura = ({ data }: { data: any }) => {
               <span style={{ fontWeight: 900 }}>Nota:</span>{" "}
               {`${data?.nota ?? ""}`}
             </Typography>
-            <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
-              <svg id="barcode"></svg>
+            <Box
+              sx={{ textAlign: "center", marginTop: "1.5rem", width: "100%" }}
+            >
+              <svg style={{ width: "100%" }} id="barcode"></svg>
             </Box>
             <Divider sx={{ background: "#000", marginTop: "20px" }} />
             <Typography sx={{ color: "#000", fontWeight: 700 }}>
