@@ -10,6 +10,8 @@ import {
   Select,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { NumericFormat } from "react-number-format";
@@ -18,13 +20,15 @@ import {
   createClient,
   createInvoice,
   getAllClientsData,
+  getInvoiceData,
+  updateInvoice,
   updateProductDataCantidad,
 } from "@/firebase";
-import LinearBuffer from "./progress";
+import LinearBuffer from "../../../components/progress";
 import Box from "@mui/material/Box";
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
-import Slider from "./slider/Slider";
+import Slider from "../../../components/slider/Slider";
 import { v4 as uuidv4 } from "uuid";
 
 interface UserData {
@@ -57,6 +61,7 @@ const DatosVenta = (props: any) => {
     numeroFactura,
     handleVenderClick,
     propsNota,
+    typeInvoice,
   } = props;
   const [options, setOptions] = useState([""]);
   const [valueClient, setValueClient] = React.useState<string | null>(
@@ -68,6 +73,8 @@ const DatosVenta = (props: any) => {
   const [mostrarValorDevolver, setMostrarValorDevolver] = useState(true);
   const [datosGuardados, setDatosGuardados] = useState(false);
   const [clientsData, setClientsData] = useState([]);
+  const themee = useTheme();
+  const matches = useMediaQuery(themee.breakpoints.up("sm"));
   const [factura, setFactura] = useState({
     invoice: "",
     date: "",
@@ -87,6 +94,7 @@ const DatosVenta = (props: any) => {
     cambio: 0,
     nota: propsNota ?? "",
   });
+  console.log(typeInvoice);
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -103,13 +111,17 @@ const DatosVenta = (props: any) => {
       handleVenderClick();
       setLoading(true);
       const valueUuid = uuidv4();
+      console.log("valueUuid:::>", valueUuid);
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
       localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
-      await createInvoice(`${factura.invoice}-${result}`, {
-        ...factura,
-      });
-      setLoading(false);
+      console.log("factura :::> ", factura);
+      !(typeInvoice === "quickSale")
+        ? await createInvoice(`${factura.invoice}-${result}`, {
+            ...factura,
+          })
+        : await handleQuickSaleFinal(factura.compra),
+        setLoading(false);
       setReciboPago(true);
       setDatosGuardados(false);
     } catch (error) {
@@ -160,7 +172,6 @@ const DatosVenta = (props: any) => {
   const calcularValorADevolver = () => {
     const cambio =
       valorRecibido !== null ? Math.max(valorRecibido - total, 0) : 0;
-    //  setFactura({ ...factura, cambio: cambio })
     return cambio;
   };
   const calcularValorADevolverOnblur = () => {
@@ -169,9 +180,76 @@ const DatosVenta = (props: any) => {
     setFactura({ ...factura, cambio: cambio });
   };
 
+  const handleQuickSaleFinal = async (newItems: any[]) => {
+    const quickSaleId = `venta-rapida-${new Date()
+      .toLocaleDateString("en-GB")
+      .replace(/\//g, "-")}`;
+    const existingInvoice = await getInvoiceData(quickSaleId);
+
+    let updatedItems = [...newItems];
+    let newTotal = 0;
+
+    if (existingInvoice) {
+      // Primero, actualizamos las cantidades de los productos que ya existen
+      updatedItems = existingInvoice.compra.map(
+        (item: { barCode: any; cantidad: any; acc: any }) => {
+          const foundItem = newItems.find(
+            (newItem) => newItem.barCode === item.barCode
+          );
+          if (foundItem) {
+            item.cantidad += foundItem.cantidad;
+            item.acc += foundItem.acc;
+            return item;
+          }
+          return item;
+        }
+      );
+
+      // Luego, agregamos los productos que no estaban en la factura existente
+      newItems.forEach((newItem) => {
+        const existingProduct = existingInvoice.compra.find(
+          (item: { barCode: any }) => item.barCode === newItem.barCode
+        );
+
+        if (!existingProduct) {
+          updatedItems.push(newItem);
+        }
+      });
+
+      // Calculamos el nuevo total
+      newTotal = updatedItems.reduce((total, item) => total + item.acc, 0);
+
+      // Actualizamos la factura existente
+      await updateInvoice(quickSaleId, {
+        compra: updatedItems,
+        subtotal: newTotal,
+        total: newTotal,
+        date: new Date().toISOString(),
+      });
+    } else {
+      // Si no existe una factura previa, simplemente creamos una nueva
+      newTotal = newItems.reduce((total, item) => total + item.acc, 0);
+      await createInvoice(quickSaleId, {
+        typeInvoice: "VENTA RAPIDA",
+        compra: newItems,
+        subtotal: newTotal,
+        total: newTotal,
+        date: new Date().toISOString(),
+        invoice: quickSaleId,
+        status: "CANCELADO",
+      });
+    }
+  };
+
   useEffect(() => {
-    getAllClientsData(setClientsData);
-  }, []);
+    if (typeInvoice === "quickSale") {
+      datosGuardadosLocalStorage();
+      setDatosGuardados(true);
+    } else {
+      getAllClientsData(setClientsData);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [typeInvoice]);
   useEffect(() => {
     if (clientsData.length > 0) {
       const array: any = [];
@@ -196,13 +274,14 @@ const DatosVenta = (props: any) => {
           lineHeight: "140%",
           marginTop: "1rem",
           textAlign: "center",
+          display: typeInvoice === "quickSale" ? "none" : "block",
         }}
       >
         DATOS DEL CLIENTE
       </Typography>
       <Divider sx={{ background: "#69EAE2", width: "100%" }} />
 
-      <Box>
+      <Box sx={{ display: typeInvoice === "quickSale" ? "none" : "block" }}>
         {datosGuardados ? (
           <>
             <IconButton
@@ -244,7 +323,7 @@ const DatosVenta = (props: any) => {
           <>
             <Box>
               <Autocomplete
-                placeholder='Clientes registrados'
+                placeholder="Clientes registrados"
                 sx={{
                   height: { xs: "35px", sm: "auto" },
                 }}
@@ -279,8 +358,8 @@ const DatosVenta = (props: any) => {
                 options={options}
                 renderInput={(params) => (
                   <TextField
-                    placeholder='  clientes registrados'
-                    variant='standard'
+                    placeholder="  clientes registrados"
+                    variant="standard"
                     sx={{ filter: "invert(1)", paddingLeft: "15px" }}
                     style={{ color: "red", filter: "invert(1)" }}
                     {...params}
@@ -299,7 +378,7 @@ const DatosVenta = (props: any) => {
               };
               return (
                 <React.Fragment key={index}>
-                  <FormControl sx={style} variant='outlined'>
+                  <FormControl sx={style} variant="outlined">
                     <OutlinedInput
                       value={data[input.field]}
                       onChange={(e) =>
@@ -432,7 +511,10 @@ const DatosVenta = (props: any) => {
           sx={{
             color: "#69EAE2",
             fontFamily: "Nunito",
-            fontSize: { xs: "16px", sm: "1rem" },
+            fontSize:
+              typeInvoice === "quickSale"
+                ? { xs: "18px", sm: "1.5rem" }
+                : { xs: "16px", sm: "1rem" },
             fontStyle: "normal",
             fontWeight: 800,
             lineHeight: "140%",
@@ -444,7 +526,10 @@ const DatosVenta = (props: any) => {
           sx={{
             color: "#69EAE2",
             fontFamily: "Nunito",
-            fontSize: { xs: "16px", sm: "1rem" },
+            fontSize:
+              typeInvoice === "quickSale"
+                ? { xs: "18px", sm: "1.5rem" }
+                : { xs: "16px", sm: "1rem" },
             fontStyle: "normal",
             fontWeight: 800,
             lineHeight: "140%",
@@ -460,12 +545,15 @@ const DatosVenta = (props: any) => {
           marginTop: "0.8rem",
         }}
       >
-        <FormControl sx={{ width: "100%" }} variant='outlined'>
+        <FormControl sx={{ width: "100%" }} variant="outlined">
           <Typography
             sx={{
               color: "#69EAE2",
               fontFamily: "Nunito",
-              fontSize: { xs: "16px", sm: "1rem" },
+              fontSize:
+                typeInvoice === "quickSale"
+                  ? { xs: "18px", sm: "1.5rem" }
+                  : { xs: "16px", sm: "1rem" },
               fontStyle: "normal",
               fontWeight: 300,
               lineHeight: "140%",
@@ -479,11 +567,15 @@ const DatosVenta = (props: any) => {
             }}
             onChange={(e) => handleChangeRecibido(e.target.value)}
             value={valorRecibido !== null ? `$ ${valorRecibido}` : ""}
-            prefix='$ '
+            prefix="$ "
             thousandSeparator
             customInput={OutlinedInput}
             sx={{
               height: { xs: "30px", sm: "2.5rem" },
+              fontSize:
+                typeInvoice === "quickSale"
+                  ? { xs: "18px", sm: "1.5rem" }
+                  : { xs: "16px", sm: "1rem" },
               width: "100%",
               color: "#FFF",
               borderRadius: "0.5rem",
@@ -496,13 +588,16 @@ const DatosVenta = (props: any) => {
         {mostrarValorDevolver && (
           <FormControl
             sx={{ width: "100%", marginTop: "0.8rem" }}
-            variant='outlined'
+            variant="outlined"
           >
             <Typography
               sx={{
                 color: "#69EAE2",
                 fontFamily: "Nunito",
-                fontSize: { xs: "16px", sm: "1rem" },
+                fontSize:
+                  typeInvoice === "quickSale"
+                    ? { xs: "18px", sm: "1.5rem" }
+                    : { xs: "16px", sm: "1rem" },
                 fontStyle: "normal",
                 fontWeight: 300,
                 lineHeight: "140%",
@@ -521,11 +616,21 @@ const DatosVenta = (props: any) => {
               }}
             >
               <NumericFormat
-                displayType='text'
+                displayType="text"
                 value={calcularValorADevolver()}
-                prefix='$ '
+                prefix="$ "
                 thousandSeparator
                 customInput={OutlinedInput}
+                style={{
+                  fontSize:
+                    typeInvoice === "quickSale"
+                      ? matches
+                        ? "1.5rem"
+                        : "18px"
+                      : matches
+                      ? "1rem"
+                      : "16px",
+                }}
                 sx={{
                   height: { xs: "30px", sm: "2.5rem" },
                   width: "100%",
@@ -548,18 +653,23 @@ const DatosVenta = (props: any) => {
           disabled={
             datosGuardados && valorRecibido !== null && valorRecibido >= total
               ? false
-              : true
+              : !(typeInvoice === "quickSale")
           }
-          onClick={() => vender()}
+          onClick={() => {
+            vender();
+          }}
           sx={{
             borderRadius: "0.5rem",
             background:
               datosGuardados && valorRecibido !== null && valorRecibido >= total
                 ? "#69EAE2"
+                : typeInvoice === "quickSale"
+                ? "#69EAE2"
                 : "gray",
 
             marginTop: "1.5rem",
             width: "8rem",
+            "&:hover": { background: "#69eae240" },
           }}
         >
           <Typography

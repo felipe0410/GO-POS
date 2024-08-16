@@ -95,7 +95,7 @@ export default function InvoicesTableResponsive({
                   const [date, hora] = row.date.split(" ");
                   const newDate = date.replaceAll("-", "/");
                   return (
-                    <React.Fragment key={row.uid}>
+                    <React.Fragment key={row?.uid}>
                       <TableRow>
                         <TableCell sx={{ borderColor: "#69EAE2" }}>
                           <IconButton
@@ -107,7 +107,7 @@ export default function InvoicesTableResponsive({
                               )
                             }
                           >
-                            {expandedRow === row.uid ? (
+                            {expandedRow === row?.uid ? (
                               <KeyboardArrowUpIcon sx={{ color: "#69EAE2" }} />
                             ) : (
                               <KeyboardArrowDownIcon
@@ -121,13 +121,13 @@ export default function InvoicesTableResponsive({
                           scope='row'
                           sx={{ color: "#FFF", borderColor: "#69EAE2" }}
                         >
-                          {row.cliente.name}
+                          {row?.cliente?.name??'xxxx'}
                         </TableCell>
                         <TableCell
                           align='left'
                           sx={{ color: "#FFF", borderColor: "#69EAE2" }}
                         >
-                          {row.invoice}
+                          {row?.invoice??'xxxx'}
                         </TableCell>
                       </TableRow>
                       <TableRow>
@@ -210,14 +210,14 @@ export default function InvoicesTableResponsive({
                                   align='center'
                                   sx={{
                                     color:
-                                      row.status === undefined ||
-                                      row.status === "cancelado"
+                                      row?.status === undefined ||
+                                      row?.status === "cancelado"
                                         ? "#00C52B"
                                         : "#FF0404",
                                     borderColor: "#69EAE2",
                                   }}
                                 >
-                                  {row.status
+                                  {row?.status
                                     ? row.status.toUpperCase()
                                     : "CANCELADO"}
                                 </TableCell>

@@ -1,3 +1,4 @@
+
 "use client";
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
@@ -125,11 +126,19 @@ export default function Sidebar({
     Vender: ["/vender"],
     Inventario: ["/inventory/productos", "/inventory/agregarProductos"],
     Caja: ["/register/invoices", "/register/dashboard"],
+    Ajustes: [
+      "/settings/user",
+      "/settings/employees",
+      "/settings/establisment",
+    ]
   };
 
   const filterSectionsByPermissions = (sections: any, permissions: any) => {
     return sections.filter((section: any) => {
       if (section.section === "INICIO" || section.section === "PERFIL") {
+        return true;
+      }
+      if (dataUser?.status === "admin" && section.section === "AJUSTES") {
         return true;
       }
       for (const permission of permissions) {

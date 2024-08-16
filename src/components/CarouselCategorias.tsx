@@ -40,8 +40,8 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
       {
         breakpoint: 600,
         settings: {
-          slidesToShow: 1,
-          slidesToScroll: 1,
+          slidesToShow: 2,
+          slidesToScroll: 2,
         },
       },
     ],
@@ -52,7 +52,7 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
       sx={{
         width: "90%",
         margin: "0 auto",
-        padding: "20px 0",
+        padding: { xs: "10px", sm: "20px 0" },
         backgroundColor: "#1F1D2B",
         borderRadius: "10px",
       }}
@@ -62,7 +62,7 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
           textAlign: "center",
           color: "#69EAE2",
           fontFamily: "Nunito",
-          fontSize: "1.25rem",
+          fontSize: { xs: "14px", sm: "1.25rem" },
           fontWeight: 800,
           paddingBottom: "10px",
         }}
@@ -76,12 +76,11 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
               <Paper
                 onClick={() => onCategorySelect(category)}
                 sx={{
-                  padding: "8px",
+                  padding: {xs:'0px',sm:"8px"},
                   textAlign: "center",
                   backgroundColor:
-                    selectedCategory === category ? "#69EAE2" : "#1F1D2B", // Cambiar color si está seleccionada
+                    selectedCategory === category ? "#69EAE2" : "#1F1D2B",
                   color: selectedCategory === category ? "#1F1D2B" : "#fff",
-                  // border: "1px solid #69EAE2",
                   borderRadius: "5px",
                   display: "flex",
                   alignItems: "center",
@@ -102,8 +101,8 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
                 <Typography
                   sx={{
                     fontFamily: "Nunito",
-                    fontSize: "1rem",
-                    fontWeight: 700,
+                    fontSize: { xs: "12px", sm: "1rem" },
+                    fontWeight: 800,
                   }}
                 >
                   {category}

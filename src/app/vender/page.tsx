@@ -7,7 +7,6 @@ import {
   InputBase,
   Pagination,
   Paper,
-  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -17,13 +16,37 @@ import { getAllProductsDataonSnapshot } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
 import CarouselCategorias from "@/components/CarouselCategorias";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+const themee = createTheme({
+  palette: {
+    secondary: {
+      main: "#1F1D2B",
+    },
+  },
+});
+
+const styleButtonInvoice = {
+  select: {
+    color: "#1F1D2B",
+    background: "#69EAE2",
+    fontWeight: 700,
+    borderRadius: "40px",
+    transition: "all 1.3s ease",
+  },
+  default: {
+    color: "#69EAE2",
+    fontWeight: 300,
+  },
+};
 
 const Page: any = () => {
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
   const [selectedItems, setSelectedItems] = useState<any>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null); // Nuevo estado para la categoría seleccionada
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [typeInvoice, setTypeInvoice] = useState<string>("quickSale");
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
@@ -176,6 +199,73 @@ const Page: any = () => {
         sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
       >
         <Header title="VENDER" />
+        <ThemeProvider theme={themee}>
+          <Box
+            sx={{ marginTop: "15px", textAlignLast: "center", width: "95%" }}
+          >
+            <Box
+              sx={{
+                background: "#1F1D2B",
+                boxShadow: "0px 0px 19px -14px #69EAE2",
+                borderRadius: "40px",
+                padding: { xs: "7px 11px", sm: "10px 14px" },
+                width: "fit-content",
+                margin: "0 auto",
+              }}
+            >
+              <Button
+                onClick={() => setTypeInvoice("invoice")}
+                style={
+                  typeInvoice == "invoice"
+                    ? styleButtonInvoice.select
+                    : styleButtonInvoice.default
+                }
+                sx={{
+                  fontFamily: "Nunito",
+                  fontSize: { xs: "12px", sm: "16px" },
+                  lineHeight: "21.82px",
+                  textAlign: "left",
+                  height: { xs: "25px", sm: "auto" },
+                }}
+              >
+                FACTURA
+              </Button>
+              <Button
+                onClick={() => setTypeInvoice("quickSale")}
+                style={
+                  typeInvoice == "quickSale"
+                    ? styleButtonInvoice.select
+                    : styleButtonInvoice.default
+                }
+                sx={{
+                  fontSize: { xs: "12px", sm: "16px" },
+                  lineHeight: "21.82px",
+                  textAlign: "left",
+                  height: { xs: "25px", sm: "auto" },
+                }}
+              >
+                VENTA RÁPIDA
+              </Button>
+              <Button
+                disabled
+                style={
+                  typeInvoice == "quickSale"
+                    ? styleButtonInvoice.select
+                    : styleButtonInvoice.default
+                }
+                onClick={() => setTypeInvoice("electronic")}
+                sx={{
+                  fontSize: "16px",
+                  lineHeight: "21.82px",
+                  textAlign: "left",
+                  display: "none",
+                }}
+              >
+                FACTURA ELECTRONICA
+              </Button>
+            </Box>
+          </Box>
+        </ThemeProvider>
         <Paper
           id={"paper"}
           sx={{ width: "95%", height: "100%", marginTop: "1rem" }}
@@ -188,7 +278,7 @@ const Page: any = () => {
           <Box
             sx={{
               padding: "40px 48px",
-              height: { xs: "90%", sm: "105%" },
+              height: { xs: "92%", sm: "99%" },
               textAlign: "-webkit-center",
             }}
           >
@@ -277,25 +367,6 @@ const Page: any = () => {
                 RESTABLECER
               </Button>
             </Box>
-            <Box
-              sx={{
-                textAlign: "start",
-                marginTop: "1rem",
-              }}
-            >
-              <Typography
-                sx={{
-                  color: "#69EAE2",
-                  fontFamily: "Nunito",
-                  fontSize: "1rem",
-                  fontStyle: "normal",
-                  fontWeight: 500,
-                  lineHeight: "140%",
-                }}
-              >
-                AGREGAR DESDE CATALOGO
-              </Typography>
-            </Box>
             <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
               <CarouselCategorias
                 onCategorySelect={handleCategorySelect}
@@ -335,6 +406,7 @@ const Page: any = () => {
         searchTerm={searchTerm}
         filteredData={filteredData}
         setSearchTerm={setSearchTerm}
+        typeInvoice={typeInvoice}
       />
     </Box>
   );
