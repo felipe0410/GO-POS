@@ -119,17 +119,39 @@ export default function Sidebar({
         },
       ],
     },
+    {
+      section: "Clientes",
+      icon: "/images/settings.svg",
+      icon2: "/images/inventarioSelected.svg",
+      id: "/settings/user",
+      submenus: [
+        {
+          section: "USUARIO",
+          id: "/settings/user",
+        },
+        {
+          section: "EMPLEADOS",
+          id: "/settings/employees",
+        },
+        {
+          section: "ESTABLECIMIENTO",
+          id: "/settings/establishment",
+        },
+      ],
+    },
   ];
 
   const permissionMap: any = {
     Vender: ["/vender"],
     Inventario: ["/inventory/productos", "/inventory/agregarProductos"],
     Caja: ["/register/invoices", "/register/dashboard"],
+    Clientes: ["/settings/user"], 
   };
 
   const filterSectionsByPermissions = (sections: any, permissions: any) => {
     return sections.filter((section: any) => {
-      if (section.section === "INICIO" || section.section === "PERFIL") {
+      if (section.section === "INICIO" || section.section === "PERFIL"||
+        section.section === "Clientes") {
         return true;
       }
       for (const permission of permissions) {
