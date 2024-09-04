@@ -1,4 +1,3 @@
-
 "use client";
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
@@ -67,6 +66,16 @@ export default function Sidebar({
       icon: "/images/vender.svg",
       icon2: "/images/venderSelected.svg",
       id: "/vender",
+      // submenus: [
+      //   {
+      //     section: "Dian",
+      //     id: "/vender/Dian",
+      //   },
+      //   {
+      //     section: "Normal",
+      //     id: "/vender/Normal",
+      //   },
+      // ],
     },
     {
       section: "CAJA",
@@ -123,14 +132,14 @@ export default function Sidebar({
   ];
 
   const permissionMap: any = {
-    Vender: ["/vender"],
+    Vender: ["/vender","/vender/Dian", "/vender/Normal"],
     Inventario: ["/inventory/productos", "/inventory/agregarProductos"],
     Caja: ["/register/invoices", "/register/dashboard"],
     Ajustes: [
       "/settings/user",
       "/settings/employees",
       "/settings/establisment",
-    ]
+    ],
   };
 
   const filterSectionsByPermissions = (sections: any, permissions: any) => {

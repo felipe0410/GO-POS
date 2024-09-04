@@ -1,0 +1,172 @@
+{
+  "dataRecords": {
+    "data": [
+      {
+        "id": 7,
+        "code": "01",
+        "voucher_name": "Factura electr\u00f3nica",
+        "cufe_algorithm": "CUFE-SHA384",
+        "prefix": "fv",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 1,
+        "active": 1
+      },
+      {
+        "id": 8,
+        "code": "02",
+        "voucher_name": "Factura de Exportaci\u00f3n",
+        "cufe_algorithm": "CUFE-SHA384",
+        "prefix": "fvex",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 9,
+        "code": "03",
+        "voucher_name": "Factura por Contingencia Facturador",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "FCF",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 1,
+        "active": 1
+      },
+      {
+        "id": 10,
+        "code": "04",
+        "voucher_name": "Factura por Contingencia DIAN",
+        "cufe_algorithm": "CUFE-SHA384",
+        "prefix": "FCDIAN",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 11,
+        "code": "05",
+        "voucher_name": "Documento de Soporte",
+        "cufe_algorithm": "CUDS-SHA384",
+        "prefix": "ds",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 1,
+        "active": 1
+      },
+      {
+        "id": 13,
+        "code": "102",
+        "voucher_name": "Documento Soporte de Pago de N\u00f3mina Electr\u00f3nica",
+        "cufe_algorithm": "CUNE-SHA384",
+        "prefix": "nie",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 14,
+        "code": "103",
+        "voucher_name": "Nota de Ajuste de N\u00f3mina Electr\u00f3nica",
+        "cufe_algorithm": "CUNE-SHA384",
+        "prefix": "niae",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 20,
+        "code": "20",
+        "voucher_name": "P.O.S Electr\u00f3nico",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "de",
+        "electronic": 1,
+        "apply_notes": 1,
+        "invoice": 1,
+        "active": 1
+      },
+      {
+        "id": 5,
+        "code": "91",
+        "voucher_name": "Nota cr\u00e9dito",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "nc",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 4,
+        "code": "92",
+        "voucher_name": "Nota d\u00e9bito",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "nd",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 93,
+        "code": "93",
+        "voucher_name": "Nota debito P.O.S Electr\u00f3nico",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "ndad",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 94,
+        "code": "94",
+        "voucher_name": "Nota cr\u00e9dito P.O.S Electr\u00f3nico",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "ndac",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 0,
+        "active": 1
+      },
+      {
+        "id": 15,
+        "code": "95",
+        "voucher_name": "Nota de ajuste documento soporte",
+        "cufe_algorithm": "CUDS-SHA384",
+        "prefix": "nas",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 1,
+        "active": 1
+      },
+      {
+        "id": 12,
+        "code": "96",
+        "voucher_name": "Eventos (ApplicationResponse)",
+        "cufe_algorithm": "CUDE-SHA384",
+        "prefix": "ar",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 1,
+        "active": 1
+      },
+      {
+        "id": 99,
+        "code": "999",
+        "voucher_name": "Attached document",
+        "cufe_algorithm": "CUDS-SHA384",
+        "prefix": "ad",
+        "electronic": 1,
+        "apply_notes": 0,
+        "invoice": 0,
+        "active": 1
+      }
+    ]
+  },
+  "success": true
+}

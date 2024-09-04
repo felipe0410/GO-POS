@@ -218,13 +218,12 @@ const DatosVenta = (props: any) => {
 
       // Calculamos el nuevo total
       newTotal = updatedItems.reduce((total, item) => total + item.acc, 0);
-
       // Actualizamos la factura existente
       await updateInvoice(quickSaleId, {
         compra: updatedItems,
         subtotal: newTotal,
         total: newTotal,
-        date: new Date().toISOString(),
+        date: getCurrentDateTime(),
       });
     } else {
       // Si no existe una factura previa, simplemente creamos una nueva

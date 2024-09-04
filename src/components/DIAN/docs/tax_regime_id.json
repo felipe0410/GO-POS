@@ -1,0 +1,19 @@
+{
+  "dataRecords": {
+    "data": [
+      {
+        "id": 1,
+        "code": "48",
+        "description": "Impuesto sobre las ventas \u2013 IVA",
+        "active": 1
+      },
+      {
+        "id": 2,
+        "code": "49",
+        "description": "No responsable de IVA",
+        "active": 1
+      }
+    ]
+  },
+  "success": true
+}

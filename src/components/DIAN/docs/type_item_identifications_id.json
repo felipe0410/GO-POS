@@ -1,0 +1,21 @@
+{
+  "dataRecords": {
+    "data": [
+      { "id": 1, "name": "UNSPSC", "code": "001", "code_agency": "10" },
+      { "id": 2, "name": "GTIN", "code": "010", "code_agency": "9" },
+      {
+        "id": 3,
+        "name": "Partida Arancelarias",
+        "code": "020",
+        "code_agency": "195"
+      },
+      {
+        "id": 4,
+        "name": "Est\u00e1ndar de adopci\u00f3n del contribuyente",
+        "code": "999",
+        "code_agency": ""
+      }
+    ]
+  },
+  "success": true
+}

@@ -1,0 +1,20 @@
+{
+  "dataRecords": {
+    "data": [
+      { "id": 1, "code": "O-13", "description": "Gran contribuyente" },
+      { "id": 2, "code": "O-15", "description": "Autorretenedor" },
+      {
+        "id": 3,
+        "code": "O-23",
+        "description": "Agente de retenci\u00f3n IVA"
+      },
+      {
+        "id": 4,
+        "code": "O-47",
+        "description": "R\u00e9gimen simple de tributaci\u00f3n"
+      },
+      { "id": 5, "code": "R-99-PN", "description": "No responsable" }
+    ]
+  },
+  "success": true
+}

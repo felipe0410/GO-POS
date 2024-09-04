@@ -1,0 +1,427 @@
+{
+  "dataRecords": {
+    "data": [
+      {
+        "id": 1,
+        "payment_method": "Instrumento no definido",
+        "code": "1",
+        "active": 0
+      },
+      {
+        "id": 2,
+        "payment_method": "Cr\u00e9dito ACH",
+        "code": "2",
+        "active": 0
+      },
+      {
+        "id": 3,
+        "payment_method": "D\u00e9bito ACH",
+        "code": "3",
+        "active": 0
+      },
+      {
+        "id": 4,
+        "payment_method": "Reversi\u00f3n d\u00e9bito de demanda ACH",
+        "code": "4",
+        "active": 0
+      },
+      {
+        "id": 5,
+        "payment_method": "Reversi\u00f3n cr\u00e9dito de demanda ACH ",
+        "code": "5",
+        "active": 0
+      },
+      {
+        "id": 6,
+        "payment_method": "Cr\u00e9dito de demanda ACH",
+        "code": "6",
+        "active": 0
+      },
+      {
+        "id": 7,
+        "payment_method": "D\u00e9bito de demanda ACH",
+        "code": "7",
+        "active": 0
+      },
+      { "id": 8, "payment_method": "Mantener", "code": "8", "active": 0 },
+      {
+        "id": 9,
+        "payment_method": "Clearing Nacional o Regional",
+        "code": "9",
+        "active": 0
+      },
+      { "id": 10, "payment_method": "Efectivo", "code": "10", "active": 1 },
+      {
+        "id": 11,
+        "payment_method": "Reversi\u00f3n Cr\u00e9dito Ahorro",
+        "code": "11",
+        "active": 0
+      },
+      {
+        "id": 12,
+        "payment_method": "Reversi\u00f3n D\u00e9bito Ahorro",
+        "code": "12",
+        "active": 0
+      },
+      {
+        "id": 13,
+        "payment_method": "Cr\u00e9dito Ahorro",
+        "code": "13",
+        "active": 0
+      },
+      {
+        "id": 14,
+        "payment_method": "D\u00e9bito Ahorro",
+        "code": "14",
+        "active": 0
+      },
+      {
+        "id": 15,
+        "payment_method": "Bookentry Cr\u00e9dito",
+        "code": "15",
+        "active": 0
+      },
+      {
+        "id": 16,
+        "payment_method": "Bookentry D\u00e9bito",
+        "code": "16",
+        "active": 0
+      },
+      {
+        "id": 17,
+        "payment_method": "Concentraci\u00f3n de la demanda en efectivo /Desembolso Cr\u00e9dito (CCD)",
+        "code": "17",
+        "active": 0
+      },
+      {
+        "id": 18,
+        "payment_method": "Concentraci\u00f3n de la demanda en efectivo / Desembolso (CCD) d\u00e9bito",
+        "code": "18",
+        "active": 0
+      },
+      {
+        "id": 19,
+        "payment_method": "Cr\u00e9dito Pago negocio corporativo (CTP)",
+        "code": "19",
+        "active": 0
+      },
+      { "id": 20, "payment_method": "Cheque", "code": "20", "active": 0 },
+      {
+        "id": 21,
+        "payment_method": "Poyecto bancario",
+        "code": "21",
+        "active": 0
+      },
+      {
+        "id": 22,
+        "payment_method": "Proyecto bancario certificado",
+        "code": "22",
+        "active": 0
+      },
+      {
+        "id": 23,
+        "payment_method": "Cheque bancario",
+        "code": "23",
+        "active": 0
+      },
+      {
+        "id": 24,
+        "payment_method": "Nota cambiaria esperando aceptaci\u00f3n",
+        "code": "24",
+        "active": 0
+      },
+      {
+        "id": 25,
+        "payment_method": "Cheque certificado",
+        "code": "25",
+        "active": 0
+      },
+      { "id": 26, "payment_method": "Cheque Local", "code": "26", "active": 0 },
+      {
+        "id": 27,
+        "payment_method": "D\u00e9bito Pago Neogcio Corporativo (CTP)",
+        "code": "27",
+        "active": 0
+      },
+      {
+        "id": 28,
+        "payment_method": "Cr\u00e9dito Negocio Intercambio Corporativo (CTX)",
+        "code": "28",
+        "active": 0
+      },
+      {
+        "id": 29,
+        "payment_method": "D\u00e9bito Negocio Intercambio Corporativo (CTX)",
+        "code": "29",
+        "active": 0
+      },
+      {
+        "id": 30,
+        "payment_method": "Transferecia Cr\u00e9dito",
+        "code": "30",
+        "active": 1
+      },
+      {
+        "id": 31,
+        "payment_method": "Transferencia D\u00e9bito",
+        "code": "31",
+        "active": 1
+      },
+      {
+        "id": 32,
+        "payment_method": "Concentraci\u00f3n Efectivo / Desembolso Cr\u00e9dito plus (CCD+)",
+        "code": "32",
+        "active": 0
+      },
+      {
+        "id": 33,
+        "payment_method": "Concentraci\u00f3n Efectivo / Desembolso D\u00e9bito plus (CCD+)",
+        "code": "33",
+        "active": 0
+      },
+      {
+        "id": 34,
+        "payment_method": "Pago y dep\u00f3sito pre acordado (PPD)",
+        "code": "34",
+        "active": 0
+      },
+      {
+        "id": 35,
+        "payment_method": "Concentraci\u00f3n efectivo ahorros / Desembolso Cr\u00e9dito (CCD)",
+        "code": "35",
+        "active": 0
+      },
+      {
+        "id": 36,
+        "payment_method": "Concentraci\u00f3n efectivo ahorros / Desembolso Dr\u00e9dito (CCD)",
+        "code": "36",
+        "active": 0
+      },
+      {
+        "id": 37,
+        "payment_method": "Pago Negocio Corporativo Ahorros Cr\u00e9dito (CTP)",
+        "code": "37",
+        "active": 0
+      },
+      {
+        "id": 38,
+        "payment_method": "Pago Neogcio Corporativo Ahorros D\u00e9bito (CTP)",
+        "code": "38",
+        "active": 0
+      },
+      {
+        "id": 39,
+        "payment_method": "Cr\u00e9dito Negocio Intercambio Corporativo (CTX)",
+        "code": "39",
+        "active": 0
+      },
+      {
+        "id": 40,
+        "payment_method": "D\u00e9bito Negocio Intercambio Corporativo (CTX)",
+        "code": "40",
+        "active": 0
+      },
+      {
+        "id": 41,
+        "payment_method": "Concentraci\u00f3n efectivo/Desembolso Cr\u00e9dito plus (CCD+) ",
+        "code": "41",
+        "active": 0
+      },
+      {
+        "id": 42,
+        "payment_method": "Consiganci\u00f3n bancaria",
+        "code": "42",
+        "active": 1
+      },
+      {
+        "id": 43,
+        "payment_method": "Concentraci\u00f3n efectivo / Desembolso D\u00e9bito plus (CCD+)",
+        "code": "43",
+        "active": 0
+      },
+      {
+        "id": 44,
+        "payment_method": "Nota cambiaria",
+        "code": "44",
+        "active": 0
+      },
+      {
+        "id": 45,
+        "payment_method": "Transferencia Cr\u00e9dito Bancario",
+        "code": "45",
+        "active": 0
+      },
+      {
+        "id": 46,
+        "payment_method": "Transferencia D\u00e9bito Interbancario",
+        "code": "46",
+        "active": 0
+      },
+      {
+        "id": 47,
+        "payment_method": "Transferencia D\u00e9bito Bancaria",
+        "code": "47",
+        "active": 0
+      },
+      {
+        "id": 48,
+        "payment_method": "Tarjeta Cr\u00e9dito",
+        "code": "48",
+        "active": 1
+      },
+      {
+        "id": 49,
+        "payment_method": "Tarjeta D\u00e9bito",
+        "code": "49",
+        "active": 1
+      },
+      { "id": 50, "payment_method": "Postgiro", "code": "50", "active": 0 },
+      {
+        "id": 51,
+        "payment_method": "Telex est\u00e1ndar bancario franc\u00e9s",
+        "code": "51",
+        "active": 0
+      },
+      {
+        "id": 52,
+        "payment_method": "Pago comercial urgente",
+        "code": "52",
+        "active": 0
+      },
+      {
+        "id": 53,
+        "payment_method": "Pago Tesorer\u00eda Urgente",
+        "code": "53",
+        "active": 0
+      },
+      {
+        "id": 54,
+        "payment_method": "Nota promisoria",
+        "code": "60",
+        "active": 0
+      },
+      {
+        "id": 55,
+        "payment_method": "Nota promisoria firmada por el acreedor",
+        "code": "61",
+        "active": 0
+      },
+      {
+        "id": 56,
+        "payment_method": "Nota promisoria firmada por el acreedor, avalada por el banco",
+        "code": "62",
+        "active": 0
+      },
+      {
+        "id": 57,
+        "payment_method": "Nota promisoria firmada por el acreedor, avalada por un tercero",
+        "code": "63",
+        "active": 0
+      },
+      {
+        "id": 58,
+        "payment_method": "Nota promisoria firmada pro el banco",
+        "code": "64",
+        "active": 0
+      },
+      {
+        "id": 59,
+        "payment_method": "Nota promisoria firmada por un banco avalada por otro banco",
+        "code": "65",
+        "active": 0
+      },
+      {
+        "id": 60,
+        "payment_method": "Nota promisoria firmada ",
+        "code": "66",
+        "active": 0
+      },
+      {
+        "id": 61,
+        "payment_method": "Nota promisoria firmada por un tercero avalada por un banco",
+        "code": "67",
+        "active": 0
+      },
+      {
+        "id": 62,
+        "payment_method": "Retiro de nota por el por el acreedor",
+        "code": "70",
+        "active": 0
+      },
+      {
+        "id": 63,
+        "payment_method": "Retiro de nota por el por el acreedor sobre un banco",
+        "code": "74",
+        "active": 0
+      },
+      {
+        "id": 64,
+        "payment_method": "Retiro de nota por el acreedor, avalada por otro banco",
+        "code": "75",
+        "active": 0
+      },
+      {
+        "id": 65,
+        "payment_method": "Retiro de nota por el acreedor, sobre un banco avalada por un tercero",
+        "code": "76",
+        "active": 0
+      },
+      {
+        "id": 66,
+        "payment_method": "Retiro de una nota por el acreedor sobre un tercero",
+        "code": "77",
+        "active": 0
+      },
+      {
+        "id": 67,
+        "payment_method": "Retiro de una nota por el acreedor sobre un tercero avalada por un banco",
+        "code": "78",
+        "active": 0
+      },
+      {
+        "id": 68,
+        "payment_method": "Nota bancaria tranferible",
+        "code": "91",
+        "active": 0
+      },
+      {
+        "id": 69,
+        "payment_method": "Cheque local traferible",
+        "code": "92",
+        "active": 0
+      },
+      {
+        "id": 70,
+        "payment_method": "Giro referenciado",
+        "code": "93",
+        "active": 0
+      },
+      { "id": 71, "payment_method": "Giro urgente", "code": "94", "active": 0 },
+      {
+        "id": 72,
+        "payment_method": "Giro formato abierto",
+        "code": "95",
+        "active": 0
+      },
+      {
+        "id": 73,
+        "payment_method": "M\u00e9todo de pago solicitado no usuado",
+        "code": "96",
+        "active": 0
+      },
+      {
+        "id": 74,
+        "payment_method": "Clearing entre partners",
+        "code": "97",
+        "active": 0
+      },
+      {
+        "id": 75,
+        "payment_method": "Acuerdo mutuo",
+        "code": "ZZZ",
+        "active": 0
+      }
+    ]
+  },
+  "success": true
+}

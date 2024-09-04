@@ -1,0 +1,31 @@
+{
+  "dataRecords": {
+    "data": [
+      { "id": 1, "code": "10", "name": "Estandar" },
+      { "id": 2, "code": "09", "name": "Servicios AIU" },
+      { "id": 3, "code": "11", "name": "Mandatos" },
+      { "id": 4, "code": "12", "name": "Transporte" },
+      { "id": 5, "code": "14", "name": "Notarios" },
+      { "id": 6, "code": "15", "name": "Compra Divisas" },
+      { "id": 7, "code": "16", "name": "Venta Divisas" },
+      { "id": 9, "code": "10", "name": "Residente" },
+      { "id": 10, "code": "11", "name": "No Residente" },
+      {
+        "id": 11,
+        "code": "20",
+        "name": "Nota de ajuste al documento Equivalente P.O.S"
+      },
+      {
+        "id": 12,
+        "code": "20",
+        "name": "Nota Cr\u00e9dito que referencia una factura electr\u00f3nica."
+      },
+      {
+        "id": 13,
+        "code": "24",
+        "name": "Nota de Ajuste para Factura Electr\u00f3nica de Venta Aceptada"
+      }
+    ]
+  },
+  "success": true
+}

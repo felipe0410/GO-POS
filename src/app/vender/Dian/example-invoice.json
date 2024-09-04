@@ -1,0 +1,89 @@
+{
+    "resolution_number": "18764071164948", // Número de resolución del documento (obligatorio)
+    "prefix": "FVP", // Prefijo de la resolución del documento (obligatorio si hay más de una resolución)
+    "notes": "Nota del documento", // Información adicional sobre el documento (opcional)
+    "document_number": "7", // Número consecutivo del documento, sin prefijos (obligatorio)
+    "graphic_representation": 0, // Indicador de representación gráfica (opcional)
+    "send_email": 0, // Indicador de envío de email (opcional)
+    "operation_type_id": 1, // Tipo de operación que afecta al documento (obligatorio)
+    "type_document_id": 7, // Tipo de documento enviado a la DIAN (obligatorio)
+    "payments": [{ // Lista de pagos (obligatorio)
+      "payment_method_id": 1, // Método de pago: 1 = contado, 2 = crédito (obligatorio)
+      "means_payment_id": 10, // Medio de pago (obligatorio)
+      "value_paid": "224.00" // Valor pagado (obligatorio)
+    }],
+    "customer": { // Información del cliente (obligatorio)
+      "country_id": "45", // País del cliente (opcional)
+      "city_id": "149", // Ciudad del cliente (opcional)
+      "identity_document_id": "1", // Documento de identidad del cliente (opcional)
+      "type_organization_id": 2, // Tipo de organización: 1 = Persona Jurídica, 2 = Persona natural (opcional)
+      "tax_regime_id": 2, // Régimen contable del cliente (opcional)
+      "tax_level_id": 5, // Régimen fiscal del cliente (opcional)
+      "company_name": "Santiago Arango", // Nombre de la empresa/persona natural (obligatorio)
+      "dni": "1152440359", // Número del documento de identidad del cliente (obligatorio)
+      "mobile": "3108435423", // Móvil del cliente (opcional)
+      "email": "lws_1234@hotmail.com", // Email del cliente (obligatorio para documentos enviados al cliente)
+      "address": "Direccion residencial", // Dirección del cliente (opcional)
+      "postal_code": "661002" // Código postal del cliente (opcional)
+    },
+    "lines": [ // Líneas de detalle de cada documento (obligatorio)
+      {
+        "invoiced_quantity": "2", // Cantidad del producto o servicio (obligatorio)
+        "quantity_units_id": "1093", // Unidad de medida (obligatorio)
+        "line_extension_amount": "100.00", // Valor total de la línea sin impuesto (obligatorio)
+        "free_of_charge_indicator": false, // Indicador de gratuidad, siempre es false (obligatorio)
+        "description": "TIJERA NECROPSIA AVES", // Descripción del artículo o servicio (obligatorio)
+        "code": "HMT83", // Código interno del artículo o servicio (obligatorio)
+        "type_item_identifications_id": "4", // Estándar de identificación del ítem (obligatorio)
+        "reference_price_id": "1", // Precio de referencia (obligatorio)
+        "price_amount": "50", // Valor del artículo o servicio (obligatorio)
+        "base_quantity": "2", // Cantidad real sobre la cual el precio aplica (obligatorio)
+        "um": "M", // Unidad de medida (obligatorio)
+        "tax_totals": [{ // Grupo de campos para impuestos de la línea (obligatorio si hay impuestos)
+          "tax_id": "1", // ID del impuesto (obligatorio)
+          "tax_amount": 19, // Monto o valor total del impuesto (obligatorio)
+          "taxable_amount": 100, // Base gravable del impuesto (obligatorio)
+          "percent": 19 // Porcentaje del impuesto (obligatorio)
+        }]
+      },
+      {
+        "invoiced_quantity": "2", // Cantidad del producto o servicio (obligatorio)
+        "quantity_units_id": "1093", // Unidad de medida (obligatorio)
+        "line_extension_amount": "100.00", // Valor total de la línea sin impuesto (obligatorio)
+        "free_of_charge_indicator": false, // Indicador de gratuidad, siempre es false (obligatorio)
+        "description": "TIJERA NECROPSIA AVES 2", // Descripción del artículo o servicio (obligatorio)
+        "code": "HMT84", // Código interno del artículo o servicio (obligatorio)
+        "type_item_identifications_id": "4", // Estándar de identificación del ítem (obligatorio)
+        "reference_price_id": "1", // Precio de referencia (obligatorio)
+        "price_amount": "50", // Valor del artículo o servicio (obligatorio)
+        "base_quantity": "2", // Cantidad real sobre la cual el precio aplica (obligatorio)
+        "tax_totals": [{ // Grupo de campos para impuestos de la línea (obligatorio si hay impuestos)
+          "tax_id": "1", // ID del impuesto (obligatorio)
+          "tax_amount": 5, // Monto o valor total del impuesto (obligatorio)
+          "taxable_amount": 100, // Base gravable del impuesto (obligatorio)
+          "percent": 5 // Porcentaje del impuesto (obligatorio)
+        }]
+      }
+    ],
+    "legal_monetary_totals": { // Totales del documento (obligatorio)
+      "line_extension_amount": "200.00", // Total de líneas antes de IVA (obligatorio)
+      "tax_exclusive_amount": "200.00", // Base gravable de las líneas con impuesto (obligatorio)
+      "tax_inclusive_amount": "224.00", // Total de líneas + Impuestos (obligatorio)
+      "payable_amount": 224.00 // Monto total del documento (obligatorio)
+    },
+    "tax_totals": [ // Suma de todos los impuestos del documento (obligatorio si hay impuestos)
+      {
+        "tax_id": "1", // ID del impuesto (obligatorio)
+        "tax_amount": 19, // Monto o valor total del impuesto (obligatorio)
+        "taxable_amount": 100, // Base gravable del impuesto (obligatorio)
+        "percent": 19 // Porcentaje del impuesto (obligatorio)
+      },
+      {
+        "tax_id": "1", // ID del impuesto (obligatorio)
+        "tax_amount": 5, // Monto o valor total del impuesto (obligatorio)
+        "taxable_amount": 100, // Base gravable del impuesto (obligatorio)
+        "percent": 5 // Porcentaje del impuesto (obligatorio)
+      }
+    ]
+  }
+  
