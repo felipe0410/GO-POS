@@ -187,7 +187,25 @@ const SlidebarVender = ({
           <Box
             id="principal container"
             padding={3}
-            sx={{ height: "92%", width: "100%", overflow: "auto" }}
+            sx={{
+              height: "92%",
+              width: "100%",
+              overflow: "auto",
+              "&::-webkit-scrollbar": {
+                width: "6px",
+              },
+               "&::-webkit-scrollbar-track": {
+                 backgroundColor: "#2C3248",
+               },
+               "&::-webkit-scrollbar-thumb": {
+                 backgroundColor: "gray",
+                 borderRadius: "10px",
+                 boxShadow: "0px 4px 4px 0px #00000040",
+               },
+              // "&::-webkit-scrollbar-thumb:hover": {
+              //   backgroundColor: "#555",
+              // },
+            }}
           >
             {reciboPago ? (
               <Factura

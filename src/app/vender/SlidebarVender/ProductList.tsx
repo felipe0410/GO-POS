@@ -70,6 +70,21 @@ const ProductList: React.FC<ProductListProps> = ({
         display: !(selectedItems?.length === 0) ? "block" : "flex",
         flexDirection: "column",
         justifyContent: "center",
+
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#2C3248",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "#69EAE2",
+          borderRadius: "10px",
+          boxShadow: "0px 4px 4px 0px #00000040",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#555",
+        },
       }}
     >
       {selectedItems?.length === 0 ? (

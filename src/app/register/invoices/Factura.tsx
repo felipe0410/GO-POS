@@ -16,8 +16,12 @@ const Factura = ({ data }: { data: any }) => {
     img: "",
   });
 
+  console.log("data.invoice:::>", data.invoice);
   React.useEffect(() => {
-    if (data.invoice) JsBarcode("#barcode", data.invoice);
+    if (data.invoice)
+      JsBarcode("#barcode", data.invoice, {
+        width: data.invoice.includes("venta-rapida") ? 1 : 2,
+      });
   }, [data.invoice]);
   React.useEffect(() => {
     const dataEstablesimente = async () => {
