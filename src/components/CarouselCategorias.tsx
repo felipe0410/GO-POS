@@ -101,7 +101,7 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
                 <Typography
                   sx={{
                     fontFamily: "Nunito",
-                    fontSize: { xs: "12px", sm: "1rem" },
+                    fontSize: { xs: "10px", sm: "14px" },
                     fontWeight: 800,
                   }}
                 >

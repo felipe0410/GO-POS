@@ -78,7 +78,7 @@ export default function InvoicesTable({
             width: "100%",
             overflow: "hidden",
             background: "#1F1D2B",
-            height: "87%",
+            height: "95%",
             marginTop: "1em",
           }}
         >

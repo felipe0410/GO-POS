@@ -136,7 +136,7 @@ const Invoices = () => {
       </Typography>
       <Paper
         id={"paper"}
-        sx={{ width: "95%", height: "100%", marginTop: "2rem" }}
+        sx={{ width: "95%", height: "75%", marginTop: "2rem" }}
         style={{
           borderRadius: "0.625rem",
           background: "#1F1D2B",

@@ -278,7 +278,7 @@ const Page: any = () => {
           <Box
             sx={{
               padding: "40px 48px",
-              height: { xs: "92%", sm: "99%" },
+              height: { xs: "92%", sm: "95%" },
               textAlign: "-webkit-center",
             }}
           >

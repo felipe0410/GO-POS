@@ -2,6 +2,7 @@ import { Button, Typography } from "@mui/material";
 import * as React from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import "./CalendarCustom.css"; 
 
 export default function ReactCalendar({
   setSearchTerm,
@@ -60,7 +61,6 @@ export default function ReactCalendar({
             background: "#69eae2ab",
             boxShadow:
               "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-
             "&:hover": { backgroundColor: "#69EAE2" },
           }}
         >
@@ -70,9 +70,7 @@ export default function ReactCalendar({
               textAlign: "center",
               fontFamily: "Nunito",
               fontSize: "0.875rem",
-              fontStyle: "normal",
               fontWeight: 800,
-              lineHeight: "normal",
             }}
           >
             CONFIRMAR
@@ -80,7 +78,7 @@ export default function ReactCalendar({
         </Button>
       ) : (
         <Button
-          disabled={dateTabs === null ? true : false}
+          disabled={dateTabs === null}
           onClick={handleOk}
           sx={{
             marginTop: "10px",
@@ -90,7 +88,6 @@ export default function ReactCalendar({
             background: dateTabs === null ? "gray" : "#69EAE2",
             boxShadow:
               "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-
             "&:hover": { backgroundColor: "#69EAE2" },
           }}
         >
@@ -100,9 +97,7 @@ export default function ReactCalendar({
               textAlign: "center",
               fontFamily: "Nunito",
               fontSize: "0.875rem",
-              fontStyle: "normal",
               fontWeight: 800,
-              lineHeight: "normal",
             }}
           >
             ACEPTAR

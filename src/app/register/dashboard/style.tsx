@@ -1,7 +1,7 @@
 export const typographyTitle = {
   color: "#FFF",
   fontFamily: "Nunito Sans",
-  fontSize: "2rem",
+  fontSize: {xs:'1rem',sm:"2rem"},
   fontStyle: "normal",
   fontWeight: 700,
   lineHeight: "normal",

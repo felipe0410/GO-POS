@@ -20,7 +20,7 @@ const VenderCards = ({
       id='paper'
       elevation={0}
       style={{
-        height: "100%",
+        height: "90%",
         overflowX: "auto",
         maxWidth: "100%",
         background: "#1F1D2B",
