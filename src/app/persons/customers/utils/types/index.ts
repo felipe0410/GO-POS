@@ -1,0 +1,1 @@
+export type TColumnAlign = "right" | "center" | "left";

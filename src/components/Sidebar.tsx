@@ -1,4 +1,3 @@
-
 "use client";
 import * as React from "react";
 import { styled, useTheme } from "@mui/material/styles";
@@ -46,7 +45,7 @@ export default function Sidebar({
   const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
   const permissions =
     dataUser?.status === "admin"
-      ? ["Vender", "Inventario", "Caja"]
+      ? ["Vender", "Inventario", "Caja", "Personas"]
       : dataUser?.jobs ?? [];
 
   const sections = [
@@ -81,6 +80,22 @@ export default function Sidebar({
         {
           section: "ANALITICAS",
           id: "/register/dashboard",
+        },
+      ],
+    },
+    {
+      section: "PERSONAS",
+      icon2: "/images/cajaSelected.svg",
+      icon: "/images/caja.svg",
+      id: "/persons/customers",
+      submenus: [
+        {
+          section: "CLIENTES",
+          id: "/persons/customers",
+        },
+        {
+          section: "PROOVEEDORES",
+          id: "/persons/suppliers",
         },
       ],
     },
@@ -126,16 +141,21 @@ export default function Sidebar({
     Vender: ["/vender"],
     Inventario: ["/inventory/productos", "/inventory/agregarProductos"],
     Caja: ["/register/invoices", "/register/dashboard"],
+    Personas: ["/persons/customers", "/persons/suppliers"],
     Ajustes: [
       "/settings/user",
       "/settings/employees",
       "/settings/establisment",
-    ]
+    ],
   };
 
   const filterSectionsByPermissions = (sections: any, permissions: any) => {
     return sections.filter((section: any) => {
-      if (section.section === "INICIO" || section.section === "PERFIL") {
+      if (
+        section.section === "INICIO" ||
+        section.section === "PERFIL" ||
+        section.section === "PERSONAS"
+      ) {
         return true;
       }
       if (dataUser?.status === "admin" && section.section === "AJUSTES") {
