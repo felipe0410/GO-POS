@@ -5,11 +5,13 @@ export interface IFilterCustomersComponentProps {
   setSearchTerm: any;
   filteredData: any[];
   setFilteredData: any;
+  handleAddCustomer: any;
 }
 
 export interface ITableCustomerComponentProps {
   filteredData: any[];
   setFilteredData: any;
+  handleAddCustomer: any;
 }
 
 export interface IColumnCustomers {
@@ -19,6 +21,15 @@ export interface IColumnCustomers {
   align: TColumnAlign;
 }
 
+export interface IFilteredData {
+  id: number;
+  clientName: string;
+  type: string;
+  numberOfPurchases: number;
+  country: string;
+  actions: string[];
+}
+
 export interface IButtonAddCustomersProps {
-  setAddCustomer: any;
+  handleAddCustomer: any;
 }

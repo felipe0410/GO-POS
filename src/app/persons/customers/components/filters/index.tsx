@@ -10,6 +10,7 @@ const FilterCustomersComponent = ({
   setSearchTerm,
   filteredData,
   setFilteredData,
+  handleAddCustomer,
 }: IFilterCustomersComponentProps) => {
   return (
     <Box
@@ -72,7 +73,7 @@ const FilterCustomersComponent = ({
         </IconButton>
       </Box>
       {filteredData.length > 0 && (
-        <ButtonAddCustomers setAddCustomer={setFilteredData} />
+        <ButtonAddCustomers handleAddCustomer={handleAddCustomer} />
       )}
     </Box>
   );

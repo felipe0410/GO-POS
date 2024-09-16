@@ -5,10 +5,32 @@ import Header from "@/components/Header";
 import { Box, Paper } from "@mui/material";
 import FilterCustomersComponent from "./components/filters";
 import TableCustomerComponent from "./components/table";
+import { CFakerCustomers } from "./utils/constants";
+import { IFilteredData } from "./utils/interfaces";
 
 const Customers: any = () => {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [filteredData, setFilteredData] = useState<any[]>([]);
+  const [filteredData, setFilteredData] = useState<IFilteredData[]>([]);
+
+  const handleAddCustomer = () => {
+    setFilteredData((prev: any[]) => {
+      if (prev.length === 0) {
+        return CFakerCustomers;
+      } else {
+        return [
+          ...prev,
+          {
+            id: prev.length + 1,
+            clientName: "Juan Perez",
+            type: "Persona",
+            numberOfPurchases: 10,
+            country: "Colombia",
+            actions: ["View", "Edit", "Delete"],
+          },
+        ];
+      }
+    });
+  };
 
   return (
     <Box
@@ -48,10 +70,12 @@ const Customers: any = () => {
                 setSearchTerm={setSearchTerm}
                 filteredData={filteredData}
                 setFilteredData={setFilteredData}
+                handleAddCustomer={handleAddCustomer}
               />
               <TableCustomerComponent
                 filteredData={filteredData}
                 setFilteredData={setFilteredData}
+                handleAddCustomer={handleAddCustomer}
               />
             </Box>
           </Box>

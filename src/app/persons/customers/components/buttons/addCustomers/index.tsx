@@ -3,10 +3,12 @@ import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { IButtonAddCustomersProps } from "../../../utils/interfaces";
 
-const ButtonAddCustomers = ({ setAddCustomer }: IButtonAddCustomersProps) => {
+const ButtonAddCustomers = ({
+  handleAddCustomer,
+}: IButtonAddCustomersProps) => {
   return (
     <Button
-      onClick={() => setAddCustomer((prev: any[]) => [...prev, "un dato"])}
+      onClick={handleAddCustomer}
       sx={{
         padding: "8px",
         textAlign: "center",

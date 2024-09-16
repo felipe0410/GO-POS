@@ -8,12 +8,6 @@ import { IColumnCustomers } from "../interfaces";
 
 export const CColumnsCustomers: readonly IColumnCustomers[] = [
   {
-    id: EColumnCustomerId.Actions,
-    label: EColumnCustomerLabel.Actions,
-    minWidth: EColumnCustomerMinWidth.min,
-    align: EColumnCustomerAlign.Center,
-  },
-  {
     id: EColumnCustomerId.ClientName,
     label: EColumnCustomerLabel.ClientName,
     minWidth: EColumnCustomerMinWidth.max,
@@ -22,13 +16,13 @@ export const CColumnsCustomers: readonly IColumnCustomers[] = [
   {
     id: EColumnCustomerId.Type,
     label: EColumnCustomerLabel.Type,
-    minWidth: EColumnCustomerMinWidth.max,
+    minWidth: EColumnCustomerMinWidth.min,
     align: EColumnCustomerAlign.Center,
   },
   {
     id: EColumnCustomerId.NumberOfPurchases,
     label: EColumnCustomerLabel.NumberOfPurchases,
-    minWidth: EColumnCustomerMinWidth.max,
+    minWidth: EColumnCustomerMinWidth.min,
     align: EColumnCustomerAlign.Center,
   },
   {
@@ -38,9 +32,58 @@ export const CColumnsCustomers: readonly IColumnCustomers[] = [
     align: EColumnCustomerAlign.Center,
   },
   {
-    id: EColumnCustomerId.Details,
-    label: EColumnCustomerLabel.Details,
+    id: EColumnCustomerId.Actions,
+    label: EColumnCustomerLabel.Actions,
     minWidth: EColumnCustomerMinWidth.min,
     align: EColumnCustomerAlign.Center,
+  },
+  // {
+  //   id: EColumnCustomerId.Details,
+  //   label: EColumnCustomerLabel.Details,
+  //   minWidth: EColumnCustomerMinWidth.min,
+  //   align: EColumnCustomerAlign.Center,
+  // },
+];
+
+export const CFakerCustomers = [
+  {
+    id: 1,
+    clientName: "Juan Perez",
+    type: "Persona",
+    numberOfPurchases: 10,
+    country: "Argentina",
+    actions: ["View", "Edit", "Delete"],
+  },
+  {
+    id: 2,
+    clientName: "Maria Lopez",
+    type: "Persona",
+    numberOfPurchases: 5,
+    country: "Argentina",
+    actions: ["View", "Edit", "Delete"],
+  },
+  {
+    id: 3,
+    clientName: "Carlos Gomez",
+    type: "Persona",
+    numberOfPurchases: 3,
+    country: "Argentina",
+    actions: ["View", "Edit", "Delete"],
+  },
+  {
+    id: 4,
+    clientName: "Ana Martinez",
+    type: "Persona",
+    numberOfPurchases: 2,
+    country: "Argentina",
+    actions: ["View", "Edit", "Delete"],
+  },
+  {
+    id: 5,
+    clientName: "Jose Rodriguez",
+    type: "Persona",
+    numberOfPurchases: 1,
+    country: "Argentina",
+    actions: ["View", "Edit", "Delete"],
   },
 ];
