@@ -16,7 +16,6 @@ const Factura = ({ data }: { data: any }) => {
     img: "",
   });
 
-  console.log("data.invoice:::>", data.invoice);
   React.useEffect(() => {
     if (data.invoice)
       JsBarcode("#barcode", data.invoice, {

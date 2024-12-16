@@ -69,7 +69,63 @@ export const storage = getStorage(app);
 const auth = getAuth();
 
 // const analytics = getAnalytics(app);
-// Función para crear un producto
+
+
+export const createDianRecord = async (dianData: any) => {
+  try {
+    const currentUser = user(); 
+
+    if (!currentUser || !currentUser.decodedString) {
+      throw new Error("Usuario no autenticado");
+    }
+
+    const dianDocRef = doc(
+      db,
+      `establecimientos/${currentUser.decodedString}/dian`,
+      "data" // Nombre explícito del documento
+    );
+
+    await setDoc(dianDocRef, {
+      user: `${currentUser.decodedString}`,
+      ...dianData,
+    });
+    return dianDocRef.id;
+  } catch (error) {
+    console.error("Error al guardar información en /dian: ", error);
+    return null;
+  }
+};
+
+
+export const getDianRecord = async () => {
+  try {
+    const currentUser = user();
+
+    if (!currentUser || !currentUser.decodedString) {
+      throw new Error("Usuario no autenticado");
+    }
+
+    const dianDocRef = doc(
+      db,
+      `establecimientos/${currentUser.decodedString}/dian`,
+      "data" 
+    );
+    const docSnap = await getDoc(dianDocRef);
+    if (docSnap.exists()) {
+      return docSnap.data(); 
+    } else {
+      console.log("No existe el documento");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener información de /dian: ", error);
+    return null;
+  }
+};
+
+
+
+
 export const createProduct = async (uid: any, productData: any) => {
   try {
     const establecimientoDocRef = doc(

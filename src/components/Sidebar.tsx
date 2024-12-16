@@ -66,16 +66,16 @@ export default function Sidebar({
       icon: "/images/vender.svg",
       icon2: "/images/venderSelected.svg",
       id: "/vender",
-      // submenus: [
-      //   {
-      //     section: "Dian",
-      //     id: "/vender/Dian",
-      //   },
-      //   {
-      //     section: "Normal",
-      //     id: "/vender/Normal",
-      //   },
-      // ],
+      //submenus: [
+       // {
+       //   section: "Dian",
+       //   id: "/vender/Dian",
+       // },
+       // {
+       //   section: "Normal",
+       //   id: "/vender/Normal",
+       // },
+      //],
     },
     {
       section: "CAJA",
@@ -107,6 +107,10 @@ export default function Sidebar({
           section: "AGREGAR PRODUCTO",
           id: "/inventory/agregarProductos",
         },
+        {
+          section: "RESUMEN",
+          id: "/inventory/historial",
+        },
       ],
     },
     {
@@ -127,18 +131,23 @@ export default function Sidebar({
           section: "ESTABLECIMIENTO",
           id: "/settings/establishment",
         },
+        //{
+        //  section: "AJUSTES DIAN",
+         // id: "/settings/dian",
+        //},
       ],
     },
   ];
 
   const permissionMap: any = {
-    Vender: ["/vender","/vender/Dian", "/vender/Normal"],
-    Inventario: ["/inventory/productos", "/inventory/agregarProductos"],
+    Vender: ["/vender", "/vender/Dian", "/vender/Normal"],
+    Inventario: ["/inventory/productos", "/inventory/agregarProductos",'inventory/stock'],
     Caja: ["/register/invoices", "/register/dashboard"],
     Ajustes: [
       "/settings/user",
       "/settings/employees",
       "/settings/establisment",
+      //"/settings/dian",
     ],
   };
 

@@ -85,9 +85,9 @@ const Invoices = () => {
       } else {
         return (
           fecha.includes(lowerSearchTerm) ||
-          item.cliente.name.toLowerCase().includes(lowerSearchTerm) ||
-          String(item.invoice).toLowerCase().includes(lowerSearchTerm) ||
-          String(item.status).toLowerCase().includes(lowerSearchTerm)
+          item?.cliente?.name.toLowerCase().includes(lowerSearchTerm) ||
+          String(item?.invoice).toLowerCase().includes(lowerSearchTerm) ||
+          String(item?.status).toLowerCase().includes(lowerSearchTerm)
         );
       }
     });

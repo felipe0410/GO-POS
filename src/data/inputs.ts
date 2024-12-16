@@ -133,37 +133,6 @@ export const dataInputs = [
   },
 ];
 
-export const profileInputs = [
-  {
-    name: "Nombre",
-    type: "text",
-    width: "100%",
-    field: "name",
-  },
-  {
-    name: "Status",
-    type: "text",
-    width: "100%",
-    field: "rol",
-  },
-  {
-    name: "Correo",
-    type: "mail",
-    width: "100%",
-    field: "email",
-  },
-  {
-    name: "Celular",
-    type: "number",
-    width: "100%",
-    field: "phone",
-  },
-  {
-    name: "Dirección",
-    type: "text",
-    width: "100%",
-    field: "direction",
-  },
-];
+
 export const IMG_DEFAULT =
   "https://firebasestorage.googleapis.com/v0/b/go-pos-add98.appspot.com/o/images%2Fimage-not-found-icon%20(1)%20(1).png?alt=media&token=d999eb4c-54a0-4489-9b23-e4a1a0ee65d9";

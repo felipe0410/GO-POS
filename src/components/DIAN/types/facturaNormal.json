@@ -1,0 +1,68 @@
+{
+    "invoice": "0000018",
+    "date": "2024-10-19 21:53",
+    "status": "CANCELADO",
+    "vendedor": "xxx",
+    "cliente": {
+        "name": "Sahona",
+        "direccion": "Centro parque ",
+        "email": "Sahona@gmail.com",
+        "identificacion": "71200000",
+        "celular": "30000000"
+    },
+    "compra": [
+        {
+            "productName": "BUCANAS DELUXE 12 AÑOS 375 cc",
+            "cantidad": 1,
+            "acc": 90000,
+            "barCode": "50196395"
+        },
+        {
+            "productName": "aguila six pack",
+            "cantidad": 1,
+            "acc": 20000,
+            "barCode": "aguila"
+        },
+        {
+            "productName": "aguardiente tapa roja 750 cc",
+            "cantidad": 1,
+            "acc": 47000,
+            "barCode": "7706434117590"
+        },
+        {
+            "productName": "black label 12 años",
+            "cantidad": 1,
+            "acc": 147000,
+            "barCode": "5000267024233"
+        },
+        {
+            "productName": "Red label",
+            "cantidad": 1,
+            "acc": 72000,
+            "barCode": "5000267014203"
+        },
+        {
+            "productName": "Black and white",
+            "cantidad": 1,
+            "acc": 57000,
+            "barCode": "50196135"
+        },
+        {
+            "productName": "JOSE CUERVO",
+            "cantidad": 1,
+            "acc": 101000,
+            "barCode": "7501035010109"
+        },
+        {
+            "productName": "ABLANDA CANAS ",
+            "cantidad": 1,
+            "acc": 5500,
+            "barCode": "7709334384277"
+        }
+    ],
+    "subtotal": 539500,
+    "descuento": 0,
+    "total": 539500,
+    "cambio": 60500,
+    "nota": ""
+}

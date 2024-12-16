@@ -51,6 +51,8 @@ const SlidebarVender = ({
   const [nota, setNota] = useState("");
   const [checked, setChecked] = useState<boolean>(false);
 
+  console.log("selectedItems:::>", selectedItems);
+
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
 

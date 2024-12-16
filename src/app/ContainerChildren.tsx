@@ -14,7 +14,7 @@ const ContainerChildren = ({ childrenn, validationRoutes }: { childrenn: any, va
     useEffect(() => {
         if (validationCookie) {
             if (validationRoutes) {
-                (window.location.href = "/inventory/productos")
+                //(window.location.href = "/inventory/productos")
                 setTimeout(() => {
                     setValidation(true)
                 }, 2000);

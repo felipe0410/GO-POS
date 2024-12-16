@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Typography, Button } from "@mui/material";
-import { generateInvoiceJson } from "@/components/DIAN/facturaElectronica";
+import { generateInvoiceJson } from "@/components/DIAN/generateInvoiceJson";
 import { InvoiceParams } from "@/components/DIAN/types/InvoiceTypes";
 
 interface TotalSectionProps {

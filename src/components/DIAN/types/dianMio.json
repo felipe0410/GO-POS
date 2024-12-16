@@ -1,0 +1,96 @@
+{
+    "resolutionNumber": "18764074347312",
+    "prefix": "LZT",
+    "documentNumber": "0000019",
+    "operationTypeId": 1,
+    "typeDocumentId": 7,
+    "payments": [
+        {
+            "paymentMethodId": 1,
+            "meansPaymentId": 10,
+            "valuePaid": "248000"
+        }
+    ],
+    "customer": {
+        "countryId": "170",
+        "cityId": "149",
+        "identityDocumentId": "1",
+        "typeOrganizationId": 2,
+        "taxRegimeId": 2,
+        "taxLevelId": 5,
+        "companyName": "Sahona",
+        "dni": "71200000",
+        "mobile": "30000000",
+        "email": "Sahona@gmail.com",
+        "address": "Centro parque ",
+        "postalCode": "661002"
+    },
+    "lines": [
+        {
+            "invoicedQuantity": "1",
+            "quantityUnitsId": "1093",
+            "lineExtensionAmount": "101000",
+            "freeOfChargeIndicator": false,
+            "description": "JOSE CUERVO ESPECIAL",
+            "code": "7501035011243",
+            "typeItemIdentificationsId": "4",
+            "referencePriceId": "1",
+            "priceAmount": "101000",
+            "baseQuantity": "1",
+            "taxTotals": [
+                {
+                    "taxId": "1",
+                    "taxAmount": "0",
+                    "taxableAmount": "101000",
+                    "percent": 0
+                }
+            ]
+        },
+        {
+            "invoicedQuantity": "1",
+            "quantityUnitsId": "1093",
+            "lineExtensionAmount": "57000",
+            "freeOfChargeIndicator": false,
+            "description": "Black and white",
+            "code": "50196135",
+            "typeItemIdentificationsId": "4",
+            "referencePriceId": "1",
+            "priceAmount": "57000",
+            "baseQuantity": "1",
+            "taxTotals": [
+                {
+                    "taxId": "1",
+                    "taxAmount": "0",
+                    "taxableAmount": "57000",
+                    "percent": 0
+                }
+            ]
+        },
+        {
+            "invoicedQuantity": "1",
+            "quantityUnitsId": "1093",
+            "lineExtensionAmount": "90000",
+            "freeOfChargeIndicator": false,
+            "description": "BUCANAS DELUXE 12 AÑOS 375 cc",
+            "code": "50196395",
+            "typeItemIdentificationsId": "4",
+            "referencePriceId": "1",
+            "priceAmount": "90000",
+            "baseQuantity": "1",
+            "taxTotals": [
+                {
+                    "taxId": "1",
+                    "taxAmount": "0",
+                    "taxableAmount": "90000",
+                    "percent": 0
+                }
+            ]
+        }
+    ],
+    "legalMonetaryTotals": {
+        "lineExtensionAmount": "248000",
+        "taxExclusiveAmount": "248000",
+        "taxInclusiveAmount": "248000",
+        "payableAmount": 248000
+    }
+}

@@ -17,6 +17,8 @@ import SlidebarVender from "./SlidebarVender";
 import CarouselCategorias from "@/components/CarouselCategorias";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import VenderCards from "@/components/VenderCards";
+import { login } from "@/components/DIAN/loginToken";
+import { useCookies } from "react-cookie";
 
 const themee = createTheme({
   palette: {
@@ -41,6 +43,7 @@ const styleButtonInvoice = {
 };
 
 const Page: any = () => {
+  const [cookies, setCookie] = useCookies(["invoice_token"]);
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
@@ -179,10 +182,39 @@ const Page: any = () => {
   }, [selectedItems]);
 
   useEffect(() => {
+    const loginInvoice = async (): Promise<any> => {
+      return await login("demo@lopezsoft.net.co", "DEMO123456");
+    };
+
+    if (!cookies.invoice_token) {
+      loginInvoice()
+        .then((response) => {
+          if (response?.access_token) {
+            const expirationDate = new Date();
+            expirationDate.setTime(expirationDate.getTime() + 60 * 60 * 1000);
+
+            setCookie("invoice_token", response.access_token, {
+              path: "/", // Asegúrate de que la cookie sea accesible en toda la aplicación
+              expires: expirationDate, // La cookie expira en 1 hora
+              secure: true, // Recomendable en producción, solo para HTTPS
+              sameSite: "strict", // Protege contra ataques CSRF
+            });
+          }
+
+          console.log("%Set token:", "color:green");
+        })
+        .catch((error) => {
+          console.error("Error during login:", error);
+        });
+    } else {
+      console.log("%cToken already present in cookies:", "color:green");
+    }
+
     const localStorageSelectedItems = getDataFromLocalStorage("selectedItems");
     if (localStorageSelectedItems?.length > 0) {
       setSelectedItems(localStorageSelectedItems);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
