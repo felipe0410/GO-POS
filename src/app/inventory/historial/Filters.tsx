@@ -11,7 +11,7 @@ interface FiltersProps {
   onSearchChange: (value: string) => void;
   onStockFilterChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
-  exportToCSV:(value: string) => void;
+  exportToCSV:(value: any) => void;
   setColumns:any
 }
 

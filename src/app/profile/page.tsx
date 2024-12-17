@@ -21,7 +21,6 @@ import {
   colabsList,
   typographyTitleTable,
 } from "./profileStyles";
-import { profileInputs } from "@/data/inputs";
 import Step1 from "./Step1";
 import ImgInput from "@/components/inputIMG";
 import {
@@ -34,6 +33,7 @@ import { SnackbarProvider } from "notistack";
 import { enqueueSnackbar } from "notistack";
 import ColabsList from "./ColabsList";
 import AddIcon from "@mui/icons-material/Add";
+import { profileInputs } from "../settings/dian/DIANStyle";
 
 interface Data {
   name: string;
@@ -131,6 +131,7 @@ const Page = () => {
         });
     };
     dataEstablesimente();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -199,7 +200,7 @@ const Page = () => {
                 },
               }}
             >
-              {profileInputs.map((input, index) => {
+              {profileInputs.map((input: { width: any; field: string; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; type: string | undefined; }, index: number) => {
                 const style = {
                   width: input.width,
                   marginTop: input.field === "name" ? "70px" : "27px",

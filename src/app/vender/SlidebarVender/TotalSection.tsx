@@ -53,12 +53,12 @@ const TotalSection: React.FC<TotalSectionProps> = ({
         referencePriceId: "1",
         priceAmount: "50",
         baseQuantity: "2",
-        um: "M",
+        
         taxTotals: [
           {
             taxId: "1",
-            taxAmount: 19,
-            taxableAmount: 100,
+            taxAmount: '19',
+            taxableAmount: '100',
             percent: 19,
           },
         ],
@@ -68,7 +68,7 @@ const TotalSection: React.FC<TotalSectionProps> = ({
       lineExtensionAmount: "200.00",
       taxExclusiveAmount: "200.00",
       taxInclusiveAmount: "224.00",
-      payableAmount: 224.0,
+      payableAmount: '224.0',
     },
   };
 

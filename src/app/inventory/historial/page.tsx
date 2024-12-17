@@ -201,9 +201,9 @@ export default function StickyHeadTable() {
 
   const allCategories = [
     "all",
-    ...new Set(data.map((item) => item?.category ?? "")),
+    ...Array.from(new Set(data.map((item: any) => item?.category ?? ""))),
   ];
-
+  
   return (
     <Box sx={{ padding: "20px" }}>
       <Header title="RESUMEN INVENTARIO" />

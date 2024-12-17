@@ -17,7 +17,6 @@ import {
   typographyProfile,
   typographyButton,
 } from "./EstablishmentStyle";
-import { profileInputs } from "@/data/inputs";
 import {
   getEstablishmentData,
   getEstablishmentDataLoggin,
@@ -26,6 +25,7 @@ import {
 import { SnackbarProvider } from "notistack";
 import { enqueueSnackbar } from "notistack";
 import ImgInputSettings from "@/components/inputIMG-Settings";
+import { profileInputs } from "../dian/DIANStyle";
 
 interface Data {
   name: string;
