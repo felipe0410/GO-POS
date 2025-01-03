@@ -58,7 +58,11 @@ export default function Sidebar({
       "/inventory/agregarProductos",
       "inventory/stock",
     ],
-    Caja: ["/register/invoices", "/register/dashboard"],
+    Caja: [
+      "/register/invoices",
+      "/register/dashboard",
+      "/register/invoicesDian",
+    ],
     Ajustes: [
       "/settings/user",
       "/settings/employees",
@@ -178,7 +182,7 @@ export default function Sidebar({
 
     loadSections();
   }, []);
-  
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
