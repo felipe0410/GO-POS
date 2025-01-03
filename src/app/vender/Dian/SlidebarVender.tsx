@@ -21,6 +21,9 @@ import { getAllInvoicesData } from "@/firebase";
 import SubtotalSection from "../SlidebarVender/SubtotalSection";
 import NoteSection from "../SlidebarVender/NoteSection";
 import SearchSection from "../SlidebarVender/SearchSection";
+import HeaderDian from "./slidebar-dian/Header";
+import { getDianRecord, getLastElectronicInvoice } from "@/firebase/dian";
+import DatosVentaDian from "./slidebar-dian/DatosVentaDian";
 
 const SlidebarVender = ({
   selectedItems,
@@ -37,6 +40,7 @@ const SlidebarVender = ({
   setSearchTerm: any;
   typeInvoice: string;
 }) => {
+  const [numeroFactura, setNumeroFactura] = useState<string>("0000000");
   const [search, setSearch] = useState<any>("");
   const [open, setOpen] = useState(false);
   const [nextStep, setNextStep] = useState(false);
@@ -50,8 +54,48 @@ const SlidebarVender = ({
   const [dataInvoice, setDataInvoice] = useState([]);
   const [nota, setNota] = useState("");
   const [checked, setChecked] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null); // Manejo de errores
 
-  console.log("selectedItems:::>", selectedItems);
+  const fetchInvoiceNumber = async () => {
+    try {
+      const dianData = await getDianRecord();
+      if (!dianData) {
+        throw new Error("No se encontró configuración de DIAN.");
+      }
+      const { Prefijo, RangoInicio, RangoFin } = dianData;
+      const rangoInicio = parseInt(RangoInicio || "0", 10);
+      const rangoFin = parseInt(RangoFin || "0", 10);
+
+      if (!Prefijo || isNaN(rangoInicio) || isNaN(rangoFin)) {
+        throw new Error("Datos de configuración de DIAN incompletos.");
+      }
+
+      const lastInvoice: any = await getLastElectronicInvoice();
+      let nuevoNumero = rangoInicio;
+
+      if (lastInvoice && !lastInvoice.message) {
+        const lastNumero = parseInt(
+          lastInvoice?.numeroFactura?.split("-")[1] || "0",
+          10
+        );
+
+        if (!isNaN(lastNumero) && lastNumero >= rangoInicio) {
+          nuevoNumero = lastNumero + 1;
+        }
+      }
+      if (nuevoNumero > rangoFin) {
+        throw new Error("El número de factura excede el rango permitido.");
+      }
+      setNumeroFactura(`${Prefijo}-${nuevoNumero}`);
+    } catch (error: any) {
+      console.error("Error al obtener el número de factura:", error);
+      setError(error.message || "Error desconocido al obtener el número.");
+    }
+  };
+
+  useEffect(() => {
+    fetchInvoiceNumber();
+  }, []);
 
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
@@ -181,9 +225,9 @@ const SlidebarVender = ({
             borderRadius: "10px 0px 0px 10px",
           }}
         >
-          <Header
+          <HeaderDian
             setOpen={setOpen}
-            generarNumeroFactura={generarNumeroFactura}
+            generarNumeroFactura={numeroFactura}
             totalUnidades={totalUnidades}
           />
           <Box
@@ -216,7 +260,7 @@ const SlidebarVender = ({
                   subtotal={subtotal}
                 />
                 {nextStep ? (
-                  <DatosVenta
+                  <DatosVentaDian
                     total={subtotal - descuento}
                     selectedItems={selectedItems}
                     subtotal={subtotal}

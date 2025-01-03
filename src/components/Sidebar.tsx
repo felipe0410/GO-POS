@@ -19,8 +19,10 @@ import {
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { usePathname, useRouter } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "@/app/globalContex";
+import { localSections } from "./sections";
+import { getDianRecord } from "@/firebase/dian";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -39,6 +41,7 @@ export default function Sidebar({
 }) {
   const { removeCookieUser } = useContext(GlobalContext) || {};
   const [selectedSection, setSelectedSection] = React.useState<any>("");
+  const [sections, setSections] = useState(localSections);
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
@@ -48,106 +51,19 @@ export default function Sidebar({
       ? ["Vender", "Inventario", "Caja"]
       : dataUser?.jobs ?? [];
 
-  const sections = [
-    {
-      section: "INICIO",
-      icon: "/images/home.svg",
-      icon2: "/images/homeSelected.svg",
-      id: "/home",
-    },
-    {
-      section: "PERFIL",
-      icon: "/images/profile.svg",
-      icon2: "/images/profileSelected.svg",
-      id: "/profile",
-    },
-    {
-      section: "VENDER",
-      icon: "/images/vender.svg",
-      icon2: "/images/venderSelected.svg",
-      id: "/vender",
-      //submenus: [
-       // {
-       //   section: "Dian",
-       //   id: "/vender/Dian",
-       // },
-       // {
-       //   section: "Normal",
-       //   id: "/vender/Normal",
-       // },
-      //],
-    },
-    {
-      section: "CAJA",
-      icon2: "/images/cajaSelected.svg",
-      icon: "/images/caja.svg",
-      id: "/register/invoices",
-      submenus: [
-        {
-          section: "FACTURAS",
-          id: "/register/invoices",
-        },
-        {
-          section: "ANALITICAS",
-          id: "/register/dashboard",
-        },
-      ],
-    },
-    {
-      section: "INVENTARIO",
-      icon: "/images/inventario.svg",
-      icon2: "/images/inventarioSelected.svg",
-      id: "/inventory/productos",
-      submenus: [
-        {
-          section: "PRODUCTOS",
-          id: "/inventory/productos",
-        },
-        {
-          section: "AGREGAR PRODUCTO",
-          id: "/inventory/agregarProductos",
-        },
-        {
-          section: "RESUMEN",
-          id: "/inventory/historial",
-        },
-      ],
-    },
-    {
-      section: "AJUSTES",
-      icon: "/images/settings.svg",
-      icon2: "/images/inventarioSelected.svg",
-      id: "/settings/user",
-      submenus: [
-        {
-          section: "USUARIO",
-          id: "/settings/user",
-        },
-        {
-          section: "EMPLEADOS",
-          id: "/settings/employees",
-        },
-        {
-          section: "ESTABLECIMIENTO",
-          id: "/settings/establishment",
-        },
-        //{
-        //  section: "AJUSTES DIAN",
-         // id: "/settings/dian",
-        //},
-      ],
-    },
-  ];
-
   const permissionMap: any = {
     Vender: ["/vender", "/vender/Dian", "/vender/Normal"],
-    Inventario: ["/inventory/productos", "/inventory/agregarProductos",'inventory/stock'],
+    Inventario: [
+      "/inventory/productos",
+      "/inventory/agregarProductos",
+      "inventory/stock",
+    ],
     Caja: ["/register/invoices", "/register/dashboard"],
     Ajustes: [
       "/settings/user",
       "/settings/employees",
       "/settings/establisment",
-      //"/settings/dian",
+      "/settings/dian",
     ],
   };
 
@@ -235,6 +151,34 @@ export default function Sidebar({
     return rutaRecortada;
   };
   const route = useRouter();
+
+  useEffect(() => {
+    const loadSections = async () => {
+      try {
+        const dianRecord = await getDianRecord();
+        if (dianRecord) {
+          const updatedSections = sections.map((section) => {
+            if (section.section === "VENDER") {
+              return {
+                ...section,
+                submenus: [
+                  ...(section.submenus || []),
+                  { section: "DIAN", id: "/vender/Dian" },
+                ],
+              };
+            }
+            return section;
+          });
+          setSections(updatedSections);
+        }
+      } catch (error) {
+        console.error("Error cargando configuración DIAN:", error);
+      }
+    };
+
+    loadSections();
+  }, []);
+  
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

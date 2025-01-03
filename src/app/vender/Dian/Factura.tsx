@@ -5,6 +5,7 @@ import { getEstablishmentData, getInvoiceData } from "@/firebase";
 import { DocumentData } from "firebase/firestore";
 import JsBarcode from "jsbarcode";
 import { useReactToPrint } from "react-to-print";
+import { getDianRecord, getLastElectronicInvoice } from "@/firebase/dian";
 
 interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
@@ -15,8 +16,9 @@ interface TuComponenteProps {
 
 const Factura: React.FC<TuComponenteProps> = (props) => {
   const barCode = localStorage.getItem("uidInvoice");
-  const numeroFactura = localStorage?.getItem("invoice") ?? "0000000";
+  const [numeroFactura, setNumeroFactura] = useState<string>("0000000"); // Estado para el número de factura
   const [facturaData, setFacturaData] = useState<null | DocumentData>(null);
+  const [error, setError] = useState<string | null>(null); // Manejo de errores
   const { setReciboPago, setSelectedItems, setNextStep, typeInvoice } = props;
   const [establishmentData, setEstablishmentData] = useState({
     phone: "",
@@ -31,6 +33,47 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     setSelectedItems([]);
     setNextStep(false);
   };
+
+  const fetchInvoiceNumber = async () => {
+    try {
+      const dianData = await getDianRecord();
+      if (!dianData) {
+        throw new Error("No se encontró configuración de DIAN.");
+      }
+      const { Prefijo, RangoInicio, RangoFin } = dianData;
+      const rangoInicio = parseInt(RangoInicio || "0", 10);
+      const rangoFin = parseInt(RangoFin || "0", 10);
+
+      if (!Prefijo || isNaN(rangoInicio) || isNaN(rangoFin)) {
+        throw new Error("Datos de configuración de DIAN incompletos.");
+      }
+
+      const lastInvoice: any = await getLastElectronicInvoice();
+      let nuevoNumero = rangoInicio;
+
+      if (lastInvoice && !lastInvoice.message) {
+        const lastNumero = parseInt(
+          lastInvoice?.numeroFactura?.split("-")[1] || "0",
+          10
+        );
+
+        if (!isNaN(lastNumero) && lastNumero >= rangoInicio) {
+          nuevoNumero = lastNumero + 1;
+        }
+      }
+      if (nuevoNumero > rangoFin) {
+        throw new Error("El número de factura excede el rango permitido.");
+      }
+      setNumeroFactura(`${Prefijo}-${nuevoNumero}`);
+    } catch (error: any) {
+      console.error("Error al obtener el número de factura:", error);
+      setError(error.message || "Error desconocido al obtener el número.");
+    }
+  };
+
+  useEffect(() => {
+    fetchInvoiceNumber();
+  }, []);
 
   useEffect(() => {
     const getInvoiceDataFull = async () => {

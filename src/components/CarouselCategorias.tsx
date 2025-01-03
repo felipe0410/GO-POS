@@ -71,7 +71,7 @@ const CarouselCategorias: React.FC<CarouselCategoriasProps> = ({
       </Typography>
       <Box>
         <Slider {...settings}>
-          {categories.map((category, index) => (
+          {categories?.map((category, index) => (
             <Box key={index}>
               <Paper
                 onClick={() => onCategorySelect(category)}

@@ -70,62 +70,6 @@ const auth = getAuth();
 
 // const analytics = getAnalytics(app);
 
-
-export const createDianRecord = async (dianData: any) => {
-  try {
-    const currentUser = user(); 
-
-    if (!currentUser || !currentUser.decodedString) {
-      throw new Error("Usuario no autenticado");
-    }
-
-    const dianDocRef = doc(
-      db,
-      `establecimientos/${currentUser.decodedString}/dian`,
-      "data" // Nombre explícito del documento
-    );
-
-    await setDoc(dianDocRef, {
-      user: `${currentUser.decodedString}`,
-      ...dianData,
-    });
-    return dianDocRef.id;
-  } catch (error) {
-    console.error("Error al guardar información en /dian: ", error);
-    return null;
-  }
-};
-
-
-export const getDianRecord = async () => {
-  try {
-    const currentUser = user();
-
-    if (!currentUser || !currentUser.decodedString) {
-      throw new Error("Usuario no autenticado");
-    }
-
-    const dianDocRef = doc(
-      db,
-      `establecimientos/${currentUser.decodedString}/dian`,
-      "data" 
-    );
-    const docSnap = await getDoc(dianDocRef);
-    if (docSnap.exists()) {
-      return docSnap.data(); 
-    } else {
-      console.log("No existe el documento");
-      return null;
-    }
-  } catch (error) {
-    console.error("Error al obtener información de /dian: ", error);
-    return null;
-  }
-};
-
-
-
-
 export const createProduct = async (uid: any, productData: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -223,6 +167,60 @@ export const getAllProductsDataonSnapshot = (callback: any) => {
     return null;
   }
 };
+
+export const getAllProductsDataonSnapshotCache = (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+    const orderedQuery = query(productCollectionRef, orderBy("productName"));
+
+    // Intenta cargar los datos desde el localStorage
+    const cacheKey = `products_${user().decodedString}`;
+    const cachedData = localStorage.getItem(cacheKey);
+
+    if (cachedData) {
+      const { timestamp, data } = JSON.parse(cachedData);
+      // Verifica si los datos en caché tienen menos de 1 hora
+      if (Date.now() - timestamp < 3600000) {
+        callback(data);
+      }
+    }
+
+    // Suscribirse a cambios en Firestore
+    const unsubscribe = onSnapshot(
+      orderedQuery,
+      (querySnapshot) => {
+        const productsData: any[] = [];
+        querySnapshot.forEach((doc) => {
+          productsData.push({ id: doc.id, ...doc.data() });
+        });
+
+        // Actualiza el cache con los nuevos datos
+        localStorage.setItem(
+          cacheKey,
+          JSON.stringify({ timestamp: Date.now(), data: productsData })
+        );
+
+        callback(productsData);
+      },
+      (error) => {
+        console.error("Error listening to data:", error);
+        callback(null);
+      }
+    );
+
+    // Devuelve la función de desuscripción
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up data observer: ", error);
+    return null;
+  }
+};
+
 
 // Función para obtener datos de un producto específico
 export const getProductData = async (uid: any) => {
@@ -415,6 +413,7 @@ export const deleteInvoice = async (uid: string) => {
 
 export const createClient = async (uid: string, data: any) => {
   try {
+    console.log(data);
     const establecimientoDocRef: DocumentReference = doc(
       db,
       "establecimientos",
@@ -890,7 +889,6 @@ export const updateEstablishmentsData = async (updatedFields: any) => {
   }
 };
 
-//funcion para crear colaboradores
 export const createColabsData = async (uid: string, colabsData: any) => {
   try {
     const establecimientoDocRef: DocumentReference = doc(

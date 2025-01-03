@@ -24,17 +24,19 @@ import {
   updateInvoice,
   updateProductDataCantidad,
 } from "@/firebase";
-import LinearBuffer from "../../../components/progress";
+
 import Box from "@mui/material/Box";
 import React from "react";
 import Autocomplete from "@mui/material/Autocomplete";
-import Slider from "../../../components/slider/Slider";
 import { v4 as uuidv4 } from "uuid";
 import { transformToDianInvoice } from "@/components/DIAN/transformToDianInvoice";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 import { getDianRecord } from "@/firebase/dian";
+import LinearBuffer from "@/components/progress";
+import Slider from "@/components/slider/Slider";
+import { sendInvoiceToDian } from "./sendInvoiceToDian";
 
 interface UserData {
   name: string;
@@ -47,7 +49,7 @@ interface UserData {
 
 const metodosDePago = ["Efectivo", "Transferencia", "Datáfono"];
 
-const DatosVenta = (props: any) => {
+const DatosVentaDian = (props: any) => {
   const [data, setData] = useState<UserData>({
     name: "",
     direccion: "",
@@ -99,94 +101,7 @@ const DatosVenta = (props: any) => {
     cambio: 0,
     nota: propsNota ?? "",
   });
-  
   const [cookies, setCookie] = useCookies(["invoice_token"]);
-
-  const sendInvoiceToDian = async (factura: any) => {
-    try {
-      // Obtén el token de las cookies
-      const token = cookies.invoice_token;
-
-      // Verifica si el token está presente
-      if (!token) {
-        enqueueSnackbar("No se encontró el token de autenticación.", {
-          variant: "error",
-        });
-        throw new Error("No se encontró el token de autenticación.");
-      }
-      const getDianRecordd = await getDianRecord();
-      if (!getDianRecordd) {
-        enqueueSnackbar(
-          "No se pudieron obtener los datos del establecimiento.",
-          {
-            variant: "error",
-          }
-        );
-        throw new Error("Error al obtener los datos del establecimiento.");
-      }
-      // Transformar la factura actual al formato DIAN
-      const invoiceDian = transformToDianInvoice(factura, getDianRecordd);
-      console.log("invoiceDian:::>", invoiceDian);
-      // Endpoint de la API Matias
-      const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL_MATIAS_API}/invoice`;
-
-      // Configurar los headers para la solicitud
-      const headers = {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Incluye el token en el header
-      };
-
-      // Hacer la solicitud POST a la API de Matias
-      //const response = await axios.post(apiUrl, invoiceDian, { headers });
-
-      // Manejo de la respuesta
-      //if (response.status === 200) {
-       // console.log("Factura enviada con éxito:", response.data);
-        //enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
-        //return response.data;
-      //} else {
-       // console.error("Error al enviar la factura:", response);
-        //enqueueSnackbar(`Error al enviar la factura: ${response.statusText}`, {
-         // variant: "error",
-        //});
-        //throw new Error(`Error al enviar la factura: ${response.statusText}`);
-      //}
-    } catch (error: any) {
-      // Manejo detallado de errores
-      if (error.response) {
-        // El servidor respondió con un código de estado diferente de 2xx
-        console.error("Error en la respuesta del servidor:", error.response);
-        enqueueSnackbar(
-          `Error del servidor: ${
-            error.response.data.message || "Error desconocido"
-          }`,
-          { variant: "error" }
-        );
-      } else if (error.request) {
-        // La solicitud fue hecha pero no se recibió respuesta
-        console.error(
-          "Error en la solicitud: No se recibió respuesta del servidor",
-          error.request
-        );
-        enqueueSnackbar(
-          "No se recibió respuesta del servidor. Verifica tu conexión a internet.",
-          { variant: "warning" }
-        );
-      } else {
-        // Algo sucedió al configurar la solicitud que provocó un error
-        console.error(
-          "Error en la configuración de la solicitud:",
-          error.message
-        );
-        enqueueSnackbar(`Error al enviar la factura: ${error.message}`, {
-          variant: "error",
-        });
-      }
-
-      // Lanza el error para que pueda ser manejado por otros procesos
-      throw error;
-    }
-  };
 
   const getCurrentDateTime = () => {
     const now = new Date();
@@ -203,18 +118,17 @@ const DatosVenta = (props: any) => {
       handleVenderClick();
       setLoading(true);
       const valueUuid = uuidv4();
-      console.log("valueUuid:::>", valueUuid);
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
       localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
-      sendInvoiceToDian(factura)
+
+      sendInvoiceToDian(factura, cookies.invoice_token)
         .then((response) => {
           console.log("Factura procesada con éxito:", response);
         })
         .catch((error) => {
           console.error("Error al procesar la factura:", error);
         });
-      console.log("factura :::> ", factura);
       !(typeInvoice === "quickSale")
         ? await createInvoice(`${factura.invoice}-${result}`, {
             ...factura,
@@ -255,6 +169,7 @@ const DatosVenta = (props: any) => {
         cantidad: item.cantidad,
         acc: item.acc,
         barCode: item.barCode,
+        unitPrice: item.cantidad > 0 ? parseFloat((item.acc / item.cantidad).toFixed(2)) : 0,
       })),
     });
   };
@@ -358,6 +273,7 @@ const DatosVenta = (props: any) => {
     }
   }, [clientsData]);
 
+ 
   return loading ? (
     <LinearBuffer />
   ) : (
@@ -508,28 +424,6 @@ const DatosVenta = (props: any) => {
           }}
         >
           <Button
-            onClick={datosGuardadosLocalStorage}
-            sx={{
-              borderRadius: "0.5rem",
-              background: "#69EAE2",
-              marginTop: "1.5rem",
-              width: "45%",
-            }}
-          >
-            <Typography
-              sx={{
-                color: "#1F1D2B",
-                fontFamily: "Nunito",
-                fontSize: "0.875rem",
-                fontStyle: "normal",
-                fontWeight: 600,
-                lineHeight: "140%",
-              }}
-            >
-              Continuar
-            </Typography>
-          </Button>
-          <Button
             disabled={Object.values(data).some((e) => e.length === 0)}
             onClick={() => {
               createClient(data.identificacion, data);
@@ -541,7 +435,8 @@ const DatosVenta = (props: any) => {
                 ? "gray"
                 : "#69EAE2",
               marginTop: "1.5rem",
-              width: "45%",
+              width: "90%",
+              margin: "10px auto",
             }}
           >
             <Typography
@@ -789,4 +684,4 @@ const DatosVenta = (props: any) => {
   );
 };
 
-export default DatosVenta;
+export default DatosVentaDian;
