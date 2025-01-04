@@ -27,7 +27,6 @@ const ProductSidebar = ({
   const ITEMS_PER_PAGE = 10;
 
   useEffect(() => {
-    // Recuperar productos del cache si existen
     const cacheKey = "products_cache";
     const cachedProducts = localStorage.getItem(cacheKey);
     if (cachedProducts) {
@@ -37,8 +36,6 @@ const ProductSidebar = ({
       setVisibleProducts(parsedProducts.slice(0, ITEMS_PER_PAGE));
       return;
     }
-
-    // Recuperar productos desde Firebase y guardarlos en el cache
     const unsubscribe = getAllProductsDataonSnapshot((data: any[]) => {
       if (data) {
         localStorage.setItem(cacheKey, JSON.stringify(data));
@@ -82,9 +79,11 @@ const ProductSidebar = ({
 
     return () => {
       if (observerRef.current) {
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         observer.unobserve(observerRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, filteredProducts, visibleProducts]);
 
   const handleSearch = (query: string) => {
@@ -158,7 +157,7 @@ const ProductSidebar = ({
               secondary={
                 <Typography
                   sx={{ color: "#69EAE2", fontWeight: "bold" }}
-                >{`Precio: $${product.price}`}</Typography>
+                >{`Precio: ${product.price}`}</Typography>
               }
             />
             <ListItemSecondaryAction>

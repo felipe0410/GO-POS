@@ -15,7 +15,6 @@ const InvoiceLetter = ({ data }: { data: any }) => {
     direction: "",
     img: "",
   });
-  console.log("data::::>", data);
   React.useEffect(() => {
     if (data.invoice) JsBarcode("#barcode", data.invoice);
   }, [data.invoice]);

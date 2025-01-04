@@ -17,8 +17,6 @@ export default function CardProduct({ filteredData }: { filteredData: any }) {
     },
   }));
 
-  console.log(filteredData);
-
   return filteredData?.map((product: any) => {
     return (
       <Card

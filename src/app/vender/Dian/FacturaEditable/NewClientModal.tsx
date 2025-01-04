@@ -53,7 +53,6 @@ const NewClientModal = ({
   const [organizationTypes, setOrganizationTypes] = useState<any[]>([]);
   const [fiscalRegimes, setFiscalRegimes] = useState<any[]>([]);
 
-  console.log("newClient::>", newClient);
   useEffect(() => {
     // Fetch data
     axios
@@ -195,7 +194,6 @@ const NewClientModal = ({
                         const selectedDoc = identityDocuments.find(
                           (doc) => doc.abbreviation === newClient.tipoDocumento
                         );
-                        console.log("Selected Document:", selectedDoc);
                         return selectedDoc;
                       })()}
                       onChange={(event, newValue) => {

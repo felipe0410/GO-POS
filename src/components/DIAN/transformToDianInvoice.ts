@@ -84,6 +84,8 @@ export const transformToDianInvoice = (data: any, establishment: any): any => {
 };
 
 export const transformToDianInvoice2 = (data: any, establishment: any): any => {
+  const isCustomerEmpty = !data.cliente || Object.values(data.cliente).every((value) => !value);
+
   return {
     resolution_number: establishment.Resolucion, // Resolución fija
     prefix: establishment.Prefijo, // Prefijo fijo
@@ -105,21 +107,26 @@ export const transformToDianInvoice2 = (data: any, establishment: any): any => {
       },
     ],
 
-    // Información del cliente
-    customer: {
-      country_id: data.cliente.country_id, // Código de país
-      city_id: data.cliente.city_id, // Código de ciudad
-      identity_document_id: data.cliente.identity_document_id, // Documento de identidad
-      type_organization_id: data?.cliente?.tax_regime_id ?? 2, // Tipo de organización: Persona natural o jurídica
-      tax_regime_id: data.cliente.tax_regime_id, // Régimen fiscal
-      tax_level_id: data.cliente.tax_level_id, // Nivel tributario
-      company_name: data.cliente.name, // Nombre completo del cliente
-      dni: data.cliente.identificacion, // Identificación del cliente
-      mobile: data.cliente.telefono, // Teléfono móvil
-      email: data.cliente.correo, // Email del cliente
-      address: data.cliente.direccion, // Dirección del cliente
-      postal_code: "661002", // Código postal por defecto (si es necesario)
-    },
+    // Información del cliente (solo se incluye si no está vacío)
+    ...(isCustomerEmpty
+      ? {}
+      : {
+          customer: {
+            country_id: data.cliente.country_id, // Código de país
+            city_id: data.cliente.city_id, // Código de ciudad
+            identity_document_id: data.cliente.identity_document_id, // Documento de identidad
+            type_organization_id: data?.cliente?.tax_regime_id ?? 2, // Tipo de organización
+            tax_regime_id: data.cliente.tax_regime_id, // Régimen fiscal
+            tax_level_id: data.cliente.tax_level_id, // Nivel tributario
+            company_name: data.cliente.name, // Nombre completo del cliente
+            dni: data.cliente.identificacion, // Identificación del cliente
+            mobile: data.cliente.telefono, // Teléfono móvil
+            email: data.cliente.correo, // Email del cliente
+            address: data.cliente.direccion, // Dirección del cliente
+            postal_code: "661002", // Código postal por defecto (si es necesario)
+          },
+        }),
+
     // Transformación de las líneas de compra
     lines: data.items.map((item: any) => {
       return {

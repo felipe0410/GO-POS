@@ -87,7 +87,6 @@ const Page = () => {
       if (searchTerm === "") {
         return true;
       }
-      console.log(Object.values(item))
       return Object.values(item).some((value) =>
         String(value).toLowerCase().includes(searchTerm.toLowerCase())
       );

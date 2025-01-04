@@ -807,7 +807,6 @@ export const getEstablishmentDataLoggin = async (encodedUserUID: string) => {
     const docSnapshot = await getDoc(establishmentDocRef);
     if (docSnapshot.exists()) {
       const establishmentData = docSnapshot.data();
-      console.log("Data del establecimiento:", establishmentData);
       return establishmentData;
     } else {
       console.error("El documento del establecimiento no existe");
@@ -835,7 +834,6 @@ export const getEstablishmentData = async () => {
     const docSnapshot = await getDoc(establishmentDocRef);
     if (docSnapshot.exists()) {
       const establishmentData = docSnapshot.data();
-      console.log("Data del establecimiento:", establishmentData);
       return establishmentData;
     } else {
       console.error("El documento del establecimiento no existe");

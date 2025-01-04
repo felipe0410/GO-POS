@@ -74,7 +74,7 @@ export const createInvoiceDraft = async (uid: string, invoiceData: any) => {
   }
 };
 
-export const getInvoicesDian = async () => {
+export const getInvoicesDraft = async () => {
   try {
     const establecimientoDocRef: DocumentReference = doc(
       db,
@@ -84,7 +84,6 @@ export const getInvoicesDian = async () => {
     const establecimientoSnapshot: DocumentSnapshot = await getDoc(
       establecimientoDocRef
     );
-
     // Verificar si el documento del establecimiento existe
     if (!establecimientoSnapshot.exists()) {
       console.warn(
@@ -96,7 +95,7 @@ export const getInvoicesDian = async () => {
     // Referencia a la colección `invoicesDian` dentro del documento del establecimiento
     const invoicesCollectionRef = collection(
       establecimientoDocRef,
-      "invoicesDian"
+      "invoicesDianDraf"
     );
     const invoicesSnapshot = await getDocs(invoicesCollectionRef);
 
@@ -116,6 +115,47 @@ export const getInvoicesDian = async () => {
   } catch (error) {
     console.error("Error al obtener los datos de /invoicesDian: ", error);
     return null; // Retorna null en caso de error
+  }
+};
+
+export const getInvoicesDian = async () => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const establecimientoSnapshot: DocumentSnapshot = await getDoc(
+      establecimientoDocRef
+    );
+
+    if (!establecimientoSnapshot.exists()) {
+      console.warn(
+        "El establecimiento no existe. No se pueden obtener facturas."
+      );
+      return []; 
+    }
+
+    const invoicesCollectionRef = collection(
+      establecimientoDocRef,
+      "invoicesDian"
+    );
+    const invoicesSnapshot = await getDocs(invoicesCollectionRef);
+
+    if (invoicesSnapshot.empty) {
+      console.warn("No se encontraron facturas en la colección invoicesDian.");
+      return []; 
+    }
+
+    const invoices = invoicesSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return invoices;
+  } catch (error) {
+    console.error("Error al obtener los datos de /invoicesDian: ", error);
+    return null;
   }
 };
 
@@ -147,8 +187,6 @@ export const getLastInvoice = async () => {
     }
 
     const lastInvoice = querySnapshot.docs[0].data();
-    console.log("Última factura:", lastInvoice);
-
     return { id: querySnapshot.docs[0].id, ...lastInvoice };
   } catch (error) {
     console.error("Error al obtener la última factura:", error);

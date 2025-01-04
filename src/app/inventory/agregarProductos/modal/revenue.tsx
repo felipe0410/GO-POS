@@ -44,7 +44,6 @@ export default function Revenue() {
     prefix: "",
     value: "",
   });
-  console.log("%crevenue", "color:green", revenue);
   const [num, setNum] = React.useState(8);
   const [isActive, setIsActive] = React.useState(false);
   const handleClose = () => setOpen(false);
@@ -52,7 +51,6 @@ export default function Revenue() {
   const handleCancel = () => {
     handleClose();
   };
-  console.log("%crevenue", "color.red", revenue);
 
   const handleOnChangePrice = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRevenue(() => {

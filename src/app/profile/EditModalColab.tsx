@@ -113,10 +113,8 @@ export default function EditModalColab(props: any) {
       ({ state }) => {
         switch (state) {
           case "paused":
-            console.log("Upload is paused");
             break;
           case "running":
-            console.log("Upload is running");
             break;
           default:
             break;
@@ -130,9 +128,7 @@ export default function EditModalColab(props: any) {
         try {
           const url = await getDownloadURL(imgUpload.snapshot.ref);
           if (previousImageUrlRef.current) {
-            console.log("deleteObject(previousImageRef);:::>");
             const previousImageRef = ref(storage, previousImageUrlRef.current);
-            console.log("previousImageRef:::>", previousImageRef);
           }
           setColabData((prevState: any) => ({
             ...prevState,

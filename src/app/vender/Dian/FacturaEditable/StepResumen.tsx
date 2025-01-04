@@ -32,6 +32,7 @@ const InvoicePreview = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [logo, setLogo] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem("dataUser");
@@ -62,7 +63,6 @@ const InvoicePreview = () => {
     };
   };
 
-  
   const { date, hour } = getCurrentDateTime();
 
   const handleSendToDian = async () => {
@@ -76,21 +76,20 @@ const InvoicePreview = () => {
       if (
         send &&
         send.response &&
-        send.AttachedDocument &&
         send.qr &&
         send.pdf
       ) {
         const enrichedData = {
           ...localData,
           attachedDocument: {
-            pathZip: send.AttachedDocument.pathZip,
-            path: send.AttachedDocument.path,
-            url: send.AttachedDocument.url,
+            pathZip: send?.AttachedDocument?.pathZip??'',
+            path: send?.AttachedDocument?.path??'',
+            url: send?.AttachedDocument?.url??'',
           },
           qrDian: send.qr.qrDian,
           qrUrl: send.qr.url,
           pdfUrl: send.pdf.url,
-          date, 
+          date,
           hour,
         };
 
@@ -98,6 +97,8 @@ const InvoicePreview = () => {
           String(localData.document_number),
           enrichedData
         );
+        setPdfUrl(send.pdf.url);
+        enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
         setLocalData({
           cliente: {
             tipoDocumento: "",
@@ -115,7 +116,7 @@ const InvoicePreview = () => {
           document_number: 0,
           document_number_complete: "",
         });
-        setActiveStep(0);
+        //setActiveStep(0);
       }
     } catch (error) {
       console.error("Error al enviar la factura a la DIAN:", error);
@@ -177,6 +178,60 @@ const InvoicePreview = () => {
       });
     }
   };
+
+  const handleFinalize = () => {
+    setPdfUrl(null);
+    setActiveStep(0);
+  };
+
+  if (pdfUrl) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "60vh",
+          width: "100%",
+          padding: "20px",
+          boxSizing: "border-box",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "baseline" }}>
+          <Typography variant="h5" gutterBottom>
+            Factura enviada con éxito
+          </Typography>
+          <Button
+            variant="contained"
+            sx={{ marginTop: 2, marginLeft: "15px" }}
+            onClick={handleFinalize}
+          >
+            Finalizar
+          </Button>
+        </Box>
+
+        <Box
+          sx={{
+            width: "100%",
+            height: "80%",
+            border: "1px solid #ccc",
+            overflow: "hidden",
+          }}
+        >
+          <iframe
+            src={pdfUrl}
+            title="Factura"
+            width="100%"
+            height="100%"
+            style={{
+              border: "none",
+            }}
+          />
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box

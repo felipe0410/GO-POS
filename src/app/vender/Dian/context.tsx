@@ -58,8 +58,6 @@ export const FacturaProvider: React.FC<FacturaProviderProps> = ({
         const establishmentData: any = (await getEstablishmentData()) || {};
         const dianData = await getDianRecord();
         const InvoicesDian: any = await getLastInvoice();
-        console.log("InvoicesDian;;;>", InvoicesDian);
-
         const { Prefijo = "", RangoInicio = 0, RangoFin = 0 } = dianData || {};
 
         let nextDocumentNumber = RangoInicio;
@@ -91,7 +89,7 @@ export const FacturaProvider: React.FC<FacturaProviderProps> = ({
     };
 
     getData();
-  }, []);
+  }, [activeStep]);
 
   return (
     <FacturaProviderContext.Provider

@@ -82,7 +82,6 @@ export default function CustomizedSwitches({
   ) => {
     setIsActive(checked); // Actualizar el estado usando el segundo parámetro
   };
-  console.log("isActive:::>", isActive);
   return (
     <FormGroup sx={{ margin: 0, padding: "0" }}>
       <FormControlLabel

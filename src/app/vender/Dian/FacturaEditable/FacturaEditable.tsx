@@ -130,7 +130,7 @@ const FacturaEditable = () => {
         <Box mt={4}>{renderStepContent(activeStep)}</Box>
         <Box mt={4} display="flex" justifyContent="space-between">
           <Button
-            disabled={activeStep === 0}
+            disabled={activeStep === 0 }
             onClick={handleBack}
             color="primary"
           >

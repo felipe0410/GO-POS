@@ -56,7 +56,6 @@ export default function InvoicesTable({
   setEditInvoice: any;
 }) {
   const [rowData, setRowData] = useState({});
-  console.log('rowData')
   const [editingInvoice, setEditingInvoice] = useState(false);
 
   const newDataObject = (row: any) => {

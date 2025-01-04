@@ -48,7 +48,6 @@ const EditInvoice = ({
   const [editProducts, setEditProducts] = useState(false);
 
   type ClienteKeys = keyof typeof data.cliente;
-  console.log(data);
 
   type InvoiceInput = {
     name: string;
