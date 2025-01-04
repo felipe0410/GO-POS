@@ -74,7 +74,6 @@ const TotalSection: React.FC<TotalSectionProps> = ({
 
   const invoiceJson = generateInvoiceJson(invoiceData);
 
-  console.log(invoiceJson, "invoiceJson:::>", invoiceJson);
   return(
 
     <Box

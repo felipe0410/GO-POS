@@ -126,7 +126,6 @@ const DatosVenta = (props: any) => {
       }
       // Transformar la factura actual al formato DIAN
       const invoiceDian = transformToDianInvoice(factura, getDianRecordd);
-      console.log("invoiceDian:::>", invoiceDian);
       // Endpoint de la API Matias
       const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL_MATIAS_API}/invoice`;
 
@@ -203,7 +202,6 @@ const DatosVenta = (props: any) => {
       handleVenderClick();
       setLoading(true);
       const valueUuid = uuidv4();
-      console.log("valueUuid:::>", valueUuid);
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
       localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
@@ -214,7 +212,6 @@ const DatosVenta = (props: any) => {
         .catch((error) => {
           console.error("Error al procesar la factura:", error);
         });
-      console.log("factura :::> ", factura);
       !(typeInvoice === "quickSale")
         ? await createInvoice(`${factura.invoice}-${result}`, {
             ...factura,

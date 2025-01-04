@@ -21,9 +21,7 @@ export const sendInvoiceToDian = async (factura: any, token: string) => {
       });
       throw new Error("Error al obtener los datos del establecimiento.");
     }
-    console.log(console.log("factura:::>", factura));
     const invoiceDian = transformToDianInvoice(factura, dianRecord);
-    console.log("invoiceDian:::>", invoiceDian);
     const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL_MATIAS_API}/invoice`;
     const headers = {
       "Content-Type": "application/json",
@@ -95,7 +93,6 @@ export const sendInvoiceToDian2 = async (factura: any, token: string) => {
     };
     const response = await axios.post(apiUrl, invoiceDian, { headers });
     if (response.status === 200) {
-      console.log("Factura enviada con éxito:", response.data);
       enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
       return response.data;
     } else {

@@ -124,7 +124,6 @@ const DatosVentaDian = (props: any) => {
 
       sendInvoiceToDian(factura, cookies.invoice_token)
         .then((response) => {
-          console.log("Factura procesada con éxito:", response);
         })
         .catch((error) => {
           console.error("Error al procesar la factura:", error);

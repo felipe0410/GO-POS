@@ -258,7 +258,6 @@ export const updateProductData = async (uid: any, newData: any) => {
 
     if (docSnapshot.exists()) {
       await updateDoc(productDocRef, newData);
-      console.log("Documento actualizado con éxito.");
     } else {
       console.log("El documento no existe.");
     }
@@ -288,7 +287,6 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
         if (newCantidad >= 0) {
           // Actualizar el documento con la nueva cantidad
           await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
-          console.log("Documento actualizado con éxito.");
         } else {
           console.log("No hay suficiente cantidad para actualizar.");
         }
@@ -411,9 +409,32 @@ export const deleteInvoice = async (uid: string) => {
   }
 };
 
+export const deleteClient = async (uid: string) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+
+    const establecimientoSnapshot = await getDoc(establecimientoDocRef);
+    if (!establecimientoSnapshot.exists()) {
+      console.warn("El establecimiento no existe. No se puede eliminar el cliente.");
+      return false;
+    }
+
+    const clientDocRef = doc(establecimientoDocRef, "clients", uid);
+
+    await deleteDoc(clientDocRef);
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar el cliente en /clients: ", error);
+    return false;
+  }
+};
+
 export const createClient = async (uid: string, data: any) => {
   try {
-    console.log(data);
     const establecimientoDocRef: DocumentReference = doc(
       db,
       "establecimientos",

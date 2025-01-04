@@ -74,7 +74,6 @@ const FacturaEditable = () => {
   };
   const handleNext = () => {
     if (activeStep === 1 && !validateItems()) {
-      console.log("1");
       enqueueSnackbar(
         "Existen productos con valores inválidos o campos vacíos. Por favor verifica los datos.",
         {

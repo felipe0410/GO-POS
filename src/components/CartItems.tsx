@@ -1,4 +1,11 @@
-import { Box, Typography, InputBase, Button, IconButton, InputAdornment } from "@mui/material";
+import {
+  Box,
+  Typography,
+  InputBase,
+  Button,
+  IconButton,
+  InputAdornment,
+} from "@mui/material";
 import React, { useState } from "react";
 import { NumericFormat } from "react-number-format";
 
@@ -11,7 +18,7 @@ const CartItems = ({
   setSelectedItems: any;
   selectedItems: any;
 }) => {
-  const [edit, setEdit] = useState(false)
+  const [edit, setEdit] = useState(false);
   const saveDataToLocalStorage = (key: string, data: any) => {
     try {
       const serializedData = JSON.stringify(data);
@@ -25,39 +32,47 @@ const CartItems = ({
     const updatedItems = selectedItems.filter(
       (item: any) => item.barCode !== product.barCode
     );
-    saveDataToLocalStorage('selectedItems', updatedItems)
+    saveDataToLocalStorage("selectedItems", updatedItems);
     setSelectedItems(updatedItems);
   };
 
-  const calcularTotal = (event: any) => {
-  };
+  const calcularTotal = (event: any) => {};
 
   const handleOnChangePrice = (
     event: React.ChangeEvent<HTMLInputElement>,
     product: any
   ) => {
     setSelectedItems((prevSelectedItems: any) => {
-      const cleanString = event.target.value.replace(/[\$,\s]/g, '');
-      const numberValue = parseFloat(cleanString)
+      const cleanString = event.target.value.replace(/[\$,\s]/g, "");
+      const numberValue = parseFloat(cleanString);
       const updatedItems = prevSelectedItems.map((item: any) =>
         item.barCode === product.barCode
-          ? { ...item, price: event.target.value, acc: (numberValue > 0 ? numberValue : 0) * item.cantidad }
+          ? {
+              ...item,
+              price: event.target.value,
+              acc: (numberValue > 0 ? numberValue : 0) * item.cantidad,
+            }
           : item
       );
       return updatedItems;
     });
   };
 
-  const handleChange = (
-    event: any,
-    product: any
-  ) => {
-    const numericValue = Number(product.price.replace(/[^0-9.-]+/g, ''));
-    console.log()
+  const handleChange = (event: any, product: any) => {
+    const numericValue = Number(product.price.replace(/[^0-9.-]+/g, ""));
     setSelectedItems((prevSelectedItems: any) => {
       const updatedItems = prevSelectedItems.map((item: any) =>
         item.barCode === product.barCode
-          ? { ...item, acc: (Number.isInteger(parseInt(event?.target?.value ?? 0)) ? event.target.value * numericValue : 0), cantidad: (event?.target?.value > 0 ? parseInt(event?.target?.value ?? 0) : "") }
+          ? {
+              ...item,
+              acc: Number.isInteger(parseInt(event?.target?.value ?? 0))
+                ? event.target.value * numericValue
+                : 0,
+              cantidad:
+                event?.target?.value > 0
+                  ? parseInt(event?.target?.value ?? 0)
+                  : "",
+            }
           : item
       );
       return updatedItems;
@@ -65,12 +80,14 @@ const CartItems = ({
   };
   return (
     <Box sx={{ marginTop: "10px" }}>
-      <Box display={'flex'}>
-        <Box sx={{ width: '60%', display: 'flex' }}>
+      <Box display={"flex"}>
+        <Box sx={{ width: "60%", display: "flex" }}>
           <Box
             component={"img"}
             src={
-              ["", null].includes(product.image) ? "/images/noImage.svg" : product.image
+              ["", null].includes(product.image)
+                ? "/images/noImage.svg"
+                : product.image
             }
             alt={`imagen del producto ${product.productName}`}
             sx={{
@@ -78,7 +95,7 @@ const CartItems = ({
               height: "37px",
             }}
           />
-          <Box marginLeft={1} sx={{ width: '100%' }}>
+          <Box marginLeft={1} sx={{ width: "100%" }}>
             <Typography
               sx={{
                 color: "#FFF",
@@ -95,7 +112,7 @@ const CartItems = ({
               {product.productName}
             </Typography>
             <Typography
-              width={'70%'}
+              width={"70%"}
               sx={{
                 color: "#FFF",
                 fontFamily: "Nunito",
@@ -105,11 +122,12 @@ const CartItems = ({
                 lineHeight: "140%",
               }}
             >
-              {edit ?
-                <Box id='container numeric'
+              {edit ? (
+                <Box
+                  id="container numeric"
                   sx={{
-                    display: 'flex',
-                    height: { xs: '1rem', sm: "1.5rem" },
+                    display: "flex",
+                    height: { xs: "1rem", sm: "1.5rem" },
                     borderRadius: "0.5rem",
                     border: "1px solid var(--Base-Dark-Line, #393C49)",
                     background: "var(--Base-Form-BG, #2D303E)",
@@ -121,30 +139,34 @@ const CartItems = ({
                       handleOnChangePrice(event, product)
                     }
                     value={product.price}
-                    prefix='$ '
-                    placeholder='Precio...'
+                    prefix="$ "
+                    placeholder="Precio..."
                     thousandSeparator
                     customInput={InputBase}
                     style={{ color: "#FFF" }}
                   />
                   <IconButton
-                    sx={{ paddingRight: "0px", marginRight: '-10px' }}
+                    sx={{ paddingRight: "0px", marginRight: "-10px" }}
                     onClick={(event) => calcularTotal(event)}
                   >
                     <IconButton
-                      color='secondary'
+                      color="secondary"
                       onClick={() => setEdit(false)}
                     >
                       <Box component={"img"} src={"/images/okay.svg"} />
                     </IconButton>
                   </IconButton>
                 </Box>
-                : <>
-                  <Typography sx={{ color: '#69EAE2', fontSize: '14px' }}>
+              ) : (
+                <>
+                  <Typography sx={{ color: "#69EAE2", fontSize: "14px" }}>
                     {product.price}
                     <IconButton
                       sx={{ paddingTop: "2px", paddingRight: "2px" }}
-                      onClick={() => { setEdit(true); }}>
+                      onClick={() => {
+                        setEdit(true);
+                      }}
+                    >
                       <Box
                         component={"img"}
                         src={"/images/edit.svg"}
@@ -153,18 +175,18 @@ const CartItems = ({
                     </IconButton>
                   </Typography>
                 </>
-              }
+              )}
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ width: '40%', display: 'flex' }}>
-          <Box width={'35%'} sx={{ textAlign: 'center' }}>
+        <Box sx={{ width: "40%", display: "flex" }}>
+          <Box width={"35%"} sx={{ textAlign: "center" }}>
             <InputBase
               sx={{
-                width: { xs: '32px', sm: "50px" },
-                padding: { xs: '5px', sm: "6px" },
+                width: { xs: "32px", sm: "50px" },
+                padding: { xs: "5px", sm: "6px" },
                 textAlignLast: "center",
-                fontSize: { xs: '13px', sm: '16px' },
+                fontSize: { xs: "13px", sm: "16px" },
               }}
               style={{
                 color: "#FFF",
@@ -174,9 +196,8 @@ const CartItems = ({
               }}
               value={product.cantidad}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                handleChange(event, product)
-              }
-              }
+                handleChange(event, product);
+              }}
             />
           </Box>
           <Box sx={{ alignSelf: "center" }}>
@@ -185,7 +206,7 @@ const CartItems = ({
                 alignSelf: "center",
                 color: "#FFF",
                 fontFamily: "Nunito",
-                fontSize: { xs: '13px', sm: "0.75rem" },
+                fontSize: { xs: "13px", sm: "0.75rem" },
                 fontStyle: "normal",
                 fontWeight: 400,
                 lineHeight: "140%",
@@ -203,12 +224,12 @@ const CartItems = ({
           flexDirection: "row",
         }}
       >
-        <Box sx={{ width: '73%' }}>
+        <Box sx={{ width: "73%" }}>
           <InputBase
             sx={{
               width: "100%",
-              height: { xs: '17px', sm: "24px" },
-              fontSize: '12px',
+              height: { xs: "17px", sm: "24px" },
+              fontSize: "12px",
               padding: "5px",
             }}
             style={{
@@ -217,14 +238,14 @@ const CartItems = ({
               border: "1px solid var(--Base-Dark-Line, #393C49)",
               background: "var(--Base-Form-BG, #2D303E)",
             }}
-            placeholder='Codigo de barras'
+            placeholder="Codigo de barras"
             value={product.barCode}
           />
         </Box>
         <Box sx={{ width: "23%", display: "flex", justifyContent: "flex-end" }}>
           <Button
             onClick={() => handleDelete(product)}
-            variant='outlined'
+            variant="outlined"
             sx={{
               height: "37px",
               width: "37px",

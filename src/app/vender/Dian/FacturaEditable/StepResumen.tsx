@@ -28,7 +28,7 @@ const InvoicePreview = () => {
     setLocalData,
     setActiveStep,
   } = useContext(FacturaProviderContext);
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [logo, setLogo] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);

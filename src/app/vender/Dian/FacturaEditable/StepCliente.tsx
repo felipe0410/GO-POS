@@ -6,10 +6,11 @@ import {
   Autocomplete,
   Button,
 } from "@mui/material";
-import { getAllClientsData, createClient } from "@/firebase";
+import { getAllClientsData, createClient, deleteClient } from "@/firebase";
 import NewClientModal from "./NewClientModal";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { FacturaProviderContext } from "../context";
+import DeleteModal from "./DeleteModal";
 
 const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
   const { newClient, setNewClient, setLocalData } =
@@ -17,6 +18,8 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
   const [clients, setClients] = useState<any[]>([]);
   const [selectedClient, setSelectedClient] = useState<any | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     const unsubscribe = getAllClientsData(setClients);
@@ -77,17 +80,54 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
       });
     }
   };
+
+  const handleEditClient = () => {
+    if (selectedClient) {
+      setNewClient(selectedClient);
+      setIsEdit(true);
+      setIsDialogOpen(true);
+    }
+  };
+
+  const handleDeleteClient = async () => {
+    if (selectedClient) {
+      const result = await deleteClient(selectedClient.uid);
+      if (result) {
+        enqueueSnackbar("Cliente eliminado exitosamente", {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+        setClients((prev) =>
+          prev.filter((client) => client.uid !== selectedClient.uid)
+        );
+        setSelectedClient(null);
+      } else {
+        enqueueSnackbar("Error al eliminar el cliente", {
+          variant: "error",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+      }
+    }
+    setIsDeleteModalOpen(false);
+  };
   useEffect(() => {
     if (selectedClient) {
       setLocalData((prev: any) => ({
         ...prev,
         cliente: {
           ...prev.cliente,
-          ...selectedClient, // Asigna las propiedades del cliente seleccionado
+          ...selectedClient,
         },
       }));
     }
-  }, [selectedClient, setLocalData]); // Agrega las dependencias adecuadas
+  }, [selectedClient, setLocalData]);
+
   return (
     <Box display="grid" gap={2}>
       <SnackbarProvider />
@@ -102,9 +142,33 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
         )}
         isOptionEqualToValue={(option, value) => option.id === value.id}
       />
-      <Button variant="outlined" onClick={() => setIsDialogOpen(true)}>
-        Crear Nuevo Cliente
-      </Button>
+      <Box display="flex" gap={2} mt={2} sx={{ placeSelf: "center" }}>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setIsEdit(false);
+            setIsDialogOpen(true);
+          }}
+        >
+          Crear Nuevo Cliente
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleEditClient}
+          disabled={!selectedClient}
+        >
+          Editar Cliente
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => setIsDeleteModalOpen(true)}
+          disabled={!selectedClient}
+        >
+          Eliminar Cliente
+        </Button>
+      </Box>
       <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2} mt={2}>
         <TextField
           label="Nombre"
@@ -294,6 +358,13 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
         newClient={newClient}
         setNewClient={setNewClient}
         isEdit={false}
+      />
+      <DeleteModal
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onDelete={handleDeleteClient}
+        title="¿ESTAS SEGURO QUE QUIERES ELIMINAR EL CLIENTE?"
+        description={`Cliente: ${selectedClient?.name || ""}`}
       />
     </Box>
   );

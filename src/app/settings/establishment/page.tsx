@@ -103,7 +103,6 @@ const Page = () => {
       const data: any = await getEstablishmentData();
       dataUser()
         .then((userData: any) => {
-          console.log(userData);
           if (userData.mail.length > 0) {
             setData({
               name: userData.name,

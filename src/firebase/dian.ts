@@ -92,7 +92,6 @@ export const getInvoicesDraft = async () => {
       return []; // Retorna un array vacío si no existe
     }
 
-    // Referencia a la colección `invoicesDian` dentro del documento del establecimiento
     const invoicesCollectionRef = collection(
       establecimientoDocRef,
       "invoicesDianDraf"
