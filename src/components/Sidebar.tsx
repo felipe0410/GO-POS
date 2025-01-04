@@ -159,7 +159,16 @@ export default function Sidebar({
   useEffect(() => {
     const loadSections = async () => {
       try {
-        const dianRecord = await getDianRecord();
+        const cachedRecord = localStorage.getItem("dianRecord");
+        let dianRecord = null;
+
+        if (cachedRecord) {
+          dianRecord = JSON.parse(cachedRecord);
+        } else {
+          dianRecord = await getDianRecord();
+          localStorage.setItem("dianRecord", JSON.stringify(dianRecord));
+        }
+
         if (dianRecord) {
           const updatedSections = sections.map((section) => {
             if (section.section === "VENDER") {
@@ -181,6 +190,7 @@ export default function Sidebar({
     };
 
     loadSections();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
