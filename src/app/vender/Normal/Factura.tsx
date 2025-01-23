@@ -530,10 +530,12 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
                       }}
                     >
                       {product.productName}
                     </Typography>
+
                     <Typography
                       sx={{
                         color: "#000",

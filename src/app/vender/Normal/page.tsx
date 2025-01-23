@@ -12,11 +12,15 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import { getAllProductsDataonSnapshot } from "@/firebase";
+import {
+  fetchAndStoreSettings,
+  getAllProductsDataonSnapshot,
+} from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
 import CarouselCategorias from "@/components/CarouselCategorias";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import ModalSettings from "./modal_settings";
 
 const themee = createTheme({
   palette: {
@@ -50,6 +54,23 @@ const Page: any = () => {
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const loadSettings = async () => {
+    const cachedSettings = localStorage.getItem("settingsData");
+    if (cachedSettings) {
+      const parsedSettings = JSON.parse(cachedSettings);
+      setTypeInvoice(parsedSettings?.defaultTypeInvoice || "quickSale");
+    } else {
+      const success: any = await fetchAndStoreSettings();
+      if (success) {
+        const updatedSettings = localStorage.getItem("settingsData");
+        const parsedUpdatedSettings = JSON.parse(updatedSettings || "{}");
+        setTypeInvoice(
+          parsedUpdatedSettings?.defaultTypeInvoice || "quickSale"
+        );
+      }
+    }
+  };
 
   const filteredData = async (
     event: any,
@@ -185,6 +206,12 @@ const Page: any = () => {
     }
   }, []);
 
+  useEffect(() => {
+    loadSettings();
+    filteredData("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <Box
       sx={{
@@ -198,7 +225,7 @@ const Page: any = () => {
         id="conainer_vender"
         sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
       >
-        <Header title="VENDER" />
+        <Header title="VENDER" txt={<ModalSettings />} />
         <ThemeProvider theme={themee}>
           <Box
             sx={{ marginTop: "15px", textAlignLast: "center", width: "95%" }}

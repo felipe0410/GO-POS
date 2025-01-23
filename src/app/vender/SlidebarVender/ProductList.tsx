@@ -104,6 +104,7 @@ const ProductList: React.FC<ProductListProps> = ({
         </Typography>
       ) : (
         <>
+        
           {selectedItems?.map((product: any) => (
             <React.Fragment key={product.barCode}>
               <CartItems

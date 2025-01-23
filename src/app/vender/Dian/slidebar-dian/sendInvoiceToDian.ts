@@ -86,6 +86,7 @@ export const sendInvoiceToDian2 = async (factura: any, token: string) => {
       throw new Error("Error al obtener los datos del establecimiento.");
     }
     const invoiceDian = transformToDianInvoice2(factura, dianRecord);
+    console.log("invoiceDian:::>", invoiceDian);
     const apiUrl = `${process.env.NEXT_PUBLIC_BASE_URL_MATIAS_API}/invoice`;
     const headers = {
       "Content-Type": "application/json",

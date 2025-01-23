@@ -39,34 +39,43 @@ const VenderCard = React.memo(({ filteredData, setSelectedItems, selectedItems, 
   }
 
   const handleIncrement = (product: any) => {
-    const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));
+    const cleanedPrice = Number(product.price.replace(/[$,]/g, ""));  
     const existingItem = selectedItems?.find(
       (item: any) => item.barCode === product.barCode
     );
     if (existingItem) {
-      const updatedItems = selectedItems?.map((item: any) =>
-        item.barCode === product.barCode
-          ? {
-            ...item,
-            cantidad: item.cantidad + 1,
-            acc: (item.cantidad + 1) * cleanedPrice,
-          }
-          : item
-      );
-      setSelectedItems(updatedItems);
+      const updatedItems = selectedItems
+        ?.map((item: any) =>
+          item.barCode === product.barCode
+            ? {
+                ...item,
+                cantidad: item.cantidad + 1,
+                acc: (item.cantidad + 1) * cleanedPrice,
+              }
+            : item
+        )
+        .filter((item: any) => item.barCode !== product.barCode); // Filtra para eliminar la versión antigua
+      setSelectedItems([
+        {
+          ...existingItem,
+          cantidad: existingItem.cantidad + 1,
+          acc: (existingItem.cantidad + 1) * cleanedPrice,
+        },
+        ...updatedItems,
+      ]);
     } else {
       const newItems = {
         image: product.image,
-        cantidad: 1,
+        cantidad: 1, 
         productName: product.productName,
         price: product.price,
-        nota: "",
+        nota: "", 
         barCode: product.barCode,
-        acc: cleanedPrice,
+        acc: cleanedPrice, 
       };
-      setSelectedItems([newItems, ...selectedItems])
+      setSelectedItems([newItems, ...selectedItems]);
     }
-  }
+  };
 
   return filteredData?.map((product: any) => {
     return (

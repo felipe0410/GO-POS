@@ -10,6 +10,7 @@ export const login = async (email: string, password: string) => {
         remember_me: 0,
       }
     );
+    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error("Error logging in:", error);

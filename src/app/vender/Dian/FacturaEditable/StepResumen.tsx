@@ -73,51 +73,41 @@ const InvoicePreview = () => {
         throw new Error("No se encontró el token de autenticación.");
       }
       const send = await sendInvoiceToDian2(localData, token);
-      if (
-        send &&
-        send.response &&
-        send.qr &&
-        send.pdf
-      ) {
-        const enrichedData = {
-          ...localData,
-          attachedDocument: {
-            pathZip: send?.AttachedDocument?.pathZip??'',
-            path: send?.AttachedDocument?.path??'',
-            url: send?.AttachedDocument?.url??'',
-          },
-          qrDian: send.qr.qrDian,
-          qrUrl: send.qr.url,
-          pdfUrl: send.pdf.url,
-          date,
-          hour,
-        };
+      const enrichedData = {
+        ...localData,
+        attachedDocument: {
+          pathZip: send?.AttachedDocument?.pathZip ?? "",
+          path: send?.AttachedDocument?.path ?? "",
+          url: send?.AttachedDocument?.url ?? "",
+        },
+        qrDian: send?.qr?.qrDian ?? "",
+        qrUrl: send?.qr?.url ?? "",
+        pdfUrl: send?.pdf?.url ?? "",
+        date,
+        hour,
+      };
 
-        await createInvoiceDian(
-          String(localData.document_number),
-          enrichedData
-        );
-        setPdfUrl(send.pdf.url);
-        enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
-        setLocalData({
-          cliente: {
-            tipoDocumento: "",
-            numeroDocumento: "",
-            telefono: "",
-            correo: "",
-            nombre: "",
-            pais: "",
-            departamento: "",
-            ciudad: "",
-            direccion: "",
-          },
-          items: [],
-          total: 0,
-          document_number: 0,
-          document_number_complete: "",
-        });
-        //setActiveStep(0);
-      }
+      await createInvoiceDian(String(localData.document_number), enrichedData);
+      setPdfUrl(send?.pdf?.url ?? "");
+      enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
+      setLocalData({
+        cliente: {
+          tipoDocumento: "",
+          numeroDocumento: "",
+          telefono: "",
+          correo: "",
+          nombre: "",
+          pais: "",
+          departamento: "",
+          ciudad: "",
+          direccion: "",
+        },
+        items: [],
+        total: 0,
+        document_number: 0,
+        document_number_complete: "",
+      });
+      //setActiveStep(0);
     } catch (error) {
       console.error("Error al enviar la factura a la DIAN:", error);
     } finally {

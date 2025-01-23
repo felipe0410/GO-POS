@@ -21,6 +21,7 @@ import { getAllInvoicesData } from "@/firebase";
 import SubtotalSection from "../SlidebarVender/SubtotalSection";
 import NoteSection from "../SlidebarVender/NoteSection";
 import SearchSection from "../SlidebarVender/SearchSection";
+import InvoicePreviewModal from "./InvoicePreview";
 
 const SlidebarVender = ({
   selectedItems,
@@ -184,6 +185,9 @@ const SlidebarVender = ({
             generarNumeroFactura={generarNumeroFactura}
             totalUnidades={totalUnidades}
           />
+          <Box sx={{position:'absolute', top:8 ,left:12, display:{sx:'auto',lg:'none'}}}>
+            <InvoicePreviewModal selectedItems={selectedItems} />
+          </Box>
           <Box
             id="principal container"
             padding={3}

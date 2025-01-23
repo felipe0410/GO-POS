@@ -120,6 +120,7 @@ export const facturaStyles = {
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
+    textTransform: "uppercase",
   },
   typographyCantidad: {
     color: "#000",

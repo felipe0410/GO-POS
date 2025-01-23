@@ -187,6 +187,7 @@ const Page: any = () => {
     const loginInvoice = async (): Promise<any> => {
       const dian = await getDianRecord();
       const password = "Ab1007446687";
+      console.log(dian?.email)
       return await login(dian?.email ?? "demo@lopezsoft.net.co", password);
     };
 

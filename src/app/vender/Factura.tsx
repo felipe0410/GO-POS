@@ -530,6 +530,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                         overflow: "hidden",
                         textOverflow: "ellipsis",
                         whiteSpace: "nowrap",
+                        textTransform: "uppercase",
                       }}
                     >
                       {product.productName}

@@ -1055,7 +1055,7 @@ export const fetchAndStoreSettings = async () => {
       `${user().decodedString}`
     );
     const settingsCollectionRef = collection(establecimientoDocRef, "settings");
-    const settingsDocRef = doc(settingsCollectionRef, "GeneralSettings"); // Asumiendo un ID constante
+    const settingsDocRef = doc(settingsCollectionRef, "GeneralSettings");
 
     const docSnap = await getDoc(settingsDocRef);
     if (docSnap.exists()) {

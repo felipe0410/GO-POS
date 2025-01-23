@@ -1,23 +1,39 @@
-import { Divider, Typography } from "@mui/material";
-import React from "react";
+import { Box, Divider, Typography } from "@mui/material";
+import React, { ReactNode } from "react";
 
-const Header = ({ title }: { title: string }) => {
+interface HeaderProps {
+  title: string;
+  txt?: any;
+}
+
+const Header: React.FC<HeaderProps> = ({ title, txt }) => {
   return (
-    <>
-      <Typography
+    <Box>
+      <Box
         sx={{
-          color: "#69EAE2",
-          fontFamily: "Nunito",
-          fontSize: { xs: "24px", sm: "40px" },
-          fontStyle: "normal",
-          fontWeight: 700,
-          lineHeight: "normal",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
         }}
       >
-        {title}
-      </Typography>
+        <Typography
+          sx={{
+            color: "#69EAE2",
+            fontFamily: "Nunito",
+            fontSize: { xs: "24px", sm: "40px" },
+            fontStyle: "normal",
+            fontWeight: 700,
+            lineHeight: "normal",
+          }}
+        >
+          <Box display={"flex"}>
+            {title}
+            {txt && <Box>{txt}</Box>}
+          </Box>
+        </Typography>
+      </Box>
       <Divider sx={{ background: "#69EAE2", width: "95%" }} />
-    </>
+    </Box>
   );
 };
 
