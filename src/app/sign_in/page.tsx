@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { styleSign_in } from "./style";
 import { getEstablishmentDataLoggin, loginUser } from "@/firebase";
 import HttpsRoundedIcon from "@mui/icons-material/HttpsRounded";
@@ -35,6 +35,14 @@ const Loggin = () => {
   ) => {
     event.preventDefault();
   };
+
+  useEffect(() => {
+    localStorage.removeItem("user");
+
+    setTimeout(() => {
+      localStorage.removeItem("dianRecord");
+    }, 2000);
+  }, []);
 
   const password = () => {
     return (

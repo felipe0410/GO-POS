@@ -99,7 +99,6 @@ const Page: any = () => {
       });
 
       setfilter(filterSearch);
-
       const foundProducts = resolvedData?.filter(
         (producto) => producto.barCode === value2
       );
@@ -123,6 +122,7 @@ const Page: any = () => {
   };
 
   const updateSelectedItems = (newItem: any) => {
+    console.log("uodate");
     let productAlreadyInList = false;
     const updatedItems = (selectedItems || []).map((item: any) => {
       if (item.barCode === newItem.barCode) {
@@ -186,6 +186,7 @@ const Page: any = () => {
   useEffect(() => {
     const getAllProducts = async () => {
       try {
+        console.log('llego aqui effect')
         await getAllProductsDataonSnapshot(setData);
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -159,16 +159,44 @@ export default function Sidebar({
   useEffect(() => {
     const loadSections = async () => {
       try {
-        const cachedRecord = localStorage.getItem("dianRecord");
-        let dianRecord = null;
-
-        if (cachedRecord) {
-          dianRecord = JSON.parse(cachedRecord);
-        } else {
-          dianRecord = await getDianRecord();
-          localStorage.setItem("dianRecord", JSON.stringify(dianRecord));
+        let attempts = 0;
+        const maxAttempts = 2;
+        let userBase64 = "";
+  
+        // Intentar obtener el usuario hasta dos veces.
+        while (attempts < maxAttempts) {
+          userBase64 = localStorage.getItem("user") ?? "";
+          if (userBase64) break; // Si el usuario está disponible, salir del bucle.
+  
+          console.warn(`Intento ${attempts + 1}: Usuario no disponible, esperando...`);
+          attempts++;
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo entre intentos.
         }
-
+  
+        if (!userBase64) {
+          console.error("Usuario no disponible después de varios intentos. Abortando operación.");
+          return; // Abortar si el usuario sigue sin estar disponible.
+        }
+  
+        const correctedBase64String = userBase64.replace(/%3D/g, "=");
+  
+        let cachedRecord = localStorage.getItem("dianRecord");
+        let dianRecord = cachedRecord ? JSON.parse(cachedRecord) : null;
+  
+        // Rectificar si `dianRecord` es `null` después del intento inicial.
+        if (!dianRecord) {
+          console.warn("Registro DIAN no disponible o nulo. Intentando recuperarlo...");
+          dianRecord = await getDianRecord();
+  
+          if (dianRecord) {
+            console.log("Registro DIAN recuperado y rectificado:", dianRecord);
+            localStorage.setItem("dianRecord", JSON.stringify(dianRecord));
+          } else {
+            console.error("No se pudo recuperar el registro DIAN.");
+            return; // Salir si no se puede recuperar el registro DIAN.
+          }
+        }
+  
         if (dianRecord) {
           const updatedSections = sections.map((section) => {
             if (section.section === "VENDER") {
@@ -188,11 +216,11 @@ export default function Sidebar({
         console.error("Error cargando configuración DIAN:", error);
       }
     };
-
+  
     loadSections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
+    
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />

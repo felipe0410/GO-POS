@@ -15,12 +15,13 @@ import {
 import { FacturaProviderContext } from "../context";
 import { sendInvoiceToDian2 } from "../slidebar-dian/sendInvoiceToDian";
 import { useCookies } from "react-cookie";
-import { createInvoiceDian, createInvoiceDraft } from "@/firebase/dian";
+import { createInvoiceDian, createInvoiceDraft, getDianRecord } from "@/firebase/dian";
 import SaveDraftDialog from "./SaveDraftDialog";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { login } from "@/components/DIAN/loginToken";
 
 const InvoicePreview = () => {
-  const [cookies] = useCookies(["invoice_token"]);
+  const [cookies,setCookie] = useCookies(["invoice_token"]);
   const {
     localData,
     dataEstablishmentData,
@@ -68,11 +69,41 @@ const InvoicePreview = () => {
   const handleSendToDian = async () => {
     try {
       setIsSubmitting(true);
-      const token = cookies.invoice_token;
+  
+      // Obtener o generar el token
+      let token = cookies.invoice_token;
       if (!token) {
-        throw new Error("No se encontró el token de autenticación.");
+        console.warn("No se encontró el token. Iniciando sesión para obtener uno nuevo...");
+  
+        // Generar un nuevo token
+        const dian = await getDianRecord();
+        const password = "Ab1007446687"; // Cambiar por una contraseña segura en producción
+        const loginResponse = await login(dian?.email ?? "demo@lopezsoft.net.co", password);
+  
+        if (loginResponse?.access_token) {
+          token = loginResponse.access_token;
+  
+          // Configurar la cookie con el nuevo token
+          const expirationDate = new Date();
+          expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000); // 1 día
+  
+          setCookie("invoice_token", token, {
+            path: "/",
+            expires: expirationDate,
+            secure: true,
+            sameSite: "strict",
+          });
+  
+          console.log("%cNuevo token generado y almacenado en cookies.", "color:green");
+        } else {
+          throw new Error("Error al generar el token de autenticación.");
+        }
       }
+  
+      // Enviar la factura a la DIAN
       const send = await sendInvoiceToDian2(localData, token);
+  
+      // Enriquecer los datos de la factura con la respuesta de la DIAN
       const enrichedData = {
         ...localData,
         attachedDocument: {
@@ -86,10 +117,17 @@ const InvoicePreview = () => {
         date,
         hour,
       };
-
+  
+      // Crear la factura en el sistema local
       await createInvoiceDian(String(localData.document_number), enrichedData);
+  
+      // Actualizar la URL del PDF generado
       setPdfUrl(send?.pdf?.url ?? "");
+  
+      // Notificar éxito
       enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
+  
+      // Restablecer los datos locales de la factura
       setLocalData({
         cliente: {
           tipoDocumento: "",
@@ -107,13 +145,16 @@ const InvoicePreview = () => {
         document_number: 0,
         document_number_complete: "",
       });
-      //setActiveStep(0);
     } catch (error) {
       console.error("Error al enviar la factura a la DIAN:", error);
+      enqueueSnackbar("Error al enviar la factura a la DIAN. Por favor, inténtelo nuevamente.", {
+        variant: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
+  
 
   const handleSaveDraft = () => {
     setOpenDialog(true);

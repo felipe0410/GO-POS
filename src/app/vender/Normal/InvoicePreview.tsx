@@ -69,8 +69,7 @@ const InvoicePreviewModal: React.FC<InvoicePreviewProps> = ({ selectedItems }) =
             Previsualización de Factura
           </Typography>
 
-          {/* Contenedor Scrollable */}
-          <Box sx={{ overflowX: "auto", maxWidth: "100%" }}>
+          <Box sx={{ overflow: "auto", maxWidth: "100%", height:'50vh' }}>
             <Table sx={{ marginBottom: "16px", minWidth: "10px" }}>
               <TableHead>
                 <TableRow>
