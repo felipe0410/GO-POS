@@ -185,7 +185,7 @@ const SlidebarVender = ({
             generarNumeroFactura={generarNumeroFactura}
             totalUnidades={totalUnidades}
           />
-          <Box sx={{position:'absolute', top:8 ,left:12, display:{sx:'auto',lg:'none'}}}>
+          <Box sx={{position:'absolute', top:{xs:8,lg:40} ,left:12, }}>
             <InvoicePreviewModal selectedItems={selectedItems} />
           </Box>
           <Box

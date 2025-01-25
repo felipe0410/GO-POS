@@ -23,7 +23,7 @@ interface InvoicePreviewProps {
 }
 
 const InvoicePreviewModal: React.FC<InvoicePreviewProps> = ({ selectedItems }) => {
-  const [open, setOpen] = useState(false); // Estado para controlar el modal
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -54,30 +54,43 @@ const InvoicePreviewModal: React.FC<InvoicePreviewProps> = ({ selectedItems }) =
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: isSmallScreen ? "90%" : "600px",
+            maxHeight: isSmallScreen ? "90%" : "80%",
+            overflowY: "auto",
             bgcolor: "#1F1D2B",
             color: "#69EAE2",
-            borderRadius: "8px",
+            borderRadius: "16px",
             boxShadow: 24,
-            p: 4,
+            p: 3,
           }}
         >
           <Typography
             id="invoice-preview-title"
-            variant="h6"
-            sx={{ marginBottom: "16px", fontWeight: "bold", textAlign: "center" }}
+            variant={isSmallScreen ? "subtitle1" : "h6"}
+            sx={{
+              marginBottom: "16px",
+              fontWeight: "bold",
+              textAlign: "center",
+              fontSize: isSmallScreen ? "1rem" : "1.5rem",
+            }}
           >
             Previsualización de Factura
           </Typography>
 
-          <Box sx={{ overflow: "auto", maxWidth: "100%", height:'50vh' }}>
-            <Table sx={{ marginBottom: "16px", minWidth: "10px" }}>
+          <Box
+            sx={{
+              overflowX: "auto",
+              maxWidth: "100%",
+              maxHeight: isSmallScreen ? "50vh" : "60vh",
+            }}
+          >
+            <Table sx={{ marginBottom: "16px" }}>
               <TableHead>
                 <TableRow>
-                  <TableCell sx={{ color: "#69EAE2" }}>Producto</TableCell>
-                  <TableCell sx={{ color: "#69EAE2" }} align="center">
+                  <TableCell sx={{ color: "#69EAE2", fontWeight: "bold" }}>Producto</TableCell>
+                  <TableCell sx={{ color: "#69EAE2", fontWeight: "bold" }} align="center">
                     Cantidad
                   </TableCell>
-                  <TableCell sx={{ color: "#69EAE2" }} align="right">
+                  <TableCell sx={{ color: "#69EAE2", fontWeight: "bold" }} align="right">
                     Acumulado
                   </TableCell>
                 </TableRow>
@@ -85,11 +98,17 @@ const InvoicePreviewModal: React.FC<InvoicePreviewProps> = ({ selectedItems }) =
               <TableBody>
                 {selectedItems.map((item, index) => (
                   <TableRow key={index}>
-                    <TableCell sx={{ color: "#fff" }}>{item.productName}</TableCell>
-                    <TableCell sx={{ color: "#fff" }} align="center">
+                    <TableCell sx={{ color: "#fff", fontSize: isSmallScreen ? "0.9rem" : "1rem" }}>
+                      {item.productName}
+                    </TableCell>
+                    <TableCell
+                      sx={{ color: "#fff", textAlign: "center", fontSize: isSmallScreen ? "0.9rem" : "1rem" }}
+                    >
                       {item.cantidad}
                     </TableCell>
-                    <TableCell sx={{ color: "#fff" }} align="right">
+                    <TableCell
+                      sx={{ color: "#fff", textAlign: "right", fontSize: isSmallScreen ? "0.9rem" : "1rem" }}
+                    >
                       ${item.acc.toLocaleString("es-CO")}
                     </TableCell>
                   </TableRow>
@@ -107,10 +126,16 @@ const InvoicePreviewModal: React.FC<InvoicePreviewProps> = ({ selectedItems }) =
               marginTop: "16px",
             }}
           >
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: "bold", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}
+            >
               Total:
             </Typography>
-            <Typography variant="subtitle1" sx={{ fontWeight: "bold", color: "#fff" }}>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: "bold", color: "#fff", fontSize: isSmallScreen ? "1rem" : "1.2rem" }}
+            >
               ${totalFactura.toLocaleString("es-CO")}
             </Typography>
           </Box>
@@ -121,6 +146,8 @@ const InvoicePreviewModal: React.FC<InvoicePreviewProps> = ({ selectedItems }) =
                 background: "#69EAE2",
                 color: "#1F1D2B",
                 fontWeight: "bold",
+                fontSize: isSmallScreen ? "0.9rem" : "1rem",
+                padding: isSmallScreen ? "8px 16px" : "10px 20px",
                 "&:hover": {
                   background: "#5ACBCC",
                 },

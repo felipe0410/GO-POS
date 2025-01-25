@@ -747,7 +747,7 @@ const DatosVenta = (props: any) => {
       <Box sx={{ textAlign: "center" }}>
         <Button
           disabled={
-            datosGuardados && valorRecibido !== null && valorRecibido >= total
+            datosGuardados
               ? false
               : !(typeInvoice === "quickSale")
           }
@@ -757,7 +757,7 @@ const DatosVenta = (props: any) => {
           sx={{
             borderRadius: "0.5rem",
             background:
-              datosGuardados && valorRecibido !== null && valorRecibido >= total
+              datosGuardados
                 ? "#69EAE2"
                 : typeInvoice === "quickSale"
                 ? "#69EAE2"
