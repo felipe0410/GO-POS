@@ -21,6 +21,7 @@ import SlidebarVender from "./SlidebarVender";
 import CarouselCategorias from "@/components/CarouselCategorias";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ModalSettings from "./modal_settings";
+import SearchInput from "./SearchInput";
 
 const themee = createTheme({
   palette: {
@@ -45,6 +46,7 @@ const styleButtonInvoice = {
 };
 
 const Page: any = () => {
+  const [localSearch, setLocalSearch] = useState<string>("");
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
@@ -186,7 +188,6 @@ const Page: any = () => {
   useEffect(() => {
     const getAllProducts = async () => {
       try {
-        console.log('llego aqui effect')
         await getAllProductsDataonSnapshot(setData);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -345,17 +346,9 @@ const Page: any = () => {
                   >
                     <SearchIcon sx={{ color: "#fff" }} />
                   </IconButton>
-                  <InputBase
-                    sx={{
-                      ml: 1,
-                      flex: 1,
-                      color: "#fff",
-                    }}
-                    placeholder="Buscar"
-                    value={searchTerm}
-                    onChange={(e) => {
-                      setSearchTerm(e.target.value);
-                    }}
+                  <SearchInput
+                    searchTerm={searchTerm}
+                    setSearchTerm={setSearchTerm}
                   />
                   <IconButton
                     sx={{
