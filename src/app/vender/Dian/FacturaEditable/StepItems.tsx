@@ -112,17 +112,19 @@ const StepItems = ({ data, setData }: { data: any; setData: Function }) => {
   };
 
   const handleAddProduct = (product: any) => {
+    const parsedPrice = parseFloat(product.price.replace(/[^\d.-]/g, ''));
+  
     const existingItem = localData.items.find(
       (item: { codigo: any }) => item.codigo === product.barCode
     );
-
+  
     const updatedItems = existingItem
       ? localData.items.map((item: { codigo: any; cantidad: number }) =>
           item.codigo === product.barCode
             ? {
                 ...item,
                 cantidad: item.cantidad + 1,
-                total: (item.cantidad + 1) * parseFloat(product.acc),
+                total: (item.cantidad + 1) * parsedPrice,
               }
             : item
         )
@@ -132,14 +134,15 @@ const StepItems = ({ data, setData }: { data: any; setData: Function }) => {
             codigo: product.barCode,
             detalle: product.productName,
             cantidad: 1,
-            precio: parseFloat(product.acc),
-            total: parseFloat(product.acc),
+            precio: parsedPrice,
+            total: parsedPrice,
           },
         ];
-
+  
     updateLocalData(updatedItems);
     setSidebarOpen(false);
   };
+  
 
   const handleDeleteRow = (index: number) => {
     const updatedItems = localData.items.filter(
