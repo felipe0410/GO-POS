@@ -15,13 +15,34 @@ import {
 import { FacturaProviderContext } from "../context";
 import { sendInvoiceToDian2 } from "../slidebar-dian/sendInvoiceToDian";
 import { useCookies } from "react-cookie";
-import { createInvoiceDian, createInvoiceDraft, getDianRecord } from "@/firebase/dian";
+import {
+  createInvoiceDian,
+  createInvoiceDraft,
+  getDianRecord,
+} from "@/firebase/dian";
 import SaveDraftDialog from "./SaveDraftDialog";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { login } from "@/components/DIAN/loginToken";
 
+interface DianRecord {
+  RangoInicio: string;
+  TechnicalKey: string;
+  name: string;
+  phone: string;
+  email: string;
+  ValidDateTo: string;
+  direction: string;
+  Prefijo: string;
+  Resolucion: string;
+  ValidDateFrom: string;
+  RangoFin: string;
+  user: string;
+  NIT: string;
+  establishment: string;
+}
+
 const InvoicePreview = () => {
-  const [cookies,setCookie] = useCookies(["invoice_token"]);
+  const [cookies, setCookie] = useCookies(["invoice_token"]);
   const {
     localData,
     dataEstablishmentData,
@@ -34,7 +55,15 @@ const InvoicePreview = () => {
   const [logo, setLogo] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
-
+  const localStorageDian: DianRecord | null = (() => {
+    const storedValue = localStorage.getItem("dianRecord");
+    try {
+      return storedValue ? (JSON.parse(storedValue) as DianRecord) : null;
+    } catch (error) {
+      console.error("Error al parsear el registro DIAN de localStorage:", error);
+      return null;
+    }
+  })();
   useEffect(() => {
     const userData = localStorage.getItem("dataUser");
     if (userData) {
@@ -57,7 +86,6 @@ const InvoicePreview = () => {
     const hours = String(now.getHours()).padStart(2, "0");
     const minutes = String(now.getMinutes()).padStart(2, "0");
     const seconds = String(now.getSeconds()).padStart(2, "0");
-
     return {
       date: `${year}-${month}-${day}`,
       hour: `${hours}:${minutes}:${seconds}`,
@@ -69,40 +97,50 @@ const InvoicePreview = () => {
   const handleSendToDian = async () => {
     try {
       setIsSubmitting(true);
-  
+
       // Obtener o generar el token
       let token = cookies.invoice_token;
       if (!token) {
-        console.warn("No se encontró el token. Iniciando sesión para obtener uno nuevo...");
-  
+        console.warn(
+          "No se encontró el token. Iniciando sesión para obtener uno nuevo..."
+        );
+
         // Generar un nuevo token
         const dian = await getDianRecord();
         const password = "Ab1007446687"; // Cambiar por una contraseña segura en producción
-        const loginResponse = await login(dian?.email ?? "demo@lopezsoft.net.co", password);
-  
+        const loginResponse = await login(
+          dian?.email ?? "demo@lopezsoft.net.co",
+          password
+        );
+
         if (loginResponse?.access_token) {
           token = loginResponse.access_token;
-  
+
           // Configurar la cookie con el nuevo token
           const expirationDate = new Date();
-          expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000); // 1 día
-  
+          expirationDate.setTime(
+            expirationDate.getTime() + 24 * 60 * 60 * 1000
+          ); // 1 día
+
           setCookie("invoice_token", token, {
             path: "/",
             expires: expirationDate,
             secure: true,
             sameSite: "strict",
           });
-  
-          console.log("%cNuevo token generado y almacenado en cookies.", "color:green");
+
+          console.log(
+            "%cNuevo token generado y almacenado en cookies.",
+            "color:green"
+          );
         } else {
           throw new Error("Error al generar el token de autenticación.");
         }
       }
-  
+
       // Enviar la factura a la DIAN
       const send = await sendInvoiceToDian2(localData, token);
-  
+
       // Enriquecer los datos de la factura con la respuesta de la DIAN
       const enrichedData = {
         ...localData,
@@ -117,16 +155,16 @@ const InvoicePreview = () => {
         date,
         hour,
       };
-  
+
       // Crear la factura en el sistema local
       await createInvoiceDian(String(localData.document_number), enrichedData);
-  
+
       // Actualizar la URL del PDF generado
       setPdfUrl(send?.pdf?.url ?? "");
-  
+
       // Notificar éxito
       enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
-  
+
       // Restablecer los datos locales de la factura
       setLocalData({
         cliente: {
@@ -147,14 +185,16 @@ const InvoicePreview = () => {
       });
     } catch (error) {
       console.error("Error al enviar la factura a la DIAN:", error);
-      enqueueSnackbar("Error al enviar la factura a la DIAN. Por favor, inténtelo nuevamente.", {
-        variant: "error",
-      });
+      enqueueSnackbar(
+        "Error al enviar la factura a la DIAN. Por favor, inténtelo nuevamente.",
+        {
+          variant: "error",
+        }
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
-  
 
   const handleSaveDraft = () => {
     setOpenDialog(true);
@@ -314,8 +354,10 @@ const InvoicePreview = () => {
             N.I.T: {dataEstablishmentData?.NIT_CC ?? "sin datos"}
           </Typography>
           <Typography variant="body2">
-            {dataEstablishmentData?.email ?? "sin datos"} |{" "}
-            {dataEstablishmentData?.phone ?? "sin datos"}
+            {localStorageDian?.email ??
+              dataEstablishmentData?.email ??
+              "sin datos"}{" "}
+            | {dataEstablishmentData?.phone ?? "sin datos"}
           </Typography>
         </Box>
         <Box textAlign="right">

@@ -104,7 +104,6 @@ const Page: any = () => {
       const foundProducts = resolvedData?.filter(
         (producto) => producto.barCode === value2
       );
-
       if (foundProducts?.length === 1) {
         const cleanedPrice = Number(
           foundProducts[0].price.replace(/[$,]/g, "")
@@ -117,6 +116,11 @@ const Page: any = () => {
         const updatedItems = updateSelectedItems(newItem);
         setSelectedItems(updatedItems);
         setSearchTerm("");
+      } else {
+        if (searchTerm.length > 0) {
+          const audio = new Audio("/error-beep.mp3");
+          audio.play();
+        }
       }
     } catch (error) {
       console.error("Error al obtener datos:", error);
@@ -124,7 +128,6 @@ const Page: any = () => {
   };
 
   const updateSelectedItems = (newItem: any) => {
-    console.log("uodate");
     let productAlreadyInList = false;
     const updatedItems = (selectedItems || []).map((item: any) => {
       if (item.barCode === newItem.barCode) {

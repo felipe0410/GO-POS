@@ -59,7 +59,6 @@ export const FacturaProvider: React.FC<FacturaProviderProps> = ({
         const dianData = await getDianRecord();
         const InvoicesDian: any = await getLastInvoice();
         const { Prefijo = "", RangoInicio = 0, RangoFin = 0 } = dianData || {};
-
         let nextDocumentNumber = RangoInicio;
         if (InvoicesDian) {
           const lastDocumentNumber = Number(
