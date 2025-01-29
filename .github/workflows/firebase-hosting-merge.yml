@@ -44,3 +44,7 @@ jobs:
           projectId: go-pos-add98
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+      - name: Deploy Firestore Indexes
+        run: firebase deploy --only firestore,indexes --project go-pos-add98
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
