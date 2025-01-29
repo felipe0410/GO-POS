@@ -3,21 +3,22 @@ import { Box, Pagination, Paper } from "@mui/material";
 import VenderCard from "./VenderCard";
 import { SelectedProduct } from "@/app/vender/interface";
 import { VenderContext } from "@/app/vender/Context_vender";
+import DevolutionCard from "@/app/vender/Devolucion/DevolutionCard";
 
 const VenderCards = ({
   filteredData,
   setSelectedItems,
   selectedItems,
+  type = false,
 }: {
   filteredData: any;
-  setSelectedItems: any,
-  selectedItems: any,
+  setSelectedItems: any;
+  selectedItems: any;
+  type?: boolean;
 }) => {
-
-
   return (
     <Paper
-      id='paper'
+      id="paper"
       elevation={0}
       style={{
         height: "90%",
@@ -29,23 +30,23 @@ const VenderCards = ({
         "&::-webkit-scrollbar": {
           width: "6px",
         },
-         "&::-webkit-scrollbar-track": {
-           backgroundColor: "#2C3248",
-         },
-         "&::-webkit-scrollbar-thumb": {
-           backgroundColor: "gray",
-           borderRadius: "10px",
-           boxShadow: "0px 4px 4px 0px #00000040",
-         },
+        "&::-webkit-scrollbar-track": {
+          backgroundColor: "#2C3248",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "gray",
+          borderRadius: "10px",
+          boxShadow: "0px 4px 4px 0px #00000040",
+        },
         // "&::-webkit-scrollbar-thumb:hover": {
         //   backgroundColor: "#555",
         // },
       }}
     >
       <Box
-        id='container card'
+        id="container card"
         sx={{
-          display: 'flex',
+          display: "flex",
           justifyContent: "space-around",
           flexWrap: "wrap",
           height: "100%",
@@ -53,13 +54,20 @@ const VenderCards = ({
           marginTop: "1.5rem",
         }}
       >
-        <VenderCard
-          filteredData={filteredData}
-          setSelectedItems={setSelectedItems}
-          selectedItems={selectedItems}
-        />
+        {type ? (
+          <DevolutionCard
+            filteredData={filteredData}
+            setSelectedItems={setSelectedItems}
+            selectedItems={selectedItems}
+          />
+        ) : (
+          <VenderCard
+            filteredData={filteredData}
+            setSelectedItems={setSelectedItems}
+            selectedItems={selectedItems}
+          />
+        )}
       </Box>
-
     </Paper>
   );
 };

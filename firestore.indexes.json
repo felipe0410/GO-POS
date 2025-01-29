@@ -1,0 +1,13 @@
+{
+    "indexes": [
+      {
+        "collectionGroup": "productos",
+        "queryScope": "COLLECTION",
+        "fields": [
+          { "fieldPath": "barCode", "order": "ASCENDING" }
+        ]
+      }
+    ],
+    "fieldOverrides": []
+  }
+  
