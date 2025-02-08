@@ -90,7 +90,7 @@ export const transformToDianInvoice2 = (data: any, establishment: any): any => {
   return {
     resolution_number: establishment.Resolucion, // Resolución fija
     prefix: establishment.Prefijo, // Prefijo fijo
-    document_number: parseInt(data?.document_number ?? 103, 10)+1, // Número de la factura actual
+    document_number: parseInt(data?.document_number ?? 103, 10), // Número de la factura actual
     operation_type_id: 1, // Tipo de operación estándar (1)
     type_document_id: 7, // Tipo de documento (7)
     graphic_representation: 1, // Generar representación gráfica

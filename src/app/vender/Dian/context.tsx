@@ -58,6 +58,7 @@ export const FacturaProvider: React.FC<FacturaProviderProps> = ({
         const establishmentData: any = (await getEstablishmentData()) || {};
         const dianData = await getDianRecord();
         const InvoicesDian: any = await getLastInvoice();
+        console.log("InvoicesDian:::>", InvoicesDian);
         const { Prefijo = "", RangoInicio = 0, RangoFin = 0 } = dianData || {};
         let nextDocumentNumber = RangoInicio;
         if (InvoicesDian) {
@@ -70,6 +71,7 @@ export const FacturaProvider: React.FC<FacturaProviderProps> = ({
             console.warn("El consecutivo supera el rango permitido por DIAN.");
           }
         }
+        console.log("nextDocumentNumber::>", nextDocumentNumber);
         const documentNumberComplete = `${Prefijo}-${nextDocumentNumber}`;
         setLocalData((prev) => ({
           ...prev,
