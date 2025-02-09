@@ -221,7 +221,6 @@ export const getAllProductsDataonSnapshotCache = (callback: any) => {
   }
 };
 
-
 // Función para obtener datos de un producto específico
 export const getProductData = async (uid: any) => {
   try {
@@ -346,6 +345,7 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
       user: `${user().decodedString}`,
       ...invoiceData,
     });
+    console.log('invice;;>',uid)
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /invoices: ", error);
@@ -419,7 +419,9 @@ export const deleteClient = async (uid: string) => {
 
     const establecimientoSnapshot = await getDoc(establecimientoDocRef);
     if (!establecimientoSnapshot.exists()) {
-      console.warn("El establecimiento no existe. No se puede eliminar el cliente.");
+      console.warn(
+        "El establecimiento no existe. No se puede eliminar el cliente."
+      );
       return false;
     }
 
@@ -504,9 +506,8 @@ export const getAllInvoicesData = async (callback: any) => {
       `${user().decodedString}`
     );
     const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
-    const orderedQuery = query(invoiceCollectionRef, orderBy("invoice"));
+    const orderedQuery = query(invoiceCollectionRef, orderBy("date", "desc"));
 
-    // Obtener datos iniciales
     const initialQuerySnapshot = await getDocs(orderedQuery);
     const initialInvoiceData = initialQuerySnapshot.docs.map((doc) => ({
       id: doc.id,
@@ -515,7 +516,6 @@ export const getAllInvoicesData = async (callback: any) => {
 
     callback(initialInvoiceData);
 
-    // Establecer observador para cambios en tiempo real
     const unsubscribe = onSnapshot(orderedQuery, (querySnapshot: any) => {
       const updatedInvoiceData = querySnapshot.docs.map((doc: any) => ({
         id: doc.id,
@@ -525,7 +525,6 @@ export const getAllInvoicesData = async (callback: any) => {
       callback(updatedInvoiceData);
     });
 
-    // Devolver la función para detener la observación de cambios
     return unsubscribe;
   } catch (error) {
     console.error("Error setting up data observer: ", error);

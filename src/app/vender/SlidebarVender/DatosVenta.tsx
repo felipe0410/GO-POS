@@ -99,7 +99,7 @@ const DatosVenta = (props: any) => {
     cambio: 0,
     nota: propsNota ?? "",
   });
-  
+
   const [cookies, setCookie] = useCookies(["invoice_token"]);
 
   const sendInvoiceToDian = async (factura: any) => {
@@ -140,15 +140,15 @@ const DatosVenta = (props: any) => {
 
       // Manejo de la respuesta
       //if (response.status === 200) {
-       // console.log("Factura enviada con éxito:", response.data);
-        //enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
-        //return response.data;
+      // console.log("Factura enviada con éxito:", response.data);
+      //enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
+      //return response.data;
       //} else {
-       // console.error("Error al enviar la factura:", response);
-        //enqueueSnackbar(`Error al enviar la factura: ${response.statusText}`, {
-         // variant: "error",
-        //});
-        //throw new Error(`Error al enviar la factura: ${response.statusText}`);
+      // console.error("Error al enviar la factura:", response);
+      //enqueueSnackbar(`Error al enviar la factura: ${response.statusText}`, {
+      // variant: "error",
+      //});
+      //throw new Error(`Error al enviar la factura: ${response.statusText}`);
       //}
     } catch (error: any) {
       // Manejo detallado de errores
@@ -205,13 +205,6 @@ const DatosVenta = (props: any) => {
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
       localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
-      sendInvoiceToDian(factura)
-        .then((response) => {
-          console.log("Factura procesada con éxito:", response);
-        })
-        .catch((error) => {
-          console.error("Error al procesar la factura:", error);
-        });
       !(typeInvoice === "quickSale")
         ? await createInvoice(`${factura.invoice}-${result}`, {
             ...factura,
@@ -322,14 +315,27 @@ const DatosVenta = (props: any) => {
         date: getCurrentDateTime(),
       });
     } else {
-      // Si no existe una factura previa, simplemente creamos una nueva
+      const now = new Date();
+      const colombiaDate = new Intl.DateTimeFormat("es-CO", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+        timeZone: "America/Bogota",
+      }).format(now);
+      const formattedDate = colombiaDate.replace(
+        /(\d+)\/(\d+)\/(\d+), (\d+):(\d+)/,
+        "$3-$2-$1 $4:$5"
+      );
       newTotal = newItems.reduce((total, item) => total + item.acc, 0);
       await createInvoice(quickSaleId, {
         typeInvoice: "VENTA RAPIDA",
         compra: newItems,
         subtotal: newTotal,
         total: newTotal,
-        date: new Date().toISOString(),
+        date: formattedDate,
         invoice: quickSaleId,
         status: "CANCELADO",
       });
@@ -746,22 +752,17 @@ const DatosVenta = (props: any) => {
       </Box>
       <Box sx={{ textAlign: "center" }}>
         <Button
-          disabled={
-            datosGuardados
-              ? false
-              : !(typeInvoice === "quickSale")
-          }
+          disabled={datosGuardados ? false : !(typeInvoice === "quickSale")}
           onClick={() => {
             vender();
           }}
           sx={{
             borderRadius: "0.5rem",
-            background:
-              datosGuardados
-                ? "#69EAE2"
-                : typeInvoice === "quickSale"
-                ? "#69EAE2"
-                : "gray",
+            background: datosGuardados
+              ? "#69EAE2"
+              : typeInvoice === "quickSale"
+              ? "#69EAE2"
+              : "gray",
 
             marginTop: "1.5rem",
             width: "8rem",

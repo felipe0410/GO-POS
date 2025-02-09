@@ -11,6 +11,7 @@ import { useReactToPrint } from "react-to-print";
 import { Typography } from "@mui/material";
 import jsPDF from "jspdf";
 import InvoiceLetter from "./invoiceLetter";
+import html2canvas from "html2canvas";
 
 const style = {
   position: "absolute" as "absolute",
@@ -31,19 +32,26 @@ const ModalInvoiceLetter = ({ data }: { data: any }) => {
   const handleClose = () => setOpen(false);
   const componentRef: any = React.useRef();
 
-  const handleDescargarPDF = () => {
-    const [date, hour] = data.date.split(" ");
+  const handleDescargarPDF = async () => {
+    const [date] = data.date.split(" ");
     const content = componentRef.current;
+
+    // Utilizar html2canvas para capturar el contenido del componente
+    const canvas = await html2canvas(content, { scale: 2 });
+    const imgData = canvas.toDataURL("image/png");
+
+    // Crear una instancia de jsPDF
     const pdf = new jsPDF({
-      unit: "px",
-      format: "A4",
       orientation: "portrait",
+      unit: "px",
+      format: [canvas.width, canvas.height],
     });
-    pdf.html(content, {
-      callback: () => {
-        pdf.save(`${data.cliente.name}_${date}`);
-      },
-    });
+
+    // Agregar la imagen al PDF
+    pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+
+    // Guardar el PDF con el nombre deseado
+    pdf.save(`${data?.cliente?.name??'venta-rapida'}_${date}.pdf`);
   };
 
   const handlePrint = useReactToPrint({

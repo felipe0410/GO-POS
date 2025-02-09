@@ -1,4 +1,3 @@
-"use client";
 import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -7,7 +6,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import { Box, IconButton } from "@mui/material";
+import { Box, IconButton, Chip } from "@mui/material";
 import FacturaModal from "./FacturaModal";
 import EditInvoice from "./EditInvoice";
 import DeleteFacturaModal from "./DeleteFacturaModal";
@@ -63,6 +62,14 @@ export default function InvoicesTable({
     setEditingInvoice(true);
     setEditInvoice(true);
   };
+
+  const today = new Date().toLocaleDateString("es-CO", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  });
+  const [day, month, year] = today.split("/");
+  const formattedToday = `${year}/${month}/${day}`;
   return (
     <>
       {editingInvoice ? (
@@ -85,7 +92,7 @@ export default function InvoicesTable({
           <TableContainer
             sx={{ maxHeight: "100%", background: "#1F1D2B", border: "none" }}
           >
-            <Table stickyHeader aria-label='sticky table'>
+            <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
                   <TableCell
@@ -125,8 +132,13 @@ export default function InvoicesTable({
                   const [date, hora] = row.date.split(" ");
                   const newDate = date.replaceAll("-", "/");
                   return (
-                    <TableRow hover role='checkbox' tabIndex={-1} key={row?.uid??'xxxx'}>
-                      <TableCell align='center' sx={{ borderColor: "#69EAE2" }}>
+                    <TableRow
+                      hover
+                      role="checkbox"
+                      tabIndex={-1}
+                      key={row?.uid ?? "xxxx"}
+                    >
+                      <TableCell align="center" sx={{ borderColor: "#69EAE2" }}>
                         <Box sx={{ display: "flex", flexDirection: "row" }}>
                           {JSON.parse(localStorage.getItem("dataUser") ?? "{}")
                             .status === "admin" && (
@@ -145,30 +157,38 @@ export default function InvoicesTable({
                             </>
                           )}
                           <FacturaModal data={row} />
-                          <ModalInvoiceLetter data={row} /> 
+                          <ModalInvoiceLetter data={row} />
                         </Box>
                       </TableCell>
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
-                        align='left'
+                        align="left"
                       >
-                        {row?.cliente?.name??'xxx'}
+                        {newDate === formattedToday ? (
+                          <Chip
+                            label={row?.cliente?.name ?? "xxx"}
+                            color="success"
+                            variant="filled"
+                          />
+                        ) : (
+                          row?.cliente?.name ?? "xxx"
+                        )}
                       </TableCell>
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
-                        align='center'
+                        align="center"
                       >
-                        {row?.invoice??'xxxx'}
+                        {row?.invoice ?? "xxxx"}
                       </TableCell>
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
-                        align='center'
+                        align="center"
                       >
                         {newDate}
                       </TableCell>
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
-                        align='center'
+                        align="center"
                       >
                         {hora}
                       </TableCell>
@@ -181,7 +201,7 @@ export default function InvoicesTable({
                               : "#FF0404",
                           borderColor: "#69EAE2",
                         }}
-                        align='center'
+                        align="center"
                       >
                         {row?.status ? row.status.toUpperCase() : "CANCELADO"}
                       </TableCell>

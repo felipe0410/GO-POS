@@ -221,17 +221,10 @@ const InvoiceLetter = ({ data }: { data: any }) => {
                 display: "flex",
                 flexWrap: "wrap",
                 gap: "20px",
-                // backgroundColor: 'lightcoral',
                 width: "70%",
               }}
             >
-              <Box
-                sx={
-                  {
-                    // background: 'red'
-                  }
-                }
-              >
+              <Box>
                 <Typography
                   sx={{
                     ...facturaStyles.typographyVendedor,
@@ -336,71 +329,97 @@ const InvoiceLetter = ({ data }: { data: any }) => {
             >
               <Typography
                 sx={facturaStyles.typographyResumenCompra}
-                style={{ color: "#000" }}
+                style={{ color: "#000", width: "40%" }}
               >
                 PRODUCTO
               </Typography>
               <Typography
-                sx={{
-                  ...facturaStyles.typographyResumenCompra,
-                  marginLeft: "30px",
-                  color: "#69EAE2",
-                }}
+                sx={facturaStyles.typographyResumenCompra}
+                style={{ color: "#000", textAlign: "center", width: "15%" }}
               >
                 CANTIDAD
               </Typography>
               <Typography
-                sx={{
-                  ...facturaStyles.typographyResumenCompra,
-                  marginRight: "20px",
-                  color: "#69EAE2",
-                  marginLeft: "-12rem",
-                }}
+                sx={facturaStyles.typographyResumenCompra}
+                style={{ color: "#69EAE2", textAlign: "end", width: "20%" }}
               >
-                PRECIO
+                V. UNITARIO
+              </Typography>
+              <Typography
+                sx={facturaStyles.typographyResumenCompra}
+                style={{ color: "#69EAE2", textAlign: "end", width: "25%" }}
+              >
+                PRECIO TOTAL
               </Typography>
             </Box>
+
             <Box
               mt={1}
               sx={{
                 paddingBottom: "2rem",
               }}
             >
-              {data?.compra?.map((product: any) => (
-                <Box
-                  key={product.barCode}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography
-                    sx={facturaStyles.typographyProduct}
-                    style={{ fontWeight: "400" }}
-                  >
-                    {product.productName}
-                  </Typography>
-                  <Typography
+              {data?.compra?.map((product: any) => {
+                const valorUnitario = product.acc / product.cantidad;
+
+                return (
+                  <Box
+                    key={product.barCode}
                     sx={{
-                      color: "#000",
-                      fontFamily: "Nunito",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      lineHeight: "140%",
-                      marginLeft: "9.5rem",
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      alignItems: "center",
                     }}
                   >
-                    {product.cantidad}
-                  </Typography>
-                  <Typography
-                    sx={facturaStyles.typographyACC}
-                    style={{ fontWeight: "400", marginRight: "1.4rem" }}
-                  >
-                    {`$ ${product.acc.toLocaleString("en-US")}`}
-                  </Typography>
-                </Box>
-              ))}
+                    <Typography
+                      sx={facturaStyles.typographyProduct}
+                      style={{ width: "40%" }}
+                    >
+                      {product.productName}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        color: "#000",
+                        fontFamily: "Nunito",
+                        fontSize: "0.8rem",
+                        textAlign: "center",
+                        width: "15%",
+                      }}
+                    >
+                      {product.cantidad}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        color: "#000",
+                        fontFamily: "Nunito",
+                        fontSize: "0.8rem",
+                        textAlign: "end",
+                        width: "20%",
+                      }}
+                    >
+                      {`$ ${valorUnitario.toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}`}
+                    </Typography>
+
+                    <Typography
+                      sx={{
+                        color: "#000",
+                        fontFamily: "Nunito",
+                        fontSize: "0.8rem",
+                        textAlign: "right",
+                        width: "25%",
+                      }}
+                    >
+                      {`$ ${product.acc.toLocaleString("en-US")}`}
+                    </Typography>
+                  </Box>
+                );
+              })}
             </Box>
             <Divider
               sx={{ background: "#000", marginTop: "8px", height: "2px" }}

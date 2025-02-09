@@ -2,10 +2,14 @@
 import Header from "@/components/Header";
 import {
   Box,
+  FormControl,
   IconButton,
   InputBase,
+  InputLabel,
+  MenuItem,
   Pagination,
   Paper,
+  Select,
   Typography,
   useMediaQuery,
   useTheme,
@@ -25,10 +29,12 @@ import InvoicesTableResponsive from "./InvoicesTableResponsive";
 import DateModal from "./DateModal";
 
 const Invoices = () => {
+  const [statusFilter, setStatusFilter] = useState<string>("Todos");
+  const [typeFilter, setTypeFilter] = useState<string>("Todos");
   const [searchTerm, setSearchTerm] = useState<any>();
   const [editInvoice, setEditInvoice] = useState<boolean>(false);
   const [filter, setfilter] = useState<any>();
-  const [data, setData] = useState<undefined | any[]>(undefined);
+  const [data, setData] = useState<any[]>([]);
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<any>();
   const [totalVentasFecha, setTotalVentasFecha] = useState<number>(0);
@@ -41,14 +47,14 @@ const Invoices = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
-  const debouncedHandleSearchChange = debounce(() => { }, 300);
+  const debouncedHandleSearchChange = debounce(() => {}, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
     debouncedHandleSearchChange();
   };
 
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
+  const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
   useEffect(() => {
     const getAllInvoices = async () => {
       try {
@@ -68,42 +74,58 @@ const Invoices = () => {
   };
 
   useEffect(() => {
-    const filteredData = data?.filter((item) => {
-      if (!searchTerm || searchTerm.length === 0) {
-        return true;
-      }
+    if (!data) return;
 
-      const lowerSearchTerm = Array.isArray(searchTerm)
-        ? searchTerm[0].toLowerCase()
-        : searchTerm.toLowerCase();
+    let filteredData = [...data];
 
-      const [fecha, hora] = item.date.split(" ");
-
-      if (Array.isArray(searchTerm)) {
-        const [fechaInicio, fechaFin] = searchTerm;
+    // Filtro por rango de fechas
+    if (Array.isArray(searchTerm) && searchTerm.length === 2) {
+      const [fechaInicio, fechaFin] = searchTerm;
+      filteredData = filteredData.filter((item) => {
+        const [fecha] = item.date.split(" ");
         return fecha >= fechaInicio && fecha <= fechaFin;
-      } else {
-        return (
-          fecha.includes(lowerSearchTerm) ||
-          item?.cliente?.name.toLowerCase().includes(lowerSearchTerm) ||
+      });
+    }
+
+    // Filtro de búsqueda general (nombre cliente, número de factura, status)
+    if (searchTerm && typeof searchTerm === "string") {
+      const lowerSearchTerm = searchTerm.toLowerCase();
+      filteredData = filteredData.filter(
+        (item) =>
+          item?.cliente?.name?.toLowerCase().includes(lowerSearchTerm) ||
           String(item?.invoice).toLowerCase().includes(lowerSearchTerm) ||
           String(item?.status).toLowerCase().includes(lowerSearchTerm)
-        );
-      }
-    });
+      );
+    }
+
+    // Filtro por estado (Pendiente, Cancelado, etc.)
+    if (statusFilter && statusFilter !== "Todos") {
+      filteredData = filteredData.filter(
+        (item) => item.status.toUpperCase() === statusFilter.toUpperCase()
+      );
+    }
+
+    // Filtro por tipo de factura (Venta Rápida o Factura Normal)
+    if (typeFilter && typeFilter !== "Todos") {
+      filteredData = filteredData.filter(
+        (item) =>
+          (item.typeInvoice?.toUpperCase() || "FACTURA NORMAL") ===
+          typeFilter.toUpperCase()
+      );
+    }
 
     setfilter(filteredData);
 
-    const ventasHoy = data?.filter((item) => {
-      const [fecha, hora] = item.date.split(" ");
-      const fechaHoy = getCurrentDateTime();
-      return fecha === fechaHoy;
+    // Calcular total de ventas de hoy
+    const ventasHoy = data.filter((item) => {
+      const [fecha] = item.date.split(" ");
+      return fecha === getCurrentDateTime();
     });
-    const totalVentas =
-      ventasHoy?.reduce((total, factura) => total + factura.total, 0) || 0;
 
+    const totalVentas =
+      ventasHoy.reduce((total, factura) => total + factura.total, 0) || 0;
     setTotalVentasHoy(totalVentas);
-  }, [data, searchTerm]);
+  }, [data, searchTerm, statusFilter, typeFilter]);
 
   useEffect(() => {
     const [fechaInicio, fechaFin] = Array.isArray(selectedDate)
@@ -128,7 +150,7 @@ const Invoices = () => {
 
   return (
     <>
-      <Header title='CAJA' />
+      <Header title="CAJA" />
       <Typography sx={typographyTitle}>FACTURAS</Typography>
       <Typography sx={typographySubtitle}>
         Aqui encontraras las facturas que ya han sido generadas, podras
@@ -158,7 +180,7 @@ const Invoices = () => {
               }}
             >
               <Paper
-                component='form'
+                component="form"
                 onSubmit={(e: any) => {
                   e.preventDefault();
                   handleSearchChange(e.target[1].value);
@@ -166,9 +188,9 @@ const Invoices = () => {
                 sx={typographyPaperSearch}
               >
                 <IconButton
-                  type='button'
+                  type="button"
                   sx={{ p: "10px" }}
-                  aria-label='search'
+                  aria-label="search"
                 >
                   <SearchIcon sx={{ color: "#fff" }} />
                 </IconButton>
@@ -178,7 +200,7 @@ const Invoices = () => {
                     flex: 1,
                     color: "#fff",
                   }}
-                  placeholder='Buscar'
+                  placeholder="Buscar"
                   onBlur={(e) => {
                     handleSearchChange(e.target.value);
                     e.preventDefault();
@@ -189,9 +211,70 @@ const Invoices = () => {
                   setSelectedDate={setSelectedDate}
                 />
               </Paper>
+              {/* Filtro de Estado */}
+              <FormControl
+                sx={{
+                  minWidth: 150,
+                }}
+              >
+                <InputLabel sx={{ color: "#fff" }}>Estado</InputLabel>
+                <Select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  sx={{
+                    color: "#fff",
+                    backgroundColor: "#2C3248",
+                    borderRadius: "0.3125rem",
+                    "& fieldset": {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#69EAE2",
+                    },
+                    "& .MuiSvgIcon-root": {
+                      color: "#69EAE2",
+                    },
+                  }}
+                >
+                  <MenuItem value="Todos">Todos</MenuItem>
+                  <MenuItem value="Pendiente">Pendiente</MenuItem>
+                  <MenuItem value="Cancelado">Cancelado</MenuItem>
+                </Select>
+              </FormControl>
+              {/* Filtro de Tipo de Factura */}
+              <FormControl
+                sx={{
+                  minWidth: 150,
+                  borderRadius: "0.3125rem",
+                }}
+              >
+                <InputLabel sx={{ color: "#fff" }}>Tipo de Factura</InputLabel>
+                <Select
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  sx={{
+                    color: "#fff",
+                    backgroundColor: "#2C3248",
+                    borderRadius: "0.3125rem",
+                    "& fieldset": {
+                      borderColor: "rgba(255, 255, 255, 0.3)",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "#69EAE2",
+                    },
+                    "& .MuiSvgIcon-root": {
+                      color: "#69EAE2",
+                    },
+                  }}
+                >
+                  <MenuItem value="Todos">Todos</MenuItem>
+                  <MenuItem value="VENTA RAPIDA">Venta Rápida</MenuItem>
+                  <MenuItem value="FACTURA NORMAL">Factura Normal</MenuItem>
+                </Select>
+              </FormControl>{" "}
               <Box
                 sx={{
-                  display: 'flex',
+                  display: "flex",
                   flexDirection: "row",
                   justifyContent: { md: "center", xs: "center" },
                   marginTop: { md: "10px", xs: "10px" },
@@ -199,7 +282,7 @@ const Invoices = () => {
               >
                 <Box sx={{ textAlign: "start", marginRight: "20px" }}>
                   <Typography
-                    variant='caption'
+                    variant="caption"
                     sx={BoxStyles.typographyCaptionStyles}
                   >
                     {`Fecha: ${getCurrentDateTime()}`}
@@ -212,7 +295,7 @@ const Invoices = () => {
                 </Box>
                 <Box sx={{ textAlign: "start", minWidth: "5rem" }}>
                   <Typography
-                    variant='caption'
+                    variant="caption"
                     sx={BoxStyles.typographyCaptionStyles}
                   >
                     {`Fecha: ${selectedDate ? selectedDate : " "}`}
@@ -246,7 +329,7 @@ const Invoices = () => {
               />
             </Box>
             <Box
-              id='pagination'
+              id="pagination"
               sx={{
                 filter: "invert(1)",
                 display: editInvoice ? "none" : "flex",
@@ -259,7 +342,7 @@ const Invoices = () => {
                 sx={{ color: "#fff" }}
                 onChange={(e, page) => setCurrentPage(page)}
                 count={totalPages}
-                shape='circular'
+                shape="circular"
                 size={matches ? "large" : "small"}
               />
             </Box>

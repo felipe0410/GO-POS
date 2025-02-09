@@ -17,13 +17,15 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
     },
   }));
 
-  const dataUser = JSON.parse(localStorage?.getItem('dataUser') ?? "{}")
-  const display = (dataUser?.jobs ?? []).includes("Inventario") || (dataUser?.status === "admin")
+  const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
+  const display =
+    (dataUser?.jobs ?? []).includes("Inventario") ||
+    dataUser?.status === "admin";
 
   return filteredData?.map((product: any) => {
     return (
       <Card
-        id='card'
+        id="card"
         key={uuidv4()}
         sx={{
           width: "11rem",
@@ -32,16 +34,16 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           background: "#2C3248",
           overflow: "visible",
           textAlign: "-webkit-center",
-          marginBottom: '65px',
-          '&:hover': {
-            border: "1px solid #69EAE2"
+          marginBottom: "65px",
+          "&:hover": {
+            border: "1px solid #69EAE2",
           },
         }}
       >
         <Box
           sx={{
             position: "relative",
-            display: display ? "flex" : 'none',
+            display: display ? "flex" : "none",
             justifyContent: "flex-end",
             marginBottom: "-6%",
             marginRight: "3%",
@@ -54,7 +56,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
           </CardActions>
         </Box>
         <Box
-          id='contianer img'
+          id="contianer img"
           sx={{
             position: "relative",
             height: "8rem",
@@ -62,29 +64,28 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             overflow: "visible",
           }}
         >
-          <>
-            {console.log(product?.image)}
-          </>
           <Box
             component={"img"}
             src={
               product?.image?.length > 0
-                ? product?.image === "images/noImage.svg" ? `/${product?.image}` : product?.image
+                ? product?.image === "images/noImage.svg"
+                  ? `/${product?.image}`
+                  : product?.image
                 : "/images/noImage.svg"
             }
             alt={`imagen del producto ${product.productName}`}
             sx={{
               width: "50%",
-              height: { xs: '130px', sm: '130px' },
+              height: { xs: "130px", sm: "130px" },
               position: "absolute",
               left: "50%",
               transform: "translateX(-50%)",
-              '&:hover': {
+              "&:hover": {
                 transform: "scale(1.7)",
                 left: "25%",
               },
             }}
-            loading='lazy'
+            loading="lazy"
           />
         </Box>
         <StyledCardContent
@@ -97,7 +98,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               color: "#69EAE2",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: { xs: '10px', sm: "14px" },
+              fontSize: { xs: "10px", sm: "14px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "130%",
@@ -110,7 +111,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               marginTop: "1px",
               color: "var(--text-light, #ABBBC2)",
               textAlign: "center",
-              fontSize: { xs: '10px', sm: "14px" },
+              fontSize: { xs: "10px", sm: "14px" },
               fontStyle: "normal",
               fontWeight: 200,
               lineHeight: "140%",
@@ -124,7 +125,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               color: "var(--White, #FFF)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: { xs: '10px', sm: "14px" },
+              fontSize: { xs: "10px", sm: "14px" },
               fontStyle: "normal",
               fontWeight: 700,
               lineHeight: "140%",
@@ -138,20 +139,23 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               color: "var(--text-light, #ABBBC2)",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: { xs: '10px', sm: "14px" },
+              fontSize: { xs: "10px", sm: "14px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
             }}
           >
-            Existencias: <span style={{ color: '#fff', fontSize: '700' }}>{product.cantidad}</span>
+            Existencias:{" "}
+            <span style={{ color: "#fff", fontSize: "700" }}>
+              {product.cantidad}
+            </span>
           </Typography>
           <Typography
             sx={{
               color: "#ABBBC2",
               textAlign: "center",
               fontFamily: "Nunito",
-              fontSize: { xs: '10px', sm: "14px" },
+              fontSize: { xs: "10px", sm: "14px" },
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
