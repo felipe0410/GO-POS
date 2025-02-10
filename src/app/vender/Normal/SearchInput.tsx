@@ -11,7 +11,7 @@ interface SearchInputProps {
 
 const SearchInput: React.FC<SearchInputProps> = ({
   setSearchTerm,
-  searchTerm// Tiempo de espera antes de ejecutar la búsqueda
+  searchTerm
 }) => {
   const [inputValue, setInputValue] = useState<string>("");
 
@@ -35,6 +35,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         flex: 1,
         color: "#fff",
       }}
+      autoFocus
       placeholder="Buscar"
       id='buscador'
       value={localSearch}

@@ -14,10 +14,12 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  limit,
   onSnapshot,
   orderBy,
   query,
   setDoc,
+  startAfter,
   updateDoc,
 } from "firebase/firestore";
 import {
@@ -135,7 +137,7 @@ export const getAllProductsData = (callback: any) => {
   }
 };
 
-export const getAllProductsDataonSnapshot = (callback: any) => {
+export const getAllProductsDataonSnapshot = async (callback: any) => {
   try {
     const establecimientoDocRef = doc(
       db,
@@ -145,29 +147,31 @@ export const getAllProductsDataonSnapshot = (callback: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const orderedQuery = query(productCollectionRef, orderBy("productName"));
 
-    const unsubscribe = onSnapshot(
-      orderedQuery,
-      (querySnapshot) => {
-        const productsData: any[] = [];
-        querySnapshot.forEach((doc) => {
-          productsData.push({ id: doc.id, ...doc.data() });
-        });
-        callback(productsData);
-      },
-      (error) => {
-        console.error("Error listening to data:", error);
-        callback(null);
-      }
-    );
+    const initialSnapshot = await getDocs(orderedQuery);
+    const initialData = initialSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
-    // Return the unsubscribe function to stop observing changes
+    callback(initialData); 
+
+    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot) => {
+      if (querySnapshot.metadata.hasPendingWrites) return; 
+
+      const productsData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      callback(productsData);
+    });
+
     return unsubscribe;
   } catch (error) {
-    console.error("Error setting up data observer: ", error);
+    console.error("Error al obtener productos:", error);
     return null;
   }
 };
-
 export const getAllProductsDataonSnapshotCache = (callback: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -298,7 +302,6 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
   }
 };
 
-// Función para eliminar un producto
 export const deleteProduct = async (uid: any, img: string) => {
   try {
     const establecimientoDocRef = doc(
@@ -323,7 +326,6 @@ export const deleteProduct = async (uid: any, img: string) => {
   }
 };
 
-//funcion para crear la factura y agregar los datos
 export const createInvoice = async (uid: string, invoiceData: any) => {
   try {
     const establecimientoDocRef: DocumentReference = doc(
@@ -345,7 +347,7 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
       user: `${user().decodedString}`,
       ...invoiceData,
     });
-    console.log('invice;;>',uid)
+    console.log("invice;;>", uid);
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /invoices: ", error);

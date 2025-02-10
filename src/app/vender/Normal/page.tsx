@@ -7,6 +7,9 @@ import {
   InputBase,
   Pagination,
   Paper,
+  Tab,
+  Tabs,
+  TextField,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -46,7 +49,6 @@ const styleButtonInvoice = {
 };
 
 const Page: any = () => {
-  const [localSearch, setLocalSearch] = useState<string>("");
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
@@ -217,6 +219,62 @@ const Page: any = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 📌 Estado para manejar múltiples facturas (pestañas)
+  const [facturas, setFacturas] = useState<
+    { id: string; name: string; items: any[] }[]
+  >([{ id: "factura-1", name: "Factura 1", items: [] }]);
+  const [facturaActiva, setFacturaActiva] = useState("factura-1");
+
+  // 📌 Obtener la factura activa
+  const facturaActual =
+    facturas.find((f) => f.id === facturaActiva) || facturas[0];
+
+  useEffect(() => {
+    const getAllProducts = async () => {
+      try {
+        await getAllProductsDataonSnapshot(setData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    getAllProducts();
+  }, []);
+
+  // 📌 Manejar cambios en los productos seleccionados de cada factura
+  const setSelectedItemss = (items: any[]) => {
+    setFacturas((prev) =>
+      prev.map((f) => (f.id === facturaActiva ? { ...f, items } : f))
+    );
+  };
+
+  // 📌 Manejar la creación de una nueva factura (nueva pestaña)
+  const agregarNuevaFactura = () => {
+    const nuevaFactura = {
+      id: `factura-${facturas.length + 1}`,
+      name: `Factura ${facturas.length + 1}`,
+      items: [],
+    };
+    setFacturas([...facturas, nuevaFactura]);
+    setFacturaActiva(nuevaFactura.id);
+  };
+
+  // 📌 Manejar el cambio de nombre de la factura
+  const cambiarNombreFactura = (id: string, nuevoNombre: string) => {
+    setFacturas((prev) =>
+      prev.map((f) => (f.id === id ? { ...f, name: nuevoNombre } : f))
+    );
+  };
+
+  // 📌 Manejar el cierre de una factura
+  const cerrarFactura = (id: string) => {
+    if (facturas.length === 1) return; // No eliminar si solo hay una factura
+    const nuevasFacturas = facturas.filter((f) => f.id !== id);
+    setFacturas(nuevasFacturas);
+    if (facturaActiva === id) {
+      setFacturaActiva(nuevasFacturas[0].id); // Mover a la primera disponible
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -231,6 +289,48 @@ const Page: any = () => {
         sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
       >
         <Header title="VENDER" txt={<ModalSettings />} />
+
+        {/* 📌 Pestañas de Facturas */}
+        <Paper
+          sx={{
+            background: "#1F1D2B",
+            boxShadow: "0px 0px 19px -14px #69EAE2",
+          }}
+        >
+          <Tabs
+            value={facturaActiva}
+            onChange={(_, newValue) => setFacturaActiva(newValue)}
+            variant="scrollable"
+            scrollButtons="auto"
+          >
+            {facturas.map((factura) => (
+              <Tab
+                key={factura.id}
+                value={factura.id}
+                label={
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
+                    <TextField
+                      variant="standard"
+                      value={factura.name}
+                      onChange={(e) =>
+                        cambiarNombreFactura(factura.id, e.target.value)
+                      }
+                      sx={{ width: "100px", marginRight: "8px", color: "#fff" }}
+                    />
+                    <IconButton
+                      size="small"
+                      onClick={() => cerrarFactura(factura.id)}
+                      sx={{ color: "red" }}
+                    >
+                      ✖
+                    </IconButton>
+                  </Box>
+                }
+              />
+            ))}
+            <Tab label="➕ Nueva" onClick={agregarNuevaFactura} />
+          </Tabs>
+        </Paper>
         <ThemeProvider theme={themee}>
           <Box
             sx={{ marginTop: "15px", textAlignLast: "center", width: "95%" }}
@@ -426,7 +526,7 @@ const Page: any = () => {
       </Box>
       <SlidebarVender
         selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
+        setSelectedItems={setSelectedItemss}
         searchTerm={searchTerm}
         filteredData={filteredData}
         setSearchTerm={setSearchTerm}
