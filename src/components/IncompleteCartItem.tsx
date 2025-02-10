@@ -67,6 +67,10 @@ const IncompleteCartItem = ({
           image: "",
           purchasePrice: "",
         });
+        setTimeout(() => {
+          console.log("ingrese aqui");
+          document.getElementById("buscador")?.focus();
+        }, 0);
       } else {
         setSelectedItems((prevData: any) => [
           { ...incompletedItem, barCode: uuidv4() },
@@ -84,6 +88,11 @@ const IncompleteCartItem = ({
           image: "",
           purchasePrice: "",
         });
+        setTimeout(() => {
+          const inputId =
+            window.innerWidth > 768 ? "buscador" : "buscardor-responsive";
+          document.getElementById(inputId)?.focus();
+        }, 0);
       }
     } catch (error) {
       console.error("error al agregar items incompleto", error);

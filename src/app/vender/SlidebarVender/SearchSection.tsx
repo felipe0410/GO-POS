@@ -125,6 +125,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
               color: "#fff",
               fontSize: "16px",
             }}
+            id='buscardor-responsive'
             value={localSearch}
             placeholder={
               !checked

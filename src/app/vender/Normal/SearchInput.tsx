@@ -36,6 +36,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
         color: "#fff",
       }}
       placeholder="Buscar"
+      id='buscador'
       value={localSearch}
       onChange={(e) => setLocalSearch(e.target.value)}
       onKeyDown={handleKeyDown}
