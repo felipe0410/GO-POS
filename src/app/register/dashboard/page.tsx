@@ -2,7 +2,7 @@
 import Header from "@/components/Header";
 import { Box, MenuItem, Select, Typography } from "@mui/material";
 import { selectStyle, typographyTitle } from "./style";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getAllInvoicesData } from "@/firebase";
 import CalendarioMes from "./CalendarioMes";
 import CalendarioAno from "./CalendarioAno";
@@ -14,16 +14,22 @@ import { getAllProductsData } from "@/firebase";
 
 const Dashboard = () => {
   const [product, setProduct] = useState<undefined | any[]>(undefined);
+  const [ingresos, setTotalIngresos] = useState<any>();
+  const [ProductosSinReferencia, setProductosSinReferencia] = useState<any>();
   const [data, setData] = useState<undefined | any[]>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const [totalVentasHoy, setTotalVentasHoy] = useState<number>(0);
   const [calendarioType, setCalendarioType] = useState<string>(" ");
   const [dateSearchTerm, setDateSearchTerm] = useState<string | string[]>("");
   const [filter, setFilter] = useState<any>();
   const [selectedDate, setSelectedDate] = useState<any>();
-  const [totalVentasFecha, setTotalVentasFecha] = useState<any>();
-  const [listaFechas, setListaFechas] = useState<string[]>();
-  const [totalVentasPorFecha, setTotalVentasPorFecha] = useState<string[]>();
+  const [listaFechas, setListaFechas] = useState<string[]>([]);
+  const [totalVentasPorFecha, setTotalVentasPorFecha] = useState<string[]>([]);
+  const [totalGananciasPorFecha, setTotalGananciasPorFecha] = useState<
+    string[]
+  >([]);
+  const [totalGanancia, setTotalGanancia] = useState<number | null>(0);
 
   const handleSelectChange = (event: any) => {
     setCalendarioType(event.target.value);
@@ -78,21 +84,104 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    const facturasEnRango = filter?.filter((item: any) => {
-      const [fecha, hora] = item.date.split(" ");
-      if (listaFechas) {
-        return listaFechas.some((listaFecha) => fecha.startsWith(listaFecha));
-      }
-      return false;
-    });
-    const totalVentasFechaFilter =
-      facturasEnRango?.reduce(
-        (total: any, factura: any) => total + factura.total,
-        0
-      ) || 0;
+    if (selectedDate) {
+      const generarListaFechas = (selectedDate: string[]): string[] => {
+        const fechaInicio = new Date(selectedDate[0]);
+        const fechaFin = new Date(selectedDate[1]);
+        const listaFechas: string[] = [];
 
-    setTotalVentasFecha(totalVentasFechaFilter);
-  }, [filter, listaFechas]);
+        let fechaActual = new Date(fechaInicio);
+        while (fechaActual <= fechaFin) {
+          listaFechas.push(fechaActual.toISOString().split("T")[0]); // Formato YYYY-MM-DD
+          fechaActual.setDate(fechaActual.getDate() + 1);
+        }
+        return listaFechas;
+      };
+      setListaFechas(generarListaFechas(selectedDate));
+    }
+  }, [selectedDate]);
+
+  useMemo(() => {
+    if (!filter || !listaFechas || !product) return;
+
+    setIsLoading(true);
+
+    // Crear un mapa de productos con `barCode` como clave
+    const productosMap = new Map();
+    product.forEach((producto) => {
+      if (producto.barCode && producto.price && producto.purchasePrice) {
+        productosMap.set(producto.barCode, {
+          price: parseFloat(producto.price.replace(/[^0-9.]/g, "")),
+          purchasePrice: parseFloat(
+            producto.purchasePrice.replace(/[^0-9.]/g, "")
+          ),
+        });
+      }
+    });
+
+    let ingresos = 0;
+    let ganancia = 0;
+    let productosNoEncontrados: any[] = [];
+
+    // Filtrar las facturas dentro del rango de fechas
+    const facturasEnRango = filter.filter((factura: any) =>
+      listaFechas.some((fecha) => factura.date.startsWith(fecha))
+    );
+
+    // Calcular ingresos netos (suma de `total` en facturas)
+    ingresos = facturasEnRango.reduce(
+      (acc: any, factura: { total: any }) => acc + (factura.total || 0),
+      0
+    );
+
+    // Calcular ganancia de cada producto vendido
+    facturasEnRango.forEach((factura: { compra: any[] }) => {
+      factura.compra.forEach(
+        (productoVendido: { barCode: any; cantidad: any }) => {
+          const producto = productosMap.get(productoVendido.barCode);
+
+          if (producto) {
+            const gananciaProducto =
+              (producto.price - producto.purchasePrice) *
+              (productoVendido.cantidad || 1);
+            ganancia += gananciaProducto;
+          } else {
+            productosNoEncontrados.push(productoVendido);
+          }
+        }
+      );
+    });
+
+    const totalGananciasPorFechaTemp = listaFechas.map((fecha) => {
+      const facturasEnRango = filter.filter((factura: any) =>
+        factura.date.startsWith(fecha)
+      );
+
+      return facturasEnRango.reduce((gananciaTotal: number, factura: any) => {
+        return (
+          gananciaTotal +
+          factura.compra.reduce(
+            (gananciaFactura: number, productoVendido: any) => {
+              const producto = productosMap.get(productoVendido.barCode);
+              if (producto) {
+                const gananciaProducto =
+                  (producto.price - producto.purchasePrice) *
+                  (productoVendido.cantidad || 1);
+                return gananciaFactura + gananciaProducto;
+              }
+              return gananciaFactura;
+            },
+            0
+          )
+        );
+      }, 0);
+    });
+    setTotalGananciasPorFecha(totalGananciasPorFechaTemp);
+    setTotalIngresos(ingresos);
+    setTotalGanancia(ganancia);
+    setProductosSinReferencia(productosNoEncontrados);
+    setIsLoading(false);
+  }, [filter, listaFechas, product]);
 
   useEffect(() => {
     const filteredData = data?.filter((item) => {
@@ -208,9 +297,9 @@ const Dashboard = () => {
       typographyStyle: { color: "#BF56DC" },
       icon: "/dashboardVender/ingresos.svg",
       value: `$ ${
-        totalVentasFecha
-          ? totalVentasFecha.toLocaleString("en-US")
-          : totalVentasHoy.toLocaleString("en-US")
+        totalVentasPorFecha
+          ? ingresos?.toLocaleString("en-US")
+          : totalVentasHoy?.toLocaleString("en-US")
       }`,
     },
     {
@@ -232,8 +321,8 @@ const Dashboard = () => {
       typographyStyle: { color: "#2EB0CC" },
       icon: "/dashboardVender/ganancia.svg",
       value: `$ ${
-        totalVentasFecha
-          ? totalVentasFecha.toLocaleString("en-US")
+        totalGanancia
+          ? totalGanancia.toLocaleString("en-US")
           : totalVentasHoy.toLocaleString("en-US")
       }`,
     },
@@ -244,6 +333,7 @@ const Dashboard = () => {
     expectedProfit: "0",
     profitPercentage: "0",
   });
+  console.log(calculations);
 
   const cardsHeader = [
     {
@@ -268,20 +358,37 @@ const Dashboard = () => {
   useEffect(() => {
     if (Array.isArray(product) && product.length > 0) {
       const totalInventoryValue = product.reduce((acc, item) => {
-        const price = item.price ? Number(item.price.replace(/[$,]/g, "")) : 0;
-        const cantidad = typeof item.cantidad === 'number' ? item.cantidad : parseFloat(item.cantidad);
+        const price =
+          item.price && typeof item.price === "string"
+            ? Number(item.price.replace(/[$,]/g, ""))
+            : 0;
+        const cantidad =
+          typeof item.cantidad === "number"
+            ? item.cantidad
+            : item.cantidad && !isNaN(parseFloat(item.cantidad))
+            ? parseFloat(item.cantidad)
+            : 0;
         const totalItemValue = price * cantidad;
         return acc + totalItemValue;
       }, 0);
 
       const totalInvestmentValue = product.reduce((acc, item) => {
-        const purchasePrice = item.purchasePrice
-          ? Number(item.purchasePrice.replace(/[$,]/g, ""))
-          : 0;
-        const cantidad = typeof item.cantidad === 'number' ? item.cantidad : parseFloat(item.cantidad);
+        const purchasePrice =
+          item.purchasePrice && typeof item.purchasePrice === "string"
+            ? Number(item.purchasePrice.replace(/[$,]/g, ""))
+            : 0;
+        const cantidad =
+          typeof item.cantidad === "number"
+            ? item.cantidad
+            : item.cantidad && !isNaN(parseFloat(item.cantidad))
+            ? parseFloat(item.cantidad)
+            : 0;
         const totalItemInvestment = purchasePrice * cantidad;
         return acc + totalItemInvestment;
       }, 0);
+
+      console.log("totalInventoryValue:", totalInventoryValue);
+      console.log("totalInvestmentValue:", totalInvestmentValue);
 
       const expectedProfit = totalInventoryValue - totalInvestmentValue;
       const profitPercentage =
@@ -296,14 +403,13 @@ const Dashboard = () => {
       const formattedExpectedProfit = expectedProfit.toLocaleString("es-ES");
 
       setCalculations({
-        formattedTotalInventoryValue: formattedTotalInventoryValue,
-        formattedTotalInvestmentValue: formattedTotalInvestmentValue,
+        formattedTotalInventoryValue,
+        formattedTotalInvestmentValue,
         expectedProfit: formattedExpectedProfit,
         profitPercentage: `${profitPercentage}%`,
       });
     }
   }, [product]);
-
   return (
     <>
       <Header title="CAJA" />
@@ -335,7 +441,7 @@ const Dashboard = () => {
           marginTop: "1rem",
           color: "#69EAE2",
           fontFamily: "Nunito",
-          fontSize: {xs:'20px',sm:"40px"},
+          fontSize: { xs: "20px", sm: "40px" },
           fontStyle: "normal",
           fontWeight: 700,
           lineHeight: "normal",
@@ -396,7 +502,9 @@ const Dashboard = () => {
                   </Typography>
                   <Typography
                     sx={{
-                      color: e?.percentage?.includes("+") ? "#01B574" : "#E31A1A",
+                      color: e?.percentage?.includes("+")
+                        ? "#01B574"
+                        : "#E31A1A",
                     }}
                   >
                     {e.percentage}
@@ -513,6 +621,7 @@ const Dashboard = () => {
                 <ChartArea
                   listaFechas={listaFechas}
                   totalVentasPorFecha={totalVentasPorFecha}
+                  totalGananciasPorFecha={totalGananciasPorFecha}
                 />
               }
             </Box>

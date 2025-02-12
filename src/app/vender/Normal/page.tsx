@@ -25,6 +25,7 @@ import CarouselCategorias from "@/components/CarouselCategorias";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import ModalSettings from "./modal_settings";
 import SearchInput from "./SearchInput";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 
 const themee = createTheme({
   palette: {
@@ -315,7 +316,12 @@ const Page: any = () => {
                       onChange={(e) =>
                         cambiarNombreFactura(factura.id, e.target.value)
                       }
-                      sx={{ width: "100px", marginRight: "8px", color: "#fff" }}
+                      sx={{
+                        width: "100px",
+                        marginRight: "8px",
+                        color: "#fff",
+                        filter: "invert(1)",
+                      }}
                     />
                     <IconButton
                       size="small"
@@ -328,7 +334,24 @@ const Page: any = () => {
                 }
               />
             ))}
-            <Tab label="➕ Nueva" onClick={agregarNuevaFactura} />
+            <Tab
+              label={
+                <Box
+                  sx={{
+                    fontWeight: "bold",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <AddOutlinedIcon
+                    sx={{ color: "green", marginRight: "5px" }}
+                  />
+                  <Box>Nueva</Box>
+                </Box>
+              }
+              onClick={agregarNuevaFactura}
+            />
           </Tabs>
         </Paper>
         <ThemeProvider theme={themee}>
