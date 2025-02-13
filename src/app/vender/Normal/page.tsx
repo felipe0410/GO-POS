@@ -296,6 +296,7 @@ const Page: any = () => {
           sx={{
             background: "#1F1D2B",
             boxShadow: "0px 0px 19px -14px #69EAE2",
+            display:'none'
           }}
         >
           <Tabs
@@ -549,7 +550,7 @@ const Page: any = () => {
       </Box>
       <SlidebarVender
         selectedItems={selectedItems}
-        setSelectedItems={setSelectedItemss}
+        setSelectedItems={setSelectedItems}
         searchTerm={searchTerm}
         filteredData={filteredData}
         setSearchTerm={setSearchTerm}
