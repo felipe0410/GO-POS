@@ -241,6 +241,7 @@ const SlidebarVender = ({
                 setSelectedItems={setSelectedItems}
                 setNextStep={setNextStep}
                 typeInvoice={typeInvoice}
+                facturaActiva={undefined}
               />
             ) : (
               <>
@@ -279,6 +280,7 @@ const SlidebarVender = ({
                     <ProductList
                       selectedItems={selectedItems}
                       setSelectedItems={setSelectedItems}
+                      facturaActiva={undefined}
                     />
                     <SubtotalSection
                       subtotal={subtotal}

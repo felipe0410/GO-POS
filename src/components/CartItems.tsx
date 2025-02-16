@@ -13,28 +13,44 @@ const CartItems = ({
   product,
   setSelectedItems,
   selectedItems,
+  facturaActiva,
 }: {
   product: any;
   setSelectedItems: any;
   selectedItems: any;
+  facturaActiva: any;
 }) => {
   const [edit, setEdit] = useState(false);
-  const saveDataToLocalStorage = (key: string, data: any) => {
-    try {
-      const serializedData = JSON.stringify(data);
-      localStorage.setItem(key, serializedData);
-    } catch (error) {
-      console.error("Error saving data to localStorage:", error);
-    }
-  };
+  // const saveDataToLocalStorage = (key: string, data: any) => {
+  //   try {
+  //     const serializedData = JSON.stringify(data);
+  //     localStorage.setItem(key, serializedData);
+  //   } catch (error) {
+  //     console.error("Error saving data to localStorage:", error);
+  //   }
+  // };
 
   const handleDelete = (product: any) => {
-    const updatedItems = selectedItems.filter(
-      (item: any) => item.barCode !== product.barCode
+    setSelectedItems((prev: any[]) =>
+      prev.map((f) =>
+        f.id === facturaActiva
+          ? {
+              ...f,
+              items: f.items.filter(
+                (item: any) => item.barCode !== product.barCode
+              ),
+            }
+          : f
+      )
     );
-    saveDataToLocalStorage("selectedItems", updatedItems);
-    setSelectedItems(updatedItems);
   };
+  // const handleDelete = (product: any) => {
+  //   const updatedItems = selectedItems.filter(
+  //     (item: any) => item.barCode !== product.barCode
+  //   );
+  //   saveDataToLocalStorage("selectedItems", updatedItems);
+  //   setSelectedItems(updatedItems);
+  // };
 
   const calcularTotal = (event: any) => {};
 
@@ -42,42 +58,56 @@ const CartItems = ({
     event: React.ChangeEvent<HTMLInputElement>,
     product: any
   ) => {
-    setSelectedItems((prevSelectedItems: any) => {
-      const cleanString = event.target.value.replace(/[\$,\s]/g, "");
-      const numberValue = parseFloat(cleanString);
-      const updatedItems = prevSelectedItems.map((item: any) =>
-        item.barCode === product.barCode
+    const cleanString = event.target.value.replace(/[$,\s]/g, "");
+    const numberValue = parseFloat(cleanString);
+
+    setSelectedItems((prev: any[]) =>
+      prev.map((f) =>
+        f.id === facturaActiva
           ? {
-              ...item,
-              price: event.target.value,
-              acc: (numberValue > 0 ? numberValue : 0) * item.cantidad,
+              ...f,
+              items: f.items.map((item: any) =>
+                item.barCode === product.barCode
+                  ? {
+                      ...item,
+                      price: event.target.value,
+                      acc: (numberValue > 0 ? numberValue : 0) * item.cantidad,
+                    }
+                  : item
+              ),
             }
-          : item
-      );
-      return updatedItems;
-    });
+          : f
+      )
+    );
   };
 
   const handleChange = (event: any, product: any) => {
     const numericValue = Number(product.price.replace(/[^0-9.-]+/g, ""));
-    setSelectedItems((prevSelectedItems: any) => {
-      const updatedItems = prevSelectedItems.map((item: any) =>
-        item.barCode === product.barCode
+    setSelectedItems((prev: any[]) =>
+      prev.map((f) =>
+        f.id === facturaActiva
           ? {
-              ...item,
-              acc: Number.isInteger(parseInt(event?.target?.value ?? 0))
-                ? event.target.value * numericValue
-                : 0,
-              cantidad:
-                event?.target?.value > 0
-                  ? parseInt(event?.target?.value ?? 0)
-                  : "",
+              ...f,
+              items: f.items.map((item: any) =>
+                item.barCode === product.barCode
+                  ? {
+                      ...item,
+                      acc: Number.isInteger(parseInt(event?.target?.value ?? 0))
+                        ? event.target.value * numericValue
+                        : 0,
+                      cantidad:
+                        event?.target?.value > 0
+                          ? parseInt(event?.target?.value ?? 0)
+                          : "",
+                    }
+                  : item
+              ),
             }
-          : item
-      );
-      return updatedItems;
-    });
+          : f
+      )
+    );
   };
+
   return (
     <Box sx={{ marginTop: "10px" }}>
       <Box display={"flex"}>
@@ -244,6 +274,7 @@ const CartItems = ({
         </Box>
         <Box sx={{ width: "23%", display: "flex", justifyContent: "flex-end" }}>
           <Button
+            id="delete-factura"
             onClick={() => handleDelete(product)}
             variant="outlined"
             sx={{

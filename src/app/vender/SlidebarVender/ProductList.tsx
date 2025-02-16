@@ -6,11 +6,13 @@ import IncompleteCartItem from "@/components/IncompleteCartItem";
 interface ProductListProps {
   selectedItems: any[];
   setSelectedItems: (items: any) => void;
+  facturaActiva: any;
 }
 
 const ProductList: React.FC<ProductListProps> = ({
   selectedItems,
   setSelectedItems,
+  facturaActiva,
 }) => (
   <Box sx={{ height: "62%", marginTop: "10px" }}>
     <Box sx={{ display: "flex" }}>
@@ -58,7 +60,10 @@ const ProductList: React.FC<ProductListProps> = ({
       </Typography>
     </Box>
     <Divider sx={{ background: "#69EAE2" }} />
-    <IncompleteCartItem setSelectedItems={setSelectedItems} />
+    <IncompleteCartItem
+      setSelectedItems={setSelectedItems}
+      facturaActiva={facturaActiva}
+    />
     <Divider sx={{ background: "#69EAE2", marginTop: "10px" }} />
     <Box
       id="items-list"
@@ -104,13 +109,13 @@ const ProductList: React.FC<ProductListProps> = ({
         </Typography>
       ) : (
         <>
-        
           {selectedItems?.map((product: any) => (
             <React.Fragment key={product.barCode}>
               <CartItems
                 product={product}
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
+                facturaActiva={facturaActiva}
               />
             </React.Fragment>
           ))}

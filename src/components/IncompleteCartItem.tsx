@@ -15,8 +15,10 @@ import ImgInputSlidebar from "./inputIMGSlidebar";
 
 const IncompleteCartItem = ({
   setSelectedItems,
+  facturaActiva
 }: {
   setSelectedItems: any;
+  facturaActiva:any;
 }) => {
   const [incompletedItem, setIncompletedItem] = useState({
     productName: "",
@@ -53,7 +55,16 @@ const IncompleteCartItem = ({
   const pushIncompletedItem = async () => {
     try {
       if (incompletedItem.barCode) {
-        setSelectedItems((prevData: any) => [incompletedItem, ...prevData]);
+        setSelectedItems((prev: any[]) =>
+          prev.map((f) =>
+            f.id === facturaActiva
+              ? {
+                  ...f,
+                  items: [incompletedItem, ...f.items]
+                }
+              : f
+          )
+        );
         await createProduct(incompletedItem.barCode, incompletedItem);
         setIncompletedItem({
           productName: "",
@@ -68,14 +79,22 @@ const IncompleteCartItem = ({
           purchasePrice: "",
         });
         setTimeout(() => {
-          console.log("ingrese aqui");
           document.getElementById("buscador")?.focus();
         }, 0);
       } else {
-        setSelectedItems((prevData: any) => [
-          { ...incompletedItem, barCode: uuidv4() },
-          ...prevData,
-        ]);
+        setSelectedItems((prev: any[]) =>
+          prev.map((f) =>
+            f.id === facturaActiva
+              ? {
+                  ...f,
+                  items: [
+                    { ...incompletedItem, barCode: uuidv4() },
+                    ...f.items
+                  ]
+                }
+              : f
+          )
+        );
         setIncompletedItem({
           productName: "",
           price: "",
@@ -98,6 +117,7 @@ const IncompleteCartItem = ({
       console.error("error al agregar items incompleto", error);
     }
   };
+  
   useEffect(() => {
     setIncompletedItem((prevData) => ({
       ...prevData,

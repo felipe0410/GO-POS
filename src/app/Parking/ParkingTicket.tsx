@@ -52,7 +52,6 @@ export const ParkingTicket: React.FC<ParkingTicketProps> = ({
       try {
         const data: any = await getEstablishmentData();
         setEstableciment(data);
-        console.log("Establecimiento:::>", data);
       } catch (error) {
         console.error("Error fetching establishment data:", error);
       }

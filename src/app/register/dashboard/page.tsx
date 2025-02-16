@@ -333,7 +333,6 @@ const Dashboard = () => {
     expectedProfit: "0",
     profitPercentage: "0",
   });
-  console.log(calculations);
 
   const cardsHeader = [
     {
@@ -386,9 +385,6 @@ const Dashboard = () => {
         const totalItemInvestment = purchasePrice * cantidad;
         return acc + totalItemInvestment;
       }, 0);
-
-      console.log("totalInventoryValue:", totalInventoryValue);
-      console.log("totalInvestmentValue:", totalInvestmentValue);
 
       const expectedProfit = totalInventoryValue - totalInvestmentValue;
       const profitPercentage =

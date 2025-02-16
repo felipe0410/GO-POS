@@ -33,7 +33,6 @@ import { v4 as uuidv4 } from "uuid";
 import { transformToDianInvoice } from "@/components/DIAN/transformToDianInvoice";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { useCookies } from "react-cookie";
-import axios from "axios";
 import { getDianRecord } from "@/firebase/dian";
 
 interface UserData {
@@ -67,6 +66,7 @@ const DatosVenta = (props: any) => {
     handleVenderClick,
     propsNota,
     typeInvoice,
+    setSelectedItems,
   } = props;
   const [options, setOptions] = useState([""]);
   const [valueClient, setValueClient] = React.useState<string | null>(
@@ -100,6 +100,7 @@ const DatosVenta = (props: any) => {
     nota: propsNota ?? "",
   });
 
+  console.log("factura:::>", factura);
   const [cookies, setCookie] = useCookies(["invoice_token"]);
 
   const sendInvoiceToDian = async (factura: any) => {

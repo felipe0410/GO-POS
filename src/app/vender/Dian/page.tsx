@@ -187,7 +187,7 @@ const Page: any = () => {
     const loginInvoice = async (): Promise<any> => {
       const dian = await getDianRecord();
       const password = "Ab1007446687";
-      console.log(dian?.email)
+      console.log(dian?.email);
       return await login(dian?.email ?? "demo@lopezsoft.net.co", password);
     };
 
@@ -196,7 +196,9 @@ const Page: any = () => {
         .then((response) => {
           if (response?.access_token) {
             const expirationDate = new Date();
-            expirationDate.setTime(expirationDate.getTime() + 24 * 60 * 60 * 1000);
+            expirationDate.setTime(
+              expirationDate.getTime() + 24 * 60 * 60 * 1000
+            );
 
             setCookie("invoice_token", response.access_token, {
               path: "/", // Asegúrate de que la cookie sea accesible en toda la aplicación
@@ -352,6 +354,7 @@ const Page: any = () => {
                     filteredData={currentDataPage}
                     setSelectedItems={setSelectedItems}
                     selectedItems={selectedItems}
+                    facturaActiva={undefined}
                   />
                   <Box
                     id="pagination"

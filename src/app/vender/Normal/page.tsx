@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   IconButton,
-  InputBase,
   Pagination,
   Paper,
   Tab,
@@ -56,7 +55,11 @@ const Page: any = () => {
   const [selectedItems, setSelectedItems] = useState<any>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [typeInvoice, setTypeInvoice] = useState<string>("quickSale");
-
+  const [load, setLoad] = useState(0);
+  const [facturas, setFacturas] = useState<
+    { id: string; name: string; items: any[] }[]
+  >([{ id: "factura-1", name: "Factura 1", items: [] }]);
+  const [facturaActiva, setFacturaActiva] = useState("factura-1");
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
 
@@ -107,6 +110,7 @@ const Page: any = () => {
       const foundProducts = resolvedData?.filter(
         (producto) => producto.barCode === value2
       );
+
       if (foundProducts?.length === 1) {
         const cleanedPrice = Number(
           foundProducts[0].price.replace(/[$,]/g, "")
@@ -116,8 +120,18 @@ const Page: any = () => {
           acc: cleanedPrice,
           cantidad: 1,
         };
-        const updatedItems = updateSelectedItems(newItem);
-        setSelectedItems(updatedItems);
+
+        setFacturas((prevFacturas) =>
+          prevFacturas.map((factura) =>
+            factura.id === facturaActiva
+              ? {
+                  ...factura,
+                  items: updateSelectedItems(factura.items, newItem),
+                }
+              : factura
+          )
+        );
+
         setSearchTerm("");
       } else {
         if (searchTerm.length > 0) {
@@ -130,25 +144,26 @@ const Page: any = () => {
     }
   };
 
-  const updateSelectedItems = (newItem: any) => {
-    let productAlreadyInList = false;
-    const updatedItems = (selectedItems || []).map((item: any) => {
-      if (item.barCode === newItem.barCode) {
-        productAlreadyInList = true;
-        return {
-          ...item,
-          cantidad: item.cantidad + 1,
-          acc: item.acc + newItem.acc,
-        };
-      }
-      return item;
-    });
-    if (!productAlreadyInList || !selectedItems?.length) {
-      return [...updatedItems, newItem];
+  const updateSelectedItems = (items: any[], newItem: any) => {
+    let updatedItems = items.filter((item) => item.barCode !== newItem.barCode);
+
+    const existingItem = items.find((item) => item.barCode === newItem.barCode);
+
+    if (existingItem) {
+      // Si el producto ya existe, actualizamos su cantidad y acumulado
+      const updatedItem = {
+        ...existingItem,
+        cantidad: existingItem.cantidad + 1,
+        acc: existingItem.acc + newItem.acc,
+      };
+      updatedItems = [updatedItem, ...updatedItems];
+    } else {
+      // Si es un nuevo producto, lo agregamos directamente al inicio
+      updatedItems = [newItem, ...updatedItems];
     }
+
     return updatedItems;
   };
-
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
     filteredData("");
@@ -221,14 +236,12 @@ const Page: any = () => {
   }, []);
 
   // 📌 Estado para manejar múltiples facturas (pestañas)
-  const [facturas, setFacturas] = useState<
-    { id: string; name: string; items: any[] }[]
-  >([{ id: "factura-1", name: "Factura 1", items: [] }]);
-  const [facturaActiva, setFacturaActiva] = useState("factura-1");
 
   // 📌 Obtener la factura activa
-  const facturaActual =
-    facturas.find((f) => f.id === facturaActiva) || facturas[0];
+  const cambiarFacturaActiva = (id: React.SetStateAction<string>) => {
+    setFacturaActiva(id);
+    const factura = facturas.find((f) => f.id === id);
+  };
 
   useEffect(() => {
     const getAllProducts = async () => {
@@ -241,32 +254,34 @@ const Page: any = () => {
     getAllProducts();
   }, []);
 
-  // 📌 Manejar cambios en los productos seleccionados de cada factura
-  const setSelectedItemss = (items: any[]) => {
-    setFacturas((prev) =>
-      prev.map((f) => (f.id === facturaActiva ? { ...f, items } : f))
-    );
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const productosFacturaActiva =
+    facturas.find((factura) => factura.id === facturaActiva)?.items || [];
 
-  // 📌 Manejar la creación de una nueva factura (nueva pestaña)
   const agregarNuevaFactura = () => {
+    const maxNumeroFactura = facturas.reduce((max, factura) => {
+      const num = parseInt(factura.id.replace("factura-", ""), 10);
+      return num > max ? num : max;
+    }, 0);
+
+    const nuevoNumero = maxNumeroFactura + 1;
+
     const nuevaFactura = {
-      id: `factura-${facturas.length + 1}`,
-      name: `Factura ${facturas.length + 1}`,
+      id: `factura-${nuevoNumero}`,
+      name: `Factura ${nuevoNumero}`,
       items: [],
     };
+
     setFacturas([...facturas, nuevaFactura]);
     setFacturaActiva(nuevaFactura.id);
   };
 
-  // 📌 Manejar el cambio de nombre de la factura
   const cambiarNombreFactura = (id: string, nuevoNombre: string) => {
     setFacturas((prev) =>
       prev.map((f) => (f.id === id ? { ...f, name: nuevoNombre } : f))
     );
   };
 
-  // 📌 Manejar el cierre de una factura
   const cerrarFactura = (id: string) => {
     if (facturas.length === 1) return; // No eliminar si solo hay una factura
     const nuevasFacturas = facturas.filter((f) => f.id !== id);
@@ -275,6 +290,34 @@ const Page: any = () => {
       setFacturaActiva(nuevasFacturas[0].id); // Mover a la primera disponible
     }
   };
+
+  useEffect(() => {
+    setLoad((prev) => prev + 1);
+    if (load > 0) {
+      localStorage.setItem("facturas", JSON.stringify(facturas));
+    }
+    if (facturas.length === 0) {
+      agregarNuevaFactura();
+    }
+    const facturaExiste = facturas.some(
+      (factura) => factura.id === facturaActiva
+    );
+    if (!facturaExiste) {
+      setFacturaActiva(facturas[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [facturas, facturaActiva]);
+
+  useEffect(() => {
+    const cachedFacturas = localStorage.getItem("facturas");
+    if (cachedFacturas) {
+      setFacturas(JSON.parse(cachedFacturas));
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("facturaActiva", JSON.stringify(facturaActiva));
+  }, [facturaActiva]);
 
   return (
     <Box
@@ -296,12 +339,14 @@ const Page: any = () => {
           sx={{
             background: "#1F1D2B",
             boxShadow: "0px 0px 19px -14px #69EAE2",
-            display:'none'
+            display: { xs: "none", lg: "block" },
+            width: "95%",
+            borderRadius: "10px",
           }}
         >
           <Tabs
             value={facturaActiva}
-            onChange={(_, newValue) => setFacturaActiva(newValue)}
+            onChange={(_, newValue) => cambiarFacturaActiva(newValue)}
             variant="scrollable"
             scrollButtons="auto"
           >
@@ -327,7 +372,10 @@ const Page: any = () => {
                     <IconButton
                       size="small"
                       onClick={() => cerrarFactura(factura.id)}
-                      sx={{ color: "red" }}
+                      sx={{
+                        color: "red",
+                        display: facturas?.length == 1 ? "none" : "block",
+                      }}
                     >
                       ✖
                     </IconButton>
@@ -522,8 +570,9 @@ const Page: any = () => {
               />
               <VenderCards
                 filteredData={currentDataPage}
-                setSelectedItems={setSelectedItems}
-                selectedItems={selectedItems}
+                setSelectedItems={setFacturas}
+                selectedItems={productosFacturaActiva}
+                facturaActiva={facturaActiva}
               />
               <Box
                 id="pagination"
@@ -549,12 +598,13 @@ const Page: any = () => {
         </Paper>
       </Box>
       <SlidebarVender
-        selectedItems={selectedItems}
-        setSelectedItems={setSelectedItems}
+        selectedItems={productosFacturaActiva}
+        setSelectedItems={setFacturas}
         searchTerm={searchTerm}
         filteredData={filteredData}
         setSearchTerm={setSearchTerm}
         typeInvoice={typeInvoice}
+        facturaActiva={facturaActiva}
       />
     </Box>
   );

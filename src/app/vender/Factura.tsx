@@ -8,16 +8,23 @@ import { useReactToPrint } from "react-to-print";
 
 interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
-  setSelectedItems: (arg0: []) => void;
+  setSelectedItems: any;
   setNextStep: (arg0: boolean) => void;
   typeInvoice: string;
+  facturaActiva: any;
 }
 
 const Factura: React.FC<TuComponenteProps> = (props) => {
   const barCode = localStorage.getItem("uidInvoice");
   const numeroFactura = localStorage?.getItem("invoice") ?? "0000000";
   const [facturaData, setFacturaData] = useState<null | DocumentData>(null);
-  const { setReciboPago, setSelectedItems, setNextStep, typeInvoice } = props;
+  const {
+    setReciboPago,
+    setSelectedItems,
+    setNextStep,
+    typeInvoice,
+    facturaActiva,
+  } = props;
   const [establishmentData, setEstablishmentData] = useState({
     phone: "",
     NIT_CC: "",
@@ -26,9 +33,33 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     name: "",
     direction: "",
   });
+
   const setNuevaFactura = () => {
+    console.log("llego aqui");
     setReciboPago(false);
-    setSelectedItems([]);
+    //setSelectedItems([]);
+    // Eliminar la factura activa
+    setSelectedItems((prevFacturas: any) => {
+      const nuevasFacturas = prevFacturas.filter(
+        (f: { id: any }) => f.id !== facturaActiva
+      );
+
+      // Si hay facturas restantes, activamos la primera de la lista
+      if (nuevasFacturas.length > 0) {
+        // setFacturaActiva(nuevasFacturas[0].id);
+      } else {
+        // Si no quedan facturas, creamos una nueva
+        const nuevaFactura = {
+          id: `factura-1`,
+          name: `Factura 1`,
+          items: [],
+        };
+        nuevasFacturas.push(nuevaFactura);
+        // setFacturaActiva(nuevaFactura.id);
+      }
+
+      return nuevasFacturas;
+    });
     setNextStep(false);
   };
 

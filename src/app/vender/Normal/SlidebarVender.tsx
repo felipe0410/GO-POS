@@ -30,6 +30,7 @@ const SlidebarVender = ({
   filteredData,
   setSearchTerm,
   typeInvoice,
+  facturaActiva,
 }: {
   selectedItems: any;
   setSelectedItems: any;
@@ -37,6 +38,7 @@ const SlidebarVender = ({
   filteredData: any;
   setSearchTerm: any;
   typeInvoice: string;
+  facturaActiva: any;
 }) => {
   const [search, setSearch] = useState<any>("");
   const [open, setOpen] = useState(false);
@@ -185,7 +187,7 @@ const SlidebarVender = ({
             generarNumeroFactura={generarNumeroFactura}
             totalUnidades={totalUnidades}
           />
-          <Box sx={{position:'absolute', top:{xs:8,lg:40} ,left:12, }}>
+          <Box sx={{ position: "absolute", top: { xs: 8, lg: 40 }, left: 12 }}>
             <InvoicePreviewModal selectedItems={selectedItems} />
           </Box>
           <Box
@@ -199,6 +201,7 @@ const SlidebarVender = ({
                 setSelectedItems={setSelectedItems}
                 setNextStep={setNextStep}
                 typeInvoice={typeInvoice}
+                facturaActiva={facturaActiva}
               />
             ) : (
               <>
@@ -231,12 +234,14 @@ const SlidebarVender = ({
                     handleVenderClick={handleVenderClick}
                     propsNota={nota}
                     typeInvoice={typeInvoice}
+                    setSelectedItems={setSelectedItems}
                   />
                 ) : (
                   <>
                     <ProductList
                       selectedItems={selectedItems}
                       setSelectedItems={setSelectedItems}
+                      facturaActiva={facturaActiva}
                     />
                     <SubtotalSection
                       subtotal={subtotal}

@@ -7,13 +7,16 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
   const [checked, setChecked] = useState<boolean>(false);
 
   const handleChange = () => {
-    setChecked(!checked);
-    setFactura({ ...factura, status: !checked ? "cancelado" : "pendiente" });
+    setFactura((prevFactura: any) => ({
+      ...prevFactura,
+      status: checked ? "CANCELADO" : "PENDIENTE",
+    }));
+    setChecked((prev) => !prev);
   };
-
+  
   return (
     <Box
-      id='container slider'
+      id="container slider"
       sx={{
         ...StylesSlider.boxRegister2,
         width: "fit-content",
@@ -34,7 +37,7 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
             checked={checked}
             onChange={handleChange}
             sx={StylesSlider.checkbox}
-            id='switch-button-checkbox'
+            id="switch-button-checkbox"
           />
           <Box sx={StylesSlider.boxRegister5}>
             <Box
@@ -45,15 +48,15 @@ const Slider = ({ setFactura, factura }: { factura: any; setFactura: any }) => {
             />
             <FormControlLabel
               control={<span />}
-              htmlFor='switch-button-checkbox'
+              htmlFor="switch-button-checkbox"
               label={
                 <Typography
                   sx={{
                     ...StylesSlider.typographyRegister,
                     color: checked ? "#69EAE2" : "#1F1D2B",
                   }}
-                  component='span'
-                  align='center'
+                  component="span"
+                  align="center"
                 >
                   CANCELADO
                 </Typography>

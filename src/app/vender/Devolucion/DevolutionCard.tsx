@@ -56,7 +56,6 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
       [key: string]: string;
     }>({});
 
-    console.log("filteredData:::>", filteredData);
 
     // Obtener imágenes de productos si no están disponibles en filteredData
     React.useEffect(() => {

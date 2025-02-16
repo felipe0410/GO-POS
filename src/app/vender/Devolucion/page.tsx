@@ -321,6 +321,7 @@ const Page: any = () => {
                 setSelectedItems={setSelectedItems}
                 selectedItems={selectedItems}
                 type={true}
+                facturaActiva={undefined}
               />
               <Box
                 id="pagination"

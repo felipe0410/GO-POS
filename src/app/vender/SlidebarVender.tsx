@@ -194,14 +194,14 @@ const SlidebarVender = ({
               "&::-webkit-scrollbar": {
                 width: "6px",
               },
-               "&::-webkit-scrollbar-track": {
-                 backgroundColor: "#2C3248",
-               },
-               "&::-webkit-scrollbar-thumb": {
-                 backgroundColor: "gray",
-                 borderRadius: "10px",
-                 boxShadow: "0px 4px 4px 0px #00000040",
-               },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#2C3248",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "gray",
+                borderRadius: "10px",
+                boxShadow: "0px 4px 4px 0px #00000040",
+              },
               // "&::-webkit-scrollbar-thumb:hover": {
               //   backgroundColor: "#555",
               // },
@@ -213,6 +213,7 @@ const SlidebarVender = ({
                 setSelectedItems={setSelectedItems}
                 setNextStep={setNextStep}
                 typeInvoice={typeInvoice}
+                facturaActiva={undefined}
               />
             ) : (
               <>
@@ -251,6 +252,7 @@ const SlidebarVender = ({
                     <ProductList
                       selectedItems={selectedItems}
                       setSelectedItems={setSelectedItems}
+                      facturaActiva={undefined}
                     />
                     <SubtotalSection
                       subtotal={subtotal}
