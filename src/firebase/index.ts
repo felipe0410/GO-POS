@@ -97,12 +97,12 @@ export const createProduct = async (uid: any, productData: any) => {
   }
 };
 // Función para obtener todos los  productos
-export const getAllProductsData = (callback: any) => {
+export const getAllProductsData = (callback: any, userID?:string) => {
   try {
     const establecimientoDocRef = doc(
       db,
       "establecimientos",
-      `${user().decodedString}`
+      userID ||`${user().decodedString}`
     );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     // Query para obtener los productos ordenados alfabéticamente
@@ -125,6 +125,116 @@ export const getAllProductsData = (callback: any) => {
       querySnapshot.forEach((doc: any) => {
         productsData.push({ id: doc.id, ...doc.data() });
       });
+      console.log("productsData::>", productsData);
+      callback(productsData);
+      return productsData;
+    });
+
+    // Return the unsubscribe function to stop observing changes
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up data observer: ", error);
+    return null;
+  }
+};
+
+export const fetchAndUpdateProducts = async (callback: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const productCollectionRef = collection(establecimientoDocRef, "productos");
+
+    // Query para obtener los productos ordenados alfabéticamente
+    const orderedQuery = query(productCollectionRef, orderBy("productName"));
+
+    // Obtener los documentos de Firestore
+    const querySnapshot = await getDocs(orderedQuery);
+    const productsData: any[] = [];
+
+    for (const docSnapshot of querySnapshot.docs) {
+      const product = docSnapshot.data();
+      const purchasePrice =
+        parseFloat(product.purchasePrice.replace(/[^0-9.-]+/g, "")) || 0;
+
+      // Calculamos el wholesalePrice con 7% adicional
+      const wholesalePriceRaw = purchasePrice * 1.07;
+
+      // Redondeamos al múltiplo de 100 más cercano
+      const wholesalePriceNumeric = Math.round(wholesalePriceRaw / 100) * 100;
+
+      // Formateamos con separadores y el símbolo $
+      const wholesalePrice = `$ ${wholesalePriceNumeric.toLocaleString()}`;
+
+      // Construimos el objeto con ambos valores
+      const updatedProduct = {
+        id: docSnapshot.id,
+        ...product,
+        wholesalePrice,
+        wholesalePriceNumeric,
+      };
+      productsData.push(updatedProduct);
+
+      // Subimos la actualización a Firebase si los valores no existen o si cambiaron
+      if (
+        !product.wholesalePrice ||
+        product.wholesalePrice !== wholesalePrice ||
+        !product.wholesalePriceNumeric ||
+        product.wholesalePriceNumeric !== wholesalePriceNumeric
+      ) {
+        await updateDoc(doc(productCollectionRef, docSnapshot.id), {
+          wholesalePrice,
+          wholesalePriceNumeric,
+        });
+      }
+    }
+
+    // Enviar los datos al callback
+    callback(productsData);
+
+    // Suscripción en tiempo real para futuras actualizaciones
+    const unsubscribe = onSnapshot(orderedQuery, async (querySnapshot: any) => {
+      const productsData: any[] = [];
+      for (const docSnapshot of querySnapshot.docs) {
+        const product = docSnapshot.data();
+        const purchasePrice =
+          parseFloat(product.purchasePrice.replace(/[^0-9.-]+/g, "")) || 0;
+
+        // Calculamos el wholesalePrice con 7% adicional
+        const wholesalePriceRaw = purchasePrice * 1.07;
+
+        // Redondeamos al múltiplo de 100 más cercano
+        const wholesalePriceNumeric = Math.round(wholesalePriceRaw / 100) * 100;
+
+        // Formateamos con separadores y el símbolo $
+        const wholesalePrice = `$ ${wholesalePriceNumeric.toLocaleString()}`;
+
+        // Construimos el objeto con ambos valores
+        const updatedProduct = {
+          id: docSnapshot.id,
+          ...product,
+          wholesalePrice,
+          wholesalePriceNumeric,
+        };
+        productsData.push(updatedProduct);
+
+        // Subimos la actualización a Firebase si los valores no existen o si cambiaron
+        if (
+          !product.wholesalePrice ||
+          product.wholesalePrice !== wholesalePrice ||
+          !product.wholesalePriceNumeric ||
+          product.wholesalePriceNumeric !== wholesalePriceNumeric
+        ) {
+          await updateDoc(doc(productCollectionRef, docSnapshot.id), {
+            wholesalePrice,
+            wholesalePriceNumeric,
+          });
+        }
+      }
+
+      console.log("productsData::>", productsData);
       callback(productsData);
       return productsData;
     });
@@ -153,10 +263,10 @@ export const getAllProductsDataonSnapshot = async (callback: any) => {
       ...doc.data(),
     }));
 
-    callback(initialData); 
+    callback(initialData);
 
     const unsubscribe = onSnapshot(orderedQuery, (querySnapshot) => {
-      if (querySnapshot.metadata.hasPendingWrites) return; 
+      if (querySnapshot.metadata.hasPendingWrites) return;
 
       const productsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,

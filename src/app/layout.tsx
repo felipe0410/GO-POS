@@ -30,7 +30,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const route: any = (children as React.ReactElement)?.props?.childPropSegment ?? null;
-  const validationRoutes = ["sign_up", "sign_in", "__DEFAULT__"].includes(route);
+  const validationRoutes = ["sign_up", "sign_in","catalog", "__DEFAULT__"].includes(route);
 
   return (
     <html lang='en' style={{ height: '100%' }}>

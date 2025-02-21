@@ -10,7 +10,13 @@ import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import { v4 as uuidv4 } from "uuid";
 
-export default function InventoryCard({ filteredData }: { filteredData: any }) {
+export default function InventoryCard({
+  filteredData,
+  wholesale = false,
+}: {
+  filteredData: any;
+  wholesale?: boolean;
+}) {
   const StyledCardContent = styled(CardContent)(({ theme }) => ({
     "&:last-child": {
       paddingBottom: "12px",
@@ -50,7 +56,10 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
             zIndex: 4,
           }}
         >
-          <CardActions disableSpacing sx={{ padding: 0 }}>
+          <CardActions
+            disableSpacing
+            sx={{ padding: 0, display: wholesale ? "none" : "auto" }}
+          >
             <EditModal key={uuidv4()} data={product} />
             <DeleteModal key={uuidv4()} data={product} />
           </CardActions>
@@ -131,7 +140,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               lineHeight: "140%",
             }}
           >
-            {product.price}
+            {wholesale ? product?.wholesalePrice ?? "0" : product.price}
           </Typography>
           <Typography
             sx={{
@@ -143,6 +152,7 @@ export default function InventoryCard({ filteredData }: { filteredData: any }) {
               fontStyle: "normal",
               fontWeight: 400,
               lineHeight: "140%",
+              display: wholesale ? "none" : "block",
             }}
           >
             Existencias:{" "}
