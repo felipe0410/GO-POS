@@ -19,13 +19,13 @@ import jsPDF from "jspdf";
 import html2pdf from "html2pdf.js";
 
 const cellStyle = { color: "#000" };
-const getCurrentDate = () => {
+export const getCurrentDate = () => {
   const today = new Date();
   return today.toISOString().split("T")[0]; // Obtiene solo la parte de la fecha (YYYY-MM-DD)
 };
 
 // Función para obtener el último día del año en formato YYYY-MM-DD
-const getEndOfYearDate = () => {
+export const getEndOfYearDate = () => {
   const endOfYear = new Date(new Date().getFullYear(), 11, 31); // Último día de diciembre
   return endOfYear.toISOString().split("T")[0];
 };
@@ -117,7 +117,7 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
                     style={{ height: "50px", marginBottom: "10px" }}
                   />
                 )}
-                <Typography sx={{ textTransform: "uppercase" }} variant="h6">
+                <Typography sx={{ textTransform: "uppercase", fontWeight:'900' }} variant="h6">
                   {dataEstablishmentData?.nameEstablishment ?? "Sin datos"}
                 </Typography>
                 <Typography variant="body2">

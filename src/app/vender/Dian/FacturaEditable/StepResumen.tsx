@@ -23,6 +23,7 @@ import {
 import SaveDraftDialog from "./SaveDraftDialog";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { login } from "@/components/DIAN/loginToken";
+import { getCurrentDate, getEndOfYearDate } from "./InvoiceModal";
 
 interface DianRecord {
   RangoInicio: string;
@@ -368,8 +369,8 @@ const InvoicePreview = () => {
             Número: {dianData?.Prefijo ?? "sin prefijo"}-
             {localData?.document_number ?? "sin numero"}
           </Typography>
-          <Typography variant="body2">Fecha: 24 Dic 2024</Typography>
-          <Typography variant="body2">Vencimiento: 31 Dic 2024</Typography>
+          <Typography variant="body2">Fecha: { getCurrentDate()}</Typography>
+          <Typography variant="body2">Vencimiento: { getEndOfYearDate()}</Typography>
         </Box>
       </Box>
       <Divider sx={{ marginY: 2 }} />
