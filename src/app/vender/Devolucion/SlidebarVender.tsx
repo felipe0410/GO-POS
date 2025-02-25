@@ -46,8 +46,6 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
 }) => {
   const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
   console.log("selectedItems:::>", selectedItems);
-  // selectedItems,
-  // setSelectedItems
   const [invoiceData, setInvoiceData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<{

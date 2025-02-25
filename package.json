@@ -29,6 +29,7 @@
     "firebase": "^10.7.1",
     "firebase-functions": "^4.5.0",
     "html2canvas": "^1.4.1",
+    "html2pdf.js": "^0.9.0",
     "jsbarcode": "^3.11.6",
     "jspdf": "^2.5.1",
     "next": "14.0.3",

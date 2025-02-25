@@ -16,36 +16,75 @@ import {
 } from "@mui/material";
 import { FacturaProviderContext } from "../context";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import html2pdf from "html2pdf.js";
+
+const cellStyle = { color: "#000" };
+const getCurrentDate = () => {
+  const today = new Date();
+  return today.toISOString().split("T")[0]; // Obtiene solo la parte de la fecha (YYYY-MM-DD)
+};
+
+// Función para obtener el último día del año en formato YYYY-MM-DD
+const getEndOfYearDate = () => {
+  const endOfYear = new Date(new Date().getFullYear(), 11, 31); // Último día de diciembre
+  return endOfYear.toISOString().split("T")[0];
+};
 
 const InvoiceModal = ({ invoice, open, onClose }: any) => {
-  const {
-    localData,
-    dataEstablishmentData,
-    dianData,
-  } = useContext(FacturaProviderContext);
+  const { localData, dataEstablishmentData, dianData } = useContext(
+    FacturaProviderContext
+  );
 
-  const logo = dataEstablishmentData?.img; 
+  const logo = dataEstablishmentData?.img;
   const pdfRef = useRef<HTMLDivElement>(null);
 
   if (!invoice) return null;
-
-  const handleDownloadPDF = async () => {
-    if (!pdfRef.current) return;
-
-    const canvas = await html2canvas(pdfRef.current, {
-      scale: 2,
-    });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "mm", "a2");
-
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save(`Factura-${invoice?.document_number ?? "sin-numero"}.pdf`);
+  const getBase64Image = async (imgUrl: string) => {
+    try {
+      const response = await fetch(imgUrl, { mode: "cors" }); // Intentar forzar CORS
+      if (!response.ok) {
+        throw new Error(`Error al cargar la imagen: ${response.statusText}`);
+      }
+      const blob = await response.blob();
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
+      });
+    } catch (error) {
+      console.error("Error obteniendo la imagen en Base64:", error);
+      return null;
+    }
   };
 
+  const handleDownloadPDF = async () => {
+    if (pdfRef.current) {
+      pdfRef.current.classList.add("pdf-light-mode");
+
+      if (logo) {
+        const base64Logo = await getBase64Image(logo);
+        const imgElement = pdfRef.current.querySelector("img");
+        if (imgElement) imgElement.src = base64Logo;
+      }
+
+      const options = {
+        margin: 10,
+        filename: `factura-${invoice.document_number ?? "sin-numero"}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      html2pdf()
+        .from(pdfRef.current)
+        .set(options)
+        .save()
+        .then(() => {
+          // Remover la clase después de generar el PDF para que la UI no cambie
+          pdfRef.current?.classList.remove("pdf-light-mode");
+        });
+    }
+  };
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
@@ -60,114 +99,176 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
         </Button>
       </DialogTitle>
       <DialogContent>
-        <Box ref={pdfRef}> 
-          {/* Información del Establecimiento */}
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
-            <Box>
-              {logo && <img src={logo} alt="Logo" style={{ height: "50px", marginBottom: "10px" }} />}
-              <Typography sx={{ textTransform: "uppercase" }} variant="h6">
-                {dataEstablishmentData?.nameEstablishment ?? "Sin datos"}
-              </Typography>
-              <Typography variant="body2">
-                N.I.T: {dataEstablishmentData?.NIT_CC ?? "Sin datos"}
-              </Typography>
-              <Typography variant="body2">
-                {dataEstablishmentData?.email ?? "Sin datos"} |{" "}
-                {dataEstablishmentData?.phone ?? "Sin datos"}
-              </Typography>
+        <Box ref={pdfRef}>
+          <Box sx={{ background: "#fff", padding: "10px" }}>
+            {/* Información del Establecimiento */}
+            <Box
+              display="flex"
+              justifyContent="space-between"
+              alignItems="center"
+              mb={2}
+              sx={{ color: "#000" }}
+            >
+              <Box>
+                {logo && (
+                  <img
+                    src={logo}
+                    alt="Logo"
+                    style={{ height: "50px", marginBottom: "10px" }}
+                  />
+                )}
+                <Typography sx={{ textTransform: "uppercase" }} variant="h6">
+                  {dataEstablishmentData?.nameEstablishment ?? "Sin datos"}
+                </Typography>
+                <Typography variant="body2">
+                  N.I.T: {dataEstablishmentData?.NIT_CC ?? "Sin datos"}
+                </Typography>
+                <Typography variant="body2">
+                  {dataEstablishmentData?.email ?? "Sin datos"} |{" "}
+                  {dataEstablishmentData?.phone ?? "Sin datos"}
+                </Typography>
+              </Box>
+              <Box textAlign="right">
+                <Typography variant="h5" fontWeight="bold">
+                  FACTURA
+                </Typography>
+                <Typography variant="body2">
+                  Número:{" "}
+                  {invoice?.document_number ??
+                    dianData?.Prefijo ??
+                    "Sin número"}
+                </Typography>
+                <Typography variant="body2">
+                  Fecha: {invoice?.date ?? getCurrentDate()}{" "}
+                  {/* Usa la fecha actual si no hay fecha en la factura */}
+                </Typography>
+                <Typography variant="body2">
+                  Vencimiento: {invoice?.due_date ?? getEndOfYearDate()}{" "}
+                  {/* Usa el último día del año si no hay vencimiento */}
+                </Typography>
+              </Box>
             </Box>
-            <Box textAlign="right">
-              <Typography variant="h5" fontWeight="bold">
-                FACTURA
-              </Typography>
-              <Typography variant="body2">
-                Número: {invoice?.document_number ?? dianData?.Prefijo ?? "Sin número"}
-              </Typography>
-              <Typography variant="body2">Fecha: {invoice?.date ?? "Sin fecha"}</Typography>
-              <Typography variant="body2">
-                Vencimiento: {invoice?.due_date ?? "Sin fecha"}
-              </Typography>
-            </Box>
-          </Box>
 
-          <Divider sx={{ marginY: 2 }} />
+            <Divider sx={{ marginY: 2 }} />
 
-          {/* Información del Cliente */}
-          <Box mb={2}>
-            <Typography variant="h6" gutterBottom>
-              Información del Cliente
-            </Typography>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
-                  <TableCell>{invoice?.cliente?.name ?? localData?.cliente?.name ?? "Sin información"}</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Identificación</TableCell>
-                  <TableCell>
-                    {invoice?.cliente?.tipoDocumento || ""}:{" "}
-                    {invoice?.cliente?.identificacion || "Sin información"}
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Teléfono</TableCell>
-                  <TableCell>{invoice?.cliente?.telefono ?? localData?.cliente?.telefono ?? "Sin información"}</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Correo</TableCell>
-                  <TableCell>{invoice?.cliente?.correo ?? localData?.cliente?.correo ?? "Sin información"}</TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell sx={{ fontWeight: "bold" }}>Dirección</TableCell>
-                  <TableCell colSpan={3}>
-                    {invoice?.cliente?.direccion ?? localData?.cliente?.direccion ?? "Sin información"}
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </Box>
-
-          {/* Detalles de los Ítems */}
-          <Box mb={2}>
-            <Typography variant="h6" gutterBottom>
-              Detalles de la Factura
-            </Typography>
-            <Table>
-              {/* Encabezados */}
-              <TableHead>
-                <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell>Código</TableCell>
-                  <TableCell>Detalle</TableCell>
-                  <TableCell align="center">Cantidad</TableCell>
-                  <TableCell align="right">Precio</TableCell>
-                  <TableCell align="right">Total</TableCell>
-                </TableRow>
-              </TableHead>
-              {/* Cuerpo */}
-              <TableBody>
-                {(invoice?.items ?? localData?.items)?.map((item: any, index: number) => (
-                  <TableRow key={index}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{item?.codigo ?? "Sin código"}</TableCell>
-                    <TableCell>{item?.detalle ?? "Sin detalle"}</TableCell>
-                    <TableCell align="center">{item?.cantidad ?? 0}</TableCell>
-                    <TableCell align="right">${item?.precio?.toLocaleString() ?? 0}</TableCell>
-                    <TableCell align="right">${item?.total?.toLocaleString() ?? 0}</TableCell>
+            {/* Información del Cliente */}
+            <Box sx={{ color: "#000" }} mb={2}>
+              <Typography variant="h6" gutterBottom>
+                Información del Cliente
+              </Typography>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={cellStyle}>Nombre</TableCell>
+                    <TableCell sx={cellStyle}>
+                      {invoice?.cliente?.name ??
+                        localData?.cliente?.name ??
+                        "Sin información"}
+                    </TableCell>
+                    <TableCell sx={cellStyle}>Identificación</TableCell>
+                    <TableCell sx={cellStyle}>
+                      {invoice?.cliente?.tipoDocumento || ""}:{" "}
+                      {invoice?.cliente?.identificacion || "Sin información"}
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+                  <TableRow>
+                    <TableCell sx={cellStyle}>Teléfono</TableCell>
+                    <TableCell sx={cellStyle}>
+                      {invoice?.cliente?.telefono ??
+                        localData?.cliente?.telefono ??
+                        "Sin información"}
+                    </TableCell>
+                    <TableCell sx={cellStyle}>Correo</TableCell>
+                    <TableCell sx={cellStyle}>
+                      {invoice?.cliente?.correo ??
+                        localData?.cliente?.correo ??
+                        "Sin información"}
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={cellStyle}>Dirección</TableCell>
+                    <TableCell sx={cellStyle} colSpan={3}>
+                      {invoice?.cliente?.direccion ??
+                        localData?.cliente?.direccion ??
+                        "Sin información"}
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </Box>
 
-          {/* Totales */}
-          <Box textAlign="right">
-            <Typography variant="body1">
-              <strong>Subtotal:</strong> ${invoice?.subtotal?.toLocaleString() ?? localData?.subtotal?.toLocaleString() ?? 0}
-            </Typography>
-            <Typography variant="body1">
-              <strong>IVA (19%):</strong> ${invoice?.iva?.toLocaleString() ?? localData?.iva?.toLocaleString() ?? 0}
-            </Typography>
-            <Typography variant="h5">
-              <strong>Total:</strong> ${invoice?.total?.toLocaleString() ?? localData?.total?.toLocaleString() ?? 0}
-            </Typography>
+            {/* Detalles de los Ítems */}
+            <Box mb={2} sx={{ color: "#000" }}>
+              <Typography variant="h6" gutterBottom>
+                Detalles de la Factura
+              </Typography>
+              <Table>
+                {/* Encabezados */}
+                <TableHead>
+                  <TableRow>
+                    <TableCell sx={cellStyle}>#</TableCell>
+                    <TableCell sx={cellStyle}>Código</TableCell>
+                    <TableCell sx={cellStyle}>Detalle</TableCell>
+                    <TableCell sx={cellStyle} align="center">
+                      Cantidad
+                    </TableCell>
+                    <TableCell sx={cellStyle} align="right">
+                      Precio
+                    </TableCell>
+                    <TableCell sx={cellStyle} align="right">
+                      Total
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                {/* Cuerpo */}
+                <TableBody>
+                  {(invoice?.items ?? localData?.items)?.map(
+                    (item: any, index: number) => (
+                      <TableRow key={index}>
+                        <TableCell sx={cellStyle}>{index + 1}</TableCell>
+                        <TableCell sx={cellStyle}>
+                          {item?.codigo ?? "Sin código"}
+                        </TableCell>
+                        <TableCell sx={cellStyle}>
+                          {item?.detalle ?? "Sin detalle"}
+                        </TableCell>
+                        <TableCell sx={cellStyle} align="center">
+                          {item?.cantidad ?? 0}
+                        </TableCell>
+                        <TableCell sx={cellStyle} align="right">
+                          ${item?.precio?.toLocaleString() ?? 0}
+                        </TableCell>
+                        <TableCell sx={cellStyle} align="right">
+                          ${item?.total?.toLocaleString() ?? 0}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
+                </TableBody>
+              </Table>
+            </Box>
+
+            {/* Totales */}
+            <Box textAlign="right">
+              <Typography variant="body1">
+                <strong>Subtotal:</strong> $
+                {invoice?.subtotal?.toLocaleString() ??
+                  localData?.subtotal?.toLocaleString() ??
+                  0}
+              </Typography>
+              <Typography variant="body1">
+                <strong>IVA (19%):</strong> $
+                {invoice?.iva?.toLocaleString() ??
+                  localData?.iva?.toLocaleString() ??
+                  0}
+              </Typography>
+              <Typography variant="h5">
+                <strong>Total:</strong> $
+                {invoice?.total?.toLocaleString() ??
+                  localData?.total?.toLocaleString() ??
+                  0}
+              </Typography>
+            </Box>
           </Box>
         </Box>
 

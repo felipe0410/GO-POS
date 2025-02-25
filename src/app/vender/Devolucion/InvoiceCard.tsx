@@ -1,6 +1,5 @@
 import React from "react";
-import { Box, Typography, Card, CardContent, Avatar } from "@mui/material";
-import NiceAvatar from "react-nice-avatar";
+import { Box, Typography, Card, CardContent, Chip } from "@mui/material";
 
 interface InvoiceCardProps {
   invoice: any;
@@ -28,16 +27,20 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
     >
       <CardContent>
         <Box display="flex" alignItems="center" gap={2}>
-          <Avatar>
-            {/* <NiceAvatar
-              style={{ width: 40, height: 40 }}
-              {...(invoice?.cliente
-                ? { name: invoice?.cliente?.name }
-                : { seed: invoice.invoice })}
-            /> */}
-          </Avatar>
           <Box>
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+              <Chip
+                label={invoice?.cliente?.name || ""}
+                sx={{
+                  backgroundColor: "#69EAE2",
+                  textTransform: "uppercase",
+                  display: invoice?.cliente?.name ? "auto" : "none",
+                  position: "absolute",
+                  right: "15px",
+                  top: "9px",
+                  borderRadius: "0 15px",
+                }}
+              />
               {invoice.invoice}
             </Typography>
             <Typography variant="body2" color="gray">
@@ -51,7 +54,19 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
         <Box mt={1} display="flex" justifyContent="space-between">
           <Typography variant="subtitle1">Total: ${invoice.total}</Typography>
           <Typography variant="subtitle2" color="error">
-            {invoice.status}
+            <Chip
+              sx={{
+                position: "absolute",
+                right: "15px",
+                bottom: "25px",
+                borderRadius: "15px 0",
+                background:
+                  invoice.status == "CANCELADO" ? "#0d5f0d" : "#720000",
+                color: "aliceblue",
+                fontWeight: "bold",
+              }}
+              label={invoice.status}
+            />
           </Typography>
         </Box>
       </CardContent>
