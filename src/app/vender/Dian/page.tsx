@@ -55,7 +55,6 @@ const Page: any = () => {
   const [invoiceLetter, setInvoiceLetter] = useState(true);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
-
   const filteredData = async (
     event: any,
     removeCategoryFilter: boolean = false
