@@ -15,7 +15,7 @@ import {
   Button,
 } from "@mui/material";
 import { FacturaProviderContext } from "../context";
-import jsPDF from "jspdf";
+// @ts-ignore
 import html2pdf from "html2pdf.js";
 
 const cellStyle = { color: "#000" };
@@ -61,11 +61,11 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
     if (pdfRef.current) {
       pdfRef.current.classList.add("pdf-light-mode");
 
-      if (logo) {
-        const base64Logo = await getBase64Image(logo);
-        const imgElement = pdfRef.current.querySelector("img");
-        if (imgElement) imgElement.src = base64Logo;
-      }
+      // if (logo) {
+      //   const base64Logo = await getBase64Image(logo);
+      //   const imgElement = pdfRef.current.querySelector("img");
+      //   if (imgElement) imgElement.src = base64Logo;
+      // }
 
       const options = {
         margin: 10,
