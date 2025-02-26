@@ -1,5 +1,6 @@
+'use client'
 /* eslint-disable @next/next/no-img-element */
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -34,39 +35,19 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
   const { localData, dataEstablishmentData, dianData } = useContext(
     FacturaProviderContext
   );
+  const [isClient, setIsClient] = useState(false);
 
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
   const logo = dataEstablishmentData?.img;
   const pdfRef = useRef<HTMLDivElement>(null);
 
   if (!invoice) return null;
-  const getBase64Image = async (imgUrl: string) => {
-    try {
-      const response = await fetch(imgUrl, { mode: "cors" }); // Intentar forzar CORS
-      if (!response.ok) {
-        throw new Error(`Error al cargar la imagen: ${response.statusText}`);
-      }
-      const blob = await response.blob();
-      return new Promise<string>((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(blob);
-      });
-    } catch (error) {
-      console.error("Error obteniendo la imagen en Base64:", error);
-      return null;
-    }
-  };
-
   const handleDownloadPDF = async () => {
+    if (!isClient) return;
     if (pdfRef.current) {
       pdfRef.current.classList.add("pdf-light-mode");
-
-      // if (logo) {
-      //   const base64Logo = await getBase64Image(logo);
-      //   const imgElement = pdfRef.current.querySelector("img");
-      //   if (imgElement) imgElement.src = base64Logo;
-      // }
-
       const options = {
         margin: 10,
         filename: `factura-${invoice.document_number ?? "sin-numero"}.pdf`,
