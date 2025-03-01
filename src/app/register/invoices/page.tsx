@@ -27,6 +27,7 @@ import InvoicesTable from "./InvoicesTable";
 import { getAllInvoicesData } from "@/firebase";
 import InvoicesTableResponsive from "./InvoicesTableResponsive";
 import DateModal from "./DateModal";
+import DashboardCards from "./DashboardCards";
 
 const Invoices = () => {
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
@@ -46,6 +47,7 @@ const Invoices = () => {
   const totalPages = Math.ceil(filter?.length / itemsPerPage);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+  const [totalVentasPendientesHoy, setTotalVentasPendientesHoy] = useState(0);
 
   const debouncedHandleSearchChange = debounce(() => {}, 300);
 
@@ -116,15 +118,39 @@ const Invoices = () => {
 
     setfilter(filteredData);
 
-    // Calcular total de ventas de hoy
+    // Filtrar ventas del día que NO están pendientes
     const ventasHoy = data.filter((item) => {
       const [fecha] = item.date.split(" ");
-      return fecha === getCurrentDateTime();
+      return (
+        fecha === getCurrentDateTime() &&
+        item.status.toUpperCase() !== "PENDIENTE"
+      );
     });
 
+    // Calcular total de ventas de hoy (excluyendo pendientes)
     const totalVentas =
       ventasHoy.reduce((total, factura) => total + factura.total, 0) || 0;
     setTotalVentasHoy(totalVentas);
+
+    // Filtrar ventas del día que ESTÁN pendientes
+    const ventasPendientesHoy = data.filter((item) => {
+      const [fecha] = item.date.split(" ");
+      return (
+        fecha === getCurrentDateTime() &&
+        item.status.toUpperCase() === "PENDIENTE"
+      );
+    });
+
+    // Calcular total de ventas pendientes del día
+    const totalVentasPendientes =
+      ventasPendientesHoy.reduce(
+        (total, factura) => total + factura.total,
+        0
+      ) || 0;
+    setTotalVentasPendientesHoy(totalVentasPendientes);
+
+    console.log("Ventas no pendientes::>", ventasHoy);
+    console.log("Ventas pendientes::>", ventasPendientesHoy);
   }, [data, searchTerm, statusFilter, typeFilter]);
 
   useEffect(() => {
@@ -152,10 +178,74 @@ const Invoices = () => {
     <>
       <Header title="CAJA" />
       <Typography sx={typographyTitle}>FACTURAS</Typography>
-      <Typography sx={typographySubtitle}>
-        Aqui encontraras las facturas que ya han sido generadas, podras
-        editarlas y ver su estado.
-      </Typography>
+      <Box>
+        <Typography sx={typographySubtitle}>
+          Aqui encontraras las facturas que ya han sido generadas, podras
+          editarlas y ver su estado.
+        </Typography>
+        <>
+          {
+            <DashboardCards
+              totalVentasHoy={totalVentasHoy}
+              totalVentasPendientesHoy={totalVentasPendientesHoy}
+              totalVentasFecha={totalVentasFecha}
+              selectedDate={selectedDate}
+              getCurrentDateTime={getCurrentDateTime}
+            />
+          }
+        </>
+        {/* <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: { md: "center", xs: "center" },
+            marginTop: { md: "10px", xs: "10px" },
+          }}
+        >
+          <Box sx={{ textAlign: "start", marginRight: "20px" }}>
+            <Typography
+              variant="caption"
+              sx={BoxStyles.typographyCaptionStyles}
+            >
+              {`Fecha: ${getCurrentDateTime()}`}
+            </Typography>
+            <Box sx={BoxStyles.boxGreen}>
+              <Typography sx={BoxStyles.typographyBoxStyles}>
+                {`$ ${totalVentasHoy.toLocaleString("en-US")}`}
+              </Typography>
+            </Box>
+          </Box>
+          <Box sx={{ textAlign: "start", marginRight: "20px" }}>
+            <Typography
+              variant="caption"
+              sx={BoxStyles.typographyCaptionStyles}
+            >
+              {`Pendiente hoy`}
+            </Typography>
+            <Box sx={BoxStyles.boxGreen}>
+              <Typography
+                sx={{ ...BoxStyles.typographyBoxStyles, paddingRight: "10px" }}
+              >
+                {`$ ${totalVentasPendientesHoy.toLocaleString("en-US")}`}
+              </Typography>
+            </Box>
+          </Box>
+
+          <Box sx={{ textAlign: "start", minWidth: "5rem" }}>
+            <Typography
+              variant="caption"
+              sx={BoxStyles.typographyCaptionStyles}
+            >
+              {`Fecha: ${selectedDate ? selectedDate : " "}`}
+            </Typography>
+            <Box sx={BoxStyles.boxOrange}>
+              <Typography sx={BoxStyles.typographyBoxStyles}>
+                {`$ ${totalVentasFecha.toLocaleString("en-US")}`}
+              </Typography>
+            </Box>
+          </Box>
+        </Box> */}
+      </Box>
       <Paper
         id={"paper"}
         sx={{ width: "95%", height: "75%", marginTop: "2rem" }}
@@ -272,41 +362,6 @@ const Invoices = () => {
                   <MenuItem value="FACTURA NORMAL">Factura Normal</MenuItem>
                 </Select>
               </FormControl>{" "}
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: { md: "center", xs: "center" },
-                  marginTop: { md: "10px", xs: "10px" },
-                }}
-              >
-                <Box sx={{ textAlign: "start", marginRight: "20px" }}>
-                  <Typography
-                    variant="caption"
-                    sx={BoxStyles.typographyCaptionStyles}
-                  >
-                    {`Fecha: ${getCurrentDateTime()}`}
-                  </Typography>
-                  <Box sx={BoxStyles.boxGreen}>
-                    <Typography sx={BoxStyles.typographyBoxStyles}>
-                      {`$ ${totalVentasHoy.toLocaleString("en-US")}`}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Box sx={{ textAlign: "start", minWidth: "5rem" }}>
-                  <Typography
-                    variant="caption"
-                    sx={BoxStyles.typographyCaptionStyles}
-                  >
-                    {`Fecha: ${selectedDate ? selectedDate : " "}`}
-                  </Typography>
-                  <Box sx={BoxStyles.boxOrange}>
-                    <Typography sx={BoxStyles.typographyBoxStyles}>
-                      {`$ ${totalVentasFecha.toLocaleString("en-US")}`}
-                    </Typography>
-                  </Box>
-                </Box>
-              </Box>
             </Box>
           )}
           <Box sx={{ marginTop: "1.56rem", height: "80%" }}>

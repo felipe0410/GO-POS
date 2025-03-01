@@ -31,7 +31,7 @@ export const typographyPaperSearch = {
 export const BoxStyles = {
   boxGreen: {
     width: "100%",
-    height: "2.2rem",
+   //height: "2.2rem",
     borderRadius: "0.8rem",
     border: "1px solid #42FF6B",
     background:
@@ -39,7 +39,7 @@ export const BoxStyles = {
   },
   boxOrange: {
     width: "100%",
-    height: "2.2rem",
+    //height: "2.2rem",
     borderRadius: "0.8rem",
     border: "1px solid #FE280B",
     background:
