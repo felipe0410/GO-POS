@@ -36,7 +36,7 @@ const ProductSidebar = ({
       setVisibleProducts(parsedProducts.slice(0, ITEMS_PER_PAGE));
       return;
     }
-    const unsubscribe: any = getAllProductsDataonSnapshot((data: any[]) => {
+    const unsubscribee: any = getAllProductsDataonSnapshot((data: any[]) => {
       if (data) {
         localStorage.setItem(cacheKey, JSON.stringify(data));
         setProducts(data);
@@ -46,7 +46,7 @@ const ProductSidebar = ({
     });
 
     return () => {
-      if (unsubscribe) unsubscribe();
+      if (unsubscribee) unsubscribee();
     };
   }, []);
 

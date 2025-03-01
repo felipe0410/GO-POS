@@ -38,34 +38,34 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    setIsClient(typeof window !== "undefined");
   }, []);
   const logo = dataEstablishmentData?.img;
   const pdfRef = useRef<HTMLDivElement>(null);
 
   if (!invoice) return null;
   const handleDownloadPDF = async () => {
-    if (!isClient) return;
-    if (pdfRef.current) {
-      pdfRef.current.classList.add("pdf-light-mode");
-      const options = {
-        margin: 10,
-        filename: `factura-${invoice.document_number ?? "sin-numero"}.pdf`,
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, allowTaint: true },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
+    if (!isClient || !pdfRef.current) return;
 
-      html2pdf()
-        .from(pdfRef.current)
-        .set(options)
-        .save()
-        .then(() => {
-          // Remover la clase después de generar el PDF para que la UI no cambie
-          pdfRef.current?.classList.remove("pdf-light-mode");
-        });
+    const html2pdf = (await import("html2pdf.js")).default; // Importa dinámicamente solo en el cliente
+
+    pdfRef.current.classList.add("pdf-light-mode");
+
+    const options = {
+      margin: 10,
+      filename: `factura-${invoice?.document_number ?? "sin-numero"}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+
+    try {
+      await html2pdf().from(pdfRef.current).set(options).save();
+    } catch (error) {
+      console.error("Error al generar el PDF:", error);
     }
   };
+  if (!isClient) return null;
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle>
