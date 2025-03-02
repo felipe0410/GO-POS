@@ -8,6 +8,8 @@ import {
   StepLabel,
   createTheme,
   ThemeProvider,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import StepCliente from "./StepCliente";
 import StepItems from "./StepItems";
@@ -58,8 +60,8 @@ const FacturaEditable = () => {
     ],
     total: 0,
   });
-  const steps = ["Datos del Cliente", "Items de la Factura", "Resumen"];
-
+  const steps = ["Cliente", "Factura", "Resumen"];
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const validateItems = () => {
     return data.items.every(
       (item) =>
@@ -113,7 +115,7 @@ const FacturaEditable = () => {
         elevation={3}
         sx={{
           padding: 4,
-          width: "80%",
+          width: activeStep == 1 && !isSmallScreen ? "75%" : "95%",
           borderRadius: "20px",
           height: "110%",
         }}
@@ -129,7 +131,7 @@ const FacturaEditable = () => {
         <Box mt={4}>{renderStepContent(activeStep)}</Box>
         <Box mt={4} display="flex" justifyContent="space-between">
           <Button
-            disabled={activeStep === 0 }
+            disabled={activeStep === 0}
             onClick={handleBack}
             color="primary"
           >

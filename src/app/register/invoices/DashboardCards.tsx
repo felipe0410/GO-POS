@@ -68,7 +68,6 @@ const DashboardCards = ({
           </Box>
         </Grid>
 
-        {/* Card: Total Ventas en Fecha Seleccionada */}
         <Grid item xs={12} sm={6} md={4}>
           <Box width="100%">
             <Card

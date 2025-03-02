@@ -5,12 +5,18 @@ import {
   Typography,
   Autocomplete,
   Button,
+  Grid,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { getAllClientsData, createClient, deleteClient } from "@/firebase";
 import NewClientModal from "./NewClientModal";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 import { FacturaProviderContext } from "../context";
 import DeleteModal from "./DeleteModal";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
   const { newClient, setNewClient, setLocalData } =
@@ -20,7 +26,9 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+  
   useEffect(() => {
     const unsubscribe = getAllClientsData(setClients);
     return () => {
@@ -129,228 +137,97 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
   }, [selectedClient, setLocalData]);
 
   return (
-    <Box display="grid" gap={2}>
+    <Box sx={{ width: "100%", maxWidth: "1000px", margin: "auto", padding: 0 }}>
       <SnackbarProvider />
-      <Typography variant="h6">Seleccionar Cliente</Typography>
+      <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }}>
+        Seleccionar Cliente
+      </Typography>
+
+      {/* Selector de clientes */}
       <Autocomplete
         options={clients}
         getOptionLabel={(option) => option.name || ""}
         value={selectedClient}
         onChange={(event, newValue) => handleClientSelection(newValue)}
         renderInput={(params) => (
-          <TextField {...params} label="Buscar Cliente" />
+          <TextField {...params} label="Buscar Cliente" fullWidth />
         )}
         isOptionEqualToValue={(option, value) => option.id === value.id}
       />
-      <Box display="flex" gap={2} mt={2} sx={{ placeSelf: "center" }}>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setIsEdit(false);
-            setIsDialogOpen(true);
-          }}
-        >
-          Crear Nuevo Cliente
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleEditClient}
-          disabled={!selectedClient}
-        >
-          Editar Cliente
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => setIsDeleteModalOpen(true)}
-          disabled={!selectedClient}
-        >
-          Eliminar Cliente
-        </Button>
-      </Box>
-      <Box display="grid" gridTemplateColumns="1fr 1fr" gap={2} mt={2}>
-        <TextField
-          label="Nombre"
-          value={data.cliente.name || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, name: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Correo *"
-          value={data.cliente.correo || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, correo: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Teléfono"
-          value={data.cliente.telefono || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, telefono: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Dirección"
-          value={data.cliente.direccion || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, direccion: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Identificación *"
-          value={data.cliente.identificacion || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, identificacion: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="País"
-          value={data.cliente.pais || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, pais: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Departamento"
-          value={data.cliente.departamento || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, departamento: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Ciudad"
-          value={data.cliente.ciudad || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, ciudad: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Tipo de Documento"
-          value={data.cliente.tipoDocumento || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, tipoDocumento: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Tipo de Contribuyente"
-          value={data.cliente.tipoContribuyente || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, tipoContribuyente: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Régimen Contable"
-          value={data.cliente.tipoContribuyente || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, tipoContribuyente: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-        <TextField
-          label="Tipo de Responsabilidad"
-          value={data.cliente.regimenFiscal || ""}
-          InputProps={{
-            readOnly: true,
-          }}
-          onChange={(e) =>
-            setData((prev: any) => ({
-              ...prev,
-              cliente: { ...prev.cliente, regimenFiscal: e.target.value },
-            }))
-          }
-          variant="outlined"
-          size="small"
-        />
-      </Box>
+
+      {/* Botones de acción */}
+      <Grid container spacing={1} justifyContent="center" mt={1}>
+        <Grid item xs={4}>
+          <Button
+            variant="outlined"
+            fullWidth
+            onClick={() => {
+              setIsEdit(false);
+              setIsDialogOpen(true);
+            }}
+          >
+            <AddCircleIcon />
+            {!isSmallScreen && " Crear Cliente"}
+          </Button>
+        </Grid>
+        <Grid item xs={4}>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleEditClient}
+            disabled={!selectedClient}
+          >
+            <EditIcon />
+            {!isSmallScreen && " Editar Cliente"}
+          </Button>
+        </Grid>
+        <Grid item xs={4}>
+          <Button
+            variant="contained"
+            color="error"
+            fullWidth
+            onClick={() => setIsDeleteModalOpen(true)}
+            disabled={!selectedClient}
+          >
+            <DeleteIcon />
+            {!isSmallScreen && " Eliminar Cliente"}
+          </Button>
+        </Grid>
+      </Grid>
+
+      {/* Información del Cliente */}
+      <Grid container spacing={2} mt={3}>
+        {[
+          { label: "Nombre", value: data.cliente.name },
+          { label: "Correo", value: data.cliente.correo },
+          { label: "Teléfono", value: data.cliente.telefono },
+          { label: "Dirección", value: data.cliente.direccion },
+          { label: "Identificación", value: data.cliente.identificacion },
+          { label: "País", value: data.cliente.pais },
+          { label: "Departamento", value: data.cliente.departamento },
+          { label: "Ciudad", value: data.cliente.ciudad },
+          { label: "Tipo de Documento", value: data.cliente.tipoDocumento },
+          {
+            label: "Tipo de Contribuyente",
+            value: data.cliente.tipoContribuyente,
+          },
+          { label: "Régimen Fiscal", value: data.cliente.regimenFiscal },
+        ].map((field, index) => (
+          <Grid item xs={12} sm={6} key={index}>
+            <TextField
+              label={field.label}
+              value={field.value || ""}
+              InputProps={{ readOnly: true }}
+              variant="outlined"
+              size="small"
+              fullWidth
+            />
+          </Grid>
+        ))}
+      </Grid>
+
+      {/* Modales */}
       <NewClientModal
         open={isDialogOpen}
         onClose={() => setIsDialogOpen(false)}
@@ -363,7 +240,7 @@ const StepCliente = ({ data, setData }: { data: any; setData: Function }) => {
         open={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={handleDeleteClient}
-        title="¿ESTAS SEGURO QUE QUIERES ELIMINAR EL CLIENTE?"
+        title="¿ESTÁS SEGURO QUE QUIERES ELIMINAR EL CLIENTE?"
         description={`Cliente: ${selectedClient?.name || ""}`}
       />
     </Box>

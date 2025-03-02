@@ -8,20 +8,30 @@ import {
   IconButton,
   TextField,
   Typography,
+  Drawer,
+  Badge,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
+import { Add, Close } from "@mui/icons-material";
+import InventoryIcon from '@mui/icons-material/Inventory';
 import { getAllProductsDataonSnapshot } from "@/firebase";
 
 const ProductSidebar = ({
   onAddProduct,
+  items,
 }: {
   onAddProduct: (product: any) => void;
+  items: any[];
 }) => {
   const [products, setProducts] = useState<any[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [visibleProducts, setVisibleProducts] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const observerRef = useRef<HTMLDivElement | null>(null);
   const ITEMS_PER_PAGE = 10;
@@ -36,7 +46,7 @@ const ProductSidebar = ({
       setVisibleProducts(parsedProducts.slice(0, ITEMS_PER_PAGE));
       return;
     }
-    const unsubscribee: any = getAllProductsDataonSnapshot((data: any[]) => {
+    const unsubscribe: any = getAllProductsDataonSnapshot((data: any[]) => {
       if (data) {
         localStorage.setItem(cacheKey, JSON.stringify(data));
         setProducts(data);
@@ -45,9 +55,9 @@ const ProductSidebar = ({
       }
     });
 
-    return () => {
-      if (unsubscribee) unsubscribee();
-    };
+    if (typeof unsubscribe === "function") {
+      unsubscribe();
+    }
   }, []);
 
   const loadMoreProducts = () => {
@@ -83,7 +93,7 @@ const ProductSidebar = ({
         observer.unobserve(observerRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasMore, filteredProducts, visibleProducts]);
 
   const handleSearch = (query: string) => {
@@ -99,88 +109,134 @@ const ProductSidebar = ({
   };
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 0,
-        right: 0,
-        width: 300,
-        height: "100vh",
-        backgroundColor: "#1E1E1E",
-        color: "#FFFFFF",
-        boxShadow: "-3px 0 5px rgba(0,0,0,0.2)",
-        overflowY: "auto",
-        p: 2,
-      }}
-    >
-      <Typography
-        variant="h6"
-        gutterBottom
+    <>
+      {isSmallScreen && (
+        <IconButton
+          onClick={() => setIsOpen(true)}
+          sx={{
+            position: "fixed",
+            top: 16,
+            right: 16,
+            backgroundColor: "#69EAE2",
+            color: "#1E1E1E",
+            zIndex: theme.zIndex.drawer + 2,
+          }}
+        >
+          <InventoryIcon />
+        </IconButton>
+      )}
+      <Drawer
+        anchor="right"
+        open={isSmallScreen ? isOpen : true}
+        onClose={() => setIsOpen(false)}
+        variant={isSmallScreen ? "temporary" : "persistent"}
         sx={{
-          textAlign: "center",
-          fontWeight: "bold",
-          color: "#69EAE2",
+          zIndex: 1600,
+          "& .MuiDrawer-paper": {
+            width: isSmallScreen ? "80vw" : 300,
+            height: "100vh",
+            backgroundColor: "#1E1E1E",
+            color: "#FFFFFF",
+            boxShadow: "-3px 0 5px rgba(0,0,0,0.2)",
+            overflowY: "auto",
+            p: 2,
+          },
         }}
       >
-        Productos
-      </Typography>
-      <TextField
-        fullWidth
-        label="Buscar producto"
-        value={searchQuery}
-        onChange={(e) => handleSearch(e.target.value)}
-        sx={{
-          input: { color: "#FFFFFF" },
-          label: { color: "#B3B3B3" },
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": { borderColor: "#69EAE2" },
-            "&:hover fieldset": { borderColor: "#69EAE2" },
-            "&.Mui-focused fieldset": { borderColor: "#69EAE2" },
-          },
-          mb: 2,
-        }}
-      />
-      <List>
-        {visibleProducts.map((product) => (
-          <ListItem
-            key={product.id}
-            sx={{
-              px: 2,
-              py: 1,
-              borderRadius: "8px",
-              backgroundColor: "#2a2a2a",
-              mb: 1,
-            }}
+        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: "bold", color: "#69EAE2" }}
           >
-            <ListItemText
-              primary={product.productName}
-              secondary={
-                <Typography
-                  sx={{ color: "#69EAE2", fontWeight: "bold" }}
-                >{`Precio: ${product.price}`}</Typography>
-              }
-            />
-            <ListItemSecondaryAction>
-              <IconButton
-                onClick={() => onAddProduct(product)}
-                color="primary"
+            Productos
+          </Typography>
+          <IconButton
+            onClick={() => setIsOpen(false)}
+            sx={{ color: "#FFFFFF" }}
+          >
+            <Close />
+          </IconButton>
+        </Box>
+        <TextField
+          fullWidth
+          label="Buscar producto"
+          value={searchQuery}
+          onChange={(e) => handleSearch(e.target.value)}
+          sx={{
+            input: { color: "#FFFFFF" },
+            label: { color: "#B3B3B3" },
+            "& .MuiOutlinedInput-root": {
+              "& fieldset": { borderColor: "#69EAE2" },
+              "&:hover fieldset": { borderColor: "#69EAE2" },
+              "&.Mui-focused fieldset": { borderColor: "#69EAE2" },
+            },
+            mb: 2,
+          }}
+        />
+        <List>
+          {visibleProducts.map((product) => {
+            const selectedItem = items.find(
+              (item) => item.codigo === product.barCode
+            );
+            const isSelected = Boolean(selectedItem);
+
+            return (
+              <ListItem
+                key={product.id}
                 sx={{
-                  color: "#69EAE2",
+                  px: 2,
+                  py: 1,
+                  borderRadius: "8px",
+                  backgroundColor: isSelected ? "#2a2a2a" : "transparent",
+                  mb: 1,
+                  border: isSelected ? "2px solid #69EAE2" : "none",
                 }}
               >
-                <Add />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        ))}
-        {hasMore && (
-          <div
-            ref={observerRef}
-            style={{ height: 20, backgroundColor: "transparent" }}
-          />
-        )}
-      </List>
-    </Box>
+                <ListItemText
+                  primary={product.productName}
+                  secondary={
+                    <Typography
+                      sx={{ color: "#69EAE2", fontWeight: "bold" }}
+                    >{`Precio: ${product.price}`}</Typography>
+                  }
+                />
+                <ListItemSecondaryAction>
+                  {isSelected && selectedItem?.cantidad > 0 && (
+                    <Badge
+                      badgeContent={selectedItem.cantidad}
+                      color="primary"
+                      sx={{
+                        position: "absolute",
+                        top: 8,
+                        right: 48,
+                        backgroundColor: "#69EAE2",
+                        color: "#1E1E1E",
+                        fontWeight: "bold",
+                      }}
+                    />
+                  )}
+                  <IconButton
+                    onClick={() => onAddProduct(product)}
+                    color="primary"
+                    sx={{
+                      color: "#69EAE2",
+                    }}
+                  >
+                    <Add />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            );
+          })}
+          {hasMore && (
+            <div
+              ref={observerRef}
+              style={{ height: 20, backgroundColor: "transparent" }}
+            />
+          )}
+        </List>
+      </Drawer>
+    </>
   );
 };
 

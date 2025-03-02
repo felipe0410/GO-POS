@@ -11,6 +11,10 @@ import {
   TableBody,
   Button,
   CircularProgress,
+  useTheme,
+  useMediaQuery,
+  Grid,
+  TableContainer,
 } from "@mui/material";
 import { FacturaProviderContext } from "../context";
 import { sendInvoiceToDian2 } from "../slidebar-dian/sendInvoiceToDian";
@@ -61,10 +65,15 @@ const InvoicePreview = () => {
     try {
       return storedValue ? (JSON.parse(storedValue) as DianRecord) : null;
     } catch (error) {
-      console.error("Error al parsear el registro DIAN de localStorage:", error);
+      console.error(
+        "Error al parsear el registro DIAN de localStorage:",
+        error
+      );
       return null;
     }
   })();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
     const userData = localStorage.getItem("dataUser");
     if (userData) {
@@ -264,29 +273,62 @@ const InvoicePreview = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          height: "60vh",
-          width: "100%",
+          height: "100vh",
+          width: "100vw",
           padding: "20px",
           boxSizing: "border-box",
+          position: "relative",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "baseline" }}>
-          <Typography variant="h5" gutterBottom>
-            Factura enviada con éxito
-          </Typography>
+        {/* Contenedor de botones */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 10,
+            right: 10,
+            zIndex: 1000,
+            display: "flex",
+            gap: 1,
+            width: "100%",
+            justifyContent: "center",
+          }}
+        >
+          {/* Botón para finalizar */}
           <Button
             variant="contained"
-            sx={{ marginTop: 2, marginLeft: "15px" }}
+            sx={{
+              backgroundColor: "#1976d2",
+              "&:hover": { backgroundColor: "#115293" },
+            }}
             onClick={handleFinalize}
           >
             Finalizar
           </Button>
+
+          {/* Botón para descargar el PDF */}
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => window.open(pdfUrl, "_blank")}
+          >
+            Descargar
+          </Button>
         </Box>
 
+        {/* Mensaje de éxito */}
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{ textAlign: "center", fontWeight: "bold", mt: 4 }}
+        >
+          Factura enviada con éxito
+        </Typography>
+
+        {/* Contenedor del PDF */}
         <Box
           sx={{
             width: "100%",
-            height: "80%",
+            height: "calc(100vh - 80px)", // Resta la altura de los botones para que no lo cubran
             border: "1px solid #ccc",
             overflow: "hidden",
           }}
@@ -304,188 +346,164 @@ const InvoicePreview = () => {
       </Box>
     );
   }
-
   return (
     <Box
       sx={{
         maxWidth: "900px",
         margin: "auto",
-        backgroundColor: isDarkMode ? "#1E1E1E" : "#FFFFFF",
-        color: isDarkMode ? "#FFFFFF" : "#000000",
-        padding: "20px",
+        backgroundColor: "#FFFFFF",
+        padding: isMobile ? "12px" : "20px",
         borderRadius: "10px",
         boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.5)",
       }}
     >
       <SnackbarProvider />
-      <Box display="flex" justifyContent="space-between" mb={2}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSendToDian}
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? <CircularProgress size={24} /> : "Enviar a la DIAN"}
-        </Button>
-        <SaveDraftDialog
-          open={openDialog}
-          onClose={() => setOpenDialog(false)}
-          onSave={handleDraftSave}
-        />
-        <Button variant="contained" onClick={handleSaveDraft}>
-          Guardar Borrador
-        </Button>
-        <Button variant="contained" onClick={toggleMode}>
-          Cambiar a {isDarkMode ? "Modo Claro" : "Modo Oscuro"}
-        </Button>
-      </Box>
 
-      <Box
-        display="flex"
-        justifyContent="space-between"
+      {/* Botones de Acción */}
+      <Grid container spacing={2} mb={2} justifyContent="center">
+        <Grid item xs={12} sm="auto">
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth={isMobile}
+            onClick={handleSendToDian}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? <CircularProgress size={24} /> : "Enviar a la DIAN"}
+          </Button>
+        </Grid>
+        <Grid item xs={12} sm="auto">
+          <Button
+            variant="contained"
+            fullWidth={isMobile}
+            onClick={handleSaveDraft}
+          >
+            Guardar Borrador
+          </Button>
+        </Grid>
+      </Grid>
+      <SaveDraftDialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        onSave={handleDraftSave}
+      />
+
+      {/* Encabezado Factura */}
+      <Grid
+        container
+        spacing={2}
         alignItems="center"
-        mb={4}
+        justifyContent="space-between"
       >
-        <Box>
-          {logo && <img src={logo} alt="Logo" style={{ height: "50px" }} />}
+        <Grid item xs={12} sm={6}>
           <Typography sx={{ textTransform: "uppercase" }} variant="h6">
-            {dataEstablishmentData?.nameEstablishment ?? "sin datos"}
-          </Typography>{" "}
-          <Typography variant="body2">
-            N.I.T: {dataEstablishmentData?.NIT_CC ?? "sin datos"}
+            {dataEstablishmentData?.nameEstablishment ?? "Sin datos"}
           </Typography>
           <Typography variant="body2">
-            {localStorageDian?.email ??
-              dataEstablishmentData?.email ??
-              "sin datos"}{" "}
-            | {dataEstablishmentData?.phone ?? "sin datos"}
+            N.I.T: {dataEstablishmentData?.NIT_CC ?? "Sin datos"}
           </Typography>
-        </Box>
-        <Box textAlign="right">
+          <Typography variant="body2">
+            {dataEstablishmentData?.email ?? "Sin datos"} |{" "}
+            {dataEstablishmentData?.phone ?? "Sin datos"}
+          </Typography>
+        </Grid>
+        <Grid item xs={12} sm={6} textAlign={isMobile ? "center" : "right"}>
           <Typography variant="h5" fontWeight="bold">
             FACTURA
           </Typography>
           <Typography variant="body2">
-            Número: {dianData?.Prefijo ?? "sin prefijo"}-
-            {localData?.document_number ?? "sin numero"}
+            Número: {localData?.document_number ?? "Sin número"}
           </Typography>
-          <Typography variant="body2">Fecha: { getCurrentDate()}</Typography>
-          <Typography variant="body2">Vencimiento: { getEndOfYearDate()}</Typography>
-        </Box>
-      </Box>
+          <Typography variant="body2">
+            Fecha: {new Date().toLocaleDateString()}
+          </Typography>
+        </Grid>
+      </Grid>
+
       <Divider sx={{ marginY: 2 }} />
+
+      {/* Información del Cliente */}
       <Box mb={4}>
         <Typography variant="h6" gutterBottom>
           Información del Cliente:
         </Typography>
-        <Table
-          sx={{
-            border: `1px solid ${tableStyles.borderColor}`,
-            backgroundColor: tableStyles.backgroundColor,
-            borderRadius: "10px",
-            overflow: "hidden",
-          }}
-        >
-          <TableBody>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", color: tableStyles.color }}>
-                Nombre
-              </TableCell>
-              <TableCell sx={{ color: tableStyles.color }}>
-                {localData.cliente.name}
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: tableStyles.color }}>
-                Identificación
-              </TableCell>
-              <TableCell sx={{ color: tableStyles.color }}>
-                {localData?.cliente?.tipoDocumento || ""}:{" "}
-                {localData?.cliente?.identificacion || "Sin información"}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", color: tableStyles.color }}>
-                Teléfono
-              </TableCell>
-              <TableCell sx={{ color: tableStyles.color }}>
-                {localData.cliente.telefono}
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold", color: tableStyles.color }}>
-                Correo
-              </TableCell>
-              <TableCell sx={{ color: tableStyles.color }}>
-                {localData?.cliente?.correo || "Sin información"}
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold", color: tableStyles.color }}>
-                Dirección
-              </TableCell>
-              <TableCell sx={{ color: tableStyles.color }} colSpan={3}>
-                {localData.cliente.direccion}, {localData.cliente.ciudad},{" "}
-                {localData.cliente.departamento}, {localData.cliente.pais}
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small">
+            <TableBody>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Nombre</TableCell>
+                <TableCell>
+                  {localData.cliente?.name || "Sin información"}
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>
+                  Identificación
+                </TableCell>
+                <TableCell>
+                  {localData.cliente?.tipoDocumento || ""}:{" "}
+                  {localData.cliente?.identificacion || "Sin información"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Teléfono</TableCell>
+                <TableCell>
+                  {localData.cliente?.telefono || "Sin información"}
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Correo</TableCell>
+                <TableCell>
+                  {localData.cliente?.correo || "Sin información"}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }}>Dirección</TableCell>
+                <TableCell colSpan={3}>
+                  {localData.cliente?.direccion || "Sin información"},{" "}
+                  {localData.cliente?.ciudad}, {localData.cliente?.departamento}
+                  , {localData.cliente?.pais}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
 
-      {/* Detalles de la factura */}
+      {/* Detalles de la Factura */}
       <Box mb={4}>
         <Typography variant="h6" gutterBottom>
           Detalles de la Factura:
         </Typography>
-        <Table sx={{ border: `1px solid ${tableStyles.borderColor}` }}>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: tableStyles.backgroundColor }}>
-              <TableCell sx={{ color: tableStyles.color }}>#</TableCell>
-              <TableCell sx={{ color: tableStyles.color }}>Código</TableCell>
-              <TableCell sx={{ color: tableStyles.color }}>Detalle</TableCell>
-              <TableCell align="center" sx={{ color: tableStyles.color }}>
-                Cantidad
-              </TableCell>
-              <TableCell align="right" sx={{ color: tableStyles.color }}>
-                Precio
-              </TableCell>
-              <TableCell align="right" sx={{ color: tableStyles.color }}>
-                Total
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {localData.items.map((item: any, index: number) => (
-              <TableRow
-                key={index}
-                sx={{
-                  backgroundColor: isDarkMode ? "#1E1E1E" : "#FFFFFF",
-                  "&:hover": {
-                    backgroundColor: isDarkMode ? "#2A2A2A" : "#F1F1F1",
-                  },
-                }}
-              >
-                <TableCell sx={{ color: tableStyles.color }}>
-                  {index + 1}
-                </TableCell>
-                <TableCell sx={{ color: tableStyles.color }}>
-                  {item.codigo}
-                </TableCell>
-                <TableCell sx={{ color: tableStyles.color }}>
-                  {item.detalle}
-                </TableCell>
-                <TableCell sx={{ color: tableStyles.color }} align="center">
-                  {item.cantidad}
-                </TableCell>
-                <TableCell sx={{ color: tableStyles.color }} align="right">
-                  ${item.precio.toLocaleString()}
-                </TableCell>
-                <TableCell sx={{ color: tableStyles.color }} align="right">
-                  ${item.total.toLocaleString()}
-                </TableCell>
+        <TableContainer sx={{ overflowX: "auto" }}>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Código</TableCell>
+                <TableCell>Detalle</TableCell>
+                <TableCell align="center">Cantidad</TableCell>
+                <TableCell align="right">Precio</TableCell>
+                <TableCell align="right">Total</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {localData.items.map((item: any, index: number) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{item.codigo}</TableCell>
+                  <TableCell>{item.detalle}</TableCell>
+                  <TableCell align="center">{item.cantidad}</TableCell>
+                  <TableCell align="right">
+                    ${item.precio.toLocaleString()}
+                  </TableCell>
+                  <TableCell align="right">
+                    ${item.total.toLocaleString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Box>
 
+      {/* Totales */}
       <Box display="flex" justifyContent="flex-end" mb={4}>
         <Box>
           <Typography variant="body1">
@@ -493,7 +511,7 @@ const InvoicePreview = () => {
           </Typography>
           <Typography variant="body1">
             <strong>IVA (19%):</strong> $
-            {Math.round(localData.total * 0).toLocaleString()}
+            {/* {Math.round(localData.total * 0.19).toLocaleString()} */}0
           </Typography>
           <Typography variant="h5">
             <strong>Total:</strong> $

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 /* eslint-disable @next/next/no-img-element */
 import React, { useContext, useEffect, useRef, useState } from "react";
 import {
@@ -18,6 +18,7 @@ import {
 import { FacturaProviderContext } from "../context";
 // @ts-ignore
 import html2pdf from "html2pdf.js";
+import CloseIcon from "@mui/icons-material/Close";
 
 const cellStyle = { color: "#000" };
 export const getCurrentDate = () => {
@@ -67,7 +68,13 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
   };
   if (!isClient) return null;
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog
+      sx={{ width: "100%" }}
+      open={open}
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+    >
       <DialogTitle>
         Factura Detallada
         <Button
@@ -78,10 +85,18 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
         >
           Descargar PDF
         </Button>
+        <Button
+          sx={{ position: "absolute", top: 0, right: 0 }}
+          onClick={onClose}
+        >
+          <CloseIcon />
+        </Button>
       </DialogTitle>
-      <DialogContent>
-        <Box ref={pdfRef}>
-          <Box sx={{ background: "#fff", padding: "10px" }}>
+      <DialogContent
+        sx={{ width: "100%", background: "#fff", borderRadius: "50px" }}
+      >
+        <Box ref={pdfRef} sx={{ width: "100%" }}>
+          <Box sx={{ background: "#fff", padding: "10px", width: "100%" }}>
             {/* Información del Establecimiento */}
             <Box
               display="flex"
@@ -98,7 +113,10 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
                     style={{ height: "50px", marginBottom: "10px" }}
                   />
                 )}
-                <Typography sx={{ textTransform: "uppercase", fontWeight:'900' }} variant="h6">
+                <Typography
+                  sx={{ textTransform: "uppercase", fontWeight: "900" }}
+                  variant="h6"
+                >
                   {dataEstablishmentData?.nameEstablishment ?? "Sin datos"}
                 </Typography>
                 <Typography variant="body2">
@@ -251,12 +269,6 @@ const InvoiceModal = ({ invoice, open, onClose }: any) => {
               </Typography>
             </Box>
           </Box>
-        </Box>
-
-        <Box display="flex" justifyContent="center" mt={3}>
-          <Button variant="contained" color="primary" onClick={onClose}>
-            Cerrar
-          </Button>
         </Box>
       </DialogContent>
     </Dialog>

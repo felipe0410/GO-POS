@@ -200,10 +200,10 @@ const Page: any = () => {
             );
 
             setCookie("invoice_token", response.access_token, {
-              path: "/", // Asegúrate de que la cookie sea accesible en toda la aplicación
-              expires: expirationDate, // La cookie expira en 1 hora
-              secure: true, // Recomendable en producción, solo para HTTPS
-              sameSite: "strict", // Protege contra ataques CSRF
+              path: "/", 
+              expires: expirationDate,
+              secure: true,
+              sameSite: "strict",
             });
           }
 
@@ -228,7 +228,7 @@ const Page: any = () => {
       sx={{
         display: "flex",
         flexDirection: "row",
-        height: "80%",
+        //height: "80%",
         marginLeft: "10px",
       }}
     >
