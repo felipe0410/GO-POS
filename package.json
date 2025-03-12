@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "scan": "next dev & npx react-scan@latest localhost:3000"
   },
   "dependencies": {
     "@emotion/react": "^11.13.5",
@@ -64,6 +65,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
     "mark.js": "^8.11.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "react-scan": "^0.2.14"
   }
 }

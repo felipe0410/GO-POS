@@ -45,7 +45,6 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
   setSelectedItems,
 }) => {
   const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
-  console.log("selectedItems:::>", selectedItems);
   const [invoiceData, setInvoiceData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [selectedProducts, setSelectedProducts] = useState<{
@@ -67,7 +66,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
     if (selectedInvoice) {
       fetchInvoiceDetails(selectedInvoice);
     }
-  }, [selectedInvoice]);
+  }, []);
 
   const fetchInvoiceDetails = async (uid: string) => {
     setLoading(true);
@@ -76,11 +75,9 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
     setLoading(false);
   };
 
-  // 🔍 Filtrar facturas por búsqueda o fecha seleccionada
   const filteredInvoices = useMemo(() => {
     let filtered = invoices;
 
-    // 🔍 Filtrar por búsqueda en número de factura o nombre del cliente
     if (searchTerm) {
       filtered = filtered.filter(
         (invoice) =>
@@ -232,8 +229,8 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
                   key={invoice.uid}
                   selected={selectedInvoice === invoice.uid}
                   onClick={() => {
-                    setSelectedInvoice(invoice.uid);
-                    setSelectedItems(invoice.compra);
+                    // setSelectedInvoice(invoice.uid);
+                    setSelectedItems(invoice);
                   }}
                 >
                   <InvoiceCard

@@ -6,6 +6,7 @@ import {
   DocumentReference,
   DocumentSnapshot,
   Firestore,
+  Timestamp,
   arrayRemove,
   arrayUnion,
   collection,
@@ -28,6 +29,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { ColabData } from "@/app/profile/page";
+import { format } from "date-fns";
+import { getHoraColombia } from "@/components/Hooks/hooks";
 
 interface User {
   decodedString: string;
@@ -97,12 +100,12 @@ export const createProduct = async (uid: any, productData: any) => {
   }
 };
 // Función para obtener todos los  productos
-export const getAllProductsData = (callback: any, userID?:string) => {
+export const getAllProductsData = (callback: any, userID?: string) => {
   try {
     const establecimientoDocRef = doc(
       db,
       "establecimientos",
-      userID ||`${user().decodedString}`
+      userID || `${user().decodedString}`
     );
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     // Query para obtener los productos ordenados alfabéticamente
@@ -438,6 +441,7 @@ export const deleteProduct = async (uid: any, img: string) => {
 
 export const createInvoice = async (uid: string, invoiceData: any) => {
   try {
+    console.log("invoiceData:::>", invoiceData);
     const establecimientoDocRef: DocumentReference = doc(
       db,
       "establecimientos",
@@ -452,9 +456,13 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     }
     const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
     const invoiceDocRef = doc(invoicesCollectionRef, uid);
+    const fechaCreacion = getHoraColombia();
+    const timestampCreacion = Timestamp.fromDate(fechaCreacion);
     await setDoc(invoiceDocRef, {
       uid: uid,
       user: `${user().decodedString}`,
+      timestamp: timestampCreacion,
+      fechaCreacion: fechaCreacion.toISOString(),
       ...invoiceData,
     });
     console.log("invice;;>", uid);
@@ -644,7 +652,6 @@ export const getAllInvoicesData = async (callback: any) => {
   }
 };
 
-//funcion para obtener una factura
 export const getInvoiceData = async (uid: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -1186,5 +1193,155 @@ export const fetchAndStoreSettings = async () => {
   } catch (error) {
     console.error("Error al recuperar o crear la configuración: ", error);
     return false;
+  }
+};
+
+export const openCaja = async (montoInicial: string, notas: string) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const cajasCollectionRef = collection(establecimientoDocRef, "cajas");
+
+    const fechaApertura = getHoraColombia();
+    const timestampApertura = Timestamp.fromDate(fechaApertura);
+    const sessionCajaID = timestampApertura.toMillis().toString();
+    const cajaDocRef = doc(cajasCollectionRef, sessionCajaID);
+
+    const dataToSave = {
+      cajaAbierta: true,
+      montoInicial: montoInicial,
+      notasApertura: notas,
+      fechaApertura: fechaApertura.toISOString(),
+      timestampApertura: timestampApertura,
+      cajaCerrada: false,
+      montoFinal: null,
+      notasCierre: null,
+      fechaCierre: null,
+      timestampCierre: null,
+      uid: sessionCajaID,
+      user: user().decodedString,
+    };
+
+    await setDoc(cajaDocRef, dataToSave);
+    console.log(
+      "Caja abierta correctamente con hora en Colombia:",
+      sessionCajaID
+    );
+    return sessionCajaID;
+  } catch (error) {
+    console.error("Error al abrir la caja:", error);
+    return null;
+  }
+};
+
+export const closeCaja = async (
+  sessionCajaID: string,
+  montoFinal: string,
+  notas: string
+) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const cajaDocRef = doc(establecimientoDocRef, "cajas", sessionCajaID);
+    const fechaCierre = new Date();
+
+    const dataToUpdate = {
+      cajaCerrada: true,
+      montoFinal: montoFinal,
+      notasCierre: notas,
+      fechaCierre: fechaCierre.toISOString(),
+      timestampCierre: Timestamp.fromDate(fechaCierre), // Guardamos Timestamp en Firebase
+    };
+
+    await updateDoc(cajaDocRef, dataToUpdate);
+    console.log("Caja cerrada correctamente.");
+    return true;
+  } catch (error) {
+    console.error("Error al cerrar la caja:", error);
+    return false;
+  }
+};
+
+export const getAllCierresCaja = async () => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const cajasCollectionRef = collection(establecimientoDocRef, "cajas");
+
+    const snapshot = await getDocs(cajasCollectionRef);
+    const cierres = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .filter((caja: any) => caja.cajaCerrada);
+
+    console.log("Cierres de caja obtenidos:", cierres);
+    return cierres;
+  } catch (error) {
+    console.error("Error al obtener los cierres de caja:", error);
+    return [];
+  }
+};
+
+// export const getCierreCajaByFecha = async (fecha: string) => {
+//   try {
+//     const establecimientoDocRef = doc(
+//       db,
+//       "establecimientos",
+//       `${user().decodedString}`
+//     );
+//     const cajaDocRef = doc(establecimientoDocRef, "cajas", fecha);
+//     const snapshot = await getDoc(cajaDocRef);
+//     if (snapshot.exists()) {
+//       const data = snapshot.data();
+//       console.log(`Cierre de caja para ${fecha}:`, data);
+//       return data;
+//     } else {
+//       console.log(`No se encontró cierre de caja para la fecha: ${fecha}`);
+//       return null;
+//     }
+//   } catch (error) {
+//     console.error("Error al obtener cierre de caja por fecha:", error);
+//     return null;
+//   }
+// };
+
+export const getUltimaCaja = async () => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const cajasCollectionRef = collection(establecimientoDocRef, "cajas");
+
+    const q = query(
+      cajasCollectionRef,
+      orderBy("timestampApertura", "desc"),
+      limit(1)
+    );
+
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      const ultimaCaja = snapshot.docs[0].data();
+      console.log("Última caja obtenida:", ultimaCaja);
+      return ultimaCaja;
+    } else {
+      console.log("No hay cajas registradas.");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al obtener la última caja:", error);
+    return null;
   }
 };

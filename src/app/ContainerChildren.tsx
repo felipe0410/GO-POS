@@ -4,6 +4,7 @@ import { GlobalContext } from "./globalContex";
 import { Box, Typography } from "@mui/material";
 import Sidebar from "@/components/Sidebar";
 import { keyframes } from "@emotion/react";
+import HeaderAppBar from "./AppBar";
 //import PrimarySearchAppBar from "./PrimarySearchAppBar";
 
 const ContainerChildren = ({
@@ -47,15 +48,13 @@ const ContainerChildren = ({
       transform: scale(1);
     }
   `;
-{/* <Box
-            id="Container header"
-          >
-            <PrimarySearchAppBar />
-          </Box> */}
   return (
     <>
       {validation ? (
         <>
+          <Box sx={{ display: "none" }}>
+            <HeaderAppBar />
+          </Box>
           <Box
             id="Container Sidebar"
             sx={{
@@ -73,7 +72,7 @@ const ContainerChildren = ({
             id="container children layout"
             sx={{
               height: "100%",
-              marginTop: validationRoutes ? "" : "64px",
+              marginTop: validationRoutes ? "" : "80px",
               marginLeft: validationRoutes
                 ? ""
                 : { xs: "20px", sm: isOpen ? "250px" : "140px" },

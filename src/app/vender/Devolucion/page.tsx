@@ -11,18 +11,12 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import {
-  fetchAndStoreSettings,
-  getAllInvoicesData,
-  getAllProductsDataonSnapshot,
-} from "@/firebase";
+import { fetchAndStoreSettings, getAllInvoicesData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
-import SlidebarVender from "./SlidebarVender";
 import CarouselCategorias from "@/components/CarouselCategorias";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import SearchInput from "./SearchInput";
-import ReturnSidebar from "./ReturnSidebar";
 import SlidebarDevoluciones from "./SlidebarVender";
+import ContainerDevolucion from "./contaniner";
 
 const Page: any = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -169,16 +163,6 @@ const Page: any = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, selectedCategory]);
   useEffect(() => {
-    const getAllProducts = async () => {
-      try {
-        await getAllProductsDataonSnapshot(setData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    getAllProducts();
-  }, []);
-  useEffect(() => {
     if (selectedItems?.length > 0) {
       saveDataToLocalStorage("selectedItems", selectedItems);
     }
@@ -199,6 +183,7 @@ const Page: any = () => {
 
   useEffect(() => {
     const getData = async () => {
+      console.log("entro aqui ");
       await getAllInvoicesData(setInvoices);
     };
     getData();
@@ -311,7 +296,8 @@ const Page: any = () => {
                 RESTABLECER
               </Button>
             </Box>
-            <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
+            <ContainerDevolucion />
+            {/* <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
               <CarouselCategorias
                 onCategorySelect={handleCategorySelect}
                 selectedCategory={selectedCategory}
@@ -342,17 +328,17 @@ const Page: any = () => {
                   size={matches ? "large" : "small"}
                 />
               </Box>
-            </Box>
+            </Box> */}
           </Box>
         </Paper>
       </Box>
-      <SlidebarDevoluciones
+      {/* <SlidebarDevoluciones
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
         invoices={invoices}
         selectedItems={data}
         setSelectedItems={setData}
-      />
+      /> */}
     </Box>
   );
 };

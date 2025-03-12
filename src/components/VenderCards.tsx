@@ -10,13 +10,15 @@ const VenderCards = ({
   setSelectedItems,
   selectedItems,
   type = false,
-  facturaActiva
+  facturaActiva,
+  invoice,
 }: {
   filteredData: any;
   setSelectedItems: any;
   selectedItems: any;
   type?: boolean;
   facturaActiva: any;
+  invoice?:any
 }) => {
   return (
     <Paper
@@ -61,6 +63,8 @@ const VenderCards = ({
             filteredData={filteredData}
             setSelectedItems={setSelectedItems}
             selectedItems={selectedItems}
+            facturaActiva={facturaActiva}
+            invoice={invoice}
           />
         ) : (
           <VenderCard

@@ -9,7 +9,6 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect } from "react";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
-import CustomizedSwitches from "./swith";
 
 const Modal = styled(BaseModal)`
   position: fixed;

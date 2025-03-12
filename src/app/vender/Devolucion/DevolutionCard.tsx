@@ -1,10 +1,15 @@
 "use client";
 import * as React from "react";
 import { styled } from "@mui/material/styles";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { Box, Button, Modal, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { getProductData } from "@/firebase";
 
 interface Product {
@@ -21,6 +26,8 @@ interface DevolutionCardProps {
   filteredData: Product[];
   setSelectedItems: React.Dispatch<React.SetStateAction<Product[]>>;
   selectedItems: Product[];
+  facturaActiva: any;
+  invoice: any;
 }
 
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
@@ -46,23 +53,30 @@ const StyledModalBox = styled(Box)(({ theme }) => ({
 }));
 
 const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
-  ({ filteredData, setSelectedItems, selectedItems }) => {
+  ({
+    filteredData,
+    setSelectedItems,
+    selectedItems,
+    facturaActiva,
+    invoice,
+  }) => {
     const [open, setOpen] = React.useState<boolean>(false);
     const [currentProduct, setCurrentProduct] = React.useState<Product | null>(
       null
     );
     const [quantity, setQuantity] = React.useState<number>(1);
+    const [initialQuantity, setInitialQuantity] = React.useState<number>(1); // Guardar el valor inicial
     const [productImages, setProductImages] = React.useState<{
       [key: string]: string;
     }>({});
-
-
+    console.log("invoice:::>", invoice);
+    console.log("facturaActiva:::>", facturaActiva);
     // Obtener imágenes de productos si no están disponibles en filteredData
     React.useEffect(() => {
       const fetchProductImages = async () => {
         const newImages: { [key: string]: string } = {};
         await Promise.all(
-          filteredData.map(async (product) => {
+          filteredData?.map(async (product) => {
             if (!product.image || product.image === "") {
               const productData = await getProductData(product.barCode);
               if (productData?.image) {
@@ -80,6 +94,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     const handleOpenModal = (product: Product) => {
       setCurrentProduct(product);
       setQuantity(product.cantidad);
+      setInitialQuantity(product.cantidad); // Guardamos el valor inicial
       setOpen(true);
     };
 
@@ -91,14 +106,21 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     const handleQuantityChange = (
       event: React.ChangeEvent<HTMLInputElement>
     ) => {
-      setQuantity(Number(event.target.value));
+      let newValue = Number(event.target.value);
+      if (isNaN(newValue)) return;
+
+      // Asegurar que el valor no sea menor a 0 ni mayor al valor inicial
+      if (newValue < 0) newValue = 0;
+      if (newValue > initialQuantity) newValue = initialQuantity;
+
+      setQuantity(newValue);
     };
 
     const handleSaveChanges = () => {
       if (!currentProduct) return;
 
       const cleanedPrice = Number(currentProduct.price.replace(/[$,]/g, ""));
-      if (quantity > 0) {
+      if (quantity >= 0 && quantity <= initialQuantity) {
         const updatedItems = selectedItems.map((item) =>
           item.barCode === currentProduct.barCode
             ? { ...item, cantidad: quantity, acc: quantity * cleanedPrice }
@@ -106,11 +128,9 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
         );
         setSelectedItems(updatedItems);
       } else {
-        const updatedItems = selectedItems.filter(
-          (item) => item.barCode !== currentProduct.barCode
-        );
-        setSelectedItems(updatedItems);
+        console.error("Cantidad fuera del rango permitido");
       }
+
       handleCloseModal();
     };
 
@@ -176,6 +196,21 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
             >
               Editar cantidad
             </Typography>
+
+            {currentProduct && (
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  color: "#FFF",
+                  textAlign: "center",
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                }}
+              >
+                {currentProduct.productName}
+              </Typography>
+            )}
+
             <TextField
               variant="filled"
               type="number"
@@ -183,11 +218,17 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
               onChange={handleQuantityChange}
               fullWidth
               sx={{
-                width:'30%',
+                width: "30%",
                 borderRadius: "0.4rem",
                 input: { color: "#FFF" },
                 label: { color: "#69EAE2" },
-                background:'#2C3248'
+                background: "#2C3248",
+                alignSelf: "center",
+                justifyContent: "center",
+              }}
+              inputProps={{
+                min: 0,
+                max: initialQuantity,
               }}
               required
             />
@@ -215,6 +256,13 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
             </Button>
           </StyledModalBox>
         </Modal>
+        <Button
+          sx={{ position: "absolute", bottom: 0 }}
+          variant="contained"
+          color="primary"
+        >
+          CONFIRMAR DEVOLUCION
+        </Button>
       </>
     );
   }
