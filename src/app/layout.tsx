@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-sync-scripts */
 import type { Metadata } from "next";
 import "./globals.css";
 import "@fontsource/nunito/200.css";
@@ -29,11 +30,20 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const route: any = (children as React.ReactElement)?.props?.childPropSegment ?? null;
-  const validationRoutes = ["sign_up", "sign_in","catalog", "__DEFAULT__"].includes(route);
+  const route: any =
+    (children as React.ReactElement)?.props?.childPropSegment ?? null;
+  const validationRoutes = [
+    "sign_up",
+    "sign_in",
+    "catalog",
+    "__DEFAULT__",
+  ].includes(route);
 
   return (
-    <html lang='en' style={{ height: '100%' }}>
+    <html lang="en" style={{ height: "100%" }}>
+      {/* <head>
+        <script src="https://unpkg.com/react-scan/dist/auto.global.js" />
+      </head> */}
       <GlobalContextProvider>
         <body
           style={{
@@ -46,7 +56,10 @@ export default async function RootLayout({
         >
           {
             <>
-              <ContainerChildren childrenn={children} validationRoutes={validationRoutes} />
+              <ContainerChildren
+                childrenn={children}
+                validationRoutes={validationRoutes}
+              />
             </>
           }
         </body>

@@ -31,11 +31,27 @@ export const typographyPaperSearch = {
 export const BoxStyles = {
   boxGreen: {
     width: "100%",
-   //height: "2.2rem",
+    //height: "2.2rem",
     borderRadius: "0.8rem",
     border: "1px solid #42FF6B",
     background:
       "linear-gradient(270deg, rgba(102, 255, 138, 0.74) 0%, rgba(102, 255, 138, 0.61) 28.97%, rgba(102, 255, 138, 0.27) 70.56%, rgba(102, 255, 138, 0.00) 85.21%)",
+  },
+  boxBlue: {
+    width: "100%",
+    //height: "2.2rem",
+    borderRadius: "0.8rem",
+    border: "1px solid #000",
+    background:
+      "linear-gradient(270deg, rgb(0 24 104 / 74%) 0%, rgb(27 38 142 / 61%) 28.97%, rgb(33 73 162 / 27%) 70.56%, rgba(102, 255, 138, 0.00) 85.21%)",
+  },
+  boxPurple: {
+    width: "100%",
+    //height: "2.2rem",
+    borderRadius: "0.8rem",
+    border: "1px solidrgb(70, 1, 87)",
+    background:
+      "linear-gradient(270deg, rgba(116, 1, 161, 0.74) 0%, rgrgba(129, 0, 129, 0.61)8.97%, rgba(102, 255, 138, 0.27) 70.56%, rgba(102, 255, 138, 0.00) 85.21%)",
   },
   boxOrange: {
     width: "100%",

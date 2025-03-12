@@ -48,6 +48,9 @@ const Invoices = () => {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
   const [totalVentasPendientesHoy, setTotalVentasPendientesHoy] = useState(0);
+  const [totalVentasEfectivo, setTotalVentasEfectivo] = useState<number>(0);
+  const [totalVentasTransferencia, setTotalVentasTransferencia] =
+    useState<number>(0);
 
   const debouncedHandleSearchChange = debounce(() => {}, 300);
 
@@ -80,7 +83,7 @@ const Invoices = () => {
 
     let filteredData = [...data];
 
-    // Filtro por rango de fechas
+    // Filtrar por rango de fechas
     if (Array.isArray(searchTerm) && searchTerm.length === 2) {
       const [fechaInicio, fechaFin] = searchTerm;
       filteredData = filteredData.filter((item) => {
@@ -89,7 +92,7 @@ const Invoices = () => {
       });
     }
 
-    // Filtro de búsqueda general (nombre cliente, número de factura, status)
+    // Filtro de búsqueda general
     if (searchTerm && typeof searchTerm === "string") {
       const lowerSearchTerm = searchTerm.toLowerCase();
       filteredData = filteredData.filter(
@@ -100,14 +103,14 @@ const Invoices = () => {
       );
     }
 
-    // Filtro por estado (Pendiente, Cancelado, etc.)
+    // Filtro por estado
     if (statusFilter && statusFilter !== "Todos") {
       filteredData = filteredData.filter(
         (item) => item.status.toUpperCase() === statusFilter.toUpperCase()
       );
     }
 
-    // Filtro por tipo de factura (Venta Rápida o Factura Normal)
+    // Filtro por tipo de factura
     if (typeFilter && typeFilter !== "Todos") {
       filteredData = filteredData.filter(
         (item) =>
@@ -127,7 +130,7 @@ const Invoices = () => {
       );
     });
 
-    // Calcular total de ventas de hoy (excluyendo pendientes)
+    // Calcular total de ventas de hoy
     const totalVentas =
       ventasHoy.reduce((total, factura) => total + factura.total, 0) || 0;
     setTotalVentasHoy(totalVentas);
@@ -148,6 +151,28 @@ const Invoices = () => {
         0
       ) || 0;
     setTotalVentasPendientesHoy(totalVentasPendientes);
+
+    // 🔹 **Cálculo de Ventas por Método de Pago**
+    const totalEfectivo =
+      ventasHoy
+        .filter(
+          (factura) =>
+            !factura.paymentMethod || // Si no existe, se asume efectivo
+            factura.paymentMethod.toUpperCase() === "EFECTIVO"
+        )
+        .reduce((total, factura) => total + factura.total, 0) || 0;
+
+    const totalTransferencia =
+      ventasHoy
+        .filter(
+          (factura) =>
+            factura.paymentMethod &&
+            factura.paymentMethod.toUpperCase() === "TRANSFERENCIA"
+        )
+        .reduce((total, factura) => total + factura.total, 0) || 0;
+
+    setTotalVentasEfectivo(totalEfectivo);
+    setTotalVentasTransferencia(totalTransferencia);
 
     console.log("Ventas no pendientes::>", ventasHoy);
     console.log("Ventas pendientes::>", ventasPendientesHoy);
@@ -191,6 +216,8 @@ const Invoices = () => {
               totalVentasFecha={totalVentasFecha}
               selectedDate={selectedDate}
               getCurrentDateTime={getCurrentDateTime}
+              totalVentasEfectivo={totalVentasEfectivo}
+              totalVentasTransferencia={totalVentasTransferencia}
             />
           }
         </>

@@ -98,7 +98,7 @@ const DatosVenta = (props: any) => {
     createBy: "",
     nota: propsNota ?? "",
     closeInvoice: false,
-    timestamp: 0,
+    paymentMethod: "Efectivo",
   });
   const [cookies, setCookie] = useCookies(["invoice_token"]);
 
@@ -512,7 +512,10 @@ const DatosVenta = (props: any) => {
       </Typography>
       <Divider sx={{ background: "#69EAE2", width: "100%" }} />
       <Select
-        onChange={(e: any) => setMetodoPago(e.target.value)}
+        onChange={(e: any) => {
+          setMetodoPago(e.target.value);
+          setFactura({ ...factura, paymentMethod: e.target.value });
+        }}
         value={metodoPago}
         displayEmpty
         style={{
