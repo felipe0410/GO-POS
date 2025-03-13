@@ -95,7 +95,7 @@ export default function PrimarySearchAppBar() {
   useEffect(() => {
     const fetchData = async () => {
       const cachedData = localStorage.getItem("establishmentData");
-  
+
       if (cachedData) {
         setEstablishmentData(JSON.parse(cachedData));
       } else {
@@ -104,7 +104,7 @@ export default function PrimarySearchAppBar() {
           console.error("No se encontró UID en el localStorage");
           return;
         }
-  
+
         // Decodificar el UID de Base64
         let userUID: string;
         try {
@@ -113,7 +113,7 @@ export default function PrimarySearchAppBar() {
           console.error("Error al decodificar el UID de Base64:", error);
           return;
         }
-  
+
         const data = await getEstablishmentDataLoggin(userUID);
         if (data) {
           const { password, ...filteredData } = data; // Excluye datos sensibles
@@ -125,10 +125,10 @@ export default function PrimarySearchAppBar() {
         }
       }
     };
-  
+
     fetchData();
   }, []);
-  
+
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -150,7 +150,7 @@ export default function PrimarySearchAppBar() {
               sx={{ mr: 2 }}
             >
               <MenuIcon />
-              {establishmentData?.name??'SIN DATA'}
+              {establishmentData?.name ?? "SIN DATA"}
             </IconButton>
             {userData && (
               <Stack direction="row" spacing={2} alignItems="center">
@@ -218,7 +218,12 @@ export default function PrimarySearchAppBar() {
               </IconButton>
             </Box>
             <Drawer anchor="right" open={sidebarOpen} onClose={toggleSidebar}>
-              <SidebarBox onClose={toggleSidebar} />
+              <SidebarBox
+                onClose={toggleSidebar}
+                isOpeningCaja={false}
+                establecimiento={undefined}
+                cajaData={undefined}
+              />
             </Drawer>
           </Toolbar>
         </AppBar>
