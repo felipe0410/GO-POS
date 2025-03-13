@@ -37,9 +37,6 @@ export default function HeaderAppBar() {
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cierreCajaActual, setCierreCajaActual] = useState<any | null>(null);
-  //   console.log("cierreCajaActual:::>", cierreCajaActual);
-
-  //   console.log(pathname);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -109,7 +106,7 @@ export default function HeaderAppBar() {
               onClose={toggleSidebar}
               isOpeningCaja={!cierreCajaActual}
               establecimiento={undefined}
-              cajaData={undefined}
+              cajaData={cierreCajaActual}
             />
           </Drawer>
         </Toolbar>

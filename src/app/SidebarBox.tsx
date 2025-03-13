@@ -9,7 +9,12 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { NumericFormat } from "react-number-format";
-import { closeCaja, getUltimaCaja, openCaja } from "@/firebase";
+import {
+  closeCaja,
+  getFilteredInvoicesData,
+  getUltimaCaja,
+  openCaja,
+} from "@/firebase";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
 interface SidebarProps {
@@ -33,7 +38,8 @@ const SidebarBox: React.FC<SidebarProps> = ({
   const [totalEfectivo, setTotalEfectivo] = useState("0");
   const [baseCajaFinal, setBaseCajaFinal] = useState("0");
   const [notasCierre, setNotasCierre] = useState("");
-
+  const [invoicesClose, setInvoicesClose] = useState([]);
+  console.log("invoicesClose:::>", invoicesClose);
   const handleConfirmOpenCaja = async () => {
     if (!initialAmount || Number(initialAmount) <= 0) {
       enqueueSnackbar("El monto inicial debe ser mayor a $0", {
@@ -109,9 +115,14 @@ const SidebarBox: React.FC<SidebarProps> = ({
     };
 
     if (!isOpeningCaja) {
-      fetchUltimaCaja(); // Cargar la última caja si estamos cerrando caja
+      fetchUltimaCaja();
     }
   }, [isOpeningCaja]);
+
+  useEffect(() => {
+    getFilteredInvoicesData(cajaData.timestampApertura, setInvoicesClose);
+  }, [cajaData.timestampApertura]);
+
   return (
     <Box
       sx={{

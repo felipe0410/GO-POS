@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { deleteObject, getStorage, ref } from "firebase/storage";
-import { getAnalytics } from "firebase/analytics";
 import {
   DocumentReference,
   DocumentSnapshot,
@@ -20,8 +19,8 @@ import {
   orderBy,
   query,
   setDoc,
-  startAfter,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import {
   createUserWithEmailAndPassword,
@@ -441,7 +440,6 @@ export const deleteProduct = async (uid: any, img: string) => {
 
 export const createInvoice = async (uid: string, invoiceData: any) => {
   try {
-    console.log("invoiceData:::>", invoiceData);
     const establecimientoDocRef: DocumentReference = doc(
       db,
       "establecimientos",
@@ -489,11 +487,12 @@ export const updateInvoice = async (uid: string, invoiceData: any) => {
       console.error("El establecimiento no existe.");
       return null;
     }
-
+    const fechaCreacion = getHoraColombia();
+    const timestampCreacion = Timestamp.fromDate(fechaCreacion);
     const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
     const invoiceDocRef = doc(invoicesCollectionRef, uid);
 
-    await updateDoc(invoiceDocRef, invoiceData);
+    await updateDoc(invoiceDocRef, { ...invoiceData, timestampCreacion });
     return uid;
   } catch (error) {
     console.error("Error al actualizar información en /invoices: ", error);
@@ -651,6 +650,56 @@ export const getAllInvoicesData = async (callback: any) => {
     return null;
   }
 };
+
+export const getFilteredInvoicesData = async (
+  timestampInicio: Timestamp,
+  callback: any
+) => {
+  try {
+
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+    const fechaActualColombia = getHoraColombia();
+    const timestampFin = Timestamp.fromDate(fechaActualColombia);
+    const filteredQuery = query(
+      invoiceCollectionRef,
+      where("timestampCreacion", ">=", timestampInicio),
+      where("timestampCreacion", "<=", timestampFin),
+      orderBy("timestampCreacion", "desc")
+    );
+
+    // Obtener los datos iniciales
+    const initialQuerySnapshot = await getDocs(filteredQuery);
+    const initialInvoiceData = initialQuerySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    console.log("initialInvoiceData:::>", initialInvoiceData);
+    
+    callback(initialInvoiceData);
+
+    const unsubscribe = onSnapshot(filteredQuery, (querySnapshot: any) => {
+      const updatedInvoiceData = querySnapshot.docs.map((doc: any) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      callback(updatedInvoiceData);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    console.error("Error setting up data observer: ", error);
+    return null;
+  }
+};
+
 
 export const getInvoiceData = async (uid: any) => {
   try {
@@ -1292,29 +1341,6 @@ export const getAllCierresCaja = async () => {
     return [];
   }
 };
-
-// export const getCierreCajaByFecha = async (fecha: string) => {
-//   try {
-//     const establecimientoDocRef = doc(
-//       db,
-//       "establecimientos",
-//       `${user().decodedString}`
-//     );
-//     const cajaDocRef = doc(establecimientoDocRef, "cajas", fecha);
-//     const snapshot = await getDoc(cajaDocRef);
-//     if (snapshot.exists()) {
-//       const data = snapshot.data();
-//       console.log(`Cierre de caja para ${fecha}:`, data);
-//       return data;
-//     } else {
-//       console.log(`No se encontró cierre de caja para la fecha: ${fecha}`);
-//       return null;
-//     }
-//   } catch (error) {
-//     console.error("Error al obtener cierre de caja por fecha:", error);
-//     return null;
-//   }
-// };
 
 export const getUltimaCaja = async () => {
   try {
