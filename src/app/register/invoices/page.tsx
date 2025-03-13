@@ -209,6 +209,7 @@ const Invoices = () => {
           editarlas y ver su estado.
         </Typography>
         <>
+        
           {
             <DashboardCards
               totalVentasHoy={totalVentasHoy}
