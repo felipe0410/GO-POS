@@ -13,6 +13,12 @@ const formatExpirationDate = () => {
 };
 
 export const transformToDianInvoice = (data: any, establishment: any): any => {
+  const cleanDni = (dni: string) => {
+    return dni
+      .replace(/\s+/g, "") // Eliminar todos los espacios
+      .replace(/-\d+/g, ""); // Eliminar cualquier guion seguido de números
+  };
+
   return {
     resolution_number: establishment.Resolucion, // Resolución fija
     prefix: establishment.Prefijo, // Prefijo fijo
@@ -43,7 +49,7 @@ export const transformToDianInvoice = (data: any, establishment: any): any => {
       tax_regime_id: 2, // Régimen simplificado
       tax_level_id: 5, // Nivel tributario básico
       company_name: data.cliente.name, // Nombre del cliente
-      dni: data.cliente.identificacion, // Identificación del cliente
+      dni: cleanDni(data.cliente.identificacion), // Identificación del cliente
       mobile: data.cliente.celular, // Teléfono móvil
       email: data.cliente.email, // Email del cliente
       address: data.cliente.direccion, // Dirección del cliente
@@ -84,6 +90,13 @@ export const transformToDianInvoice = (data: any, establishment: any): any => {
 };
 
 export const transformToDianInvoice2 = (data: any, establishment: any): any => {
+
+  const cleanDni = (dni: string) => {
+    return dni
+      .replace(/\s+/g, "") // Eliminar todos los espacios
+      .replace(/-\d+/g, ""); // Eliminar cualquier guion seguido de números
+  };
+
   const isCustomerEmpty =
     !data.cliente || Object.values(data.cliente).every((value) => !value);
 
@@ -120,9 +133,9 @@ export const transformToDianInvoice2 = (data: any, establishment: any): any => {
             tax_regime_id: data.cliente.tax_regime_id, // Régimen fiscal
             tax_level_id: data.cliente.tax_level_id, // Nivel tributario
             company_name: data.cliente.name, // Nombre completo del cliente
-            dni: data.cliente.identificacion, // Identificación del cliente
-            mobile: data.cliente.telefono, // Teléfono móvil
-            email: data.cliente.correo, // Email del cliente
+            dni: cleanDni(data.cliente.identificacion), // Identificación del cliente
+            mobile: cleanDni(data.cliente.telefono), // Teléfono móvil
+            email: cleanDni(data.cliente.correo), // Email del cliente
             address: data.cliente.direccion, // Dirección del cliente
             postal_code: "661002", // Código postal por defecto (si es necesario)
           },

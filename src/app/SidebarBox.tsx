@@ -240,7 +240,6 @@ const SidebarBox: React.FC<SidebarProps> = ({
 
           <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
 
-          {/* 🔴 Resumen de Caja */}
           <Box sx={{ textAlign: "left" }}>
             <Typography variant="subtitle2">
               🕒 Fecha de apertura: {cajaData?.fechaApertura || "Sin datos"}
@@ -255,7 +254,6 @@ const SidebarBox: React.FC<SidebarProps> = ({
 
           <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
 
-          {/* 🔢 Inputs de Cierre */}
           <Typography variant="subtitle2">💵 Total Efectivo</Typography>
           <NumericFormat
             value={totalEfectivo}
@@ -303,7 +301,6 @@ const SidebarBox: React.FC<SidebarProps> = ({
 
           <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
 
-          {/* 📈 Mostrar el Producido Calculado */}
           <Typography
             variant="subtitle2"
             sx={{ fontWeight: "bold", color: "#69EAE2" }}
@@ -319,7 +316,6 @@ const SidebarBox: React.FC<SidebarProps> = ({
             {Number(totalEfectivo) + Number(totalTransferencias)}
           </Typography>
 
-          {/* 📝 Input Notas de Cierre */}
           <Typography variant="subtitle2">📝 Notas de Cierre</Typography>
           <OutlinedInput
             placeholder="Notas de cierre"
