@@ -44,6 +44,7 @@ const EditInvoice = ({
     total: 0,
     cambio: 0,
     uid: "",
+    paymentMethod: "",
   });
   const [editProducts, setEditProducts] = useState(false);
 
@@ -195,7 +196,7 @@ const EditInvoice = ({
 
                     return (
                       <React.Fragment key={index * 123}>
-                        <FormControl sx={style} variant='outlined'>
+                        <FormControl sx={style} variant="outlined">
                           <Typography sx={editStyles.inputstypography}>
                             {input.name}
                           </Typography>
@@ -225,10 +226,10 @@ const EditInvoice = ({
                   >
                     Metodo de pago
                   </Typography>
-                  <OutlinedInput
+                  {/* <OutlinedInput
                     disabled
-                    value='Efectivo'
-                    type='text'
+                    value={data.paymentMethod?? "Efectivo"}
+                    type="text"
                     sx={{
                       width: "100%",
                       height: "44.9px",
@@ -238,7 +239,28 @@ const EditInvoice = ({
                         "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                     }}
                     style={{ color: "#FFF" }}
-                  />
+                  /> */}
+                  <Select
+                    value={data.paymentMethod ?? "Efectivo"}
+                    style={{
+                      color:
+                        data?.paymentMethod === "Transferencia"
+                          ? "blue"
+                          : "yellow",
+                      fontWeight: 900,
+                    }}
+                    sx={selectStyle}
+                    onChange={(event: any) => {
+                      setData({ ...data, paymentMethod: event.target.value });
+                    }}
+                  >
+                    <MenuItem sx={{ color: "red" }} value="Efectivo">
+                      Efectivo
+                    </MenuItem>
+                    <MenuItem sx={{ color: "blue" }} value="Transferencia">
+                      Transferencia
+                    </MenuItem>
+                  </Select>
                   <Typography
                     sx={{ ...editStyles.inputstypography, marginTop: "10px" }}
                   >
@@ -252,10 +274,10 @@ const EditInvoice = ({
                     sx={selectStyle}
                     onChange={handleSelectChange}
                   >
-                    <MenuItem sx={{ color: "red" }} value='PENDIENTE'>
+                    <MenuItem sx={{ color: "red" }} value="PENDIENTE">
                       PENDIENTE
                     </MenuItem>
-                    <MenuItem sx={{ color: "green" }} value='CANCELADO'>
+                    <MenuItem sx={{ color: "green" }} value="CANCELADO">
                       CANCELADO
                     </MenuItem>
                   </Select>
