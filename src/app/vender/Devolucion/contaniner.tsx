@@ -1,14 +1,14 @@
 "use client";
 import { Box, Pagination, useMediaQuery, useTheme } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { fetchAndStoreSettings, getAllInvoicesData } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
 import SlidebarDevoluciones from "./SlidebarVender";
+import { DevolucionContext } from "./context";
 
 const ContainerDevolucion: any = () => {
+  const { data } = useContext(DevolucionContext) || {};
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [invoices, setInvoices] = useState<any[]>([]);
-  const [data, setData] = useState<any>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setfilter] = useState<any>();
   const [selectedItems, setSelectedItems] = useState<any>([]);
@@ -42,7 +42,7 @@ const ContainerDevolucion: any = () => {
     try {
       let value2 = event.trim();
       value2 = value2.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-      const resolvedData = await data.compra;
+      const resolvedData: any[] = data?.compra ?? [];
       if (removeCategoryFilter) {
         setSelectedCategory(null);
       }
@@ -135,6 +135,7 @@ const ContainerDevolucion: any = () => {
   };
   useEffect(() => {
     filteredData("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
   useEffect(() => {
     if (selectedItems?.length > 0) {
@@ -155,27 +156,15 @@ const ContainerDevolucion: any = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(() => {
-    const getData = async () => {
-      console.log("entro aqui ");
-      await getAllInvoicesData(setInvoices);
-    };
-    getData();
-  }, []);
-
   return (
     <Box sx={{ height: "100%" }}>
-      <Box sx={{ background: "red", height: "95%" }}>
-        {/* <CarouselCategorias
-          onCategorySelect={handleCategorySelect}
-          selectedCategory={selectedCategory}
-        /> */}
+      <Box sx={{ height: "95%" }}>
         <VenderCards
           filteredData={currentDataPage}
           setSelectedItems={setSelectedItems}
           selectedItems={selectedItems}
           type={true}
-          facturaActiva={data.invoice}
+          facturaActiva={data?.invoice ?? []}
           invoice={data}
         />
         <Box
@@ -201,9 +190,6 @@ const ContainerDevolucion: any = () => {
       <SlidebarDevoluciones
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        invoices={invoices}
-        selectedItems={data}
-        setSelectedItems={setData}
       />
     </Box>
   );

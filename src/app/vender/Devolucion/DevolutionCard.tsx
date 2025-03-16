@@ -11,6 +11,9 @@ import {
   Typography,
 } from "@mui/material";
 import { getProductData } from "@/firebase";
+import { useContext } from "react";
+import { DevolucionContext } from "./context";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 
 interface Product {
   uid: string;
@@ -60,6 +63,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     facturaActiva,
     invoice,
   }) => {
+    const { data, setData } = useContext(DevolucionContext) || {};
     const [open, setOpen] = React.useState<boolean>(false);
     const [currentProduct, setCurrentProduct] = React.useState<Product | null>(
       null
@@ -69,9 +73,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     const [productImages, setProductImages] = React.useState<{
       [key: string]: string;
     }>({});
-    console.log("invoice:::>", invoice);
-    console.log("facturaActiva:::>", facturaActiva);
-    // Obtener imágenes de productos si no están disponibles en filteredData
+
     React.useEffect(() => {
       const fetchProductImages = async () => {
         const newImages: { [key: string]: string } = {};
@@ -94,7 +96,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     const handleOpenModal = (product: Product) => {
       setCurrentProduct(product);
       setQuantity(product.cantidad);
-      setInitialQuantity(product.cantidad); // Guardamos el valor inicial
+      setInitialQuantity(product.cantidad);
       setOpen(true);
     };
 
@@ -108,34 +110,70 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     ) => {
       let newValue = Number(event.target.value);
       if (isNaN(newValue)) return;
-
-      // Asegurar que el valor no sea menor a 0 ni mayor al valor inicial
       if (newValue < 0) newValue = 0;
       if (newValue > initialQuantity) newValue = initialQuantity;
 
       setQuantity(newValue);
     };
 
-    const handleSaveChanges = () => {
-      if (!currentProduct) return;
+    const updateCompra = (currentProduct: any, quantity: number) => {
+      return data.compra.map((item: any) => {
+        if (item.barCode === currentProduct.barCode) {
+          return { ...item, cantidad: item.cantidad - quantity };
+        }
+        return item;
+      });
+    };
 
-      const cleanedPrice = Number(currentProduct.price.replace(/[$,]/g, ""));
-      if (quantity >= 0 && quantity <= initialQuantity) {
-        const updatedItems = selectedItems.map((item) =>
-          item.barCode === currentProduct.barCode
-            ? { ...item, cantidad: quantity, acc: quantity * cleanedPrice }
+    const updateDevolucion = (currentProduct: any, quantity: number) => {
+      const existingIndex = data.Devolucion?.findIndex(
+        (item: any) => item.barCode === currentProduct.barCode
+      );
+
+      if (existingIndex !== -1 && existingIndex !== undefined) {
+        return data.Devolucion.map((item: any, index: number) =>
+          index === existingIndex
+            ? { ...item, cantidad: item.cantidad + quantity }
             : item
         );
-        setSelectedItems(updatedItems);
       } else {
-        console.error("Cantidad fuera del rango permitido");
+        const devolucionItem = {
+          productName: currentProduct.productName,
+          cantidad: quantity,
+          barCode: currentProduct.barCode,
+          acc: currentProduct.acc,
+        };
+        return data.Devolucion
+          ? [...data.Devolucion, devolucionItem]
+          : [devolucionItem];
       }
+    };
 
-      handleCloseModal();
+    const calculateTotals = (quantity: number, currentProduct: any) => {
+      const totalRestado = quantity * currentProduct.acc;
+      return {
+        subtotal: Math.max(0, data.subtotal - totalRestado),
+        total: Math.max(0, data.total - totalRestado),
+      };
+    };
+
+    const handleSaveChanges = (currentProduct: any, quantity: number) => {
+      if (!data || !currentProduct) return;
+      const updatedCompra = updateCompra(currentProduct, quantity);
+      const updatedDevolucion = updateDevolucion(currentProduct, quantity);
+      const { subtotal, total } = calculateTotals(quantity, currentProduct);
+      setData({
+        ...data,
+        compra: updatedCompra,
+        Devolucion: updatedDevolucion,
+        subtotal,
+        total,
+      });
     };
 
     return (
       <>
+        <SnackbarProvider />
         {filteredData?.map((product) => (
           <Card
             key={product.uid}
@@ -187,14 +225,13 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
           </Card>
         ))}
 
-        {/* Modal para editar cantidad */}
         <Modal open={open} onClose={handleCloseModal}>
           <StyledModalBox>
             <Typography
               variant="h6"
               sx={{ color: "#69EAE2", textAlign: "center" }}
             >
-              Editar cantidad
+              {"Editar cantidad"}
             </Typography>
 
             {currentProduct && (
@@ -239,7 +276,20 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
                 color: "#1F1D2B",
                 "&:hover": { background: "#52D4CB" },
               }}
-              onClick={handleSaveChanges}
+              onClick={() => {
+                if (quantity === 0) {
+                  enqueueSnackbar("No se permite mas devoluciones", {
+                    variant: "error",
+                    anchorOrigin: {
+                      vertical: "bottom",
+                      horizontal: "right",
+                    },
+                  });
+                  handleCloseModal();
+                } else {
+                  handleSaveChanges(currentProduct, quantity);
+                }
+              }}
             >
               Guardar cambios
             </Button>
@@ -256,13 +306,6 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
             </Button>
           </StyledModalBox>
         </Modal>
-        <Button
-          sx={{ position: "absolute", bottom: 0 }}
-          variant="contained"
-          color="primary"
-        >
-          CONFIRMAR DEVOLUCION
-        </Button>
       </>
     );
   }

@@ -230,7 +230,7 @@ const Factura = ({ data }: { data: any }) => {
               </Typography>
             </Box>
             <Box mt={1}>
-              {data?.compra.map((product: any) => (
+              {data?.compra?.map((product: any) => (
                 <Box
                   key={product.barCode}
                   sx={{
@@ -251,6 +251,73 @@ const Factura = ({ data }: { data: any }) => {
                 </Box>
               ))}
             </Box>
+            <Box
+              sx={{
+                background: "#00000042",
+                borderRadius: "10px",
+                display: data?.Devolucion ? "block" : "none",
+              }}
+            >
+              <Divider sx={{ color: "#000", marginTop: "8px" }} />
+              <Typography
+                sx={{
+                  ...facturaStyles.typographyResumenCompra,
+                  marginTop: "1rem",
+                }}
+              >
+                DEVOLUCION
+              </Typography>
+              <Box
+                mt={1}
+                sx={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Typography sx={facturaStyles.typographyResumenCompra}>
+                  PRODUCTO
+                </Typography>
+                <Typography
+                  sx={{
+                    ...facturaStyles.typographyResumenCompra,
+                    marginLeft: "30px",
+                  }}
+                >
+                  UND
+                </Typography>
+                <Typography
+                  sx={{
+                    ...facturaStyles.typographyResumenCompra,
+                    marginRight: "5px",
+                  }}
+                >
+                  PRECIO
+                </Typography>
+              </Box>
+              <Box mt={1}>
+                {data?.Devolucion?.map((product: any) => (
+                  <Box
+                    key={product.barCode}
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <Typography sx={facturaStyles.typographyProduct}>
+                      {product.productName}
+                    </Typography>
+                    <Typography sx={facturaStyles.typographyCantidad}>
+                      {product.cantidad}
+                    </Typography>
+                    <Typography sx={facturaStyles.typographyACC}>
+                      {`$ ${product.acc.toLocaleString("en-US")}`}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
             <Divider sx={{ color: "#000", marginTop: "8px" }} />
             <Box
               sx={{
@@ -264,7 +331,7 @@ const Factura = ({ data }: { data: any }) => {
                 Sub Total
               </Typography>
               <Typography sx={facturaStyles.typographyVenta}>
-                {`$ ${data?.subtotal.toLocaleString("en-US")}`}
+                {`$ ${data?.subtotal?.toLocaleString("en-US")}`}
               </Typography>
             </Box>
             <Box
@@ -318,7 +385,7 @@ const Factura = ({ data }: { data: any }) => {
                 Total
               </Typography>
               <Typography sx={facturaStyles.typographyVenta}>
-                {`$ ${data?.total.toLocaleString("en-US")}`}
+                {`$ ${data?.total?.toLocaleString("en-US")}`}
               </Typography>
             </Box>
             <Typography

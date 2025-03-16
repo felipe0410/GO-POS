@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Box, Typography, Card, CardContent, Chip } from "@mui/material";
 
 interface InvoiceCardProps {
@@ -12,6 +12,7 @@ const InvoiceCard: React.FC<InvoiceCardProps> = ({
   onSelect,
   isSelected,
 }) => {
+
   return (
     <Card
       onClick={() => onSelect(invoice.uid)}

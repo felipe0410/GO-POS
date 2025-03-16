@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   IconButton,
-  Pagination,
   Paper,
   useMediaQuery,
   useTheme,
@@ -12,14 +11,10 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
 import { fetchAndStoreSettings, getAllInvoicesData } from "@/firebase";
-import VenderCards from "@/components/VenderCards";
-import CarouselCategorias from "@/components/CarouselCategorias";
 import SearchInput from "./SearchInput";
-import SlidebarDevoluciones from "./SlidebarVender";
 import ContainerDevolucion from "./contaniner";
 
 const Page: any = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [invoices, setInvoices] = useState<any[]>([]);
   const [data, setData] = useState<undefined | any[]>(undefined);
   const [searchTerm, setSearchTerm] = useState("");
@@ -297,48 +292,9 @@ const Page: any = () => {
               </Button>
             </Box>
             <ContainerDevolucion />
-            {/* <Box sx={{ marginTop: { sm: "0" }, height: "70%" }}>
-              <CarouselCategorias
-                onCategorySelect={handleCategorySelect}
-                selectedCategory={selectedCategory}
-              />
-              <VenderCards
-                filteredData={currentDataPage}
-                setSelectedItems={setSelectedItems}
-                selectedItems={selectedItems}
-                type={true}
-                facturaActiva={undefined}
-              />
-              <Box
-                id="pagination"
-                sx={{
-                  filter: "invert(1)",
-                  display: "flex",
-                  justifyContent: "center",
-                  marginTop: "20px",
-                  width: { xs: "115%", sm: "100%" },
-                  marginLeft: { xs: "-15px", sm: "0" },
-                }}
-              >
-                <Pagination
-                  sx={{ color: "#fff" }}
-                  onChange={(e, page) => setCurrentPage(page)}
-                  count={totalPages}
-                  shape="circular"
-                  size={matches ? "large" : "small"}
-                />
-              </Box>
-            </Box> */}
           </Box>
         </Paper>
       </Box>
-      {/* <SlidebarDevoluciones
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        invoices={invoices}
-        selectedItems={data}
-        setSelectedItems={setData}
-      /> */}
     </Box>
   );
 };

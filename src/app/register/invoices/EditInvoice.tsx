@@ -226,20 +226,6 @@ const EditInvoice = ({
                   >
                     Metodo de pago
                   </Typography>
-                  {/* <OutlinedInput
-                    disabled
-                    value={data.paymentMethod?? "Efectivo"}
-                    type="text"
-                    sx={{
-                      width: "100%",
-                      height: "44.9px",
-                      borderRadius: "0.625rem",
-                      background: "#2C3248",
-                      boxShadow:
-                        "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                    }}
-                    style={{ color: "#FFF" }}
-                  /> */}
                   <Select
                     value={data.paymentMethod ?? "Efectivo"}
                     style={{

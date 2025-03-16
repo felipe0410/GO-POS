@@ -42,9 +42,6 @@ const VenderCards = ({
           borderRadius: "10px",
           boxShadow: "0px 4px 4px 0px #00000040",
         },
-        // "&::-webkit-scrollbar-thumb:hover": {
-        //   backgroundColor: "#555",
-        // },
       }}
     >
       <Box
