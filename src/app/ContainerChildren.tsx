@@ -52,7 +52,7 @@ const ContainerChildren = ({
     <>
       {validation ? (
         <>
-          <Box sx={{ display: "none" }}>
+          <Box sx={{ display: "block" }}>
             <HeaderAppBar />
           </Box>
           <Box
