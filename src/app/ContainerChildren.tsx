@@ -75,7 +75,7 @@ const ContainerChildren = ({
               marginTop: validationRoutes ? "" : "80px",
               marginLeft: validationRoutes
                 ? ""
-                : { xs: "20px", sm: isOpen ? "250px" : "140px" },
+                : { xs: "20px", sm: (isOpen ? "250px" : "140px") },
             }}
           >
             {childrenn}

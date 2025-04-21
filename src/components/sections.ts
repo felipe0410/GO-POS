@@ -25,6 +25,10 @@ export const localSections = [
         section: "NORMAL",
         id: "/vender/Normal",
       },
+      {
+        section: "DEVOLUCION",
+        id: "/vender/Devolucion",
+      },
     ],
   },
   {

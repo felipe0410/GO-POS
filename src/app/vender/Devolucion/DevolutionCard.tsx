@@ -89,7 +89,6 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
         );
         setProductImages((prevImages) => ({ ...prevImages, ...newImages }));
       };
-
       fetchProductImages();
     }, [filteredData]);
 
@@ -119,13 +118,27 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     const updateCompra = (currentProduct: any, quantity: number) => {
       return data.compra.map((item: any) => {
         if (item.barCode === currentProduct.barCode) {
-          return { ...item, cantidad: item.cantidad - quantity };
+          const unitPrice =
+            item.unitPrice ??
+            (item.cantidad > 0 ? item.acc / item.cantidad : 0);
+          return {
+            ...item,
+            cantidad: item.cantidad - quantity,
+            acc: item.acc - unitPrice * quantity,
+            unitPrice, // lo guardamos siempre, o se mantiene si ya existía
+          };
         }
         return item;
       });
     };
 
     const updateDevolucion = (currentProduct: any, quantity: number) => {
+      const unitPrice =
+        currentProduct.unitPrice ??
+        (currentProduct.cantidad > 0
+          ? currentProduct.acc / currentProduct.cantidad
+          : 0);
+
       const existingIndex = data.Devolucion?.findIndex(
         (item: any) => item.barCode === currentProduct.barCode
       );
@@ -133,7 +146,11 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
       if (existingIndex !== -1 && existingIndex !== undefined) {
         return data.Devolucion.map((item: any, index: number) =>
           index === existingIndex
-            ? { ...item, cantidad: item.cantidad + quantity }
+            ? {
+                ...item,
+                cantidad: item.cantidad + quantity,
+                acc: item.acc + quantity * unitPrice,
+              }
             : item
         );
       } else {
@@ -141,7 +158,8 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
           productName: currentProduct.productName,
           cantidad: quantity,
           barCode: currentProduct.barCode,
-          acc: currentProduct.acc,
+          acc: quantity * unitPrice,
+          unitPrice,
         };
         return data.Devolucion
           ? [...data.Devolucion, devolucionItem]
@@ -150,10 +168,19 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
     };
 
     const calculateTotals = (quantity: number, currentProduct: any) => {
-      const totalRestado = quantity * currentProduct.acc;
+      const unitPrice =
+        currentProduct.cantidad > 0
+          ? currentProduct.acc / currentProduct.cantidad
+          : 0;
+
+      const totalRestado = unitPrice * quantity;
+
+      console.log("totalRestado:", totalRestado);
+
       return {
         subtotal: Math.max(0, data.subtotal - totalRestado),
-        total: Math.max(0, data.total - totalRestado),
+        total: Math.max(0, data.subtotal - totalRestado),
+        descuento: 0,
       };
     };
 
@@ -161,13 +188,17 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
       if (!data || !currentProduct) return;
       const updatedCompra = updateCompra(currentProduct, quantity);
       const updatedDevolucion = updateDevolucion(currentProduct, quantity);
-      const { subtotal, total } = calculateTotals(quantity, currentProduct);
+      const { subtotal, total, descuento } = calculateTotals(
+        quantity,
+        currentProduct
+      );
       setData({
         ...data,
         compra: updatedCompra,
         Devolucion: updatedDevolucion,
         subtotal,
         total,
+        descuento,
       });
     };
 

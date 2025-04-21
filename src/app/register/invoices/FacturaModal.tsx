@@ -113,7 +113,9 @@ const FacturaModal = ({ data }: { data: any }) => {
                 },
               }}
             >
-              <Factura data={data} />
+              <Factura data={data} setFacturaData={function (value: any): void {
+                throw new Error("Function not implemented.");
+              } } />
             </Box>
             <Box
               sx={{
