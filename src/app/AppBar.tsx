@@ -57,7 +57,12 @@ export default function HeaderAppBar() {
   }, []);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box
+      sx={{
+        flexGrow: 1,
+        display: pathname?.startsWith("/vender") ? "none" : "none",
+      }}
+    >
       <AppBar
         position="absolute"
         sx={{ zIndex: "auto", background: "#1f1d2b" }}

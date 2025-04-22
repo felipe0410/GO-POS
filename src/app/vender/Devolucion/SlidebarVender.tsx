@@ -134,7 +134,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
             overflow: "hidden",
             top: 0,
             right: 0,
-            width: { xs: "100%", sm: "50%", lg: "24rem" },
+            width: { xs: "100%", sm: "50%", lg: "28rem" },
             borderRadius: "10px 0px 0px 10px",
             color: "#fff",
           }}
@@ -216,7 +216,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
                 >
                   Regresar
                 </Button>
-                <Factura data={data} />
+                <Factura data={data} setFacturaData={setData} />
               </Box>
             ) : (
               <>

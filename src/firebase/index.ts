@@ -656,7 +656,6 @@ export const getFilteredInvoicesData = async (
   callback: any
 ) => {
   try {
-
     const establecimientoDocRef = doc(
       db,
       "establecimientos",
@@ -681,7 +680,7 @@ export const getFilteredInvoicesData = async (
     }));
 
     console.log("initialInvoiceData:::>", initialInvoiceData);
-    
+
     callback(initialInvoiceData);
 
     const unsubscribe = onSnapshot(filteredQuery, (querySnapshot: any) => {
@@ -699,7 +698,6 @@ export const getFilteredInvoicesData = async (
     return null;
   }
 };
-
 
 export const getInvoiceData = async (uid: any) => {
   try {
@@ -1369,5 +1367,76 @@ export const getUltimaCaja = async () => {
   } catch (error) {
     console.error("Error al obtener la última caja:", error);
     return null;
+  }
+};
+
+export const handleGuardarDevolucion = async (facturaData: any) => {
+  try {
+    const uid = facturaData.uid;
+    console.log("🧾 Factura recibida para devolución:", facturaData);
+
+    const devolucion = facturaData.Devolucion ?? [];
+
+    let seRealizoCambio = false;
+
+    const devolucionActualizada = await Promise.all(
+      devolucion.map(async (producto: any) => {
+        const cantidadRegistrada = producto.cantidad ?? 0;
+        const cantidadYaGuardada = producto.devolucion_save ?? 0;
+
+        // 🔍 Verificamos si hay diferencia que aplicar al inventario
+        if (cantidadRegistrada <= cantidadYaGuardada) {
+          return producto; // No hay cambio
+        }
+
+        const diferencia = cantidadRegistrada - cantidadYaGuardada;
+
+        const productoDocRef = doc(
+          db,
+          "establecimientos",
+          `${user().decodedString}`,
+          "productos",
+          producto.barCode
+        );
+
+        const snapshot = await getDoc(productoDocRef);
+
+        if (snapshot.exists()) {
+          const productoBD = snapshot.data();
+          const nuevaCantidad = (productoBD.cantidad ?? 0) + diferencia;
+
+          await updateDoc(productoDocRef, {
+            cantidad: nuevaCantidad,
+          });
+
+          console.log(`📦 Inventario actualizado (+${diferencia}) para ${producto.barCode}`);
+
+          seRealizoCambio = true;
+
+          return {
+            ...producto,
+            devolucion_save: cantidadRegistrada, // actualizamos el valor aplicado
+          };
+        } else {
+          console.warn(`⚠️ Producto no encontrado: ${producto.barCode}`);
+          return producto;
+        }
+      })
+    );
+
+    if (!seRealizoCambio) {
+      console.warn("🔁 No se realizaron cambios en el inventario.");
+      return;
+    }
+
+    // 🧾 Guardar la factura actualizada con la nueva `Devolucion`
+    await updateInvoice(uid, {
+      ...facturaData,
+      Devolucion: devolucionActualizada,
+    });
+
+    console.log("✅ Devolución aplicada y factura actualizada correctamente.");
+  } catch (error) {
+    console.error("❌ Error al guardar la devolución:", error);
   }
 };

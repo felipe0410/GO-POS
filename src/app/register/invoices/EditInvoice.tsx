@@ -316,7 +316,12 @@ const EditInvoice = ({
           )}
         </Box>
         <Box sx={{ width: "35%", textAlign: "start", marginLeft: "1rem" }}>
-          <Factura data={data} />
+          <Factura
+            data={data}
+            setFacturaData={function (value: any): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
         </Box>
       </Box>
     </>

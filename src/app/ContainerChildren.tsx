@@ -52,7 +52,7 @@ const ContainerChildren = ({
     <>
       {validation ? (
         <>
-          <Box sx={{ display: "none" }}>
+          <Box sx={{ display: "block" }}>
             <HeaderAppBar />
           </Box>
           <Box
@@ -75,7 +75,7 @@ const ContainerChildren = ({
               marginTop: validationRoutes ? "" : "80px",
               marginLeft: validationRoutes
                 ? ""
-                : { xs: "20px", sm: isOpen ? "250px" : "140px" },
+                : { xs: "20px", sm: (isOpen ? "250px" : "140px") },
             }}
           >
             {childrenn}

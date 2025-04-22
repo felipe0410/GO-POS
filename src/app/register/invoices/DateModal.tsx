@@ -39,8 +39,8 @@ const DateModal = ({
         <CalendarMonthIcon sx={{ color: "#69EAE2" }} />
       </Button>
       <Modal
-        aria-labelledby='transition-modal-title'
-        aria-describedby='transition-modal-description'
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
@@ -82,7 +82,7 @@ const DateModal = ({
                 }}
               >
                 <CloseIcon
-                  fontSize='large'
+                  fontSize="large"
                   sx={{ color: "#F8F8F8", fontSize: "20px" }}
                 />
               </Button>
@@ -91,6 +91,7 @@ const DateModal = ({
               setSearchTerm={setSearchTerm}
               handleClose={handleClose}
               setSelectedDate={setSelectedDate}
+              selectedDate={undefined}
             />
           </Box>
         </Fade>

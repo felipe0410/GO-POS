@@ -177,8 +177,7 @@ const Page: any = () => {
   }, []);
 
   useEffect(() => {
-    const getData = async () => {
-      console.log("entro aqui ");
+    const getData = async () => {;
       await getAllInvoicesData(setInvoices);
     };
     getData();
@@ -195,7 +194,7 @@ const Page: any = () => {
     >
       <Box
         id="conainer_vender"
-        sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
+        sx={{ width: { xs: "100%", lg: "calc(100% - 27rem)", minHeight:'75vh' } }}
       >
         <Header title="Devolucion" />
         <Paper

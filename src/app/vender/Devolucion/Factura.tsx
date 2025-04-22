@@ -490,6 +490,18 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     fontStyle: "normal",
                     fontWeight: 900,
                     lineHeight: "140%",
+                  }}
+                >
+                  V/UNIT
+                </Typography>
+                <Typography
+                  sx={{
+                    color: "#000",
+                    textAlign: "center",
+                    fontSize: "0.7rem",
+                    fontStyle: "normal",
+                    fontWeight: 900,
+                    lineHeight: "140%",
                     marginLeft: "75px",
                   }}
                 >
@@ -510,59 +522,66 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                 </Typography>
               </Box>
               <Box mt={1}>
-                {facturaData?.compra.map((product: any) => (
-                  <Box
-                    key={product.barCode}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#000",
-                        fontSize: "0.8",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                        width: "10.2rem",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {product.productName}
-                    </Typography>
+                {facturaData?.compra.map((product: any) => {
+                  const valorUnitario = product.acc / product.cantidad;
+                  const total = product.acc;
 
-                    <Typography
+                  return (
+                    <Box
+                      key={product.barCode}
                       sx={{
-                        color: "#000",
-                        textAlign: "center",
-                        fontSize: "0.8",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                       }}
                     >
-                      {product.cantidad}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        width: "70px",
-                        color: "#000",
-                        textAlign: "center",
-                        fontSize: "0.8",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {`$ ${product.acc.toLocaleString("en-US")}`}
-                    </Typography>
-                  </Box>
-                ))}
+                      <Typography
+                        sx={{
+                          color: "#000",
+                          fontSize: "0.8",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "140%",
+                          width: "10.2rem",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {product.productName}
+                      </Typography>
+                      <Typography sx={{ width: "20%", textAlign: "center" }}>
+                        ${valorUnitario.toLocaleString("en-US")}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "#000",
+                          textAlign: "center",
+                          fontSize: "0.8",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "140%",
+                        }}
+                      >
+                        {product.cantidad}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          width: "70px",
+                          color: "#000",
+                          textAlign: "center",
+                          fontSize: "0.8",
+                          fontStyle: "normal",
+                          fontWeight: 700,
+                          lineHeight: "140%",
+                        }}
+                      >
+                        {`$ ${product.acc.toLocaleString("en-US")}`}
+                      </Typography>
+                    </Box>
+                  );
+                })}
               </Box>
               <Divider sx={{ color: "#000", marginTop: "8px" }} />
               <Box

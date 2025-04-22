@@ -52,7 +52,7 @@ export default function Sidebar({
       : dataUser?.jobs ?? [];
 
   const permissionMap: any = {
-    Vender: ["/vender", "/vender/Dian", "/vender/Normal"],
+    Vender: ["/vender", "/vender/Dian", "/vender/Normal","/vender/Devolucion"],
     Inventario: [
       "/inventory/productos",
       "/inventory/agregarProductos",
