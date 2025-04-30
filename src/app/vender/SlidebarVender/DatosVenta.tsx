@@ -116,6 +116,7 @@ const DatosVenta = (props: any) => {
     try {
       handleVenderClick();
       setLoading(true);
+      selectedItems.map((e: any) => updateProductDataCantidad(e.barCode, e));
       const valueUuid = uuidv4();
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
@@ -143,7 +144,6 @@ const DatosVenta = (props: any) => {
     };
 
     const datosCliente = JSON.stringify(dataWithDefaults);
-    selectedItems.map((e: any) => updateProductDataCantidad(e.barCode, e));
     localStorage.setItem("cliente", datosCliente);
     localStorage.setItem("invoice", numeroFactura());
     setDatosGuardados(true);
