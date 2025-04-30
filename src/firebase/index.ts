@@ -394,22 +394,17 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
 
-    // console.log("Obteniendo documento del producto...");
     const docSnapshot = await getDoc(productDocRef);
 
     if (docSnapshot.exists()) {
       const existingData = docSnapshot.data();
-      // console.log("Datos existentes del producto:", existingData);
 
       if (existingData) {
         const newCantidad = existingData.cantidad - newData.cantidad;
-        // console.log(`Cantidad actual: ${existingData.cantidad}, cantidad a descontar: ${newData.cantidad}`);
-        // console.log("Nueva cantidad calculada:", newCantidad);
+
 
         if (newCantidad >= 0) {
-          // console.log("Actualizando documento con la nueva cantidad...");
           await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
-          // console.log("Documento actualizado correctamente.");
         } else {
           console.log("No hay suficiente cantidad para actualizar. Operación abortada.");
         }
