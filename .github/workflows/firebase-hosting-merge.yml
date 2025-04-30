@@ -47,3 +47,4 @@ jobs:
           projectId: go-pos-add98
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
+          FIREBASE_DEPLOY_FORCE: true

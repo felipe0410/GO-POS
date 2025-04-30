@@ -122,6 +122,7 @@ const Dashboard = () => {
     let ingresos = 0;
     let ganancia = 0;
     let productosNoEncontrados: any[] = [];
+    let totalDescuentos = 0;
 
     // Filtrar las facturas dentro del rango de fechas
     const facturasEnRango = filter.filter((factura: any) =>
@@ -134,23 +135,33 @@ const Dashboard = () => {
       0
     );
 
-    // Calcular ganancia de cada producto vendido
-    facturasEnRango.forEach((factura: { compra: any[] }) => {
-      factura.compra.forEach(
-        (productoVendido: { barCode: any; cantidad: any }) => {
-          const producto = productosMap.get(productoVendido.barCode);
+    facturasEnRango.forEach(
+      (factura: { descuento?: number; compra: any[] }) => {
+        let gananciaFactura = 0;
 
-          if (producto) {
-            const gananciaProducto =
-              (producto.price - producto.purchasePrice) *
-              (productoVendido.cantidad || 1);
-            ganancia += gananciaProducto;
-          } else {
-            productosNoEncontrados.push(productoVendido);
+        factura.compra.forEach(
+          (productoVendido: { barCode: any; cantidad: any }) => {
+            const producto = productosMap.get(productoVendido.barCode);
+
+            if (producto) {
+              const gananciaProducto =
+                (producto.price - producto.purchasePrice) *
+                (productoVendido.cantidad || 1);
+              gananciaFactura += gananciaProducto;
+            } else {
+              productosNoEncontrados.push(productoVendido);
+            }
           }
-        }
-      );
-    });
+        );
+
+        const descuento = factura.descuento
+          ? parseFloat(factura.descuento.toString())
+          : 0;
+        totalDescuentos += descuento; // 👈 acumulamos descuento total
+        console.log("descuento:::>", descuento);
+        ganancia += gananciaFactura - descuento;
+      }
+    );
 
     const totalGananciasPorFechaTemp = listaFechas.map((fecha) => {
       const facturasEnRango = filter.filter((factura: any) =>
