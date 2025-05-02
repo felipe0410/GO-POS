@@ -319,7 +319,7 @@ const EditInvoice = ({
           <Factura
             data={data}
             setFacturaData={function (value: any): void {
-              throw new Error("Function not implemented.");
+              // throw new Error("Function not implemented.");
             }}
           />
         </Box>

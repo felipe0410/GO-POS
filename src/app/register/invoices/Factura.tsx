@@ -19,6 +19,7 @@ import JsBarcode from "jsbarcode";
 import { getEstablishmentData, handleGuardarDevolucion } from "@/firebase";
 import { NumericFormat } from "react-number-format";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import { usePathname } from "next/navigation";
 
 const Factura = ({
   data,
@@ -27,6 +28,7 @@ const Factura = ({
   data: any;
   setFacturaData: (value: any) => void;
 }) => {
+  const pathname = usePathname();
   const [establishmentData, setEstablishmentData] = React.useState({
     phone: "",
     NIT_CC: "",
@@ -62,6 +64,7 @@ const Factura = ({
         color="primary"
         fullWidth
         sx={{
+          display: pathname?.startsWith("/vender") ? "block" : "none",
           mt: 2,
           backgroundColor: "#007128",
           color: "#fff",
@@ -158,20 +161,47 @@ const Factura = ({
           <Table size="small" sx={{ width: "100%" }}>
             <TableHead>
               <TableRow>
-                <TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontFamily: "Nunito",
+                  }}
+                >
                   <b>Detalle</b>
                 </TableCell>
-                <TableCell align="right">
+                <TableCell
+                  sx={{
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontFamily: "Nunito",
+                  }}
+                  align="right"
+                >
                   <b>V/Unit</b>
                 </TableCell>
-                <TableCell align="center">
+                <TableCell
+                  sx={{
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontFamily: "Nunito",
+                  }}
+                  align="center"
+                >
                   <b>UND</b>
                 </TableCell>
                 {/* <TableCell align="right">
                   <b>Descuento</b>
                 </TableCell> */}
 
-                <TableCell align="right">
+                <TableCell
+                  sx={{
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontFamily: "Nunito",
+                  }}
+                  align="right"
+                >
                   <b>Total</b>
                 </TableCell>
               </TableRow>
@@ -181,11 +211,44 @@ const Factura = ({
                 const unit = item.acc / (item.cantidad > 0 ? item.cantidad : 1);
                 return (
                   <TableRow key={item.barCode}>
-                    <TableCell>{item.productName}</TableCell>
-                    <TableCell align="right">
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontFamily: "Nunito",
+                      }}
+                      padding={"none"}
+                      size={"small"}
+                      variant={"head"}
+                    >
+                      {item.productName}
+                    </TableCell>
+                    <TableCell
+                      padding={"none"}
+                      size={"small"}
+                      variant={"head"}
+                      align="right"
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontFamily: "Nunito",
+                      }}
+                    >
                       {item?.unitPrice ?? formatCurrency(unit)}
                     </TableCell>
-                    <TableCell align="center">{item.cantidad}</TableCell>
+                    <TableCell
+                      padding={"none"}
+                      size={"small"}
+                      variant={"head"}
+                      align="center"
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontFamily: "Nunito",
+                      }}
+                    >
+                      {item.cantidad}
+                    </TableCell>
                     {/* <TableCell align="right">
                       <NumericFormat
                         value={item.descuento ?? 0}
@@ -221,7 +284,17 @@ const Factura = ({
                         }}
                       />
                     </TableCell> */}
-                    <TableCell align="right">
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontFamily: "Nunito",
+                      }}
+                      padding={"none"}
+                      size={"small"}
+                      variant={"head"}
+                      align="right"
+                    >
                       {formatCurrency(item.acc)}
                     </TableCell>
                   </TableRow>
