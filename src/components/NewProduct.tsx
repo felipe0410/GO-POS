@@ -3,6 +3,8 @@ import {
   Autocomplete,
   Box,
   Button,
+  Collapse,
+  Divider,
   FormControl,
   IconButton,
   InputAdornment,
@@ -27,6 +29,10 @@ import Calculatorr from "./modalCalculator";
 import ImgInput from "./inputIMG";
 import Revenue from "@/app/inventory/agregarProductos/modal/revenue";
 import GenerateBarCode from "@/app/inventory/agregarProductos/modal/Barcode";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import DeleteIcon from "@mui/icons-material/Delete";
+import PresentacionesProducto from "./PresentacionesProducto";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -92,6 +98,7 @@ export default function NewProduct() {
     cantidad: "",
     purchasePrice: "0",
   });
+  const [openPresentaciones, setOpenPresentaciones] = useState(false);
   const [imageBase64, setImageBase64] = useState("");
   const [category, setCategory] = useState<any>([""]);
   const [measure, setMeasure] = useState<any>([""]);
@@ -248,6 +255,29 @@ export default function NewProduct() {
       }
       return settings;
     }
+  };
+
+  const removePresentacion = (indexToRemove: number) => {
+    setPresentaciones((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  const [presentaciones, setPresentaciones] = useState([
+    { tipo: "", codigoBarra: "", factor: "", precio: "" },
+  ]);
+
+  const addPresentacion = () => {
+    setPresentaciones((prev) => [
+      ...prev,
+      { tipo: "", codigoBarra: "", factor: "", precio: "" },
+    ]);
+  };
+
+  const updatePresentacion = (index: number, field: string, value: string) => {
+    const newPresentaciones: any = [...presentaciones];
+    newPresentaciones[index][field] = value;
+    setPresentaciones(newPresentaciones);
   };
 
   useEffect(() => {
@@ -618,6 +648,12 @@ export default function NewProduct() {
                   </React.Fragment>
                 );
               })}
+              <PresentacionesProducto
+                presentaciones={presentaciones}
+                setPresentaciones={setPresentaciones}
+                open={openPresentaciones}
+                toggleOpen={() => setOpenPresentaciones(!openPresentaciones)}
+              />
             </Box>
           </Box>
         </Paper>

@@ -10,7 +10,6 @@ export const typographyTitle = {
 
 export const typographySubtitle = {
   color: "#FFF",
-  fontFamily: "Nunito",
   fontSize: "1rem",
   fontStyle: "normal",
   fontWeight: 400,
@@ -65,7 +64,6 @@ export const BoxStyles = {
     marginTop: "4px",
     marginLeft: "12px",
     color: "#FFF",
-    fontFamily: "Nunito",
     fontSize: "1.2rem",
     fontStyle: "normal",
     fontWeight: 700,
@@ -73,7 +71,6 @@ export const BoxStyles = {
   },
   typographyCaptionStyles: {
     color: "#FFF",
-    fontFamily: "Nunito",
     fontSize: "1rem",
     fontStyle: "normal",
     fontWeight: 500,
@@ -85,7 +82,6 @@ export const facturaStyles = {
   typographyTitle: {
     color: "#000",
     textAlign: "center",
-    fontFamily: "Nunito",
     fontSize: "1.5rem",
     fontStyle: "normal",
     fontWeight: 800,
@@ -94,24 +90,20 @@ export const facturaStyles = {
   },
   typographyNIT: {
     color: "#000",
-    fontFamily: "Nunito",
-    fontSize: "0.8rem",
+    fontSize: "1rem",
     fontStyle: "normal",
     fontWeight: 600,
     lineHeight: "140%",
   },
   typographyVenta: {
     color: "#000",
-    fontFamily: "Nunito",
-    fontSize: "20px",
+    fontSize: "1rem",
     fontStyle: "normal",
-    fontWeight: 500,
-    lineHeight: "140%",
+    fontWeight: 700,
   },
   typographyVendedor: {
     color: "#000",
-    fontFamily: "Nunito",
-    fontSize: "0.8rem",
+    fontSize: "1rem",
     fontStyle: "normal",
     fontWeight: 800,
     lineHeight: "140%",
@@ -119,15 +111,13 @@ export const facturaStyles = {
   typographyResumenCompra: {
     color: "#000",
     textAlign: "center",
-    fontFamily: "Nunito",
-    fontSize: "0.75rem",
+    fontSize: "1rem",
     fontStyle: "normal",
     fontWeight: "bold",
     lineHeight: "140%",
   },
   typographyProduct: {
     color: "#000",
-    fontFamily: "Nunito",
     fontSize: "0.8rem",
     fontStyle: "normal",
     fontWeight: 700,
@@ -141,7 +131,6 @@ export const facturaStyles = {
   typographyCantidad: {
     color: "#000",
     textAlign: "center",
-    fontFamily: "Nunito",
     fontSize: "0.8rem",
     fontStyle: "normal",
     fontWeight: 700,
@@ -151,7 +140,6 @@ export const facturaStyles = {
     width: "70px",
     color: "#000",
     textAlign: "right",
-    fontFamily: "Nunito",
     fontSize: "0.8rem",
     fontStyle: "normal",
     fontWeight: 700,
@@ -159,7 +147,6 @@ export const facturaStyles = {
   },
   typographySpan: {
     color: "#000",
-    fontFamily: "Nunito",
     fontSize: "0.8rem",
     fontStyle: "normal",
     fontWeight: 700,
@@ -170,7 +157,6 @@ export const facturaStyles = {
 export const editStyles = {
   backTypography: {
     color: "#69EAE2",
-    fontFamily: "Nunito",
     fontSize: "24px",
     fontStyle: "normal",
     fontWeight: 700,
@@ -178,7 +164,6 @@ export const editStyles = {
   },
   ventaTypography: {
     color: "#FFF",
-    fontFamily: "Nunito",
     fontSize: "20px",
     fontStyle: "normal",
     fontWeight: 700,
@@ -189,7 +174,6 @@ export const editStyles = {
   },
   encabezadoTypography: {
     color: "#69EAE2",
-    fontFamily: "Nunito",
     fontSize: "18px",
     fontStyle: "normal",
     fontWeight: 800,
@@ -198,7 +182,6 @@ export const editStyles = {
   },
   inputstypography: {
     color: "#FFF",
-    fontFamily: "Nunito",
     fontSize: { xs: "10px", sm: "1rem" },
     fontStyle: "normal",
     fontWeight: 700,
@@ -207,7 +190,6 @@ export const editStyles = {
   },
   productosTypography: {
     color: "#8e918f",
-    fontFamily: "Nunito",
     fontSize: "17.5px",
     fontStyle: "normal",
     fontWeight: 400,
@@ -215,7 +197,6 @@ export const editStyles = {
   },
   typographyButton: {
     color: "#1F1D2B",
-    fontFamily: "Nunito",
     fontSize: "1rem",
     fontStyle: "normal",
     fontWeight: 700,
@@ -238,7 +219,6 @@ export const selectStyle = {
 export const deleteInvoiceStyle = {
   mainTypography: {
     color: "#FFF",
-    fontFamily: "Nunito",
     fontSize: "16px",
     fontStyle: "normal",
     fontWeight: 400,
@@ -247,7 +227,6 @@ export const deleteInvoiceStyle = {
   },
   subtitleTypogrephy: {
     color: "#69EAE2",
-    fontFamily: "Nunito",
     fontSize: "14px",
     fontStyle: "normal",
     fontWeight: 400,
@@ -256,7 +235,6 @@ export const deleteInvoiceStyle = {
   },
   spanTypography: {
     color: "#69EAE2",
-    fontFamily: "Nunito",
     fontSize: "14px",
     fontStyle: "normal",
     fontWeight: 900,

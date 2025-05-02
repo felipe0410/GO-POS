@@ -154,7 +154,7 @@ const Factura = ({
         <Typography
           sx={{ ...facturaStyles.typographyResumenCompra, textAlign: "center" }}
         >
-          RESUMEN DE COMPRAA
+          RESUMEN DE COMPRA
         </Typography>
 
         <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
@@ -163,18 +163,18 @@ const Factura = ({
               <TableRow>
                 <TableCell
                   sx={{
+                    color: "#000",
+                    fontSize: "1rem",
                     fontWeight: 900,
-                    textTransform: "uppercase",
-                    fontFamily: "Nunito",
                   }}
                 >
                   <b>Detalle</b>
                 </TableCell>
                 <TableCell
                   sx={{
+                    color: "#000",
+                    fontSize: "1rem",
                     fontWeight: 900,
-                    textTransform: "uppercase",
-                    fontFamily: "Nunito",
                   }}
                   align="right"
                 >
@@ -182,9 +182,9 @@ const Factura = ({
                 </TableCell>
                 <TableCell
                   sx={{
+                    color: "#000",
+                    fontSize: "1rem",
                     fontWeight: 900,
-                    textTransform: "uppercase",
-                    fontFamily: "Nunito",
                   }}
                   align="center"
                 >
@@ -196,9 +196,9 @@ const Factura = ({
 
                 <TableCell
                   sx={{
+                    color: "#000",
+                    fontSize: "1rem",
                     fontWeight: 900,
-                    textTransform: "uppercase",
-                    fontFamily: "Nunito",
                   }}
                   align="right"
                 >
@@ -210,7 +210,10 @@ const Factura = ({
               {data?.compra?.map((item: any, index: number) => {
                 const unit = item.acc / (item.cantidad > 0 ? item.cantidad : 1);
                 return (
-                  <TableRow key={item.barCode}>
+                  <TableRow
+                    key={item.barCode}
+                    style={{background: index % 2 === 0 ? "#b6b6b6" : "#FFFFFF",}}
+                  >
                     <TableCell
                       sx={{
                         fontWeight: 900,
@@ -438,7 +441,7 @@ const Factura = ({
           }}
         >
           <Typography>Cambio:</Typography>
-          <Typography>{formatCurrency(data.cambio)}</Typography>
+          <Typography>{formatCurrency(data?.cambio ?? 0)}</Typography>
         </Box>
         <Box
           sx={{
@@ -450,7 +453,14 @@ const Factura = ({
           }}
         >
           <Typography>Total:</Typography>
-          <Typography>{formatCurrency(data.total)}</Typography>
+          <Typography
+            sx={{
+              fontSize: "1rem",
+              fontWeight: 900,
+            }}
+          >
+            {formatCurrency(data.total)}
+          </Typography>
         </Box>
 
         {/* Nota */}
