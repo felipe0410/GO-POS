@@ -163,18 +163,18 @@ const Factura = ({
               <TableRow>
                 <TableCell
                   sx={{
-                    color: "#000",
-                    fontSize: "1rem",
                     fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontSize: "1rem",
                   }}
                 >
                   <b>Detalle</b>
                 </TableCell>
                 <TableCell
                   sx={{
-                    color: "#000",
-                    fontSize: "1rem",
                     fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontSize: "1rem",
                   }}
                   align="right"
                 >
@@ -182,9 +182,9 @@ const Factura = ({
                 </TableCell>
                 <TableCell
                   sx={{
-                    color: "#000",
-                    fontSize: "1rem",
                     fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontSize: "1rem",
                   }}
                   align="center"
                 >
@@ -212,13 +212,15 @@ const Factura = ({
                 return (
                   <TableRow
                     key={item.barCode}
-                    style={{background: index % 2 === 0 ? "#b6b6b6" : "#FFFFFF",}}
+                    style={{
+                      background: index % 2 === 0 ? "#b6b6b6" : "#FFFFFF",
+                    }}
                   >
                     <TableCell
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontFamily: "Nunito",
+                        fontSize: "1rem",
                       }}
                       padding={"none"}
                       size={"small"}
@@ -234,7 +236,7 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontFamily: "Nunito",
+                        fontSize: "1rem",
                       }}
                     >
                       {item?.unitPrice ?? formatCurrency(unit)}
@@ -247,7 +249,7 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontFamily: "Nunito",
+                        fontSize: "1rem",
                       }}
                     >
                       {item.cantidad}
@@ -291,7 +293,7 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontFamily: "Nunito",
+                        fontSize: "1rem",
                       }}
                       padding={"none"}
                       size={"small"}
