@@ -224,14 +224,14 @@ const Factura = ({
                       }}
                       padding={"none"}
                       size={"small"}
-                      variant={"head"}
+                      // variant={"head"}
                     >
                       {item.productName}
                     </TableCell>
                     <TableCell
                       padding={"none"}
                       size={"small"}
-                      variant={"head"}
+                      // variant={"head"}
                       align="right"
                       sx={{
                         fontWeight: 900,
@@ -244,7 +244,7 @@ const Factura = ({
                     <TableCell
                       padding={"none"}
                       size={"small"}
-                      variant={"head"}
+                      // variant={"head"}
                       align="center"
                       sx={{
                         fontWeight: 900,
@@ -297,7 +297,7 @@ const Factura = ({
                       }}
                       padding={"none"}
                       size={"small"}
-                      variant={"head"}
+                      // variant={"head"}
                       align="right"
                     >
                       {formatCurrency(item.acc)}

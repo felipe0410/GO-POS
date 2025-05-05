@@ -48,7 +48,7 @@ export default function ReactCalendar({
   }
 
   useEffect(() => {
-    if (selectedDate.length > 0) {
+    if (selectedDate?.length > 0) {
       setDateTabs(selectedDate);
     }
   }, []);

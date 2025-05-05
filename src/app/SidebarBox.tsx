@@ -120,7 +120,10 @@ const SidebarBox: React.FC<SidebarProps> = ({
   }, [isOpeningCaja]);
 
   useEffect(() => {
-    getFilteredInvoicesData(cajaData?.timestampApertura??'', setInvoicesClose);
+    getFilteredInvoicesData(
+      cajaData?.timestampApertura ?? "",
+      setInvoicesClose
+    );
   }, [cajaData?.timestampApertura]);
 
   return (

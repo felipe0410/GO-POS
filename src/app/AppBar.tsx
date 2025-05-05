@@ -60,7 +60,10 @@ export default function HeaderAppBar() {
     <Box
       sx={{
         flexGrow: 1,
-        display: pathname?.startsWith("/vender") ? "none" : "none",
+        display: {
+          xs: "none",
+          lg: pathname?.startsWith("/vender") ? "block" : "none",
+        },
       }}
     >
       <AppBar
