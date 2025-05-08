@@ -73,29 +73,59 @@ export default function InventoryCard({
             overflow: "visible",
           }}
         >
-          <Box
-            component={"img"}
-            src={
-              product?.image?.length > 0
-                ? product?.image === "images/noImage.svg"
-                  ? `/${product?.image}`
-                  : product?.image
-                : "/images/noImage.svg"
-            }
-            alt={`imagen del producto ${product.productName}`}
-            sx={{
-              width: "50%",
-              height: { xs: "130px", sm: "130px" },
-              position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              "&:hover": {
-                transform: "scale(1.7)",
-                left: "25%",
-              },
-            }}
-            loading="lazy"
-          />
+          <Box sx={{ position: "relative", width: "100%", height: "130px" }}>
+            <Box
+              component="img"
+              src={
+                product?.image?.length > 0
+                  ? product?.image === "images/noImage.svg"
+                    ? `/${product?.image}`
+                    : product?.image
+                  : "/images/noImage.svg"
+              }
+              alt={`imagen del producto ${product.productName}`}
+              sx={{
+                width: "50%",
+                height: { xs: "130px", sm: "130px" },
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
+                filter:
+                  product?.cantidad === 0
+                    ? "grayscale(100%) brightness(0.5)"
+                    : "none",
+                transition: "transform 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.7) translateX(-25%)",
+                },
+              }}
+              loading="lazy"
+            />
+
+            {product?.cantidad === 0 && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  width: "50%",
+                  height: "100%",
+                  // backgroundColor: "rgba(0, 0, 0, 0.5)",
+                  color: "white",
+                  fontWeight: "bold",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                  fontSize: "12px",
+                  padding: "4px",
+                }}
+              >
+                Producto agotado temporalmente
+              </Box>
+            )}
+          </Box>
         </Box>
         <StyledCardContent
           sx={{

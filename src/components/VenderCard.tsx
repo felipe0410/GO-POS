@@ -138,24 +138,61 @@ const VenderCard = React.memo(
               />
             </Button>
             <Box
-              component={"img"}
-              src={
-                ["", null].includes(product.image)
-                  ? "images/noImage.svg"
-                  : product.image
-              }
-              alt={`imagen del producto ${product.productName}`}
               sx={{
+                position: "relative",
                 width: "60%",
                 height: { xs: "70px", sm: "120px" },
-                position: "relative",
                 top: { xs: "-10px", sm: "-30px" },
-                "&:hover": {
-                  transform: "scale(1.7)",
-                },
               }}
-              loading="lazy"
-            />
+            >
+              <Box
+                component="img"
+                src={
+                  ["", null].includes(product.image)
+                    ? "images/noImage.svg"
+                    : product.image
+                }
+                alt={`imagen del producto ${product.productName}`}
+                sx={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  filter:
+                    product.cantidad === 0
+                      ? "grayscale(100%) brightness(0.5)"
+                      : "none",
+                  transition: "transform 0.3s ease",
+                  "&:hover": {
+                    transform: "scale(1.7)",
+                  },
+                }}
+                loading="lazy"
+              />
+
+              {product.cantidad === 0 && (
+                <Box
+                  sx={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    // backgroundColor: "rgba(0, 0, 0, 0.5)",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontSize: "10px",
+                    textAlign: "center",
+                    fontWeight: "bold",
+                    padding: "5px",
+                    borderRadius: "4px",
+                  }}
+                >
+                  Producto agotado
+                </Box>
+              )}
+            </Box>
 
             <Button
               sx={{ padding: 0, minWidth: 0, minHeight: 0 }}

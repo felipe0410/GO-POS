@@ -107,24 +107,55 @@ const CartItems = ({
       )
     );
   };
+  console.log("product.cantidad::>", product.cantidad);
 
   return (
     <Box sx={{ marginTop: "10px" }}>
       <Box display={"flex"}>
         <Box sx={{ width: "60%", display: "flex" }}>
-          <Box
-            component={"img"}
-            src={
-              ["", null].includes(product.image)
-                ? "/images/noImage.svg"
-                : product.image
-            }
-            alt={`imagen del producto ${product.productName}`}
-            sx={{
-              width: "37px",
-              height: "37px",
-            }}
-          />
+          <Box sx={{ position: "relative", width: "37px", height: "37px" }}>
+            <Box
+              component="img"
+              src={
+                ["", null].includes(product.image)
+                  ? "/images/noImage.svg"
+                  : product.image
+              }
+              alt={`imagen del producto ${product.productName}`}
+              sx={{
+                width: "100%",
+                height: "100%",
+                filter:
+                  product.cantidad === 0
+                    ? "grayscale(100%) brightness(0.5)"
+                    : "none",
+                borderRadius: "4px",
+              }}
+            />
+            {product.cantidad === 0 && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  // backgroundColor: "rgba(0,0,0,0.5)",
+                  color: "#fff",
+                  fontSize: "10px",
+                  fontWeight: "bold",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "4px",
+                  textAlign: "center",
+                  padding: "2px",
+                }}
+              >
+                Producto agotado
+              </Box>
+            )}
+          </Box>
           <Box marginLeft={1} sx={{ width: "100%" }}>
             <Typography
               sx={{
