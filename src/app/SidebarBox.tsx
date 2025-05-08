@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -6,6 +7,7 @@ import {
   Button,
   OutlinedInput,
   Divider,
+  Chip,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { NumericFormat } from "react-number-format";
@@ -13,9 +15,11 @@ import {
   closeCaja,
   getFilteredInvoicesData,
   getUltimaCaja,
+  getUltimaCajaCerrada,
   openCaja,
 } from "@/firebase";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
+import TicketCierreCaja from "./TicketCierreCaja";
 
 interface SidebarProps {
   onClose: () => void;
@@ -31,6 +35,7 @@ const SidebarBox: React.FC<SidebarProps> = ({
   cajaData,
 }) => {
   const [ultimaCaja, setUltimaCaja] = useState<any | null>(null);
+  const [consecutivo, setconsecutivo] = useState(0);
   const [initialAmount, setInitialAmount] = useState("0");
   const [finalAmount, setFinalAmount] = useState("0");
   const [totalTransferencias, setTotalTransferencias] = useState("0");
@@ -38,8 +43,71 @@ const SidebarBox: React.FC<SidebarProps> = ({
   const [totalEfectivo, setTotalEfectivo] = useState("0");
   const [baseCajaFinal, setBaseCajaFinal] = useState("0");
   const [notasCierre, setNotasCierre] = useState("");
-  const [invoicesClose, setInvoicesClose] = useState([]);
-  console.log("invoicesClose:::>", invoicesClose);
+  const [invoicesClose, setInvoicesClose] = useState<any>([]);
+  const [mostrarTicket, setMostrarTicket] = useState(false);
+  const [resumenCaja, setResumenCaja] = useState<any>(null);
+
+  const calcularResumenCaja = () => {
+    return invoicesClose.reduce(
+      (
+        acc: {
+          transferencias: number;
+          efectivo: number;
+          totalCerrado: number;
+          pendientes: number;
+          devoluciones: any;
+        },
+        factura: {
+          total: any;
+          paymentMethod: any;
+          status: any;
+          Devolucion: any[];
+        }
+      ) => {
+        const total = Number(factura.total || 0);
+        const metodo = (factura.paymentMethod || "").toLowerCase();
+        const status = factura.status;
+
+        const esCerrada = status === "CANCELADO";
+
+        if (esCerrada) {
+          if (metodo === "transferencia") {
+            acc.transferencias += total;
+          } else {
+            acc.efectivo += total;
+          }
+          acc.totalCerrado += total;
+        } else {
+          acc.pendientes += total;
+        }
+
+        if (Array.isArray(factura.Devolucion)) {
+          const totalDev = factura.Devolucion.reduce(
+            (sum: number, item: { acc: any }) => sum + (Number(item.acc) || 0),
+            0
+          );
+          acc.devoluciones += totalDev;
+        }
+
+        return acc;
+      },
+      {
+        efectivo: 0,
+        transferencias: 0,
+        totalCerrado: 0,
+        pendientes: 0,
+        devoluciones: 0,
+      }
+    );
+  };
+
+  const formatCurrency = (value: number | string) =>
+    new Intl.NumberFormat("es-CO", {
+      style: "currency",
+      currency: "COP",
+      maximumFractionDigits: 0,
+    }).format(Number(value || 0));
+
   const handleConfirmOpenCaja = async () => {
     if (!initialAmount || Number(initialAmount) <= 0) {
       enqueueSnackbar("El monto inicial debe ser mayor a $0", {
@@ -93,17 +161,30 @@ const SidebarBox: React.FC<SidebarProps> = ({
       return;
     }
 
-    const success = await closeCaja(ultimaCaja.id, finalAmount, notes);
+    const resumen = calcularResumenCaja();
+
+    const success: any = await closeCaja(ultimaCaja.uid, {
+      montoFinal: finalAmount,
+      notasCierre,
+      efectivo: resumen.efectivo,
+      transferencias: resumen.transferencias,
+      pendientes: resumen.pendientes,
+      devoluciones: resumen.devoluciones,
+      totalCerrado: resumen.totalCerrado,
+      facturasUIDs,
+    });
 
     if (success) {
       enqueueSnackbar("Caja cerrada con éxito!", { variant: "success" });
-      onClose();
+      setconsecutivo(success.consecutivo);
+      setMostrarTicket(true);
     } else {
       enqueueSnackbar("Error al cerrar la caja. Inténtalo de nuevo.", {
         variant: "error",
       });
     }
   };
+
   const producido =
     Number(totalEfectivo) +
     Number(totalTransferencias) -
@@ -111,6 +192,12 @@ const SidebarBox: React.FC<SidebarProps> = ({
   useEffect(() => {
     const fetchUltimaCaja = async () => {
       const data = await getUltimaCaja();
+      const ultimaCerrada = await getUltimaCajaCerrada();
+      const consecutivo =
+        ultimaCerrada?.consecutivoCaja != null
+          ? ultimaCerrada.consecutivoCaja + 1
+          : 1;
+      setconsecutivo(consecutivo);
       setUltimaCaja(data);
     };
 
@@ -125,6 +212,21 @@ const SidebarBox: React.FC<SidebarProps> = ({
       setInvoicesClose
     );
   }, [cajaData?.timestampApertura]);
+
+  useEffect(() => {
+    if (!isOpeningCaja) {
+      const result = calcularResumenCaja();
+      setTotalEfectivo(result.efectivo);
+      setTotalTransferencias(result.transferencias);
+      setFinalAmount(ultimaCaja?.montoInicial ?? 0);
+      setBaseCajaFinal(ultimaCaja?.montoInicial ?? 0);
+      setResumenCaja(result);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [invoicesClose, ultimaCaja]);
+  const facturasUIDs = invoicesClose.map(
+    (factura: { uid: any }) => factura.uid
+  );
 
   return (
     <Box
@@ -157,7 +259,40 @@ const SidebarBox: React.FC<SidebarProps> = ({
         </IconButton>
       </Box>
 
-      {isOpeningCaja ? (
+      {mostrarTicket ? (
+        <TicketCierreCaja
+          establecimiento={
+            establecimiento?.nameEstablishment || "Establecimiento"
+          }
+          fecha={new Date().toLocaleString("es-CO", {
+            timeZone: "America/Bogota",
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })}
+          montoInicial={Number(cajaData?.montoInicial)}
+          efectivo={resumenCaja?.efectivo}
+          transferencias={resumenCaja?.transferencias}
+          pendientes={resumenCaja?.pendientes}
+          devoluciones={resumenCaja?.devoluciones}
+          totalCerrado={resumenCaja?.totalCerrado}
+          producido={
+            resumenCaja
+              ? resumenCaja.efectivo +
+                resumenCaja.transferencias -
+                Number(cajaData?.montoInicial)
+              : 0
+          }
+          montoFinal={Number(finalAmount)}
+          notasCierre={notasCierre}
+          onImprimir={() => window.print()}
+          consecutivo={consecutivo ?? "error"}
+        />
+      ) : isOpeningCaja ? (
         // 🟢 Formulario para abrir caja dentro del Sidebar
         <Box sx={{ mt: 2 }}>
           <Typography variant="body2" sx={{ marginBottom: 2 }}>
@@ -230,10 +365,7 @@ const SidebarBox: React.FC<SidebarProps> = ({
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
               {establecimiento?.nameEstablishment || "Establecimiento"}
             </Typography>
-            <Typography variant="subtitle2">
-              📍 {establecimiento?.direction || "Dirección no disponible"}
-            </Typography>
-            <Typography variant="subtitle2">
+            <Typography variant="subtitle1">
               📅{" "}
               {new Date().toLocaleString("es-CO", {
                 timeZone: "America/Bogota",
@@ -244,41 +376,70 @@ const SidebarBox: React.FC<SidebarProps> = ({
           <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
 
           <Box sx={{ textAlign: "left" }}>
-            <Typography variant="subtitle2">
-              🕒 Fecha de apertura: {cajaData?.fechaApertura || "Sin datos"}
+            <Typography variant="subtitle1">
+              🕒 Fecha de apertura:{" "}
+              <Chip
+                sx={{
+                  color: "#fff",
+                  background: "#004944",
+                  textTransform: "uppercase",
+                  fontWeight: 900,
+                }}
+                // variant="outlined"
+                color="primary"
+                label={
+                  cajaData?.fechaApertura
+                    ? new Date(cajaData.fechaApertura).toLocaleString("es-CO", {
+                        timeZone: "America/Bogota",
+                        weekday: "long",
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                        hour12: true,
+                      })
+                    : "Sin datos"
+                }
+              />
             </Typography>
-            <Typography variant="subtitle2">
-              💰 Monto inicial: ${cajaData?.montoInicial || "0"}
+            <Typography variant="subtitle1" sx={{ fontWeight: "900" }}>
+              💰 Monto inicial: {formatCurrency(cajaData?.montoInicial) || "0"}
             </Typography>
-            <Typography variant="subtitle2">
+            <Typography variant="subtitle1">
               📝 Notas: {cajaData?.notasApertura || "N/A"}
             </Typography>
           </Box>
 
           <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
 
-          <Typography variant="subtitle2">💵 Total Efectivo</Typography>
+          <Typography variant="subtitle1">💵 Total Efectivo</Typography>
           <NumericFormat
             value={totalEfectivo}
-            onValueChange={(values) => setTotalEfectivo(values.value)}
             prefix="$ "
             thousandSeparator
             customInput={OutlinedInput}
+            inputProps={{ readOnly: true }}
             sx={{
               width: "100%",
               background: "#2C3248",
               color: "#FFF",
               marginBottom: 1,
+              "& input": {
+                color: "#FFF", // asegura que el texto sea blanco
+                cursor: "default",
+              },
             }}
           />
 
-          <Typography variant="subtitle2">💳 Total Transferencias</Typography>
+          <Typography variant="subtitle1">💳 Total Transferencias</Typography>
           <NumericFormat
             value={totalTransferencias}
-            onValueChange={(values) => setTotalTransferencias(values.value)}
+            // onValueChange={(values) => setTotalTransferencias(values.value)}
             prefix="$ "
             thousandSeparator
             customInput={OutlinedInput}
+            inputProps={{ readOnly: true }}
             sx={{
               width: "100%",
               background: "#2C3248",
@@ -287,13 +448,14 @@ const SidebarBox: React.FC<SidebarProps> = ({
             }}
           />
 
-          <Typography variant="subtitle2">📌 Base Caja Final</Typography>
+          <Typography variant="subtitle1">📌 Base Caja Final</Typography>
           <NumericFormat
             value={baseCajaFinal}
-            onValueChange={(values) => setBaseCajaFinal(values.value)}
+            // onValueChange={(values) => setBaseCajaFinal(values.value)}
             prefix="$ "
             thousandSeparator
             customInput={OutlinedInput}
+            inputProps={{ readOnly: true }}
             sx={{
               width: "100%",
               background: "#2C3248",
@@ -305,21 +467,47 @@ const SidebarBox: React.FC<SidebarProps> = ({
           <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
 
           <Typography
-            variant="subtitle2"
+            variant="subtitle1"
             sx={{ fontWeight: "bold", color: "#69EAE2" }}
           >
-            📈 Producido: ${producido}
+            📈 Producido:
+            <Chip
+              sx={{
+                color: "#fff",
+                background: "#004944",
+                textTransform: "uppercase",
+                fontWeight: 900,
+                fontSize: "1rem",
+                marginBottom: "10px",
+              }}
+              // variant="outlined"
+              color="primary"
+              label={formatCurrency(producido)}
+            />
           </Typography>
 
           <Typography
-            variant="subtitle2"
+            variant="subtitle1"
             sx={{ fontWeight: "bold", color: "#69EAE2" }}
           >
-            🏦 Total en Caja: $
-            {Number(totalEfectivo) + Number(totalTransferencias)}
+            🏦 Total en Caja:
+            <Chip
+              sx={{
+                color: "#fff",
+                background: "#004944",
+                textTransform: "uppercase",
+                fontWeight: 900,
+                fontSize: "1rem",
+              }}
+              // variant="outlined"
+              color="primary"
+              label={formatCurrency(
+                Number(totalEfectivo) + Number(initialAmount)
+              )}
+            />
           </Typography>
 
-          <Typography variant="subtitle2">📝 Notas de Cierre</Typography>
+          <Typography variant="subtitle1">📝 Notas de Cierre</Typography>
           <OutlinedInput
             placeholder="Notas de cierre"
             multiline

@@ -402,11 +402,12 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
       if (existingData) {
         const newCantidad = existingData.cantidad - newData.cantidad;
 
-
         if (newCantidad >= 0) {
           await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
         } else {
-          console.log("No hay suficiente cantidad para actualizar. Operación abortada.");
+          console.log(
+            "No hay suficiente cantidad para actualizar. Operación abortada."
+          );
         }
       }
     } else {
@@ -416,7 +417,6 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
     console.error("Error al actualizar el documento: ", error);
   }
 };
-
 
 export const deleteProduct = async (uid: any, img: string) => {
   try {
@@ -458,7 +458,13 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     }
     const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
     const invoiceDocRef = doc(invoicesCollectionRef, uid);
-    const fechaCreacion = getHoraColombia();
+    const fechaCreacion = await getHoraColombia();
+    if (!(fechaCreacion instanceof Date)) {
+      console.warn(
+        "⚠️ fechaCreacion no es una instancia válida de Date",
+        fechaCreacion
+      );
+    }
     const timestampCreacion = Timestamp.fromDate(fechaCreacion);
     await setDoc(invoiceDocRef, {
       uid: uid,
@@ -467,7 +473,6 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
       fechaCreacion: fechaCreacion.toISOString(),
       ...invoiceData,
     });
-    console.log("invice;;>", uid);
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /invoices: ", error);
@@ -1290,32 +1295,64 @@ export const openCaja = async (montoInicial: string, notas: string) => {
 
 export const closeCaja = async (
   sessionCajaID: string,
-  montoFinal: string,
-  notas: string
-) => {
+  resumen: {
+    montoFinal: string;
+    notasCierre: string;
+    efectivo: number;
+    transferencias: number;
+    pendientes: number;
+    devoluciones: number;
+    totalCerrado: number;
+    facturasUIDs: any;
+  }
+): Promise<{ success: boolean; consecutivo: number | null }> => {
   try {
     const establecimientoDocRef = doc(
       db,
       "establecimientos",
       `${user().decodedString}`
     );
-    const cajaDocRef = doc(establecimientoDocRef, "cajas", sessionCajaID);
+    const cajasCollectionRef = collection(establecimientoDocRef, "cajas");
+
+    const q = query(
+      cajasCollectionRef,
+      orderBy("consecutivo", "desc"),
+      limit(1)
+    );
+    const snapshot = await getDocs(q);
+
+    let nuevoConsecutivo = 1;
+    if (!snapshot.empty) {
+      const data = snapshot.docs[0].data();
+      if (data.consecutivo != null) {
+        nuevoConsecutivo = data.consecutivo + 1;
+      }
+    }
+
+    const cajaDocRef = doc(cajasCollectionRef, sessionCajaID);
     const fechaCierre = new Date();
 
     const dataToUpdate = {
       cajaCerrada: true,
-      montoFinal: montoFinal,
-      notasCierre: notas,
+      montoFinal: resumen.montoFinal,
+      notasCierre: resumen.notasCierre,
       fechaCierre: fechaCierre.toISOString(),
-      timestampCierre: Timestamp.fromDate(fechaCierre), // Guardamos Timestamp en Firebase
+      timestampCierre: Timestamp.fromDate(fechaCierre),
+      efectivo: resumen.efectivo,
+      transferencias: resumen.transferencias,
+      pendientes: resumen.pendientes,
+      devoluciones: resumen.devoluciones,
+      totalCerrado: resumen.totalCerrado,
+      consecutivo: nuevoConsecutivo,
+      facturasUIDs: resumen.facturasUIDs,
     };
 
     await updateDoc(cajaDocRef, dataToUpdate);
-    console.log("Caja cerrada correctamente.");
-    return true;
+    console.log(`Caja cerrada correctamente. Consecutivo: ${nuevoConsecutivo}`);
+    return { success: true, consecutivo: nuevoConsecutivo };
   } catch (error) {
     console.error("Error al cerrar la caja:", error);
-    return false;
+    return { success: false, consecutivo: null };
   }
 };
 
@@ -1355,21 +1392,51 @@ export const getUltimaCaja = async () => {
 
     const q = query(
       cajasCollectionRef,
+      where("cajaCerrada", "==", false),
       orderBy("timestampApertura", "desc"),
       limit(1)
     );
 
     const snapshot = await getDocs(q);
     if (!snapshot.empty) {
-      const ultimaCaja = snapshot.docs[0].data();
-      console.log("Última caja obtenida:", ultimaCaja);
-      return ultimaCaja;
+      const doc = snapshot.docs[0];
+      return { id: doc.id, ...doc.data() };
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error al obtener la última caja abierta:", error);
+    return null;
+  }
+};
+
+export const getUltimaCajaCerrada = async () => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const cajasCollectionRef = collection(establecimientoDocRef, "cajas");
+
+    const q = query(
+      cajasCollectionRef,
+      where("cajaCerrada", "==", true),
+      orderBy("timestampCierre", "desc"),
+      limit(1)
+    );
+
+    const snapshot = await getDocs(q);
+    if (!snapshot.empty) {
+      const ultimaCajaCerrada = snapshot.docs[0].data();
+      console.log("Última caja cerrada obtenida:", ultimaCajaCerrada);
+      return ultimaCajaCerrada;
     } else {
-      console.log("No hay cajas registradas.");
+      console.log("No hay cajas cerradas registradas.");
       return null;
     }
   } catch (error) {
-    console.error("Error al obtener la última caja:", error);
+    console.error("Error al obtener la última caja cerrada:", error);
     return null;
   }
 };
@@ -1413,7 +1480,9 @@ export const handleGuardarDevolucion = async (facturaData: any) => {
             cantidad: nuevaCantidad,
           });
 
-          console.log(`📦 Inventario actualizado (+${diferencia}) para ${producto.barCode}`);
+          console.log(
+            `📦 Inventario actualizado (+${diferencia}) para ${producto.barCode}`
+          );
 
           seRealizoCambio = true;
 
