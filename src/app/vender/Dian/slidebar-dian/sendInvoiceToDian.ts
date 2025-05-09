@@ -93,6 +93,7 @@ export const sendInvoiceToDian2 = async (factura: any, token: string) => {
       Authorization: `Bearer ${token}`,
     };
     const response = await axios.post(apiUrl, invoiceDian, { headers });
+    console.log("response:::>", response);
     if (response.status === 200) {
       enqueueSnackbar("Factura enviada con éxito.", { variant: "success" });
       return response.data;

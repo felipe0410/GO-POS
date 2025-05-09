@@ -273,7 +273,7 @@ const InvoicePreview = () => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          height: "100vh",
+          height: "100%",
           width: "100vw",
           padding: "20px",
           boxSizing: "border-box",
@@ -328,18 +328,21 @@ const InvoicePreview = () => {
         <Box
           sx={{
             width: "100%",
-            height: "calc(100vh - 80px)", // Resta la altura de los botones para que no lo cubran
+            height: { xs: "50vh", lg: "calc(100vh - 80px)" }, // Resta la altura de los botones para que no lo cubran
             border: "1px solid #ccc",
             overflow: "hidden",
           }}
         >
           <iframe
-            src={pdfUrl}
+            src={`https://docs.google.com/gview?url=${encodeURIComponent(
+              pdfUrl
+            )}&embedded=true`}
             title="Factura"
             width="100%"
             height="100%"
             style={{
               border: "none",
+              borderRadius: "8px",
             }}
           />
         </Box>
