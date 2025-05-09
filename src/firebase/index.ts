@@ -670,33 +670,43 @@ export const getFilteredInvoicesData = async (
       "establecimientos",
       `${user().decodedString}`
     );
-
     const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
     const fechaActualColombia = getHoraColombia();
     const timestampFin = Timestamp.fromDate(fechaActualColombia);
     const filteredQuery = query(
       invoiceCollectionRef,
-      where("timestampCreacion", ">=", timestampInicio),
-      where("timestampCreacion", "<=", timestampFin),
-      orderBy("timestampCreacion", "desc")
+      where("timestamp", ">=", timestampInicio),
+      where("timestamp", "<=", timestampFin),
+      orderBy("timestamp")
     );
 
     // Obtener los datos iniciales
     const initialQuerySnapshot = await getDocs(filteredQuery);
-    const initialInvoiceData = initialQuerySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const initialInvoiceData = initialQuerySnapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .sort(
+        (a: any, b: any) =>
+          b.timestamp.seconds - a.timestamp.seconds
+      );
 
-    console.log("initialInvoiceData:::>", initialInvoiceData);
 
     callback(initialInvoiceData);
 
     const unsubscribe = onSnapshot(filteredQuery, (querySnapshot: any) => {
-      const updatedInvoiceData = querySnapshot.docs.map((doc: any) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const updatedInvoiceData = querySnapshot.docs
+        .map((doc: any) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .sort(
+          (
+            a: { timestampCreacion: { seconds: number } },
+            b: { timestampCreacion: { seconds: number } }
+          ) => b.timestampCreacion.seconds - a.timestampCreacion.seconds
+        );
 
       callback(updatedInvoiceData);
     });
