@@ -94,7 +94,7 @@ const Factura = ({
         Confirmar devolución
       </Button>
 
-      <Box sx={{ backgroundColor: "#fff", padding: "2px" }}>
+      <Box sx={{ backgroundColor: "#fff", padding: "12px" }}>
         <Box sx={{ textAlign: "center", mb: 2 }}>
           {establishmentData.img && (
             <Box
@@ -167,8 +167,11 @@ const Factura = ({
           RESUMEN DE COMPRA
         </Typography>
 
-        <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
-          <Table size="small" sx={{ width: "100%" }}>
+        <TableContainer
+          component={Paper}
+          sx={{ boxShadow: "none", padding: "15px" }}
+        >
+          <Table size="medium" sx={{ width: "100%" }}>
             <TableHead>
               <TableRow>
                 <TableCell
@@ -239,12 +242,10 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontSize: "1rem",
+                        fontSize: "1.1rem",
                         color: "#000",
                         fontFamily: "system-ui",
                         letterSpacing: "0.00938em",
-                        // fontSize: "1rem",
-                        // fontWeight: 900,
                       }}
                       padding={"none"}
                       size={"small"}
@@ -260,7 +261,7 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontSize: "1rem",
+                        fontSize: "1.1rem",
                         color: "#000",
                         fontFamily: "system-ui",
                         letterSpacing: "0.00938em",
@@ -276,7 +277,7 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontSize: "1rem",
+                        fontSize: "1.1rem",
                         color: "#000",
                         fontFamily: "system-ui",
                         letterSpacing: "0.00938em",
@@ -323,7 +324,7 @@ const Factura = ({
                       sx={{
                         fontWeight: 900,
                         textTransform: "uppercase",
-                        fontSize: "1rem",
+                        fontSize: "1.1rem",
                         color: "#000",
                         fontFamily: "system-ui",
                         letterSpacing: "0.00938em",
