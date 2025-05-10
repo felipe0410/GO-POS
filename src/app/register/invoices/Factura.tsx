@@ -167,11 +167,8 @@ const Factura = ({
           RESUMEN DE COMPRA
         </Typography>
 
-        <TableContainer
-          component={Paper}
-          sx={{ boxShadow: "none", padding: "15px" }}
-        >
-          <Table size="medium" sx={{ width: "100%" }}>
+        <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+          <Table size="small" sx={{ width: "98%", margin: " 0 auto" }}>
             <TableHead>
               <TableRow>
                 <TableCell
@@ -328,6 +325,7 @@ const Factura = ({
                         color: "#000",
                         fontFamily: "system-ui",
                         letterSpacing: "0.00938em",
+                        padding:'0 15px 0 0'
                       }}
                       padding={"none"}
                       size={"small"}
