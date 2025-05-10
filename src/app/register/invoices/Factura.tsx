@@ -94,13 +94,13 @@ const Factura = ({
         Confirmar devolución
       </Button>
 
-      <Box sx={{ backgroundColor: "#fff", padding: "25px" }}>
+      <Box sx={{ backgroundColor: "#fff", padding: "2px" }}>
         <Box sx={{ textAlign: "center", mb: 2 }}>
           {establishmentData.img && (
             <Box
               component="img"
               src={establishmentData.img}
-              sx={{ maxHeight: "60px", mb: 1 }}
+              sx={{ maxHeight: "120px", mb: 1 }}
             />
           )}
           <Typography sx={facturaStyles.typographyTitle}>
