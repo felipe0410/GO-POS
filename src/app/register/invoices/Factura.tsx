@@ -94,7 +94,7 @@ const Factura = ({
         Confirmar devolución
       </Button>
 
-      <Box sx={{ backgroundColor: "#fff", padding: "2px" }}>
+      <Box sx={{ backgroundColor: "#fff", padding: "0px" }}>
         <Box sx={{ textAlign: "center", mb: 2 }}>
           {establishmentData.img && (
             <Box
