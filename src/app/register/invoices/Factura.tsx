@@ -221,6 +221,10 @@ const Factura = ({
                         fontWeight: 900,
                         textTransform: "uppercase",
                         fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        // fontSize: "1rem",
+                        // fontWeight: 900,
                       }}
                       padding={"none"}
                       size={"small"}
@@ -399,7 +403,7 @@ const Factura = ({
               fontWeight: 900,
             }}
           >
-            Descuento
+            DESCUENTO
           </Typography>
 
           <NumericFormat
