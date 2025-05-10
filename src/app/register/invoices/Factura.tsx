@@ -94,7 +94,7 @@ const Factura = ({
         Confirmar devolución
       </Button>
 
-      <Box sx={{ backgroundColor: "#fff", padding: "9px" }}>
+      <Box sx={{ backgroundColor: "#fff", padding: "25px" }}>
         <Box sx={{ textAlign: "center", mb: 2 }}>
           {establishmentData.img && (
             <Box
@@ -125,7 +125,17 @@ const Factura = ({
           <Typography sx={facturaStyles.typographyVenta}>
             {data.date}
           </Typography>
-          <Typography sx={facturaStyles.typographyVendedor}>
+          <Typography
+            sx={{
+              ...facturaStyles.typographyVendedor,
+              fontWeight: 900,
+              textTransform: "uppercase",
+              fontSize: "1rem",
+              color: "#000",
+              fontFamily: "system-ui",
+              letterSpacing: "0.00938em",
+            }}
+          >
             VENDEDOR:{" "}
             <span style={facturaStyles.typographySpan}>
               {establishmentData.name}
@@ -166,6 +176,9 @@ const Factura = ({
                     fontWeight: 900,
                     textTransform: "uppercase",
                     fontSize: "1rem",
+                    color: "#000",
+                    fontFamily: "system-ui",
+                    letterSpacing: "0.00938em",
                   }}
                 >
                   <b>Detalle</b>
@@ -175,6 +188,9 @@ const Factura = ({
                     fontWeight: 900,
                     textTransform: "uppercase",
                     fontSize: "1rem",
+                    color: "#000",
+                    fontFamily: "system-ui",
+                    letterSpacing: "0.00938em",
                   }}
                   align="right"
                 >
@@ -185,6 +201,9 @@ const Factura = ({
                     fontWeight: 900,
                     textTransform: "uppercase",
                     fontSize: "1rem",
+                    color: "#000",
+                    fontFamily: "system-ui",
+                    letterSpacing: "0.00938em",
                   }}
                   align="center"
                 >
@@ -213,7 +232,7 @@ const Factura = ({
                   <TableRow
                     key={item.barCode}
                     style={{
-                      background: index % 2 === 0 ? "#b6b6b6" : "#FFFFFF",
+                      background: index % 2 === 0 ? "#807e7e" : "#FFFFFF",
                     }}
                   >
                     <TableCell
@@ -223,6 +242,7 @@ const Factura = ({
                         fontSize: "1rem",
                         color: "#000",
                         fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
                         // fontSize: "1rem",
                         // fontWeight: 900,
                       }}
@@ -241,6 +261,9 @@ const Factura = ({
                         fontWeight: 900,
                         textTransform: "uppercase",
                         fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
                       }}
                     >
                       {item?.unitPrice ?? formatCurrency(unit)}
@@ -254,6 +277,9 @@ const Factura = ({
                         fontWeight: 900,
                         textTransform: "uppercase",
                         fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
                       }}
                     >
                       {item.cantidad}
@@ -298,6 +324,9 @@ const Factura = ({
                         fontWeight: 900,
                         textTransform: "uppercase",
                         fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
                       }}
                       padding={"none"}
                       size={"small"}
@@ -327,6 +356,10 @@ const Factura = ({
                 textAlign: "center",
                 color: "#000", // color rojizo para diferenciarlo
                 fontWeight: 900,
+                textTransform: "uppercase",
+                fontSize: "1rem",
+                fontFamily: "system-ui",
+                letterSpacing: "0.00938em",
               }}
             >
               DEVOLUCIÓN DE PRODUCTOS
@@ -339,16 +372,55 @@ const Factura = ({
               <Table size="small" sx={{ width: "100%", fontWeight: 900 }}>
                 <TableHead>
                   <TableRow sx={{ fontWeight: 900 }}>
-                    <TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                    >
                       <b>Detalle</b>
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                      align="right"
+                    >
                       <b>V/Unit</b>
                     </TableCell>
-                    <TableCell align="center">
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                      align="center"
+                    >
                       <b>UND</b>
                     </TableCell>
-                    <TableCell align="right">
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                      align="right"
+                    >
                       <b>Total</b>
                     </TableCell>
                   </TableRow>
@@ -357,13 +429,66 @@ const Factura = ({
                   {data?.Devolucion.map((item: any, index: number) => {
                     const unit = item.acc / item.cantidad;
                     return (
-                      <TableRow key={item.barCode + "-devolucion-" + index}>
-                        <TableCell>{item.productName}</TableCell>
-                        <TableCell align="right">
+                      <TableRow
+                        sx={{
+                          fontWeight: 900,
+                          textTransform: "uppercase",
+                          fontSize: "1rem",
+                          color: "#000",
+                          fontFamily: "system-ui",
+                          letterSpacing: "0.00938em",
+                        }}
+                        key={item.barCode + "-devolucion-" + index}
+                      >
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                        >
+                          {item.productName}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          align="right"
+                        >
                           {formatCurrency(unit)}
                         </TableCell>
-                        <TableCell align="center">{item.cantidad}</TableCell>
-                        <TableCell align="right">
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          align="center"
+                        >
+                          {item.cantidad}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          align="right"
+                        >
                           {formatCurrency(item.acc)}
                         </TableCell>
                       </TableRow>
