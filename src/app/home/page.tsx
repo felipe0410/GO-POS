@@ -1,5 +1,5 @@
 "use client";
-import { Box, Divider, Typography } from "@mui/material";
+import { Box, Chip, Divider, Typography } from "@mui/material";
 import * as React from "react";
 import ChartAreaIndex from "@/components/index/ChartAreaIndex";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import {
   getAllClientsData,
   getAllInvoicesData,
   getEstablishmentData,
+  getProductData,
 } from "@/firebase";
 import { stat } from "fs";
 interface Cliente {
@@ -44,6 +45,9 @@ interface VentasPorFecha {
 }
 
 export default function Home() {
+  const [topProductos, setTopProductos] = useState<
+    { barCode: string; productName: string; cantidad: number; totalVentas: number; image?: string }[]
+  >([]);
   const [invoicesData, setInvoicesData] = useState([]);
   const [arraySumInvoices, setArraySumInvoices] = useState<number[]>([]);
   const [arrayDate, setArrayDate] = useState<string[]>([]);
@@ -107,14 +111,60 @@ export default function Home() {
     return crecimiento.toFixed(2); // Redondear a dos decimales
   };
 
+
+  const calcularTopProductos = async () => {
+    const conteo: Record<string, {
+      barCode: string;
+      productName: string;
+      cantidad: number;
+      totalVentas: number;
+    }> = {};
+
+    invoicesData.forEach((factura: Factura) => {
+      if (factura.status !== "CANCELADO") return;
+
+      factura.compra.forEach((item: Producto) => {
+        const key = item.barCode || item.productName;
+
+        if (!conteo[key]) {
+          conteo[key] = {
+            barCode: item.barCode,
+            productName: item.productName,
+            cantidad: 0,
+            totalVentas: 0,
+          };
+        }
+
+        conteo[key].cantidad += item.cantidad;
+        conteo[key].totalVentas += item.acc;
+      });
+    });
+
+    const productosOrdenados = Object.values(conteo)
+      .sort((a, b) => b.cantidad - a.cantidad)
+      .slice(0, 10);
+
+    // Consultar las imágenes de cada producto
+    const productosConImagen = await Promise.all(
+      productosOrdenados.map(async (producto) => {
+        const data = await getProductData(producto.barCode);
+        return {
+          ...producto,
+          image: data?.image || "/images/noImage.svg", // fallback si no tiene imagen
+        };
+      })
+    );
+
+    setTopProductos(productosConImagen);
+  };
   const Container = ({ children }: { children: React.ReactNode }) => {
     return (
       <Box
         sx={{
           marginY: "20px",
           borderRadius: "20px",
-          background:
-            "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, rgba(24, 24, 42, 0.93) 61.61%, #1F1D2B 91.2%)",
+          marginLeft: '5px',
+          background: "linear-gradient(127deg, rgba(6, 11, 38, 0.74) 28.26%, rgba(24, 24, 42, 0.93) 61.61%, #1F1D2B 91.2%)",
           backdropFilter: "blur(60px)",
         }}
       >
@@ -132,6 +182,13 @@ export default function Home() {
     };
     getData();
   }, []);
+
+  useEffect(() => {
+    if (invoicesData.length > 0) {
+      calcularTopProductos();
+    }
+
+  }, [invoicesData]);
   useEffect(() => {
     const fechaActual = new Date();
     const mesActual = fechaActual.getMonth() + 1; // Mes actual (1-12)
@@ -311,6 +368,8 @@ export default function Home() {
       })}
     </Box>
   );
+
+
   return (
     <Box sx={{ width: { xs: "95%", sm: "98%" } }}>
       <Box sx={{ display: { xs: "none", sm: "block" } }}>{sectionHeader}</Box>
@@ -335,7 +394,7 @@ export default function Home() {
                   color: "#69EAE2",
                   textShadow: "0px 4px 4px rgba(0, 0, 0, 0.25)",
                   fontFamily: "Nunito",
-                  fontSize: { xs: "24px", sm: "40px" },
+                  fontSize: { xs: "24px", sm: "30px" },
                   fontStyle: "normal",
                   fontWeight: 700,
                   lineHeight: "normal",
@@ -377,7 +436,7 @@ export default function Home() {
           }}
         />
         <Container>
-          <Box sx={{ padding: "20px", maxHeight: "280px" }}>
+          <Box sx={{ padding: "30px", maxHeight: "280px", overflowX:'none' }}>
             <Box>
               <Typography
                 sx={{
@@ -390,66 +449,76 @@ export default function Home() {
                   lineHeight: "140%",
                 }}
               >
-                Top 10 de productos mas vendidos en Enero
+                {topProductos.length > 2 ? 'Top 10 de productos mas vendidos en Enero' : "Aun nos falta informacion, pronto se generara la lista de los productos mas vendidos"}
               </Typography>
             </Box>
             <Box sx={{ maxHeight: "180px", overflowY: "auto" }}>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e, i) => {
-                return (
-                  <Box
-                    key={i * 87}
-                    display={"flex"}
+              {topProductos.map((producto, i) => (
+                <Box
+                  key={producto.barCode}
+                  display={"flex"}
+                  sx={{
+                    height: "50px",
+                    justifyContent: "space-between",
+                    marginBottom: "8px",
+                    marginTop: "10px",
+                  }}
+                >
+                  <Typography
                     sx={{
-                      height: "50px",
-                      justifyContent: "space-between",
-                      marginBottom: "8px",
-                      marginTop: "10px",
+                      color: "var(--Gray-Gray-400, #A0AEC0)",
+                      fontFamily: "Nunito",
+                      fontSize: { xs: "14px", sm: "16px" },
+                      fontStyle: "normal",
+                      fontWeight: 700,
+                      lineHeight: "100%",
+                      textTransform: 'uppercase'
                     }}
                   >
-                    <Typography
-                      sx={{
-                        color: "var(--Gray-Gray-400, #A0AEC0)",
-                        fontFamily: "Nunito",
-                        fontSize: { xs: "14px", sm: "20px" },
-                        fontStyle: "normal",
-                        fontWeight: 500,
-                        lineHeight: "100%",
-                      }}
-                    >
-                      {i + 1}. cuaderno Barbie X100H
-                      <Box>
-                        <Typography
-                          sx={{
-                            color: "var(--Gray-Gray-300, #CBD5E0)",
-                            fontFamily: "Nunito",
-                            fontSize: "10px",
-                            fontStyle: "normal",
-                            fontWeight: 400,
-                            lineHeight: "150%",
-                          }}
-                        >
-                          30 und , 400 ventas
-                        </Typography>
-                      </Box>
-                    </Typography>
-                    <Box
-                      sx={{
-                        height: "50px",
-                        width: "50px",
-                        background: "#fff",
-                        textAlignLast: "center",
-                        borderRadius: "50%",
-                      }}
-                    >
-                      <Box
-                        height={"100%"}
-                        component={"img"}
-                        src="/dashboard_home/fox.png"
+                    {i + 1}. {producto.productName}
+                    <Box display="flex" alignItems="center" gap={1}>
+                      <Chip
+                        label={`${producto.cantidad} und`}
+                        size="medium"
+                        sx={{
+                          fontSize: "13px",
+                          backgroundColor: "#CBD5E0",
+                          color: "#1A202C",
+                          height: "20px",
+                          fontWeight: '900'
+                        }}
                       />
+                      <Typography
+                        sx={{
+                          fontSize: "14px",
+                          color: "#01B574", // verde
+                          fontWeight: 900,
+                        }}
+                      >
+                        ${producto.totalVentas.toLocaleString("es-CO")}
+                      </Typography>
                     </Box>
+                  </Typography>
+                  <Box
+                    id='containe imagen product'
+                    sx={{
+                      height: "60px",
+                      width: "60px",
+                      background: "#000",
+                      textAlignLast: "center",
+                      borderRadius: "50%",
+                      padding: '10px'
+                    }}
+                  >
+                    <Box
+                      height={"100%"}
+                      component={"img"}
+                      src={producto?.image && producto.image.length > 2 ? producto.image : "/images/noImage.svg"}
+                    />
+
                   </Box>
-                );
-              })}
+                </Box>
+              ))}
             </Box>
           </Box>
         </Container>
