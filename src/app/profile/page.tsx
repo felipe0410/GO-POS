@@ -131,7 +131,7 @@ const Page = () => {
         });
     };
     dataEstablesimente();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -200,7 +200,7 @@ const Page = () => {
                 },
               }}
             >
-              {profileInputs.map((input: { width: any; field: string; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; type: string | undefined; }, index: number) => {
+              {profileInputs.map((input: { width: any; field: string; name: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | React.ReactNode | null | undefined; type: string | undefined; }, index: number) => {
                 const style = {
                   width: input.width,
                   marginTop: input.field === "name" ? "70px" : "27px",

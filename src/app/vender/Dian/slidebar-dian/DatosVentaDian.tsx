@@ -337,7 +337,6 @@ const DatosVentaDian = (props: any) => {
           <>
             <Box>
               <Autocomplete
-                placeholder="Clientes registrados"
                 sx={{
                   height: { xs: "35px", sm: "auto" },
                 }}

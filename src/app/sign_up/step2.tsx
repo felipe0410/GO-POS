@@ -5,7 +5,7 @@ import {
     Button,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, useContext, useEffect, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useContext, useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider } from "notistack";
@@ -124,7 +124,7 @@ const Step_second = () => {
                             }}>
                             Ahora vamos a crear tu perfil con los datos de tu establecimiento, mas adelante podras editarlo en la seccion de “Ajustes”, estos datos se usaran para generar las facturas de tu establecimiento
                         </Typography>
-                        {inputs_step_second.map((input: { type: string | undefined; label: string | undefined; placeHolder: string | undefined; value: unknown; field: any; validation: () => any; msgErrror: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }, index: number) => {
+                        {inputs_step_second.map((input: { type: string | undefined; label: string | undefined; placeHolder: string | undefined; value: unknown; field: any; validation: () => any; msgErrror: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | React.ReactNode | null | undefined; }, index: number) => {
                             return (
                                 <Box sx={{ width: { lg: '50%' }, alignSelf: 'center' }} key={index * 98}>
                                     <>

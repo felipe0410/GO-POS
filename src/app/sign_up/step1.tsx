@@ -10,7 +10,7 @@ import {
     Button,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
-import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, useContext, useEffect, useState } from "react";
+import { JSXElementConstructor, ReactElement, ReactNode, ReactPortal, useContext, useEffect, useState } from "react";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useRouter } from "next/navigation";
 import { SnackbarProvider } from "notistack";
@@ -129,7 +129,7 @@ const Step_one = () => {
                             >
                                 REGISTRATE
                             </Typography>
-                            {inputs.map((input: { type: string | undefined; label: string | undefined; placeHolder: string | undefined; value: unknown; field: any; validation: () => any; msgErrror: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | PromiseLikeOfReactNode | null | undefined; }, index: number) => {
+                            {inputs.map((input: { type: string | undefined; label: string | undefined; placeHolder: string | undefined; value: unknown; field: any; validation: () => any; msgErrror: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | React.ReactNode | null | undefined; }, index: number) => {
                                 return (
                                     <Box key={index * 98}>
                                         {input.type === "password" ? (

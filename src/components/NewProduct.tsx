@@ -395,7 +395,6 @@ export default function NewProduct() {
                 const categorySelect = (
                   <Box>
                     <Autocomplete
-                      placeholder="Categoria"
                       style={{
                         width: "100%",
                         borderRadius: "0.625rem",
@@ -429,7 +428,6 @@ export default function NewProduct() {
                   <Box>
                     <Box>
                       <Autocomplete
-                        placeholder="Unidades de medida"
                         style={{
                           width: "100%",
                           borderRadius: "0.625rem",
