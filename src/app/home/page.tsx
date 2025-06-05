@@ -191,7 +191,7 @@ export default function Home() {
   }, [invoicesData]);
   useEffect(() => {
     const fechaActual = new Date();
-    const mesActual = fechaActual.getMonth() + 1; // Mes actual (1-12)
+    const mesActual = fechaActual.getMonth() + 1;
     const anioActual = fechaActual.getFullYear();
     const mesAnterior = mesActual === 1 ? 12 : mesActual - 1;
     const anioMesAnterior = mesActual === 1 ? anioActual - 1 : anioActual;
