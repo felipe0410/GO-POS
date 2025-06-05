@@ -9,7 +9,6 @@ import {
   getEstablishmentData,
   getProductData,
 } from "@/firebase";
-import { stat } from "fs";
 interface Cliente {
   celular: string;
   email: string;
@@ -188,6 +187,7 @@ export default function Home() {
       calcularTopProductos();
     }
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [invoicesData]);
   useEffect(() => {
     const fechaActual = new Date();
@@ -436,7 +436,7 @@ export default function Home() {
           }}
         />
         <Container>
-          <Box sx={{ padding: "30px", maxHeight: "280px", overflowX:'none' }}>
+          <Box sx={{ padding: "30px", maxHeight: "280px", overflowX: 'none' }}>
             <Box>
               <Typography
                 sx={{

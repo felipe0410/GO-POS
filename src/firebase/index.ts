@@ -251,6 +251,7 @@ export const fetchAndUpdateProducts = async (callback: any) => {
 
 export const getAllProductsDataonSnapshot = async (callback: any) => {
   try {
+
     const establecimientoDocRef = doc(
       db,
       "establecimientos",
@@ -259,31 +260,92 @@ export const getAllProductsDataonSnapshot = async (callback: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const orderedQuery = query(productCollectionRef, orderBy("productName"));
 
+    const calcularCantidadDesdePadres = (
+      producto: any,
+      todos: Record<string, any>
+    ): number | undefined => {
+      const { parentBarCodes } = producto;
+
+      if (!Array.isArray(parentBarCodes) || parentBarCodes.length === 0) {
+        return undefined;
+      }
+
+      let cantidadFinal = undefined;
+
+      const padreRaiz = todos[parentBarCodes[0]];
+      if (!padreRaiz) return undefined;
+
+      const cantidadRaiz = parseFloat(padreRaiz.cantidad || "0");
+      if (isNaN(cantidadRaiz) || cantidadRaiz <= 0) return undefined;
+
+      cantidadFinal = cantidadRaiz;
+
+      for (let i = 1; i < parentBarCodes.length; i++) {
+        const padre = todos[parentBarCodes[i]];
+        if (!padre) return undefined;
+
+        const factor = parseFloat(padre.cantidadContenida || "0");
+        if (isNaN(factor) || factor <= 0) return undefined;
+
+        cantidadFinal *= factor;
+      }
+
+      const propiaCantidadContenida = parseFloat(producto.cantidadContenida || "0");
+      if (isNaN(propiaCantidadContenida) || propiaCantidadContenida <= 0) return undefined;
+
+      cantidadFinal *= propiaCantidadContenida;
+
+      return cantidadFinal;
+    };
+
+
+    const procesarYCalcular = (productsDataRaw: any[]) => {
+      const mapaProductos: Record<string, any> = {};
+      productsDataRaw.forEach((p) => {
+        mapaProductos[p.barCode] = { ...p };
+      });
+
+      return productsDataRaw.map((producto) => {
+        if (!producto.parentBarCodes || producto.parentBarCodes.length === 0) {
+          return producto;
+        }
+
+        const nuevaCantidad = calcularCantidadDesdePadres(producto, mapaProductos);
+        return nuevaCantidad === undefined
+          ? producto
+          : { ...producto, cantidad: nuevaCantidad.toFixed(1) };
+      });
+    };
+
     const initialSnapshot = await getDocs(orderedQuery);
-    const initialData = initialSnapshot.docs.map((doc) => ({
+    const initialDataRaw = initialSnapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
 
+    const initialData = procesarYCalcular(initialDataRaw);
     callback(initialData);
 
     const unsubscribe = onSnapshot(orderedQuery, (querySnapshot) => {
       if (querySnapshot.metadata.hasPendingWrites) return;
 
-      const productsData = querySnapshot.docs.map((doc) => ({
+      const productsDataRaw = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
+      const productsData = procesarYCalcular(productsDataRaw);
       callback(productsData);
     });
 
     return unsubscribe;
   } catch (error) {
-    console.error("Error al obtener productos:", error);
+    console.error("❌ Error al obtener productos:", error);
     return null;
   }
 };
+
+
 export const getAllProductsDataonSnapshotCache = (callback: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -382,9 +444,6 @@ export const updateProductData = async (uid: any, newData: any) => {
 };
 
 export const updateProductDataCantidad = async (uid: any, newData: any) => {
-  // console.log("UID recibido:", uid);
-  // console.log("Datos nuevos recibidos:", newData);
-
   try {
     const establecimientoDocRef = doc(
       db,
@@ -394,30 +453,65 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
     const productCollectionRef = collection(establecimientoDocRef, "productos");
     const productDocRef = doc(productCollectionRef, uid);
 
-    const docSnapshot = await getDoc(productDocRef);
+    const currentProductSnapshot = await getDoc(productDocRef);
 
-    if (docSnapshot.exists()) {
-      const existingData = docSnapshot.data();
-
-      if (existingData) {
-        const newCantidad = existingData.cantidad - newData.cantidad;
-
-        if (newCantidad >= 0) {
-          await updateDoc(productDocRef, { ...newData, cantidad: newCantidad });
-        } else {
-          console.log(
-            "No hay suficiente cantidad para actualizar. Operación abortada."
-          );
-        }
-      }
-    } else {
-      console.log("El documento del producto no existe.");
+    if (!currentProductSnapshot.exists()) {
+      console.log("❌ El producto no existe.");
+      return;
     }
+
+    const currentProduct = currentProductSnapshot.data();
+
+    if (
+      !Array.isArray(currentProduct.parentBarCodes) ||
+      currentProduct.parentBarCodes.length === 0
+    ) {
+      const cantidadActual = parseFloat(currentProduct.cantidad || "0");
+      const nuevaCantidad = cantidadActual - newData.cantidad;
+
+      if (nuevaCantidad >= 0) {
+        await updateDoc(productDocRef, {
+          ...newData,
+          cantidad: nuevaCantidad,
+        });
+        console.log("✅ Cantidad actualizada directamente.");
+      } else {
+        console.log("⚠️ No hay suficiente cantidad. Operación cancelada.");
+      }
+      return;
+    }
+
+    const parentUID = currentProduct.parentBarCodes[0];
+    const parentProduct = await getProductData(parentUID);
+
+    if (!parentProduct) {
+      console.log("❌ Producto padre no encontrado.");
+      return;
+    }
+
+    const porcentajeEquivalencia = parseFloat(
+      currentProduct.porcentajeEquivalencia || "0"
+    );
+    const cantidadPadreActual = parseFloat(parentProduct.cantidad || "0");
+    const cantidadARestar = newData.cantidad * porcentajeEquivalencia;
+
+    const nuevaCantidadPadre = cantidadPadreActual - cantidadARestar;
+
+    if (nuevaCantidadPadre < 0) {
+      console.log("⚠️ No hay suficiente cantidad en el padre. Operación cancelada.");
+      return;
+    }
+    await updateDoc(doc(productCollectionRef, parentUID), {
+      ...parentProduct,
+      cantidad: parseFloat(nuevaCantidadPadre.toPrecision(5)),
+    });
+
+    console.log("✅ Cantidad actualizada en el producto padre.");
+
   } catch (error) {
-    console.error("Error al actualizar el documento: ", error);
+    console.error("❌ Error al actualizar el documento: ", error);
   }
 };
-
 export const deleteProduct = async (uid: any, img: string) => {
   try {
     const establecimientoDocRef = doc(

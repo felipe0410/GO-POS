@@ -117,7 +117,7 @@ const InvoicePreview = () => {
 
         // Generar un nuevo token
         const dian = await getDianRecord();
-        const password = "Ab1007446687"; // Cambiar por una contraseña segura en producción
+        const password = dian?.email === 'Sergiosua11@gmail.com' ? "Ab1007446687$" : "Ab1007446687";
         const loginResponse = await login(
           dian?.email ?? "demo@lopezsoft.net.co",
           password

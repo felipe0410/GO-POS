@@ -157,8 +157,7 @@ const Dashboard = () => {
         const descuento = factura.descuento
           ? parseFloat(factura.descuento.toString())
           : 0;
-        totalDescuentos += descuento; // 👈 acumulamos descuento total
-        console.log("descuento:::>", descuento);
+        totalDescuentos += descuento;
         ganancia += gananciaFactura - descuento;
       }
     );
@@ -307,11 +306,10 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#BF56DC" },
       icon: "/dashboardVender/ingresos.svg",
-      value: `$ ${
-        totalVentasPorFecha
-          ? ingresos?.toLocaleString("en-US")
-          : totalVentasHoy?.toLocaleString("en-US")
-      }`,
+      value: `$ ${totalVentasPorFecha
+        ? ingresos?.toLocaleString("en-US")
+        : totalVentasHoy?.toLocaleString("en-US")
+        }`,
     },
     {
       title: "GASTOS",
@@ -331,11 +329,10 @@ const Dashboard = () => {
       },
       typographyStyle: { color: "#2EB0CC" },
       icon: "/dashboardVender/ganancia.svg",
-      value: `$ ${
-        totalGanancia
-          ? totalGanancia.toLocaleString("en-US")
-          : totalVentasHoy.toLocaleString("en-US")
-      }`,
+      value: `$ ${totalGanancia
+        ? totalGanancia.toLocaleString("en-US")
+        : totalVentasHoy.toLocaleString("en-US")
+        }`,
     },
   ];
   const [calculations, setCalculations] = useState({
@@ -376,8 +373,8 @@ const Dashboard = () => {
           typeof item.cantidad === "number"
             ? item.cantidad
             : item.cantidad && !isNaN(parseFloat(item.cantidad))
-            ? parseFloat(item.cantidad)
-            : 0;
+              ? parseFloat(item.cantidad)
+              : 0;
         const totalItemValue = price * cantidad;
         return acc + totalItemValue;
       }, 0);
@@ -391,8 +388,8 @@ const Dashboard = () => {
           typeof item.cantidad === "number"
             ? item.cantidad
             : item.cantidad && !isNaN(parseFloat(item.cantidad))
-            ? parseFloat(item.cantidad)
-            : 0;
+              ? parseFloat(item.cantidad)
+              : 0;
         const totalItemInvestment = purchasePrice * cantidad;
         return acc + totalItemInvestment;
       }, 0);
@@ -454,9 +451,8 @@ const Dashboard = () => {
           lineHeight: "normal",
         }}
       >
-        {`Fecha: ${
-          dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
-        }`}
+        {`Fecha: ${dateSearchTerm === "" ? getCurrentDateTime() : dateSearchTerm
+          }`}
       </Typography>
       <Box
         sx={{

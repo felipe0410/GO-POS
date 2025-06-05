@@ -3,8 +3,6 @@ import {
   Autocomplete,
   Box,
   Button,
-  Collapse,
-  Divider,
   FormControl,
   IconButton,
   InputAdornment,
@@ -25,13 +23,10 @@ import {
   getAllMeasurementsDataa,
   getProductData,
 } from "@/firebase";
-import Calculatorr from "./modalCalculator";
 import ImgInput from "./inputIMG";
 import Revenue from "@/app/inventory/agregarProductos/modal/revenue";
 import GenerateBarCode from "@/app/inventory/agregarProductos/modal/Barcode";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import PresentacionesProducto from "./PresentacionesProducto";
 
 const Input = React.forwardRef(function CustomInput(
@@ -98,16 +93,22 @@ export default function NewProduct() {
     cantidad: "",
     purchasePrice: "0",
   });
-  const [openPresentaciones, setOpenPresentaciones] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openPresentaciones, setOpenPresentaciones] = useState(true);
   const [imageBase64, setImageBase64] = useState("");
   const [category, setCategory] = useState<any>([""]);
   const [measure, setMeasure] = useState<any>([""]);
   const [inputValue, setInputValue] = React.useState("");
   const [inputValue2, setInputValue2] = React.useState("");
+  const [isChild, setIsChild] = useState(false);
   const [revenue, setRevenue] = React.useState({
     prefix: "",
     value: "",
   });
+  const [presentaciones, setPresentaciones] = useState([
+    { tipo: "", codigoBarra: "", factor: "", precio: "", porcentajeEquivalencia: 0, cantidadEquivalente: 0 },
+  ]);
+
   const [valueMeasure, setValueMeasure] = React.useState<string | null>(
     measure[0]
   );
@@ -117,23 +118,68 @@ export default function NewProduct() {
 
   const saveToFirebase = async () => {
     try {
-      await createProduct(data.barCode, {
+      const padreData = {
         ...data,
         image: data.image === "" ? "/images/noImage.svg" : data.image,
-      });
-      enqueueSnackbar("Producto guardado con exito", {
+        childBarcodes: presentaciones.length > 0 ? [presentaciones[0].codigoBarra] : [],
+      };
+
+      await createProduct(data.barCode, padreData);
+
+      for (let i = 0; i < presentaciones.length; i++) {
+        const current = presentaciones[i];
+        const parentBarcode = i === 0 ? data.barCode : presentaciones[i - 1].codigoBarra;
+        const nextChildBarcode = i + 1 < presentaciones.length ? presentaciones[i + 1].codigoBarra : null;
+
+        const allParents = [data.barCode, ...presentaciones.slice(0, i).map(p => p.codigoBarra)];
+
+        const existing = await getProductData(current.codigoBarra);
+        const mergedParents = Array.from(new Set([...(existing?.parentBarCodes || []), ...allParents]));
+        const hijo = {
+          ...data,
+          price: current.precio,
+          cantidad: "",
+          purchasePrice: "",
+          barCode: current.codigoBarra,
+          uid: current.codigoBarra,
+          productName: current.tipo,
+          cantidadContenida: current.factor,
+          parentBarCodes: mergedParents,
+          childBarcodes: nextChildBarcode ? [nextChildBarcode] : [],
+          porcentajeEquivalencia: current?.porcentajeEquivalencia ?? 0,
+          cantidadEquivalente: current.cantidadEquivalente ?? 0
+        };
+
+        await createProduct(current.codigoBarra, hijo);
+
+        const parentData = await getProductData(parentBarcode);
+        const updatedChildBarcodes = Array.from(new Set([
+          ...(parentData?.childBarcodes || []),
+          current.codigoBarra,
+        ]));
+
+        await createProduct(parentBarcode, {
+          ...parentData,
+          childBarcodes: updatedChildBarcodes,
+        });
+      }
+
+      enqueueSnackbar("Producto y presentaciones guardados con éxito", {
         variant: "success",
         anchorOrigin: {
           vertical: "top",
           horizontal: "right",
         },
       });
+
       setData(DATA_DEFAULT);
+      setPresentaciones([{ tipo: "", codigoBarra: "", factor: "", precio: "", porcentajeEquivalencia: 0, cantidadEquivalente: 0 }]);
       setImageBase64("");
       setValueCategory("");
       setValueMeasure("");
     } catch (error) {
-      enqueueSnackbar("Error al guardar el producto", {
+      console.error("Error en saveToFirebase:", error);
+      enqueueSnackbar("Error al guardar el producto y sus presentaciones", {
         variant: "error",
         anchorOrigin: {
           vertical: "bottom",
@@ -178,11 +224,19 @@ export default function NewProduct() {
     if (dataFirebase !== null) {
       setData(dataFirebase);
       setImageBase64(dataFirebase.image);
+      setIsChild(Array.isArray(dataFirebase.parentBarCodes) && dataFirebase.parentBarCodes.length > 0);
+      if (Array.isArray(dataFirebase.childBarcodes) && dataFirebase.childBarcodes.length > 0) {
+        const presentacionesCargadas = await fetchPresentacionesRecursivas(dataFirebase.childBarcodes);
+        setPresentaciones(presentacionesCargadas);
+      } else {
+        setPresentaciones([]);
+      }
     } else {
       setData({ ...DATA_DEFAULT, barCode: data.barCode });
       setImageBase64("");
       setValueCategory("");
       setValueMeasure("");
+      setIsChild(false);
     }
   };
 
@@ -257,28 +311,32 @@ export default function NewProduct() {
     }
   };
 
-  const removePresentacion = (indexToRemove: number) => {
-    setPresentaciones((prev) =>
-      prev.filter((_, index) => index !== indexToRemove)
-    );
+  const fetchPresentacionesRecursivas = async (
+    barcodes: string[],
+    nivel = 0
+  ): Promise<any[]> => {
+    const result: any[] = [];
+
+    for (const code of barcodes) {
+      const child = await getProductData(code);
+      if (!child) continue;
+
+      result.push({
+        tipo: child.productName ?? "",
+        codigoBarra: child.barCode ?? "",
+        factor: child.cantidadContenida ?? "1",
+        precio: child.price ?? "0",
+      });
+
+      if (child.childBarcodes && child.childBarcodes.length > 0) {
+        const subchildren = await fetchPresentacionesRecursivas(child.childBarcodes, nivel + 1);
+        result.push(...subchildren);
+      }
+    }
+
+    return result;
   };
 
-  const [presentaciones, setPresentaciones] = useState([
-    { tipo: "", codigoBarra: "", factor: "", precio: "" },
-  ]);
-
-  const addPresentacion = () => {
-    setPresentaciones((prev) => [
-      ...prev,
-      { tipo: "", codigoBarra: "", factor: "", precio: "" },
-    ]);
-  };
-
-  const updatePresentacion = (index: number, field: string, value: string) => {
-    const newPresentaciones: any = [...presentaciones];
-    newPresentaciones[index][field] = value;
-    setPresentaciones(newPresentaciones);
-  };
 
   useEffect(() => {
     getDataRevenue();
@@ -428,7 +486,6 @@ export default function NewProduct() {
                   <NumericFormat
                     onChange={(e: any) => {
                       const revenuee = getDataRevenue();
-                      console.log("%crevenuee::>:", "color:red", revenuee);
                       const cleanString = e.target.value.replace(
                         /[\$,\s%]/g,
                         ""
@@ -439,7 +496,7 @@ export default function NewProduct() {
                           ? revenuee.revenue.prefix === "$"
                             ? parseFloat(revenuee.revenue.value) + numberValue
                             : (1 + parseFloat(revenuee.revenue.value) * 0.01) *
-                              numberValue
+                            numberValue
                           : data.price;
                       setData((prevData) => ({
                         ...prevData,
@@ -491,15 +548,14 @@ export default function NewProduct() {
                     >
                       <Button
                         onClick={() => saveToFirebase()}
-                        disabled={!isNotEmpty(data)}
+                        disabled={isChild || !isNotEmpty(data)}
                         sx={{
                           width: "45%",
                           height: "2.5rem",
                           borderRadius: "0.625rem",
                           boxShadow:
                             "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                          background: !isNotEmpty(data) ? "gray" : "#69EAE2",
-                          // background: "#69EAE2",
+                          background: (isChild || !isNotEmpty(data)) ? "gray" : "#69EAE2",
                           marginTop: "10px",
                         }}
                       >
@@ -626,9 +682,8 @@ export default function NewProduct() {
                                   : "";
                                 return {
                                   ...prevData,
-                                  description: `${descriptionPrefix}${
-                                    prevData.description.split(":")[1] || ""
-                                  }`,
+                                  description: `${descriptionPrefix}${prevData.description.split(":")[1] || ""
+                                    }`,
                                 };
                               });
                             }}
@@ -648,11 +703,20 @@ export default function NewProduct() {
                   </React.Fragment>
                 );
               })}
+              <Button
+                onClick={() => setOpenDrawer(true)}
+                sx={{ color: "#69EAE2", mt: 2 }}
+              >
+                Ver presentaciones
+              </Button>
               <PresentacionesProducto
                 presentaciones={presentaciones}
                 setPresentaciones={setPresentaciones}
                 open={openPresentaciones}
                 toggleOpen={() => setOpenPresentaciones(!openPresentaciones)}
+                openDrawer={openDrawer}
+                setOpenDrawer={setOpenDrawer}
+                cantidad={data.cantidad}
               />
             </Box>
           </Box>

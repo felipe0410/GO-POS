@@ -125,9 +125,9 @@ const Page: any = () => {
           prevFacturas.map((factura) =>
             factura.id === facturaActiva
               ? {
-                  ...factura,
-                  items: updateSelectedItems(factura.items, newItem),
-                }
+                ...factura,
+                items: updateSelectedItems(factura.items, newItem),
+              }
               : factura
           )
         );
@@ -334,7 +334,6 @@ const Page: any = () => {
       >
         <Header title="VENDER" txt={<ModalSettings />} />
 
-        {/* 📌 Pestañas de Facturas */}
         <Paper
           sx={{
             background: "#1F1D2B",
