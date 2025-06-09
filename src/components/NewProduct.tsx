@@ -3,6 +3,7 @@ import {
   Autocomplete,
   Box,
   Button,
+  Chip,
   FormControl,
   IconButton,
   InputAdornment,
@@ -21,6 +22,7 @@ import {
   createProduct,
   getAllCategoriesData,
   getAllMeasurementsDataa,
+  getAllProveedores,
   getProductData,
 } from "@/firebase";
 import ImgInput from "./inputIMG";
@@ -28,6 +30,7 @@ import Revenue from "@/app/inventory/agregarProductos/modal/revenue";
 import GenerateBarCode from "@/app/inventory/agregarProductos/modal/Barcode";
 
 import PresentacionesProducto from "./PresentacionesProducto";
+import ModalProveedor from "@/app/inventory/agregarProductos/ModalProveedor";
 
 const Input = React.forwardRef(function CustomInput(
   props: InputProps,
@@ -81,6 +84,7 @@ export default function NewProduct() {
     image: "",
     cantidad: "",
     purchasePrice: "0",
+    wholesaler: 0
   };
   const [data, setData] = useState({
     productName: "",
@@ -92,7 +96,12 @@ export default function NewProduct() {
     image: "",
     cantidad: "",
     purchasePrice: "0",
+    wholesaler: 0
   });
+  console.log('data::>', data)
+  const [proveedoresSeleccionados, setProveedoresSeleccionados] = useState<any[]>([]);
+  const [proveedores, setProveedores] = useState<any[]>([]);
+  const [openProveedorModal, setOpenProveedorModal] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openPresentaciones, setOpenPresentaciones] = useState(true);
   const [imageBase64, setImageBase64] = useState("");
@@ -122,6 +131,7 @@ export default function NewProduct() {
         ...data,
         image: data.image === "" ? "/images/noImage.svg" : data.image,
         childBarcodes: presentaciones.length > 0 ? [presentaciones[0].codigoBarra] : [],
+        proveedores: proveedoresSeleccionados.map(p => p.nit),
       };
 
       await createProduct(data.barCode, padreData);
@@ -147,7 +157,8 @@ export default function NewProduct() {
           parentBarCodes: mergedParents,
           childBarcodes: nextChildBarcode ? [nextChildBarcode] : [],
           porcentajeEquivalencia: current?.porcentajeEquivalencia ?? 0,
-          cantidadEquivalente: current.cantidadEquivalente ?? 0
+          cantidadEquivalente: current.cantidadEquivalente ?? 0,
+          proveedores: proveedoresSeleccionados.map(p => p.nit),
         };
 
         await createProduct(current.codigoBarra, hijo);
@@ -161,6 +172,7 @@ export default function NewProduct() {
         await createProduct(parentBarcode, {
           ...parentData,
           childBarcodes: updatedChildBarcodes,
+          proveedores: proveedoresSeleccionados.map(p => p.nit),
         });
       }
 
@@ -224,6 +236,12 @@ export default function NewProduct() {
     if (dataFirebase !== null) {
       setData(dataFirebase);
       setImageBase64(dataFirebase.image);
+      if (Array.isArray(dataFirebase.proveedores)) {
+        const proveedoresDelProducto = proveedores.filter(p =>
+          dataFirebase.proveedores.includes(p.nit)
+        );
+        setProveedoresSeleccionados(proveedoresDelProducto);
+      }
       setIsChild(Array.isArray(dataFirebase.parentBarCodes) && dataFirebase.parentBarCodes.length > 0);
       if (Array.isArray(dataFirebase.childBarcodes) && dataFirebase.childBarcodes.length > 0) {
         const presentacionesCargadas = await fetchPresentacionesRecursivas(dataFirebase.childBarcodes);
@@ -342,6 +360,15 @@ export default function NewProduct() {
     getDataRevenue();
   }, []);
 
+  useEffect(() => {
+    const fetchProveedores = async () => {
+      const lista = await getAllProveedores();
+      setProveedores(lista);
+    };
+    fetchProveedores();
+  }, []);
+
+
   return (
     <>
       <SnackbarProvider />
@@ -361,6 +388,61 @@ export default function NewProduct() {
             boxShadow: "0px 1px 100px -50px #69EAE2",
           }}
         >
+          <Autocomplete
+            multiple
+            style={{
+              textAlign: 'center'
+            }}
+            id="select-multiple-proveedores"
+            options={proveedores}
+            getOptionLabel={(option: any) => option.nombre || option.nit}
+            value={proveedoresSeleccionados}
+            onChange={(event, newValue) => setProveedoresSeleccionados(newValue)}
+            renderTags={(value, getTagProps) =>
+              value.map((option, index) => (
+                <Chip
+                  label={option.nombre || option.nit}
+                  {...getTagProps({ index })}
+                  key={option.nit}
+                  sx={{ backgroundColor: "#69EAE2", color: "#1F1D2B", fontWeight: 900 }}
+                />
+              ))
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="filled"
+                label="Proveedores del producto"
+                placeholder="Seleccionar proveedores"
+                InputLabelProps={{
+                  style: { color: "#FFF" },
+                }}
+                style={{
+                  color: '#FFF',
+                  width: "90%",
+                  borderRadius: "0.625rem",
+                  background: "#2C3248",
+                  boxShadow:
+                    "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                }}
+              />
+            )}
+            sx={{
+              mt: 2, "& .MuiFilledInput-root": {
+                backgroundColor: "#2C3248",
+              },
+              "& .MuiInputBase-input": {
+                color: "#FFF",
+              },
+              "& .MuiSvgIcon-root": {
+                color: "#000",
+              },
+              "& .MuiFormLabel-root": {
+                color: "#FFF",
+              },
+            }}
+          />
+
           <Box sx={{ padding: { xs: "15px", sm: "2rem 3.8rem 2rem 3.4rem" } }}>
             <Box
               id="container-inputs"
@@ -533,6 +615,33 @@ export default function NewProduct() {
                           "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
                       }}
                       style={{ color: "#FFF" }}
+                    />
+                    <Typography
+                      sx={{
+                        ...styleTypography,
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >MAYORISTA</Typography>
+                    <NumericFormat
+                      onChange={(e: any) => {
+                        setData((prevData) => ({
+                          ...prevData,
+                          wholesaler: e.target.value,
+                        }));
+                      }}
+                      value={data.wholesaler}
+                      prefix="$ "
+                      thousandSeparator
+                      customInput={OutlinedInput}
+                      style={{ color: "#FFF" }}
+                      sx={{
+                        height: "44.9px",
+                        borderRadius: "0.625rem",
+                        background: "#2C3248",
+                        boxShadow:
+                          "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                      }}
                     />
                     <Box
                       sx={{
@@ -707,6 +816,7 @@ export default function NewProduct() {
               >
                 Ver presentaciones
               </Button>
+              <Button sx={{ color: "#69EAE2", mt: 2 }} onClick={() => setOpenProveedorModal(true)}>Agregar proveedor</Button>
               <PresentacionesProducto
                 presentaciones={presentaciones}
                 setPresentaciones={setPresentaciones}
@@ -720,6 +830,12 @@ export default function NewProduct() {
           </Box>
         </Paper>
       </Box>
+      <ModalProveedor
+        open={openProveedorModal}
+        onClose={() => setOpenProveedorModal(false)}
+        proveedores={proveedores}
+
+      />
     </>
   );
 }

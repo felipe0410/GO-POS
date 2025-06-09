@@ -72,7 +72,77 @@ export const db: Firestore = getFirestore(app);
 export const storage = getStorage(app);
 const auth = getAuth();
 
-// const analytics = getAnalytics(app);
+
+export const createProveedor = async (uid: string, proveedorData: any) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const proveedoresCollectionRef = collection(establecimientoDocRef, "proveedores");
+    const proveedorDocRef = doc(proveedoresCollectionRef, uid);
+
+    await setDoc(proveedorDocRef, {
+      uid,
+      user: `${user().decodedString}`,
+      ...proveedorData,
+    });
+
+    return uid;
+  } catch (error) {
+    console.error("Error al guardar proveedor en /proveedores: ", error);
+    return null;
+  }
+};
+
+export const getAllProveedores = async (): Promise<any[]> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const proveedoresCollectionRef = collection(establecimientoDocRef, "proveedores");
+
+    const querySnapshot = await getDocs(proveedoresCollectionRef);
+
+    const proveedores: any[] = [];
+    querySnapshot.forEach((doc) => {
+      proveedores.push({ uid: doc.id, ...doc.data() });
+    });
+
+    return proveedores;
+  } catch (error) {
+    console.error("Error al obtener proveedores: ", error);
+    return [];
+  }
+};
+
+
+export const getProveedorByNIT = async (nit: string): Promise<any | null> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+
+    const proveedoresCollectionRef = collection(establecimientoDocRef, "proveedores");
+    const q = query(proveedoresCollectionRef, where("nit", "==", nit));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const docSnap = querySnapshot.docs[0];
+      return { uid: docSnap.id, ...docSnap.data() };
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al buscar proveedor por NIT:", error);
+    return null;
+  }
+};
 
 export const createProduct = async (uid: any, productData: any) => {
   try {
