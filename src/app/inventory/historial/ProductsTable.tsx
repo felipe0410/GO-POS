@@ -25,6 +25,7 @@ interface ProductsTableProps {
   onSort: (key: string) => void;
   onPageChange: (page: number) => void;
   totalPages: number;
+  proveedoresData: any[];
 }
 
 const ProductsTable: React.FC<ProductsTableProps> = ({
@@ -34,10 +35,11 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
   onSort,
   onPageChange,
   totalPages,
+  proveedoresData
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-
+  console.log('paginatedData::>', paginatedData)
   const handleOpenDialog = (product: any) => {
     setSelectedProduct(product);
     setDialogOpen(true);
@@ -52,6 +54,12 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
       setDialogOpen(false);
     }
   };
+
+  const getProveedorName = (nit: string) => {
+    const proveedor = proveedoresData.find((p) => p.nit === nit);
+    return proveedor?.nombre || nit;
+  };
+
 
   return (
     <Box>
@@ -93,6 +101,19 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                     </TableCell>
                   )
               )}
+              <TableCell
+                align="center"
+                sx={{
+                  background: "#1F1D2B",
+                  color: "#69EAE2",
+                  fontFamily: "Nunito",
+                  fontSize: "0.8rem",
+                  fontWeight: 800,
+                  borderColor: "#69EAE2",
+                }}
+              >
+                PROVEEDORES
+              </TableCell>
               {/* Nueva columna: Cantidad Óptima */}
               <TableCell
                 align="center"
@@ -151,22 +172,22 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                               value={Math.min(
                                 100,
                                 (row.cantidad / (row?.optimice_cant ?? 100)) *
-                                  100
+                                100
                               )}
                               color={
                                 row.cantidad === 0
                                   ? "error"
                                   : (row.cantidad /
-                                      (row?.optimice_cant ?? 100)) *
-                                      100 <=
+                                    (row?.optimice_cant ?? 100)) *
+                                    100 <=
                                     20
-                                  ? "error"
-                                  : (row.cantidad /
+                                    ? "error"
+                                    : (row.cantidad /
                                       (row?.optimice_cant ?? 100)) *
                                       100 <=
-                                    70
-                                  ? "warning"
-                                  : "success"
+                                      70
+                                      ? "warning"
+                                      : "success"
                               }
                             />
                             <Typography
@@ -182,6 +203,27 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                       </TableCell>
                     )
                 )}
+                <TableCell align="center" sx={{ color: "#FFF", borderColor: "#69EAE2" }}>
+                  {row.proveedores && row.proveedores.length > 0 ? (
+                    row.proveedores.map((nit: string, index: number) => (
+                      <Chip
+                        key={index}
+                        label={getProveedorName(nit)}
+                        sx={{
+                          backgroundColor: "gray",
+                          color: "#FFF",
+                          width:'140px',
+                          height:'15px'
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <Typography variant="caption" sx={{ color: "#FFF" }}>
+                      Sin proveedor
+                    </Typography>
+                  )}
+                </TableCell>
+
                 {/* Mostrar la cantidad óptima */}
                 <TableCell
                   align="center"

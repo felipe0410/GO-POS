@@ -4,7 +4,7 @@ import {
   Box,
   Paper,
 } from "@mui/material";
-import { getAllProductsData } from "@/firebase";
+import { getAllProductsData, getAllProveedores } from "@/firebase";
 import { saveAs } from "file-saver";
 import Header from "@/components/Header";
 import SummaryCards from "./SummaryCards";
@@ -54,10 +54,11 @@ const initialColumns: Column[] = [
     align: "right",
     visible: true,
   },
-  
+
 ];
 
 export default function StickyHeadTable() {
+  const [proveedoresData, setProveedoresData] = useState<any[]>([]);
   const [data, setData] = useState<any[]>([]);
   const [filter, setFilter] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,25 +70,26 @@ export default function StickyHeadTable() {
   } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [columns, setColumns] = useState(initialColumns);
+  const [proveedorFilter, setProveedorFilter] = useState("all");
   const itemsPerPage = 10;
   const totalProductos = data.length;
 
   const productosSinStock = data.filter(
     (item) => {
-      const optimiceCant = item?.optimice_cant ?? 100; // Usar optimice_cant o un valor por defecto
+      const optimiceCant = item?.optimice_cant ?? 100;
       const porcentaje = (item.cantidad / optimiceCant) * 100;
-      return porcentaje >= 0 && porcentaje <= 20; // 0-20%
+      return porcentaje >= 0 && porcentaje <= 20;
     }
   ).length;
-  
+
   const productosStockBajo = data.filter(
     (item) => {
       const optimiceCant = item?.optimice_cant ?? 100;
       const porcentaje = (item.cantidad / optimiceCant) * 100;
-      return porcentaje > 20 && porcentaje <= 70; // 21-70%
+      return porcentaje > 20 && porcentaje <= 70;
     }
   ).length;
-  
+
   const productosBuenStock = data.filter(
     (item) => {
       const optimiceCant = item?.optimice_cant ?? 100;
@@ -95,33 +97,44 @@ export default function StickyHeadTable() {
       return porcentaje > 70; // Más del 70%
     }
   ).length;
-  
+
   useEffect(() => {
     getAllProductsData((fetchedData: any[]) => {
       setData(fetchedData);
       setFilter(fetchedData);
     });
   }, []);
-
+  useEffect(() => {
+    const fetchProveedores = async () => {
+      const lista = await getAllProveedores();
+      setProveedoresData(lista);
+    };
+    fetchProveedores();
+  }, []);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
-    applyFilters(value, stockFilter, categoryFilter);
+    applyFilters(value, stockFilter, categoryFilter, proveedorFilter);
   };
 
   const handleStockFilterChange = (event: any) => {
     const value = event.target.value as string;
     setStockFilter(value);
-    applyFilters(searchTerm, value, categoryFilter);
+    applyFilters(searchTerm, value, categoryFilter, proveedorFilter);
   };
 
   const handleCategoryFilterChange = (event: any) => {
     const value = event.target.value as string;
     setCategoryFilter(value);
-    applyFilters(searchTerm, stockFilter, value);
+    applyFilters(searchTerm, stockFilter, value, proveedorFilter);
   };
 
-  const applyFilters = (search: string, stock: string, category: string) => {
+  const applyFilters = (
+    search: string,
+    stock: string,
+    category: string,
+    proveedor: string
+  ) => {
     let filtered = data;
 
     if (search) {
@@ -141,6 +154,12 @@ export default function StickyHeadTable() {
 
     if (category !== "all") {
       filtered = filtered.filter((item) => item.category === category);
+    }
+
+    if (proveedor !== "all") {
+      filtered = filtered.filter((item) =>
+        item.proveedores?.includes(proveedor)
+      );
     }
 
     setFilter(filtered);
@@ -191,19 +210,12 @@ export default function StickyHeadTable() {
     currentPage * itemsPerPage
   );
 
-  const toggleColumnVisibility = (columnId: string) => {
-    setColumns((prevColumns) =>
-      prevColumns.map((col) =>
-        col.id === columnId ? { ...col, visible: !col.visible } : col
-      )
-    );
-  };
 
   const allCategories = [
     "all",
     ...Array.from(new Set(data.map((item: any) => item?.category ?? ""))),
   ];
-  
+
   return (
     <Box sx={{ padding: "20px" }}>
       <Header title="RESUMEN INVENTARIO" />
@@ -226,6 +238,12 @@ export default function StickyHeadTable() {
         columns={columns}
         exportToCSV={exportToCSV}
         setColumns={setColumns}
+        proveedoresData={proveedoresData}
+        proveedorFilter={proveedorFilter}
+        onProveedorFilterChange={(value: any) => {
+          setProveedorFilter(value);
+          applyFilters(searchTerm, stockFilter, categoryFilter, value);
+        }}
       />
       <Paper
         elevation={0}
@@ -245,6 +263,7 @@ export default function StickyHeadTable() {
           onSort={handleSort}
           onPageChange={setCurrentPage}
           totalPages={Math.ceil(filter.length / itemsPerPage)}
+          proveedoresData={proveedoresData}
         />
       </Paper>
     </Box>

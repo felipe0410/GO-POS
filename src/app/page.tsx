@@ -2,6 +2,8 @@
 import { Box, Divider, Typography } from "@mui/material";
 import * as React from "react";
 import ChartAreaIndex from "@/components/index/ChartAreaIndex";
+import { Amplify } from "aws-amplify";
+import awsconfig from "./aws-exports";
 
 export default function Home() {
   const arrayFecha = [
@@ -57,6 +59,8 @@ export default function Home() {
       </Box>
     );
   };
+
+  Amplify.configure(awsconfig);
 
   return (
     <Box sx={{ width: '98%' }}>

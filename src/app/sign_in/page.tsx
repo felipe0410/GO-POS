@@ -21,6 +21,8 @@ import Checkbox from "@mui/material/Checkbox";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { GlobalContext } from "../globalContex";
+import { signInWithCognito } from "@/aws";
+
 
 const Loggin = () => {
   const { setCookie } = useContext(GlobalContext) || {};
@@ -36,6 +38,7 @@ const Loggin = () => {
     event.preventDefault();
   };
 
+
   useEffect(() => {
     localStorage.removeItem("user");
 
@@ -43,6 +46,8 @@ const Loggin = () => {
       localStorage.removeItem("dianRecord");
     }, 2000);
   }, []);
+
+
 
   const password = () => {
     return (
@@ -146,6 +151,13 @@ const Loggin = () => {
         await setCookie("dataUser", allDataUserString, {
           expires: expirationDate,
         });
+        const resultado = await signInWithCognito();
+        if (resultado.success) {
+          enqueueSnackbar(resultado.message, { variant: "success" });
+        } else {
+          enqueueSnackbar(resultado.message, { variant: "warning" });
+        }
+
         enqueueSnackbar("Autenticacion exitosa", {
           variant: "success",
           anchorOrigin: {

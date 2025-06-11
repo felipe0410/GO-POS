@@ -7,12 +7,15 @@ interface FiltersProps {
   stockFilter: string;
   categoryFilter: string;
   allCategories: string[];
-  columns:any;
+  proveedorFilter: string;
+  proveedoresData: any[];
+  columns: any;
+  onProveedorFilterChange: (value: string) => void;
   onSearchChange: (value: string) => void;
   onStockFilterChange: (value: string) => void;
   onCategoryFilterChange: (value: string) => void;
-  exportToCSV:(value: any) => void;
-  setColumns:any
+  exportToCSV: (value: any) => void;
+  setColumns: any
 }
 
 const Filters: React.FC<FiltersProps> = ({
@@ -25,7 +28,10 @@ const Filters: React.FC<FiltersProps> = ({
   onCategoryFilterChange,
   exportToCSV,
   columns,
-  setColumns
+  setColumns,
+  proveedorFilter,
+  onProveedorFilterChange,
+  proveedoresData
 }) => {
   return (
     <Box
@@ -39,6 +45,7 @@ const Filters: React.FC<FiltersProps> = ({
     >
       <Paper
         component="form"
+        onSubmit={(e) => e.preventDefault()}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -49,9 +56,9 @@ const Filters: React.FC<FiltersProps> = ({
         <InputBase
           placeholder="Buscar productos"
           value={searchTerm}
-          onChange={(e:any) =>{ 
+          onChange={(e: any) => {
             onSearchChange(e)
-        }}
+          }}
           sx={{ marginLeft: "10px", flex: 1 }}
         />
         <IconButton>
@@ -60,7 +67,7 @@ const Filters: React.FC<FiltersProps> = ({
       </Paper>
       <Select
         value={stockFilter}
-        onChange={(e:any) => onStockFilterChange(e)}
+        onChange={(e: any) => onStockFilterChange(e)}
         sx={selectStyles}
       >
         <MenuItem value="all">Todos</MenuItem>
@@ -70,7 +77,7 @@ const Filters: React.FC<FiltersProps> = ({
       </Select>
       <Select
         value={categoryFilter}
-        onChange={(e:any) => onCategoryFilterChange(e)}
+        onChange={(e: any) => onCategoryFilterChange(e)}
         sx={selectStyles}
       >
         {allCategories.map((category) => (
@@ -79,64 +86,77 @@ const Filters: React.FC<FiltersProps> = ({
           </MenuItem>
         ))}
       </Select>
+      <Select
+        value={proveedorFilter}
+        onChange={(e: any) => onProveedorFilterChange(e.target.value)}
+        sx={selectStyles}
+      >
+        <MenuItem value="all">Todos los Proveedores</MenuItem>
+        {proveedoresData.map((p) => (
+          <MenuItem key={p.nit} value={p.nit}>
+            {p.nombre || p.nit}
+          </MenuItem>
+        ))}
+      </Select>
+
       <Box>
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Select
-              multiple
-              displayEmpty
-              value={columns.filter((col: { visible: any; }) => col.visible).map((col: { id: any; }) => col.id)}
-              onChange={(event) => {
-                const selectedValues = event.target.value as string[];
-                setColumns((prevColumns: any[]) =>
-                  prevColumns.map((col) => ({
-                    ...col,
-                    visible: selectedValues.includes(col.id),
-                  }))
-                );
-              }}
-              renderValue={(selected) => {
-                if (selected.length === 0) {
-                  return (
-                    <Typography sx={{ color: "#69EAE2" }}>
-                      Seleccione columnas
-                    </Typography>
-                  );
-                }
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Select
+            multiple
+            displayEmpty
+            value={columns.filter((col: { visible: any; }) => col.visible).map((col: { id: any; }) => col.id)}
+            onChange={(event) => {
+              const selectedValues = event.target.value as string[];
+              setColumns((prevColumns: any[]) =>
+                prevColumns.map((col) => ({
+                  ...col,
+                  visible: selectedValues.includes(col.id),
+                }))
+              );
+            }}
+            renderValue={(selected) => {
+              if (selected.length === 0) {
                 return (
                   <Typography sx={{ color: "#69EAE2" }}>
-                    {selected.length} columnas
+                    Seleccione columnas
                   </Typography>
                 );
-              }}
-              sx={{
-                minWidth: "150px",
-                background: "#1F1D2B",
-                color: "#69EAE2",
-                borderRadius: "4px",
-                marginRight: "10px",
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#69EAE2",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "#69EAE2",
-                },
-              }}
-            >
-              {columns.map((column: { id: any; visible: any; label: any; }) => (
-                <MenuItem key={column.id} value={column.id}>
-                  <Checkbox
-                    checked={column.visible}
-                    sx={{ color: "#69EAE2" }}
-                  />
-                  <Typography>{column.label}</Typography>
-                </MenuItem>
-              ))}
-            </Select>
-          </Box>
+              }
+              return (
+                <Typography sx={{ color: "#69EAE2" }}>
+                  {selected.length} columnas
+                </Typography>
+              );
+            }}
+            sx={{
+              minWidth: "150px",
+              background: "#1F1D2B",
+              color: "#69EAE2",
+              borderRadius: "4px",
+              marginRight: "10px",
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#69EAE2",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "#69EAE2",
+              },
+            }}
+          >
+            {columns.map((column: { id: any; visible: any; label: any; }) => (
+              <MenuItem key={column.id} value={column.id}>
+                <Checkbox
+                  checked={column.visible}
+                  sx={{ color: "#69EAE2" }}
+                />
+                <Typography>{column.label}</Typography>
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
-        <Button variant="contained" color="primary" onClick={exportToCSV}>
-          Descargar CSV
-        </Button>
+      </Box>
+      <Button variant="contained" color="primary" onClick={exportToCSV}>
+        Descargar CSV
+      </Button>
     </Box>
   );
 };

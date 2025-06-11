@@ -5,6 +5,8 @@ import { Box, Typography } from "@mui/material";
 import Sidebar from "@/components/Sidebar";
 import { keyframes } from "@emotion/react";
 import HeaderAppBar from "./AppBar";
+import { Amplify } from "aws-amplify";
+import awsconfig from "./aws-exports";
 //import PrimarySearchAppBar from "./PrimarySearchAppBar";
 
 const ContainerChildren = ({
@@ -17,6 +19,8 @@ const ContainerChildren = ({
   const { isOpen, setIsOpen, cookies } = useContext(GlobalContext) || {};
   const [validation, setValidation] = useState(false);
   const validationCookie = cookies?.user?.length > 0;
+
+  Amplify.configure(awsconfig)
   useEffect(() => {
     if (validationCookie) {
       if (validationRoutes) {

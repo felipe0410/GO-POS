@@ -1,7 +1,11 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import InvoiceTable from "./invoiceTable";
+import { getCognitoIdToken } from "@/aws";
+
+const CACHE_KEY = "facturas_teleconexiones";
+const CACHE_TTL_MS = 120 * 60 * 1000; // 5 minutos
 
 const FacturasPage = () => {
   const [data, setData] = useState<any[]>([]);
@@ -9,59 +13,52 @@ const FacturasPage = () => {
 
   useEffect(() => {
     const fetchFacturas = async () => {
+      const cached = localStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { timestamp, data } = JSON.parse(cached);
+        const now = Date.now();
+
+        if (now - timestamp < CACHE_TTL_MS) {
+          console.log("✅ Usando datos en cache");
+          setData(data);
+          setLoading(false);
+          return;
+        } else {
+          localStorage.removeItem(CACHE_KEY); // Expiró
+        }
+      }
+
+      // Si no hay cache válida, hacemos la petición
       try {
-        const response = await axios.get(
-          "https://wisphub.io/facturas/json/teleconexionesjyjsas/",
+        const token = await getCognitoIdToken();
+        if (!token) {
+          console.error("❌ No se pudo obtener el token de Cognito");
+          return;
+        }
+
+        const response = await axios.post(
+          "https://8y1hciviel.execute-api.us-east-1.amazonaws.com/prod/facturas/teleconexiones",
+          {},
           {
-            params: {
-              desde: "2025-05-01",
-              hasta: "2025-05-31",
-              tipo_fecha: "fecha_pago",
-              estado: 2,
-              forma_pago: "",
-              cajero: "",
-              zona: "",
-              estado_fiscal: "",
-              pagos_fecha: "05/2025",
-              generar_reporte_caja: false,
-              _: Date.now(),
-            },
             headers: {
-              "accept": "application/json, text/javascript, */*; q=0.01",
-              "x-requested-with": "XMLHttpRequest",
-              "referer": "https://wisphub.io/facturas/?pagos_fecha=05/2025&estado=pagada",
-              "user-agent":
-                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36",
-              "Cookie":
-                "csrftoken=dv256HB2FrsUOGZr2jpmhL7bGZEtSfXrzTqeA9a7CTaflzQohwcghS8scfDsutBw; sessionid=0fmn71ic69k8ou4qesfk6q9s9ailvvn6;",
+              Authorization: token,
+              "Content-Type": "application/json",
             },
           }
         );
 
-        // Procesamos los datos que vienen en formato HTML
-        const clean = (htmlString: string) => {
-          const doc = new DOMParser().parseFromString(htmlString, "text/html");
-          return doc.body.textContent || htmlString;
-        };
+        const results = response.data.results;
 
-        const parsedData = response.data.map((item: any) => ({
-          id: item.id_factura,
-          cliente: clean(item.cliente),
-          date: item.fecha_pago,
-          total: parseFloat(item.total),
-          document_number: item.referencia,
-          document_number_complete: item.cliente__perfilusuario__cedula,
-          status: clean(item.estado),
-          pdfUrl: `https://wisphub.io/facturas/editar/teleconexionesjyjsas/${item.id_factura}/`,
-          qrDian: `https://www.dian.gov.co`, // No viene, así que lo ponemos fijo
-          attachedDocument: {
-            pathZip: "" // No viene, lo dejamos vacío
-          }
-        }));
+        // Cachear
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ data: results, timestamp: Date.now() })
+        );
 
-        setData(parsedData);
+        console.log("✅ Datos cargados del API Gateway");
+        setData(results);
       } catch (error) {
-        console.error("Error al obtener las facturas:", error);
+        console.error("❌ Error al obtener las facturas del API:", error);
       } finally {
         setLoading(false);
       }
