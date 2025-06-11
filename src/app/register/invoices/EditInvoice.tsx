@@ -201,7 +201,7 @@ const EditInvoice = ({
                             {input.name}
                           </Typography>
                           <OutlinedInput
-                            value={data.cliente[input?.field]}
+                            value={data?.cliente[input?.field]}
                             onChange={(e) => {
                               inputOnChange(input.field, e.target.value);
                             }}

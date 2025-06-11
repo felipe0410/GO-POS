@@ -58,6 +58,7 @@ const FacturaModal = ({ data }: { data: any }) => {
         <ReceiptIcon sx={{ color: "#69EAE2" }} />
       </Button>
       <Modal
+        sx={{ scale: { xs: '70%', lg: '100%' } }}
         aria-labelledby='transition-modal-title'
         aria-describedby='transition-modal-description'
         open={open}
@@ -65,7 +66,7 @@ const FacturaModal = ({ data }: { data: any }) => {
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
         slotProps={{
-          backdrop: { 
+          backdrop: {
             timeout: 500,
           },
         }}
@@ -80,7 +81,7 @@ const FacturaModal = ({ data }: { data: any }) => {
           }}
           in={open}
         >
-          <Box sx={{ ...style, maxHeight: "95%", overflowY: "auto" }}>
+          <Box sx={{ ...style, maxHeight: { xs: "140%", lg: '95%' }, overflowY: "auto", height: { xs: '123%', lg: 'auto' } }}>
             <Box
               sx={{
                 display: "flex",
@@ -105,9 +106,8 @@ const FacturaModal = ({ data }: { data: any }) => {
               sx={{
                 "@media print": {
                   "@page": {
-                    size: `${componentRef?.current?.clientWidth}px ${
-                      componentRef?.current?.clientHeight * 1.1
-                    }px`,
+                    size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
+                      }px`,
                   },
                   width: "100%",
                 },
@@ -115,7 +115,7 @@ const FacturaModal = ({ data }: { data: any }) => {
             >
               <Factura data={data} setFacturaData={function (value: any): void {
                 throw new Error("Function not implemented.");
-              } } />
+              }} />
             </Box>
             <Box
               sx={{

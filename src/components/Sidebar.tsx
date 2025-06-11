@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
+import ContactsIcon from '@mui/icons-material/Contacts';
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "@/app/globalContex";
@@ -52,7 +53,7 @@ export default function Sidebar({
       : dataUser?.jobs ?? [];
 
   const permissionMap: any = {
-    Vender: ["/vender", "/vender/Dian", "/vender/Normal","/vender/Devolucion"],
+    Vender: ["/vender", "/vender/Dian", "/vender/Normal", "/vender/Devolucion"],
     Inventario: [
       "/inventory/productos",
       "/inventory/agregarProductos",
@@ -68,6 +69,10 @@ export default function Sidebar({
       "/settings/employees",
       "/settings/establisment",
       "/settings/dian",
+    ],
+    Contacts: [
+      "/contacts/proveedores",
+      "/contacts/clientes",
     ],
   };
 
@@ -162,32 +167,32 @@ export default function Sidebar({
         let attempts = 0;
         const maxAttempts = 2;
         let userBase64 = "";
-  
+
         // Intentar obtener el usuario hasta dos veces.
         while (attempts < maxAttempts) {
           userBase64 = localStorage.getItem("user") ?? "";
           if (userBase64) break; // Si el usuario está disponible, salir del bucle.
-  
+
           console.warn(`Intento ${attempts + 1}: Usuario no disponible, esperando...`);
           attempts++;
           await new Promise((resolve) => setTimeout(resolve, 1000)); // Esperar 1 segundo entre intentos.
         }
-  
+
         if (!userBase64) {
           console.error("Usuario no disponible después de varios intentos. Abortando operación.");
           return; // Abortar si el usuario sigue sin estar disponible.
         }
-  
+
         const correctedBase64String = userBase64.replace(/%3D/g, "=");
-  
+
         let cachedRecord = localStorage.getItem("dianRecord");
         let dianRecord = cachedRecord ? JSON.parse(cachedRecord) : null;
-  
+
         // Rectificar si `dianRecord` es `null` después del intento inicial.
         if (!dianRecord) {
           console.warn("Registro DIAN no disponible o nulo. Intentando recuperarlo...");
           dianRecord = await getDianRecord();
-  
+
           if (dianRecord) {
             console.log("Registro DIAN recuperado y rectificado:", dianRecord);
             localStorage.setItem("dianRecord", JSON.stringify(dianRecord));
@@ -196,7 +201,7 @@ export default function Sidebar({
             return; // Salir si no se puede recuperar el registro DIAN.
           }
         }
-  
+
         if (dianRecord) {
           const updatedSections = sections.map((section) => {
             if (section.section === "VENDER") {
@@ -216,11 +221,11 @@ export default function Sidebar({
         console.error("Error cargando configuración DIAN:", error);
       }
     };
-  
+
     loadSections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-    
+
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -277,10 +282,10 @@ export default function Sidebar({
                       selectedSection === section.id
                         ? "#252836"
                         : section?.submenus
-                        ? selectedSection?.includes(slice(section.id))
-                          ? "#252836"
-                          : "transparent"
-                        : "transparent",
+                          ? selectedSection?.includes(slice(section.id))
+                            ? "#252836"
+                            : "transparent"
+                          : "transparent",
                     marginLeft: "12px",
                     padding: "8px",
                     borderRadius: "12px 0 0 12px",

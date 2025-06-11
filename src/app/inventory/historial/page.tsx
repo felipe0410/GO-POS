@@ -94,7 +94,7 @@ export default function StickyHeadTable() {
     (item) => {
       const optimiceCant = item?.optimice_cant ?? 100;
       const porcentaje = (item.cantidad / optimiceCant) * 100;
-      return porcentaje > 70; // Más del 70%
+      return porcentaje > 70;
     }
   ).length;
 
@@ -157,10 +157,17 @@ export default function StickyHeadTable() {
     }
 
     if (proveedor !== "all") {
-      filtered = filtered.filter((item) =>
-        item.proveedores?.includes(proveedor)
-      );
+      if (proveedor === "sin") {
+        filtered = filtered.filter(
+          (item) => !item.proveedores || item.proveedores.length === 0
+        );
+      } else {
+        filtered = filtered.filter((item) =>
+          item.proveedores?.includes(proveedor)
+        );
+      }
     }
+
 
     setFilter(filtered);
   };
@@ -196,13 +203,6 @@ export default function StickyHeadTable() {
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     saveAs(blob, "inventory.csv");
-  };
-
-  const handlePageChange = (
-    event: React.ChangeEvent<unknown>,
-    page: number
-  ) => {
-    setCurrentPage(page);
   };
 
   const paginatedData = filter.slice(

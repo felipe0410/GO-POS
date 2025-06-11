@@ -95,4 +95,20 @@ export const localSections = [
       },
     ],
   },
+  {
+    section: "AJUSTES",
+    icon: "/images/settings.svg",
+    icon2: "/images/inventarioSelected.svg",
+    id: "/contacts/clientes",
+    submenus: [
+      {
+        section: "PROVEEDORES",
+        id: "/contacts/proveedores",
+      },
+      {
+        section: "CLIENTES",
+        id: "/contacts/clientes",
+      }
+    ],
+  },
 ];

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
     Modal,
     Box,
@@ -16,7 +16,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { createProveedor } from "@/firebase";
 import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
-
 const style = {
     position: "absolute" as const,
     top: "50%",
@@ -28,7 +27,6 @@ const style = {
     borderRadius: "12px",
     p: 3,
 };
-
 
 interface ModalProveedorProps {
     open: boolean;
@@ -45,20 +43,47 @@ export default function ModalProveedor({ open, onClose, proveedores = [] }: Moda
         direccion: "",
     });
 
+    const [errors, setErrors] = useState({
+        nombre: false,
+        nit: false,
+    });
+
     const handleSaveProveedor = async (proveedor: any) => {
         const uid = proveedor.nit || crypto.randomUUID();
         const result = await createProveedor(uid, proveedor);
-        enqueueSnackbar(result ? "Proveedor guardado exitosamente" : "Error al guardar el proveedor", {
-            variant: result ? "success" : "error",
-        });
+        enqueueSnackbar(
+            result ? "Proveedor guardado exitosamente" : "Error al guardar el proveedor",
+            { variant: result ? "success" : "error" }
+        );
     };
 
     const handleChange = (field: string, value: string) => {
         setProveedor((prev) => ({ ...prev, [field]: value }));
+
+        // Limpiar el error si el campo ahora tiene valor
+        if ((field === "nombre" || field === "nit") && value.trim() !== "") {
+            setErrors((prev) => ({ ...prev, [field]: false }));
+        }
     };
 
     const handleSubmit = () => {
+        const hasNombre = proveedor.nombre.trim() !== "";
+        const hasNit = proveedor.nit.trim() !== "";
+
+        setErrors({
+            nombre: !hasNombre,
+            nit: !hasNit,
+        });
+
+        if (!hasNombre || !hasNit) {
+            enqueueSnackbar("El nombre y el NIT del proveedor son obligatorios", {
+                variant: "error",
+            });
+            return;
+        }
+
         handleSaveProveedor(proveedor);
+
         setProveedor({
             nombre: "",
             nit: "",
@@ -66,6 +91,7 @@ export default function ModalProveedor({ open, onClose, proveedores = [] }: Moda
             email: "",
             direccion: "",
         });
+        setErrors({ nombre: false, nit: false });
         onClose();
     };
 
@@ -106,18 +132,24 @@ export default function ModalProveedor({ open, onClose, proveedores = [] }: Moda
 
                             <TextField
                                 fullWidth
+                                required
                                 label="Nombre"
                                 variant="filled"
                                 value={proveedor.nombre}
                                 onChange={(e) => handleChange("nombre", e.target.value)}
+                                error={errors.nombre}
+                                helperText={errors.nombre ? "Este campo es obligatorio" : ""}
                                 sx={{ mb: 2, backgroundColor: "#fff", borderRadius: 1 }}
                             />
                             <TextField
                                 fullWidth
+                                required
                                 label="NIT o Documento"
                                 variant="filled"
                                 value={proveedor.nit}
                                 onChange={(e) => handleChange("nit", e.target.value)}
+                                error={errors.nit}
+                                helperText={errors.nit ? "Este campo es obligatorio" : ""}
                                 sx={{ mb: 2, backgroundColor: "#fff", borderRadius: 1 }}
                             />
                             <TextField

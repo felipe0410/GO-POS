@@ -92,12 +92,14 @@ const Filters: React.FC<FiltersProps> = ({
         sx={selectStyles}
       >
         <MenuItem value="all">Todos los Proveedores</MenuItem>
+        <MenuItem value="sin">Sin proveedor</MenuItem>
         {proveedoresData.map((p) => (
           <MenuItem key={p.nit} value={p.nit}>
             {p.nombre || p.nit}
           </MenuItem>
         ))}
       </Select>
+
 
       <Box>
         <Box sx={{ display: "flex", alignItems: "center" }}>

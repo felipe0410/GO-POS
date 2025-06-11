@@ -13,7 +13,7 @@ import DeleteFacturaModal from "./DeleteFacturaModal";
 import ModalInvoiceLetter from "./modalInvoiceLetter";
 
 interface Column {
-  id: "iconos" | "clientName" | "invoice" | "date" | "hora" | "estado";
+  id: "iconos" | "clientName" | "invoice" | "date" | "hora" | "estado" | "total";
   label: string;
   minWidth?: number;
   align?: "right" | "center" | "left";
@@ -40,6 +40,12 @@ const columns: readonly Column[] = [
     align: "center",
   },
   {
+    id: "total",
+    label: "TOTAL",
+    minWidth: 100,
+    align: "right",
+  },
+  {
     id: "estado",
     label: "ESTADO",
     minWidth: 170,
@@ -56,7 +62,6 @@ export default function InvoicesTable({
 }) {
   const [rowData, setRowData] = useState({});
   const [editingInvoice, setEditingInvoice] = useState(false);
-
   const newDataObject = (row: any) => {
     setRowData(row);
     setEditingInvoice(true);
@@ -142,20 +147,20 @@ export default function InvoicesTable({
                         <Box sx={{ display: "flex", flexDirection: "row" }}>
                           {JSON.parse(localStorage.getItem("dataUser") ?? "{}")
                             .status === "admin" && (
-                            <>
-                              <IconButton
-                                sx={{ padding: "8px 3px" }}
-                                onClick={() => newDataObject(row)}
-                              >
-                                <Box
-                                  component={"img"}
-                                  src={"/images/edit.svg"}
-                                  sx={{ width: "1rem", height: "1rem" }}
-                                />
-                              </IconButton>
-                              <DeleteFacturaModal data={row} />
-                            </>
-                          )}
+                              <>
+                                <IconButton
+                                  sx={{ padding: "8px 3px" }}
+                                  onClick={() => newDataObject(row)}
+                                >
+                                  <Box
+                                    component={"img"}
+                                    src={"/images/edit.svg"}
+                                    sx={{ width: "1rem", height: "1rem" }}
+                                  />
+                                </IconButton>
+                                <DeleteFacturaModal data={row} />
+                              </>
+                            )}
                           <FacturaModal data={row} />
                           <ModalInvoiceLetter data={row} />
                         </Box>
@@ -193,10 +198,16 @@ export default function InvoicesTable({
                         {hora}
                       </TableCell>
                       <TableCell
+                        sx={{ color: "#FFF", borderColor: "#69EAE2" }}
+                        align="right"
+                      >
+                        ${row?.total?.toLocaleString() ?? "0"}
+                      </TableCell>
+                      <TableCell
                         sx={{
                           color:
                             row.status === undefined ||
-                            row.status.toLowerCase() === "cancelado"
+                              row.status.toLowerCase() === "cancelado"
                               ? "#00C52B"
                               : "#FF0404",
                           borderColor: "#69EAE2",

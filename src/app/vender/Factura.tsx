@@ -178,7 +178,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
             lineHeight: "140%",
           }}
         >
-          IMPRIMIR
+          IMPRIMIRr
         </Button>
       </Box>
       <Box
