@@ -1,3 +1,4 @@
+import BadgeIcon from '@mui/icons-material/Badge';
 export const localSections = [
   {
     section: "INICIO",
@@ -96,9 +97,9 @@ export const localSections = [
     ],
   },
   {
-    section: "AJUSTES",
-    icon: "/images/settings.svg",
-    icon2: "/images/inventarioSelected.svg",
+    section: "DIRECTORIO",
+    icon: <BadgeIcon sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px", margin: 0 }} />,
+    icon2: <BadgeIcon sx={{ fontSize: "24px", ml: "10px", margin: 0 }} />,
     id: "/contacts/clientes",
     submenus: [
       {

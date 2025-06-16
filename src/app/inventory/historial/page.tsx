@@ -105,6 +105,10 @@ export default function StickyHeadTable() {
     });
   }, []);
   useEffect(() => {
+    applyFilters(searchTerm, stockFilter, categoryFilter, proveedorFilter);
+  }, [data, searchTerm, stockFilter, categoryFilter, proveedorFilter]);
+
+  useEffect(() => {
     const fetchProveedores = async () => {
       const lista = await getAllProveedores();
       setProveedoresData(lista);

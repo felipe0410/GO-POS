@@ -49,7 +49,7 @@ export default function Sidebar({
   const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
   const permissions =
     dataUser?.status === "admin"
-      ? ["Vender", "Inventario", "Caja"]
+      ? ["Vender", "Inventario", "Caja", "Directorio"]
       : dataUser?.jobs ?? [];
 
   const permissionMap: any = {
@@ -70,6 +70,7 @@ export default function Sidebar({
       "/settings/establisment",
       "/settings/dian",
     ],
+    Directorio: ["/contacts/proveedores", "/contacts/clientes"],
     Contacts: [
       "/contacts/proveedores",
       "/contacts/clientes",
@@ -329,14 +330,23 @@ export default function Sidebar({
                             paddingLeft: "8px",
                           }}
                         >
-                          <Box
-                            component={"img"}
-                            src={
-                              selectedSection?.includes(section.id)
-                                ? section.icon2
-                                : section.icon
-                            }
-                          />
+                          {typeof (selectedSection?.includes(section.id)
+                            ? section.icon2
+                            : section.icon) === "string" ? (
+                            <Box
+                              component="img"
+                              src={
+                                selectedSection?.includes(section.id)
+                                  ? section.icon2
+                                  : section.icon
+                              }
+                              alt="icon"
+                            />
+                          ) : (
+                            selectedSection?.includes(section.id)
+                              ? section.icon2
+                              : section.icon
+                          )}
                         </ListItemIcon>
                       </Box>
                       <ListItemText

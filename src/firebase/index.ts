@@ -120,6 +120,33 @@ export const getAllProveedores = async (): Promise<any[]> => {
 };
 
 
+export const suscribeToProveedores = (
+  callback: (proveedores: any[]) => void
+): (() => void) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const proveedoresCollectionRef = collection(establecimientoDocRef, "proveedores");
+
+    // Suscripción en tiempo real
+    const unsubscribe = onSnapshot(proveedoresCollectionRef, (querySnapshot) => {
+      const proveedores: any[] = [];
+      querySnapshot.forEach((doc) => {
+        proveedores.push({ uid: doc.id, ...doc.data() });
+      });
+      callback(proveedores); // Dispara la actualización
+    });
+
+    return unsubscribe; // Para cancelar la suscripción si hace falta
+  } catch (error) {
+    console.error("Error al suscribirse a proveedores: ", error);
+    return () => {};
+  }
+};
+
 export const getProveedorByNIT = async (nit: string): Promise<any | null> => {
   try {
     const establecimientoDocRef = doc(
@@ -141,6 +168,48 @@ export const getProveedorByNIT = async (nit: string): Promise<any | null> => {
   } catch (error) {
     console.error("Error al buscar proveedor por NIT:", error);
     return null;
+  }
+};
+
+export const updateProveedor = async (uid: string, data: any) => {
+  try {
+    const proveedorRef = doc(
+      db,
+      "establecimientos",
+      user().decodedString,
+      "proveedores",
+      uid
+    );
+
+    await updateDoc(proveedorRef, {
+      ...data,
+      uid,
+      user: user().decodedString,
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error al actualizar proveedor: ", error);
+    return false;
+  }
+};
+
+
+export const deleteProveedor = async (uid: string) => {
+  try {
+    const proveedorRef = doc(
+      db,
+      "establecimientos",
+      user().decodedString,
+      "proveedores",
+      uid
+    );
+
+    await deleteDoc(proveedorRef);
+    return true;
+  } catch (error) {
+    console.error("Error al eliminar proveedor: ", error);
+    return false;
   }
 };
 
@@ -751,6 +820,34 @@ export const createClient = async (uid: string, data: any) => {
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /clients: ", error);
+    return null;
+  }
+};
+// firebase/clients.ts
+export const updateClient = async (id: string, data: any) => {
+  const ref = doc(db, "establecimientos", user().decodedString, "clients", id);
+  await setDoc(ref, data, { merge: true });
+};
+
+
+export const getClientById = async (id: string) => {
+  try {
+    const establecimientoDocRef: DocumentReference = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+
+    const clientDocRef = doc(establecimientoDocRef, "clients", id);
+    const clientSnapshot: DocumentSnapshot = await getDoc(clientDocRef);
+
+    if (clientSnapshot.exists()) {
+      return clientSnapshot.data();
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error al consultar cliente por ID: ", error);
     return null;
   }
 };

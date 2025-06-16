@@ -39,7 +39,6 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
 }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
-  console.log('paginatedData::>', paginatedData)
   const handleOpenDialog = (product: any) => {
     setSelectedProduct(product);
     setDialogOpen(true);
@@ -212,8 +211,8 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
                         sx={{
                           backgroundColor: "gray",
                           color: "#FFF",
-                          width:'140px',
-                          height:'15px'
+                          width: '140px',
+                          height: '15px'
                         }}
                       />
                     ))
