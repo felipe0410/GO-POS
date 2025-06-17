@@ -15,9 +15,9 @@ import Chip from "@mui/material/Chip";
 import SearchIcon from "@mui/icons-material/Search";
 import Paper from "@mui/material/Paper";
 import React, { useEffect, useState } from "react";
-import StickyHeadTable from "@/components/StickyHeadTable";
+import StickyHeadTable from "@/app/inventory/productos/StickyHeadTable";
 import ProductCards from "@/components/ProductCards";
-import TableResponsive from "@/components/TableResponsive";
+import TableResponsive from "@/app/inventory/productos/TableResponsive";
 import { getAllProductsData } from "@/firebase";
 import debounce from "debounce";
 

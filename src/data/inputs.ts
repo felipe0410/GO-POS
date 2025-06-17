@@ -92,6 +92,12 @@ export const inputsEdit = [
     width: "45%",
     field: "price",
   },
+    {
+    name: "PRECIO DE COMPRA",
+    type: "purchasePrice",
+    width: "45%",
+    field: "purchasePrice",
+  },
   {
     name: "CANTIDAD",
     type: "qty",

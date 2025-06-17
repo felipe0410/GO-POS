@@ -16,8 +16,8 @@ import { tableCellClasses } from "@mui/material/TableCell";
 import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
 import { getAllProductsData } from "@/firebase";
-import EditModal from "./EditModal";
-import DeleteModal from "./DeleteModal";
+import EditModal from "../../../components/EditModal";
+import DeleteModal from "../../../components/DeleteModal";
 
 export default function TableResponsive({
   filteredData,

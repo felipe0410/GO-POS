@@ -9,8 +9,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { deleteProduct, getAllProductsData } from "@/firebase";
 import { Box, IconButton } from "@mui/material";
-import DeleteModal from "./DeleteModal";
-import EditModal from "./EditModal";
+import DeleteModal from "../../../components/DeleteModal";
+import EditModal from "../../../components/EditModal";
 
 interface Column {
   id: "iconos" | "productName" | "barCode" | "price" | "cantidad" | "category";

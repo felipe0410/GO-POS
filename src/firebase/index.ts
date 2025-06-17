@@ -266,7 +266,6 @@ export const getAllProductsData = (callback: any, userID?: string) => {
       querySnapshot.forEach((doc: any) => {
         productsData.push({ id: doc.id, ...doc.data() });
       });
-      console.log("productsData::>", productsData);
       callback(productsData);
       return productsData;
     });
@@ -375,7 +374,6 @@ export const fetchAndUpdateProducts = async (callback: any) => {
         }
       }
 
-      console.log("productsData::>", productsData);
       callback(productsData);
       return productsData;
     });
