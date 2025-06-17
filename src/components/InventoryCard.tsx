@@ -170,7 +170,7 @@ export default function InventoryCard({
               lineHeight: "140%",
             }}
           >
-            {wholesale ? product?.wholesalePrice ?? "0" : product.price}
+            {wholesale ? product?.price ?? "0" : product.price}
           </Typography>
           <Typography
             sx={{

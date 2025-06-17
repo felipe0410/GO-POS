@@ -1,6 +1,7 @@
 "use client";
 import { OutlinedInput, InputAdornment, IconButton } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from "react-datepicker";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 

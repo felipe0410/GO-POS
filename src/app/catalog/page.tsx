@@ -76,7 +76,7 @@ const Page = () => {
 
   return (
     <Box id="page products" sx={{ height: "78%", width:'95%', margin:'0 auto' , paddingLeft:{ xs:'17px', lg:'auto'} , marginTop:'10px' }}>
-      <Header title="CATALOGO MAYORISTAS" />
+      <Header title="CATALOGO" />
       <Box sx={{ marginTop: "2rem", height: "100%" }}>
         <Box>
           <Typography
