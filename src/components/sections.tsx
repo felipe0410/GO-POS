@@ -47,6 +47,10 @@ export const localSections = [
         id: "/register/dashboard",
       },
       {
+        section: "ITEMS",
+        id: "/register/dashboardProductos",
+      },
+      {
         section: "FACTURAS DIAN",
         id: "/register/invoicesDian",
       },

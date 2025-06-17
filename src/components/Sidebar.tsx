@@ -63,6 +63,7 @@ export default function Sidebar({
       "/register/invoices",
       "/register/dashboard",
       "/register/invoicesDian",
+      '/register/dashboardProductos',
     ],
     Ajustes: [
       "/settings/user",

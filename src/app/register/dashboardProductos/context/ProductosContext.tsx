@@ -10,7 +10,7 @@ type ProductoInfo = {
     price?: number;
     purchasePrice?: number;
     image?: string;
-    barCode?: string; // ✅ AGREGADO AQUÍ
+    barCode?: string;
 };
 type Factura = {
     timestamp?: { seconds: number };
