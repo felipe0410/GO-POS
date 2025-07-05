@@ -243,6 +243,7 @@ export default function Sidebar({
     const initSidebar = async () => {
       try {
         const modules = await getModules();
+        console.log('entro aqui')
         const selectedSections =
           modules?.solution_restaurant === "true"
             ? gastrobarSections
