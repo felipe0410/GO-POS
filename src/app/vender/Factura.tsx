@@ -35,7 +35,6 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
   });
 
   const setNuevaFactura = () => {
-    console.log("llego aqui");
     setReciboPago(false);
     //setSelectedItems([]);
     // Eliminar la factura activa

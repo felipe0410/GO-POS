@@ -18,12 +18,12 @@ import {
 } from "@mui/material";
 import Link from "next/link";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import ContactsIcon from '@mui/icons-material/Contacts';
 import { usePathname, useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "@/app/globalContex";
-import { localSections } from "./sections";
+import { gastrobarSections, localSections } from "./sections";
 import { getDianRecord } from "@/firebase/dian";
+import { getModules } from "@/firebase/settingsModules";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   display: "flex",
@@ -42,14 +42,14 @@ export default function Sidebar({
 }) {
   const { removeCookieUser } = useContext(GlobalContext) || {};
   const [selectedSection, setSelectedSection] = React.useState<any>("");
-  const [sections, setSections] = useState(localSections);
+  const [sections, setSections] = useState<any[]>([]);
   const pathname = usePathname();
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("sm"));
   const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
   const permissions =
     dataUser?.status === "admin"
-      ? ["Vender", "Inventario", "Caja", "Directorio"]
+      ? ["Vender", "Inventario", "Caja", "Directorio", 'PEDIDOS', 'ZONAS', 'COCINA']
       : dataUser?.jobs ?? [];
 
   const permissionMap: any = {
@@ -66,8 +66,8 @@ export default function Sidebar({
       '/register/dashboardProductos',
     ],
     Ajustes: [
-      "/settings/user",
-      "/settings/employees",
+      //"/settings/user",
+      //"/settings/employees",
       "/settings/establisment",
       "/settings/dian",
     ],
@@ -75,6 +75,16 @@ export default function Sidebar({
     Contacts: [
       "/contacts/proveedores",
       "/contacts/clientes",
+    ],
+    //__________________gastrobares______________________
+    PEDIDOS: [
+      "/gastrobares/pedido",
+    ],
+    ZONAS: [
+      "/gastrobares/zonas",
+    ],
+    COCINA: [
+      "/gastrobares/cocina",
     ],
   };
 
@@ -120,7 +130,7 @@ export default function Sidebar({
       dataUser?.status !== "admin"
     ) {
       section.submenus = section.submenus.filter(
-        (submenu) => submenu.section === "FACTURAS"
+        (submenu: { section: string; }) => submenu.section === "FACTURAS"
       );
     }
     return section;
@@ -227,6 +237,26 @@ export default function Sidebar({
     loadSections();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+
+  useEffect(() => {
+    const initSidebar = async () => {
+      try {
+        const modules = await getModules();
+        const selectedSections =
+          modules?.solution_restaurant === "true"
+            ? gastrobarSections
+            : localSections;
+        setSections(selectedSections);
+      } catch (error) {
+        console.error("Error cargando módulos:", error);
+        setSections(localSections);
+      }
+    };
+
+    initSidebar();
+  }, []);
+
 
   return (
     <Box sx={{ display: "flex" }}>

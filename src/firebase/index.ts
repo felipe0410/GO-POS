@@ -66,13 +66,104 @@ export const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENTID ?? "",
 };
 
-// Initialize Firebase
 const app: FirebaseApp = initializeApp(firebaseConfig);
 export const db: Firestore = getFirestore(app);
 export const storage = getStorage(app);
 const auth = getAuth();
 
 
+type Mesa = {
+  id: string;
+  tipo: "mesa" | "decorativo";
+  subtipo?: string;
+  nombre: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  puestos?: number;
+  forma?: "cuadrada" | "redonda" | "rectangular";
+};
+
+export const saveZonaConfig = async (
+  piso: number,
+  mesas: Mesa[]
+): Promise<boolean> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      user().decodedString
+    );
+
+    const zonasCollectionRef = collection(establecimientoDocRef, "zonas_gastrobares");
+    const zonaDocRef = doc(zonasCollectionRef, `piso-${piso}`);
+
+    await setDoc(zonaDocRef, {
+      piso,
+      user: user().decodedString,
+      mesas: JSON.parse(JSON.stringify(mesas)),
+      updatedAt: Timestamp.now(),
+    });
+
+    return true;
+  } catch (error) {
+    console.error("Error al guardar configuración de zona:", error);
+    return false;
+  }
+};
+
+export const getZonaConfig = async (piso: number): Promise<Mesa[] | null> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      user().decodedString
+    );
+    const zonaDocRef = doc(collection(establecimientoDocRef, "zonas_gastrobares"), `piso-${piso}`);
+    const zonaSnap = await getDoc(zonaDocRef);
+
+    if (zonaSnap.exists()) {
+      const data = zonaSnap.data();
+      return data.mesas ?? [];
+    } else {
+      console.warn("No hay configuración guardada para este piso.");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error al recuperar configuración de zona:", error);
+    return null;
+  }
+};
+
+
+export const getPisosConfigurados = async (): Promise<number[]> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      user().decodedString
+    );
+    const zonasCollectionRef = collection(establecimientoDocRef, "zonas_gastrobares");
+
+    const snapshot = await getDocs(zonasCollectionRef);
+    const pisos: number[] = [];
+
+    snapshot.forEach((doc) => {
+      const id = doc.id; // Ej: "piso-1"
+      const match = id.match(/^piso-(\d+)$/);
+      if (match) {
+        pisos.push(parseInt(match[1], 10));
+      }
+    });
+
+    return pisos.sort((a, b) => a - b);
+  } catch (error) {
+    console.error("Error al obtener pisos configurados:", error);
+    return [];
+  }
+};
 export const createProveedor = async (uid: string, proveedorData: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -143,7 +234,7 @@ export const suscribeToProveedores = (
     return unsubscribe; // Para cancelar la suscripción si hace falta
   } catch (error) {
     console.error("Error al suscribirse a proveedores: ", error);
-    return () => {};
+    return () => { };
   }
 };
 
@@ -1743,15 +1834,11 @@ export const handleGuardarDevolucion = async (facturaData: any) => {
 
         if (snapshot.exists()) {
           const productoBD = snapshot.data();
-          const nuevaCantidad = (productoBD.cantidad ?? 0) + diferencia;
+          const nuevaCantidad = +(productoBD.cantidad ?? 0) + +(diferencia ?? 0);
 
           await updateDoc(productoDocRef, {
             cantidad: nuevaCantidad,
           });
-
-          console.log(
-            `📦 Inventario actualizado (+${diferencia}) para ${producto.barCode}`
-          );
 
           seRealizoCambio = true;
 

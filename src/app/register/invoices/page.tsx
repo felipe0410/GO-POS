@@ -174,8 +174,6 @@ const Invoices = () => {
     setTotalVentasEfectivo(totalEfectivo);
     setTotalVentasTransferencia(totalTransferencia);
 
-    console.log("Ventas no pendientes::>", ventasHoy);
-    console.log("Ventas pendientes::>", ventasPendientesHoy);
   }, [data, searchTerm, statusFilter, typeFilter]);
 
   useEffect(() => {

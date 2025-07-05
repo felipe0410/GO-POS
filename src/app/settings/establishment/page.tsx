@@ -4,7 +4,9 @@ import {
   Avatar,
   Box,
   Button,
+  Checkbox,
   FormControl,
+  FormControlLabel,
   OutlinedInput,
   Paper,
   Typography,
@@ -14,18 +16,18 @@ import {
   cards,
   container,
   styleTypography,
-  typographyProfile,
   typographyButton,
+  typographyProfile,
 } from "./EstablishmentStyle";
 import {
   getEstablishmentData,
   getEstablishmentDataLoggin,
   updateEstablishmentsData,
 } from "@/firebase";
-import { SnackbarProvider } from "notistack";
-import { enqueueSnackbar } from "notistack";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import ImgInputSettings from "@/components/inputIMG-Settings";
 import { profileInputs } from "../dian/DIANStyle";
+import { getModules, saveModules } from "@/firebase/settingsModules";
 
 interface Data {
   name: string;
@@ -34,18 +36,10 @@ interface Data {
   establishment: string;
   NIT: string;
   email: string;
-  [key: string]: string;
-}
-
-export interface ColabData {
-  uid: string;
-  name: string;
-  jobs: [];
-  password: string;
   img: string;
-  uidEstablishments: string;
-  mail: string;
-  status: string;
+  solution_restaurant: string;
+  solution_general: string;
+  [key: string]: string;
 }
 
 const Page = () => {
@@ -57,74 +51,65 @@ const Page = () => {
     NIT: "",
     email: "",
     img: "",
+    solution_restaurant: "false",
+    solution_general: "false",
   });
 
-  const [editOn, setEditOn] = useState<boolean>(false);
   const [imageBase64, setImageBase64] = useState("");
   const userData = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
-  const dataUser = async () => {
-    const establishmentData = await getEstablishmentDataLoggin(
-      atob(userData.uid)
-    );
-    return establishmentData;
-  };
-
   const user = atob(localStorage?.getItem("user") ?? "");
+
   const inputOnChange = (field: string, value: string) => {
     setData({ ...data, [field]: value });
   };
-  const handleEdit = () => {
-    setEditOn(true);
-  };
+
   const handleChanges = async () => {
     try {
       await updateEstablishmentsData(data);
-      enqueueSnackbar("Cambios guardados", {
+      await saveModules({
+        solution_restaurant: data.solution_restaurant,
+        solution_general: data.solution_general,
+      });
+
+      enqueueSnackbar("Cambios guardados correctamente", {
         variant: "success",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
+        anchorOrigin: { vertical: "bottom", horizontal: "right" },
       });
     } catch (error) {
-      enqueueSnackbar("Error al guardar", {
+      enqueueSnackbar("Error al guardar cambios", {
         variant: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
+        anchorOrigin: { vertical: "bottom", horizontal: "right" },
       });
     }
-    setEditOn(false);
   };
 
   useEffect(() => {
-    const dataEstablesimente = async () => {
-      const data: any = await getEstablishmentData();
-      dataUser()
-        .then((userData: any) => {
-          if (userData.mail.length > 0) {
-            setData({
-              name: userData.name,
-              direction: "centro",
-              phone: "30000",
-              establishment: "pruea",
-              NIT: userData.status,
-              email: userData.mail,
-              img: userData.img,
-            });
-          } else if (data !== null) {
-            setData(data);
-          }
-        })
-        .catch((error) => {
-          setData(data);
-          console.error("Error al obtener los datos del usuario:", error);
-        });
+    const fetchData = async () => {
+      const dataFirebase: any = await getEstablishmentData();
+      const userDataResponse: any = await getEstablishmentDataLoggin(
+        atob(userData.uid)
+      );
+
+      const modules = await getModules();
+
+      const baseData = {
+        name: userDataResponse?.name ?? dataFirebase?.name ?? "",
+        direction: "centro",
+        phone: "30000",
+        establishment: "pruea",
+        NIT: userDataResponse?.status ?? "",
+        email: userDataResponse?.mail ?? dataFirebase?.email ?? "",
+        img: userDataResponse?.img ?? "",
+        solution_restaurant: modules?.solution_restaurant ?? "false",
+        solution_general: modules?.solution_general ?? "true", // valor por defecto
+      };
+
+      setData(baseData);
     };
-    dataEstablesimente();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    fetchData();
+  }, [userData.uid]);
+
 
   return (
     <>
@@ -158,7 +143,6 @@ const Page = () => {
                 setImageBase64={setImageBase64}
                 border="50%"
               />
-
               <Box
                 sx={{
                   position: "absolute",
@@ -175,9 +159,9 @@ const Page = () => {
                     height: { lg: "260px", sm: "230px", xs: "180px" },
                   }}
                 />
-                |
               </Box>
             </Box>
+
             <Box
               sx={{
                 display: "flex",
@@ -195,104 +179,100 @@ const Page = () => {
                 },
               }}
             >
-              {profileInputs.map((input, index) => {
-                const style = {
-                  width: { sm: "45%", xs: "100%" },
-                  marginTop: { sm: "90px", xs: "75px" },
-                  marginBottom: { sm: "-73px", xs: "-75px" },
-                };
 
-                return (
-                  <React.Fragment key={index * 123}>
-                    <FormControl sx={style} variant="outlined">
-                      <Typography sx={styleTypography}>{input.name}</Typography>
-                      {editOn ? (
-                        <OutlinedInput
-                          value={data[input.field]}
-                          onChange={(e) => {
-                            inputOnChange(input.field, e.target.value);
-                          }}
-                          type={input.type}
-                          sx={{
-                            height: "35.9px",
-                            borderRadius: "0.625rem",
-                            background: "#2C3248",
-                            boxShadow:
-                              "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
-                          }}
-                          style={{ color: "#FFF" }}
-                        />
-                      ) : (
-                        <Typography
-                          sx={{
-                            ...typographyProfile,
-                            overflow: "hidden",
-                            whiteSpace: "nowrap",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {data[input.field]}
-                        </Typography>
-                      )}
-                    </FormControl>
-                  </React.Fragment>
-                );
-              })}
-              {editOn ? (
-                <Box
+              <Box
+                sx={{
+                  marginTop: "5.5rem",
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 1,
+                  background: "#2C3248",
+                  borderRadius: "0.625rem",
+                  padding: "1rem",
+                  boxShadow:
+                    "0px 4px 4px 0px rgba(0, 0, 0, 0.25), 0px 4px 4px 0px rgba(0, 0, 0, 0.25)",
+                }}
+              >
+                <Typography sx={styleTypography}>
+                  ¿Qué solución necesitas activar?
+                </Typography>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={data.solution_restaurant === "true"}
+                      onChange={(e) => {
+                        const checked = e.target.checked.toString();
+                        setData((prev) => ({
+                          ...prev,
+                          solution_restaurant: checked,
+                          solution_general: checked === "true" ? "false" : prev.solution_general,
+                        }));
+                      }}
+                      sx={{
+                        color: "#69EAE2",
+                        "&.Mui-checked": { color: "#69EAE2" },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography sx={typographyProfile}>
+                      🍽️ Restaurantes y Gastrobares
+                    </Typography>
+                  }
+                />
+
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={data.solution_general === "true"}
+                      onChange={(e) => {
+                        const checked = e.target.checked.toString();
+                        setData((prev) => ({
+                          ...prev,
+                          solution_general: checked,
+                          solution_restaurant: checked === "true" ? "false" : prev.solution_restaurant,
+                        }));
+                      }}
+                      sx={{
+                        color: "#69EAE2",
+                        "&.Mui-checked": { color: "#69EAE2" },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography sx={typographyProfile}>
+                      🛒 Solución general (supermercados, tiendas, papelerías, etc.)
+                    </Typography>
+                  }
+                />
+
+
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  width: "100%",
+                  marginTop: "2rem",
+                }}
+              >
+                <Button
+                  onClick={handleChanges}
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "10px",
+                    height: "2.5rem",
+                    borderRadius: "0.625rem",
+                    background: "#004d00",
+                    border: "solid #ffffff 1px",
+                    "&:hover": { opacity: "80%" },
                   }}
                 >
-                  <Button
-                    onClick={handleChanges}
-                    sx={{
-                      height: "2.5rem",
-                      borderRadius: "0.625rem",
-                      marginTop: "10px",
-                      "&:hover": { opacity: "80%" },
-                    }}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      right: 12,
-                      background: "#004d00",
-                      border: "solid #ffffff 1px",
-                    }}
-                  >
-                    <Typography sx={typographyButton} style={{color:'#fff'}}>
-                      Guardar Cambios
-                    </Typography>
-                  </Button>
-                </Box>
-              ) : (
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    marginTop: "10px",
-                  }}
-                >
-                  <Button
-                    onClick={handleEdit}
-                    sx={{
-                      height: "2.5rem",
-                      borderRadius: "0.625rem",
-                      marginTop: "10px",
-                    }}
-                    style={{ position: "absolute", top: 1, right: 12 }}
-                  >
-                    <Typography
-                      sx={typographyButton}
-                      style={{ textDecoration: "0.5px solid underline" }}
-                    >
-                      Editar Datos
-                    </Typography>
-                  </Button>
-                </Box>
-              )}
+                  <Typography sx={typographyButton} style={{ color: "#fff" }}>
+                    Guardar Cambios
+                  </Typography>
+                </Button>
+              </Box>
             </Box>
           </Paper>
         </Box>

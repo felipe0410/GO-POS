@@ -39,6 +39,7 @@
     "html2pdf.js": "^0.9.0",
     "jsbarcode": "^3.11.6",
     "jspdf": "^2.5.1",
+    "lodash": "^4.17.21",
     "next": "14.0.3",
     "notistack": "^3.0.1",
     "prop-types": "^15.8.1",
@@ -62,6 +63,7 @@
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
     "@types/js-cookie": "^3.0.6",
+    "@types/lodash": "^4.17.20",
     "@types/mark.js": "^8.11.12",
     "@types/node": "^20",
     "@types/react": "^18",

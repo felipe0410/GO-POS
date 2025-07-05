@@ -1,4 +1,8 @@
 import BadgeIcon from '@mui/icons-material/Badge';
+import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import CountertopsIcon from '@mui/icons-material/Countertops';
+
 export const localSections = [
   {
     section: "INICIO",
@@ -80,16 +84,16 @@ export const localSections = [
     section: "AJUSTES",
     icon: "/images/settings.svg",
     icon2: "/images/inventarioSelected.svg",
-    id: "/settings/user",
+    id: "/settings/establishment",
     submenus: [
-      {
-        section: "USUARIO",
-        id: "/settings/user",
-      },
-      {
-        section: "EMPLEADOS",
-        id: "/settings/employees",
-      },
+      //{
+      // section: "USUARIO",
+      //id: "/settings/user",
+      //},
+      //{
+      //  section: "EMPLEADOS",
+      // id: "/settings/employees",
+      //},
       {
         section: "ESTABLECIMIENTO",
         id: "/settings/establishment",
@@ -114,6 +118,140 @@ export const localSections = [
         section: "CLIENTES",
         id: "/contacts/clientes",
       }
+    ],
+  },
+];
+
+
+export const gastrobarSections = [
+  {
+    section: "INICIO",
+    icon: "/images/home.svg",
+    icon2: "/images/homeSelected.svg",
+    id: "/home",
+  },
+  {
+    section: "PERFIL",
+    icon: "/images/profile.svg",
+    icon2: "/images/profileSelected.svg",
+    id: "/profile",
+  },
+  {
+    section: "PEDIDOS",
+    icon: (
+      <DeliveryDiningIcon
+        sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px", margin: 0 }}
+      />
+    ),
+    icon2: (
+      <DeliveryDiningIcon sx={{ fontSize: "24px", ml: "10px", margin: 0 }} />
+    ),
+    id: "/gastrobares/pedido",
+  },
+  {
+    section: "ZONAS",
+    icon: (
+      <StorefrontIcon
+        sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px", margin: 0 }}
+      />
+    ),
+    icon2: (
+      <StorefrontIcon sx={{ fontSize: "24px", ml: "10px", margin: 0 }} />
+    ),
+    id: "/gastrobares/zonas",
+  },
+  {
+    section: "COCINA",
+    icon: (
+      <CountertopsIcon
+        sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px", margin: 0 }}
+      />
+    ),
+    icon2: (
+      <CountertopsIcon sx={{ fontSize: "24px", ml: "10px", margin: 0 }} />
+    ),
+    id: "/gastrobares/cocina",
+  },
+  {
+    section: "CAJA",
+    icon2: "/images/cajaSelected.svg",
+    icon: "/images/caja.svg",
+    id: "/register/invoices",
+    submenus: [
+      {
+        section: "FACTURAS",
+        id: "/register/invoices",
+      },
+      {
+        section: "ANALÍTICAS",
+        id: "/register/dashboard",
+      },
+      {
+        section: "ITEMS",
+        id: "/register/dashboardProductos",
+      },
+      {
+        section: "FACTURAS DIAN",
+        id: "/register/invoicesDian",
+      },
+    ],
+  },
+  {
+    section: "INVENTARIO",
+    icon: "/images/inventario.svg",
+    icon2: "/images/inventarioSelected.svg",
+    id: "/inventory/productos",
+    submenus: [
+      {
+        section: "PRODUCTOS",
+        id: "/inventory/productos",
+      },
+      {
+        section: "AGREGAR PRODUCTO",
+        id: "/inventory/agregarProductos",
+      },
+      {
+        section: "RESUMEN",
+        id: "/inventory/historial",
+      },
+    ],
+  },
+  {
+    section: "AJUSTES",
+    icon: "/images/settings.svg",
+    icon2: "/images/inventarioSelected.svg",
+    id: "/settings/establishment",
+    submenus: [
+      {
+        section: "ESTABLECIMIENTO",
+        id: "/settings/establishment",
+      },
+      {
+        section: "AJUSTES DIAN",
+        id: "/settings/dian",
+      },
+    ],
+  },
+  {
+    section: "DIRECTORIO",
+    icon: (
+      <BadgeIcon
+        sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px", margin: 0 }}
+      />
+    ),
+    icon2: (
+      <BadgeIcon sx={{ fontSize: "24px", ml: "10px", margin: 0 }} />
+    ),
+    id: "/contacts/clientes",
+    submenus: [
+      {
+        section: "PROVEEDORES",
+        id: "/contacts/proveedores",
+      },
+      {
+        section: "CLIENTES",
+        id: "/contacts/clientes",
+      },
     ],
   },
 ];

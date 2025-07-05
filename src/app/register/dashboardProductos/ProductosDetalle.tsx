@@ -52,6 +52,7 @@ export default function ProductosDetalle() {
                     }}
                   >
                     {productoInfo?.image ? (
+                      // eslint-disable-next-line @next/next/no-img-element
                       <img
                         src={productoInfo?.image}
                         alt={productoInfo?.productName}

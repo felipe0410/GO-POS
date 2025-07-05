@@ -122,7 +122,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
           },
         }}
         onClose={onClose}
-        onOpen={() => {}}
+        onOpen={() => { }}
       >
         <Box
           sx={{
@@ -168,7 +168,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
                 sx={{ mb: 2, background: "#fff", borderRadius: "5px" }}
                 value={selectedDate || ""}
                 onClick={(e) => setCalendarAnchorEl(e.currentTarget)}
-                //readOnly
+              //readOnly
               />
               <Box id="contianer_calendar" sx={{ display: "flex" }}>
                 <Popover
@@ -216,7 +216,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
                 >
                   Regresar
                 </Button>
-                <Factura data={data} setFacturaData={setData} />
+                <Factura data={data} setFacturaData={setData} setSelectedInvoice={setSelectedInvoice} />
               </Box>
             ) : (
               <>

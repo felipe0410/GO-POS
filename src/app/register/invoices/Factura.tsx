@@ -24,9 +24,11 @@ import { usePathname } from "next/navigation";
 const Factura = ({
   data,
   setFacturaData,
+  setSelectedInvoice,
 }: {
   data: any;
   setFacturaData: (value: any) => void;
+  setSelectedInvoice?: ((value: any) => void) | any;
 }) => {
   const pathname = usePathname();
   const [establishmentData, setEstablishmentData] = React.useState({
@@ -79,7 +81,10 @@ const Factura = ({
                 vertical: "bottom",
                 horizontal: "right",
               },
-            });
+            }); { }
+            if (setSelectedInvoice) {
+              setSelectedInvoice(null)
+            }
           } catch (error) {
             enqueueSnackbar("Hubo un error al guardar la devolución", {
               variant: "error",
@@ -246,7 +251,7 @@ const Factura = ({
                       }}
                       padding={"none"}
                       size={"small"}
-                      // variant={"head"}
+                    // variant={"head"}
                     >
                       {item.productName}
                     </TableCell>
@@ -325,7 +330,7 @@ const Factura = ({
                         color: "#000",
                         fontFamily: "system-ui",
                         letterSpacing: "0.00938em",
-                        padding:'0 15px 0 0'
+                        padding: '0 15px 0 0'
                       }}
                       padding={"none"}
                       size={"small"}

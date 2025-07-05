@@ -94,7 +94,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
 
     const handleOpenModal = (product: Product) => {
       setCurrentProduct(product);
-      setQuantity(product.cantidad);
+      setQuantity(product.cantidad > 0 ? 1 : 0);
       setInitialQuantity(product.cantidad);
       setOpen(true);
     };
@@ -147,10 +147,10 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
         return data.Devolucion.map((item: any, index: number) =>
           index === existingIndex
             ? {
-                ...item,
-                cantidad: item.cantidad + quantity,
-                acc: item.acc + quantity * unitPrice,
-              }
+              ...item,
+              cantidad: item.cantidad + quantity,
+              acc: item.acc + quantity * unitPrice,
+            }
             : item
         );
       } else {
@@ -200,6 +200,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
         total,
         descuento,
       });
+      handleCloseModal();
     };
 
     return (
@@ -262,7 +263,7 @@ const DevolutionCard: React.FC<DevolutionCardProps> = React.memo(
               variant="h6"
               sx={{ color: "#69EAE2", textAlign: "center" }}
             >
-              {"Editar cantidad"}
+              {"Ingrese la cantidad a devolver"}
             </Typography>
 
             {currentProduct && (

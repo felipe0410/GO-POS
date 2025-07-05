@@ -16,8 +16,10 @@ import {
     Tabs,
     Tab,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Rnd } from "react-rnd";
+import { getZonaConfig, saveZonaConfig } from "@/firebase";
+import { enqueueSnackbar, SnackbarProvider } from "notistack";
 
 const ELEMENTOS_EXTRA = [
     { tipo: "entrada", color: "#ff9800" },
@@ -77,16 +79,30 @@ export default function ZonaPorPiso() {
         );
     };
 
-    const handleGuardar = () => {
-        if (editando) {
-            actualizarElemento(editando.id, editando);
-            setEditando(null);
+    const handleGuardar = async () => {
+        const success = await saveZonaConfig(Number(piso), elementos);
+        if (success) {
+            enqueueSnackbar("Zona guardada exitosamente", { variant: "success" });
+        } else {
+            enqueueSnackbar("Error al guardar zona", { variant: "error" });
         }
     };
+
+    useEffect(() => {
+        const cargarZona = async () => {
+            const config = await getZonaConfig(Number(piso));
+            if (config) {
+                setElementos(config);
+            }
+        };
+        cargarZona();
+    }, [piso]);
+
 
     return (
         <Box sx={{ display: "flex", height: "100vh", bgcolor: "#121212", color: "white" }}>
             {/* Panel lateral */}
+            <SnackbarProvider />
             <Box
                 sx={{
                     width: 250,
@@ -95,6 +111,8 @@ export default function ZonaPorPiso() {
                     bgcolor: "#1e1e1e",
                 }}
             >
+                <Button onClick={() => setEditando(null)}>Cancelar</Button>
+                <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
                 <Typography variant="h6" gutterBottom>
                     Piso {piso}
                 </Typography>
@@ -217,7 +235,6 @@ export default function ZonaPorPiso() {
                 ))}
             </Box>
 
-            {/* Editor de elementos */}
             <Dialog open={!!editando} onClose={() => setEditando(null)}>
                 <DialogTitle>Editar elemento</DialogTitle>
                 <DialogContent>
@@ -259,10 +276,6 @@ export default function ZonaPorPiso() {
                         style={{ width: "100%", height: 40, border: "none" }}
                     />
                 </DialogContent>
-                <DialogActions>
-                    <Button onClick={() => setEditando(null)}>Cancelar</Button>
-                    <Button variant="contained" onClick={handleGuardar}>Guardar</Button>
-                </DialogActions>
             </Dialog>
         </Box>
     );

@@ -29,38 +29,38 @@ const VenderCard = React.memo(
         prev.map((f) =>
           f.id === id
             ? {
-                ...f,
-                items: (f.items || [])
-                  .map((item: any) =>
-                    item.barCode === nuevosProducto.barCode
-                      ? {
-                          ...item,
-                          cantidad: nuevosProducto.cantidad,
-                          acc:
-                            nuevosProducto.cantidad *
-                            Number(
-                              nuevosProducto.price.replace(/[^0-9.-]+/g, "")
-                            ),
-                        }
-                      : item
+              ...f,
+              items: (f.items || [])
+                .map((item: any) =>
+                  item.barCode === nuevosProducto.barCode
+                    ? {
+                      ...item,
+                      cantidad: nuevosProducto.cantidad,
+                      acc:
+                        nuevosProducto.cantidad *
+                        Number(
+                          nuevosProducto.price.replace(/[^0-9.-]+/g, "")
+                        ),
+                    }
+                    : item
+                )
+                .concat(
+                  (f.items || []).some(
+                    (item: any) => item.barCode === nuevosProducto.barCode
                   )
-                  .concat(
-                    (f.items || []).some(
-                      (item: any) => item.barCode === nuevosProducto.barCode
-                    )
-                      ? []
-                      : [
-                          {
-                            ...nuevosProducto,
-                            acc:
-                              nuevosProducto.cantidad *
-                              Number(
-                                nuevosProducto.price.replace(/[^0-9.-]+/g, "")
-                              ),
-                          },
-                        ]
-                  ),
-              }
+                    ? []
+                    : [
+                      {
+                        ...nuevosProducto,
+                        acc:
+                          nuevosProducto.cantidad *
+                          Number(
+                            nuevosProducto.price.replace(/[^0-9.-]+/g, "")
+                          ),
+                      },
+                    ]
+                ),
+            }
             : f
         )
       );
