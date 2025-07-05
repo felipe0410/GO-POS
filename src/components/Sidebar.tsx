@@ -242,12 +242,35 @@ export default function Sidebar({
   useEffect(() => {
     const initSidebar = async () => {
       try {
-        const modules = await getModules();
-        console.log('entro aqui')
+        // Intentar cargar desde localStorage
+        const cachedModules = localStorage.getItem("modulesCache");
+        const cacheTTL = localStorage.getItem("modulesCacheTTL");
+
+        const isCacheValid =
+          cachedModules && cacheTTL && Date.now() < Number(cacheTTL);
+
+        let modules;
+
+        if (isCacheValid) {
+          // 👌 Usar datos cacheados
+          modules = JSON.parse(cachedModules);
+          console.log("Usando módulos cacheados");
+        } else {
+          // 📡 Hacer la petición y actualizar el cache
+          console.log("Consultando getModules()");
+          modules = await getModules();
+          localStorage.setItem("modulesCache", JSON.stringify(modules));
+
+          // Establecer TTL de 5 minutos (puedes cambiarlo)
+          const ttl = Date.now() + 5 * 60 * 1000; // 5 minutos
+          localStorage.setItem("modulesCacheTTL", ttl.toString());
+        }
+
         const selectedSections =
           modules?.solution_restaurant === "true"
             ? gastrobarSections
             : localSections;
+
         setSections(selectedSections);
       } catch (error) {
         console.error("Error cargando módulos:", error);
