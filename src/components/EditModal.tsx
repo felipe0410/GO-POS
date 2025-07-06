@@ -100,7 +100,7 @@ const ModalContent = styled(Paper)(
     border-radius: 0.625rem;
     padding: 24px;
     width: 48.6875rem;
-    height: 35rem;
+    height: 45rem;
   `
 );
 
@@ -725,9 +725,10 @@ export default function EditModal(props: any) {
             <Box
               sx={{
                 display: "flex",
-                justifyContent: { xs: "center", sm: "space-between" },
+                justifyContent: { xs: "space-between", sm: "space-between" },
                 width: { sm: "53%" },
                 marginLeft: { xs: "0", sm: "auto" },
+                marginTop:'10px'
               }}
             >
               <Button
