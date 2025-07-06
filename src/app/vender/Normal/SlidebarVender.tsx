@@ -100,6 +100,7 @@ const SlidebarVender = ({
       return newContador;
     });
     setNota("");
+    setDescuento(0)
   }, []);
 
   const storedContadorFactura = localStorage.getItem("contadorFactura");
@@ -112,9 +113,12 @@ const SlidebarVender = ({
   );
 
   const calcularTotal = useCallback(() => {
-    const valorSinPorcentaje = inputValue.includes("%")
-      ? Math.ceil((parseFloat(inputValue.replace("%", "")) / 100) * subtotal)
-      : parseFloat(inputValue);
+    const value = inputValue?.trim() || "0";
+
+    const valorSinPorcentaje = value.includes("%")
+      ? Math.ceil((parseFloat(value.replace("%", "")) / 100) * subtotal)
+      : parseFloat(value) || 0;
+
     setDescuento(valorSinPorcentaje);
     setDescuentoON(true);
   }, [inputValue, subtotal]);

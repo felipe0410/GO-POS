@@ -97,6 +97,7 @@ const SlidebarVender = ({
       return newContador;
     });
     setNota("");
+    setDescuento(0)
   }, []);
 
   const storedContadorFactura = localStorage.getItem("contadorFactura");

@@ -114,7 +114,6 @@ const DatosVenta = (props: any) => {
 
   const vender = async () => {
     try {
-      handleVenderClick();
       setLoading(true);
       selectedItems.map((e: any) => updateProductDataCantidad(e.barCode, e));
       const valueUuid = uuidv4();
@@ -122,13 +121,14 @@ const DatosVenta = (props: any) => {
       const result = bloques.slice(0, 2).join("-");
       localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
       !(typeInvoice === "quickSale")
-        ? await createInvoice(`${factura.invoice}-${result}`, {
-            ...factura,
-          })
-        : await handleQuickSaleFinal(factura.compra),
-        setLoading(false);
+      ? await createInvoice(`${factura.invoice}-${result}`, {
+        ...factura,
+      })
+      : await handleQuickSaleFinal(factura.compra),
+      setLoading(false);
       setReciboPago(true);
       setDatosGuardados(false);
+      handleVenderClick();
     } catch (error) {
       console.error("falló el primer intento", error);
     }
