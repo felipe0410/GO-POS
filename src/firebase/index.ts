@@ -664,7 +664,7 @@ export const updateProductData = async (uid: any, newData: any) => {
     if (docSnapshot.exists()) {
       await updateDoc(productDocRef, newData);
     } else {
-      console.log("El documento no existe.");
+      
     }
   } catch (error) {
     console.error("Error al actualizar el documento: ", error);
@@ -684,7 +684,6 @@ export const updateProductDataCantidad = async (uid: any, newData: any) => {
     const currentProductSnapshot = await getDoc(productDocRef);
 
     if (!currentProductSnapshot.exists()) {
-      console.log("❌ El producto no existe.");
       return;
     }
 
@@ -1081,7 +1080,6 @@ export const getInvoiceData = async (uid: any) => {
     if (docSnapshot.exists()) {
       return docSnapshot.data();
     } else {
-      console.log("El documento no existe.");
       return null;
     }
   } catch (error) {
@@ -1595,7 +1593,6 @@ export const fetchAndStoreSettings = async () => {
     if (docSnap.exists()) {
       const settingsData = docSnap.data();
       localStorage.setItem("settingsData", JSON.stringify(settingsData));
-      console.log("Configuración almacenada en Local Storage con éxito!");
       return true;
     } else {
       console.log(

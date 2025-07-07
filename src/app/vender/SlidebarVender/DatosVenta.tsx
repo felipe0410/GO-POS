@@ -42,7 +42,7 @@ interface UserData {
   [key: string]: any;
 }
 
-const metodosDePago = ["Efectivo", "Transferencia", "Datáfono"];
+const metodosDePago = ["Efectivo", "Transferencia", "Datáfono", 'Mixto'];
 
 const DatosVenta = (props: any) => {
   const [data, setData] = useState<UserData>({
@@ -69,6 +69,10 @@ const DatosVenta = (props: any) => {
   const [valueClient, setValueClient] = React.useState<string | null>(
     options[0]
   );
+  const [vrMixta, setVrMixta] = useState({
+    efectivo: 0,
+    transferencia: 0,
+  });
   const [inputValue, setInputValue] = React.useState("");
   const [metodoPago, setMetodoPago] = useState("Efectivo");
   const [valorRecibido, setValorRecibido] = useState<number | null>(null);
@@ -119,12 +123,19 @@ const DatosVenta = (props: any) => {
       const valueUuid = uuidv4();
       const bloques = valueUuid.split("-");
       const result = bloques.slice(0, 2).join("-");
-      localStorage.setItem("uidInvoice", `${factura.invoice}-${result}`);
-      !(typeInvoice === "quickSale")
-      ? await createInvoice(`${factura.invoice}-${result}`, {
-        ...factura,
-      })
-      : await handleQuickSaleFinal(factura.compra),
+      const invoiceId = `${factura.invoice}-${result}`;
+      localStorage.setItem("uidInvoice", invoiceId);
+      if (factura.descuento > 0) {
+        await createInvoice(invoiceId, {
+          ...factura,
+        });
+      } else if (typeInvoice === "quickSale") {
+        await handleQuickSaleFinal(factura.compra);
+      } else {
+        await createInvoice(invoiceId, {
+          ...factura, vrMixta,
+        });
+      }
       setLoading(false);
       setReciboPago(true);
       setDatosGuardados(false);
@@ -195,16 +206,16 @@ const DatosVenta = (props: any) => {
   };
 
   const handleQuickSaleFinal = async (newItems: any[]) => {
-    const quickSaleId = `venta-rapida-${new Date()
-      .toLocaleDateString("en-GB")
-      .replace(/\//g, "-")}`;
+    const quickSaleId = `${metodoPago?.toUpperCase() === "MIXTO"
+      ? "vr-mixta"
+      : metodoPago?.toUpperCase() === "TRANSFERENCIA"
+        ? "vr-transferencia"
+        : "venta-rapida"
+      }-${new Date().toLocaleDateString("en-GB").replace(/\//g, "-")}`;
     const existingInvoice = await getInvoiceData(quickSaleId);
-
     let updatedItems = [...newItems];
     let newTotal = 0;
-
     if (existingInvoice) {
-      // Primero, actualizamos las cantidades de los productos que ya existen
       updatedItems = existingInvoice.compra.map(
         (item: { barCode: any; cantidad: any; acc: any }) => {
           const foundItem = newItems.find(
@@ -230,7 +241,17 @@ const DatosVenta = (props: any) => {
         }
       });
 
+      const updatedVrMixta = existingInvoice.vrMixta
+        ? {
+          efectivo:
+            (existingInvoice.vrMixta.efectivo || 0) + vrMixta.efectivo,
+          transferencia:
+            (existingInvoice.vrMixta.transferencia || 0) +
+            vrMixta.transferencia,
+        }
+        : vrMixta;
       // Calculamos el nuevo total
+
       newTotal = updatedItems.reduce((total, item) => total + item.acc, 0);
       // Actualizamos la factura existente
       await updateInvoice(quickSaleId, {
@@ -238,6 +259,7 @@ const DatosVenta = (props: any) => {
         subtotal: newTotal,
         total: newTotal,
         date: getCurrentDateTime(),
+        vrMixta: updatedVrMixta
       });
     } else {
       const now = new Date();
@@ -263,6 +285,8 @@ const DatosVenta = (props: any) => {
         date: formattedDate,
         invoice: quickSaleId,
         status: "CANCELADO",
+        paymentMethod: metodoPago,
+        vrMixta
       });
     }
   };
@@ -379,12 +403,12 @@ const DatosVenta = (props: any) => {
                   Object.values(clients).length > 0
                     ? setData(clients)
                     : setData({
-                        name: "",
-                        direccion: "",
-                        email: "",
-                        identificacion: "",
-                        celular: "",
-                      });
+                      name: "",
+                      direccion: "",
+                      email: "",
+                      identificacion: "",
+                      celular: "",
+                    });
                 }}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
@@ -514,6 +538,7 @@ const DatosVenta = (props: any) => {
         onChange={(e: any) => {
           setMetodoPago(e.target.value);
           setFactura({ ...factura, paymentMethod: e.target.value });
+          setMostrarValorDevolver(!(e.target.value === 'Mixto'))
         }}
         value={metodoPago}
         displayEmpty
@@ -578,7 +603,6 @@ const DatosVenta = (props: any) => {
       </Box>
       <Box
         sx={{
-          display: metodoPago === "" ? "none" : "block",
           width: "100%",
           marginTop: "0.8rem",
         }}
@@ -588,6 +612,7 @@ const DatosVenta = (props: any) => {
             sx={{
               color: "#69EAE2",
               fontFamily: "Nunito",
+              display: !mostrarValorDevolver ? 'none' : 'auto',
               fontSize:
                 typeInvoice === "quickSale"
                   ? { xs: "18px", sm: "1.5rem" }
@@ -599,6 +624,54 @@ const DatosVenta = (props: any) => {
           >
             Valor Recibido
           </Typography>
+          {metodoPago === "Mixto" && (
+            <Box sx={{ mt: 2 }}>
+              <Typography sx={{ color: "#69EAE2", fontWeight: 600 }}>
+                Valor en efectivo
+              </Typography>
+              <NumericFormat
+                value={vrMixta.efectivo}
+                onValueChange={(values) => {
+                  const efectivo = values.floatValue || 0;
+                  const transferencia = Math.max(total - efectivo, 0); // 👈 calcula el otro
+                  setVrMixta({ efectivo, transferencia });
+                }}
+                prefix="$ "
+                thousandSeparator
+                customInput={OutlinedInput}
+                sx={{
+                  width: "100%",
+                  borderRadius: "0.5rem",
+                  background: "#2C3248",
+                  color: "#FFF",
+                  mt: 1,
+                }}
+              />
+
+              <Typography sx={{ color: "#69EAE2", fontWeight: 600, mt: 2 }}>
+                Valor en transferencia
+              </Typography>
+              <NumericFormat
+                value={vrMixta.transferencia}
+                onValueChange={(values) => {
+                  const transferencia = values.floatValue || 0;
+                  const efectivo = Math.max(total - transferencia, 0);
+                  setVrMixta({ efectivo, transferencia });
+                }}
+                prefix="$ "
+                thousandSeparator
+                customInput={OutlinedInput}
+                sx={{
+                  width: "100%",
+                  borderRadius: "0.5rem",
+                  background: "#2C3248",
+                  color: "#FFF",
+                  mt: 1,
+                }}
+              />
+            </Box>
+          )}
+
           <NumericFormat
             onBlur={(e) => {
               calcularValorADevolverOnblur();
@@ -609,6 +682,7 @@ const DatosVenta = (props: any) => {
             thousandSeparator
             customInput={OutlinedInput}
             sx={{
+              display: !mostrarValorDevolver ? 'none' : 'auto',
               height: { xs: "30px", sm: "2.5rem" },
               fontSize:
                 typeInvoice === "quickSale"
@@ -625,7 +699,7 @@ const DatosVenta = (props: any) => {
         </FormControl>
         {mostrarValorDevolver && (
           <FormControl
-            sx={{ width: "100%", marginTop: "0.8rem" }}
+            sx={{ width: "100%", marginTop: "0.8rem", display: metodoPago === "mixto" ? 'none' : 'block', }}
             variant="outlined"
           >
             <Typography
@@ -666,8 +740,8 @@ const DatosVenta = (props: any) => {
                         ? "1.5rem"
                         : "18px"
                       : matches
-                      ? "1rem"
-                      : "16px",
+                        ? "1rem"
+                        : "16px",
                 }}
                 sx={{
                   height: { xs: "30px", sm: "2.5rem" },
@@ -697,8 +771,8 @@ const DatosVenta = (props: any) => {
             background: datosGuardados
               ? "#69EAE2"
               : typeInvoice === "quickSale"
-              ? "#69EAE2"
-              : "gray",
+                ? "#69EAE2"
+                : "gray",
 
             marginTop: "1.5rem",
             width: "8rem",

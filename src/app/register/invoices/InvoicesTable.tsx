@@ -51,6 +51,12 @@ const columns: readonly Column[] = [
     minWidth: 170,
     align: "center",
   },
+  {
+    id: "estado",
+    label: "PAGO",
+    minWidth: 170,
+    align: "center",
+  },
 ];
 
 export default function InvoicesTable({
@@ -75,6 +81,7 @@ export default function InvoicesTable({
   });
   const [day, month, year] = today.split("/");
   const formattedToday = `${year}/${month}/${day}`;
+
   return (
     <>
       {editingInvoice ? (
@@ -136,6 +143,17 @@ export default function InvoicesTable({
                 {filteredData?.map((row: any) => {
                   const [date, hora] = row.date.split(" ");
                   const newDate = date.replaceAll("-", "/");
+
+                  const paymentMethod = row.paymentMethod?.toUpperCase() || "EFECTIVO";
+
+                  const paymentColors: Record<string, string> = {
+                    EFECTIVO: "success",      // verde
+                    TRANSFERENCIA: "primary", // azul
+                    NEQUI: "secondary",       // morado
+                    TARJETA: "warning",       // naranja
+                  };
+
+                  const chipColor = paymentColors[paymentMethod] || "default";
                   return (
                     <TableRow
                       hover
@@ -183,8 +201,27 @@ export default function InvoicesTable({
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
                         align="center"
                       >
-                        {row?.invoice ?? "xxxx"}
+                        {row?.invoice?.toLowerCase().includes("venta-rapida") ||
+                          row?.invoice?.toLowerCase().includes("vr") ? (
+                          <Chip
+                            label={row?.invoice ?? "xxxx"}
+                            color="warning" // 🟡 Amarillo para destacar
+                            variant="filled"
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              maxWidth: "150px",        // 👈 límite de ancho
+                              whiteSpace: "normal",     // 👈 permite saltos de línea
+                              wordBreak: "break-word",  // 👈 corta palabras largas
+                              textAlign: "center",      // 👈 centra el texto
+                              lineHeight: 1.2,          // 👌 mejor altura de línea
+                            }}
+                          />
+                        ) : (
+                          row?.invoice ?? "xxxx"
+                        )}
                       </TableCell>
+
                       <TableCell
                         sx={{ color: "#FFF", borderColor: "#69EAE2" }}
                         align="center"
@@ -215,6 +252,14 @@ export default function InvoicesTable({
                         align="center"
                       >
                         {row?.status ? row.status.toUpperCase() : "CANCELADO"}
+                      </TableCell>
+                      <TableCell sx={{ borderColor: "#69EAE2" }} align="center">
+                        <Chip
+                          label={paymentMethod}
+                          color={chipColor as "default" | "primary" | "secondary" | "success" | "error" | "warning" | "info"}
+                          variant="outlined"
+                          sx={{ fontWeight: 600 }}
+                        />
                       </TableCell>
                     </TableRow>
                   );

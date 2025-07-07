@@ -287,41 +287,6 @@ const Factura = ({
                     >
                       {item.cantidad}
                     </TableCell>
-                    {/* <TableCell align="right">
-                      <NumericFormat
-                        value={item.descuento ?? 0}
-                        onValueChange={({ value }) => {
-                          const descuento = parseInt(value || "0", 10);
-                          const nuevaCompra = [...data.compra];
-                          nuevaCompra[index].descuento = descuento;
-
-                          const nuevoSubtotal = nuevaCompra.reduce((acc, p) => {
-                            const u = p.acc / (p.cantidad > 0 ? p.cantidad : 1);
-                            const total = u * p.cantidad - (p.descuento ?? 0);
-                            return acc + total;
-                          }, 0);
-
-                          setFacturaData((prev: any) => ({
-                            ...prev,
-                            compra: nuevaCompra,
-                            subtotal: nuevoSubtotal,
-                            total: nuevoSubtotal - (prev.descuento ?? 0),
-                          }));
-                        }}
-                        customInput={TextField}
-                        thousandSeparator
-                        prefix="$"
-                        variant="standard"
-                        sx={{
-                          width: 100,
-                          input: {
-                            textAlign: "right",
-                            fontWeight: 500,
-                            color: "#000",
-                          },
-                        }}
-                      />
-                    </TableCell> */}
                     <TableCell
                       sx={{
                         fontWeight: 900,
@@ -358,7 +323,7 @@ const Factura = ({
               sx={{
                 ...facturaStyles.typographyResumenCompra,
                 textAlign: "center",
-                color: "#000", // color rojizo para diferenciarlo
+                color: "#000",
                 fontWeight: 900,
                 textTransform: "uppercase",
                 fontSize: "1rem",
@@ -578,6 +543,59 @@ const Factura = ({
           <Typography>Cambio:</Typography>
           <Typography>{formatCurrency(data?.cambio ?? 0)}</Typography>
         </Box>
+        {data?.vrMixta && (
+          <>
+            <Divider sx={{ my: 1 }} />
+            <Box
+              sx={{
+                background: "#828181",
+                borderRadius: "6px",
+                padding: "6px",
+                mb: 1,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontWeight: 800,
+                  color: "#69EAE2",
+                  textAlign: "center",
+                  fontSize: "0.95rem",
+                  mb: 0.5,
+                }}
+              >
+                Detalle de pagos mixtos
+              </Typography>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "0.85rem",
+                }}
+              >
+                <Typography sx={{ fontWeight: 600 }}>Efectivo:</Typography>
+                <Typography sx={{ fontWeight: 600 }}>
+                  $ {data.vrMixta.efectivo?.toLocaleString("en-US")}
+                </Typography>
+              </Box>
+
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: "0.85rem",
+                  mt: 0.5,
+                }}
+              >
+                <Typography sx={{ fontWeight: 600 }}>Transferencia:</Typography>
+                <Typography sx={{ fontWeight: 600 }}>
+                  $ {data.vrMixta.transferencia?.toLocaleString("en-US")}
+                </Typography>
+              </Box>
+            </Box>
+          </>
+        )}
+
         <Box
           sx={{
             ...facturaStyles.typographyResumenCompra,

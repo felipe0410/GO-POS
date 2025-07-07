@@ -34,10 +34,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     direction: "",
   });
 
-  const setNuevaFactura = () => {
-    setReciboPago(false);
-    //setSelectedItems([]);
-    // Eliminar la factura activa
+  const cleanfactura = () => {
     setSelectedItems((prevFacturas: any) => {
       const nuevasFacturas = prevFacturas.filter(
         (f: { id: any }) => f.id !== facturaActiva
@@ -59,6 +56,13 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
 
       return nuevasFacturas;
     });
+  }
+
+  const setNuevaFactura = () => {
+    setReciboPago(false);
+    //setSelectedItems([]);
+    // Eliminar la factura activa
+
     setNextStep(false);
   };
 
@@ -109,6 +113,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
   useEffect(() => {
     typeInvoice === "quickSale" && setNuevaFactura();
     saveDataToLocalStorage("selectedItems", []);
+    cleanfactura()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -215,9 +220,8 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               background: "#fff",
               "@media print": {
                 "@page": {
-                  size: `${componentRef?.current?.clientWidth}px ${
-                    componentRef?.current?.clientHeight * 1.1
-                  }px`,
+                  size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
+                    }px`,
                 },
                 width: "100%",
               },
@@ -690,11 +694,10 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     lineHeight: "140%",
                   }}
                 >
-                  {`$ ${
-                    facturaData?.cambio > 0
-                      ? facturaData?.cambio?.toLocaleString("en-US")
-                      : 0
-                  }`}
+                  {`$ ${facturaData?.cambio > 0
+                    ? facturaData?.cambio?.toLocaleString("en-US")
+                    : 0
+                    }`}
                 </Typography>
               </Box>
               <Box

@@ -47,7 +47,6 @@ export const getModules = async () => {
     if (docSnap.exists()) {
       return docSnap.data();
     } else {
-      console.log("No hay configuración de módulos aún.");
       return null;
     }
   } catch (error) {

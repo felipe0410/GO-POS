@@ -48,7 +48,6 @@ export default function HeaderAppBar() {
         const data: any = await getEstablishmentData();
         setEstablishment(data);
         const cierreCaja = await getUltimaCaja();
-        console.log("cierreCaja::>", cierreCaja);
         setCierreCajaActual(cierreCaja);
       } catch (error) {
         console.error("Error al obtener datos del establecimiento:", error);

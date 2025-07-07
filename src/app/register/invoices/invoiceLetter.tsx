@@ -479,11 +479,62 @@ const InvoiceLetter = ({ data }: { data: any }) => {
                   marginRight: "1.5rem",
                 }}
               >
-                {`$ ${
-                  data?.cambio > 0 ? data?.cambio?.toLocaleString("en-US") : 0
-                }`}
+                {`$ ${data?.cambio > 0 ? data?.cambio?.toLocaleString("en-US") : 0
+                  }`}
               </Typography>
             </Box>
+            {data?.vrMixta && (
+              <Box
+                sx={{
+                  color: '#000',
+                  display: "flex",
+                  flexDirection: "column",
+                  marginTop: "10px",
+                  padding: "10px",
+                  background: "#828181",
+                  borderRadius: "8px",
+                  boxShadow: "0 0 5px rgba(0,0,0,0.1)",
+                }}
+              >
+                <Typography
+                  sx={{
+                    color: "#f0f8ff",
+                    fontWeight: 900,
+                    fontSize: "1.2rem",
+                    marginBottom: "5px",
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  Detalle de pagos mixtos
+                </Typography>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "3px",
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 600 }}>Efectivo:</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>
+                    $ {data.vrMixta.efectivo?.toLocaleString("en-US")}
+                  </Typography>
+                </Box>
+
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography sx={{ fontWeight: 600 }}>Transferencia:</Typography>
+                  <Typography sx={{ fontWeight: 600 }}>
+                    $ {data.vrMixta.transferencia?.toLocaleString("en-US")}
+                  </Typography>
+                </Box>
+              </Box>
+            )}
+
             <Box
               sx={{
                 display: "flex",

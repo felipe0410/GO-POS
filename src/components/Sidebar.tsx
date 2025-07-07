@@ -254,16 +254,13 @@ export default function Sidebar({
         if (isCacheValid) {
           // 👌 Usar datos cacheados
           modules = JSON.parse(cachedModules);
-          console.log("Usando módulos cacheados");
         } else {
           // 📡 Hacer la petición y actualizar el cache
-          console.log("Consultando getModules()");
           modules = await getModules();
           localStorage.setItem("modulesCache", JSON.stringify(modules));
 
           // Establecer TTL de 5 minutos (puedes cambiarlo)
           const ttl = Date.now() + 5 * 60 * 1000; // 5 minutos
-          localStorage.setItem("modulesCacheTTL", ttl.toString());
         }
 
         const selectedSections =

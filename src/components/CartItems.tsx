@@ -107,7 +107,6 @@ const CartItems = ({
       )
     );
   };
-  console.log("product.cantidad::>", product.cantidad);
 
   return (
     <Box sx={{ marginTop: "10px" }}>

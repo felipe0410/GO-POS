@@ -52,7 +52,7 @@ const Invoices = () => {
   const [totalVentasTransferencia, setTotalVentasTransferencia] =
     useState<number>(0);
 
-  const debouncedHandleSearchChange = debounce(() => {}, 300);
+  const debouncedHandleSearchChange = debounce(() => { }, 300);
 
   const handleSearchChange = (event: any) => {
     setSearchTerm(event);
@@ -153,24 +153,31 @@ const Invoices = () => {
     setTotalVentasPendientesHoy(totalVentasPendientes);
 
     // 🔹 **Cálculo de Ventas por Método de Pago**
+
     const totalEfectivo =
-      ventasHoy
-        .filter(
-          (factura) =>
-            !factura.paymentMethod || // Si no existe, se asume efectivo
-            factura.paymentMethod.toUpperCase() === "EFECTIVO"
-        )
-        .reduce((total, factura) => total + factura.total, 0) || 0;
+      ventasHoy.reduce((total, factura) => {
+        if (!factura.paymentMethod || factura.paymentMethod.toUpperCase() === "EFECTIVO") {
+          // Si no hay método o es EFECTIVO, suma todo
+          return total + factura.total;
+        } else if (factura.paymentMethod.toUpperCase() === "MIXTO" && factura.vrMixta?.efectivo) {
+          // Si es mixto, suma solo la parte en efectivo
+          return total + factura.vrMixta.efectivo;
+        }
+        return total;
+      }, 0) || 0;
 
     const totalTransferencia =
-      ventasHoy
-        .filter(
-          (factura) =>
-            factura.paymentMethod &&
-            factura.paymentMethod.toUpperCase() === "TRANSFERENCIA"
-        )
-        .reduce((total, factura) => total + factura.total, 0) || 0;
-
+      ventasHoy.reduce((total, factura) => {
+        if (factura.paymentMethod?.toUpperCase() === "TRANSFERENCIA") {
+          // Si es solo transferencia, suma todo
+          return total + factura.total;
+        } else if (factura.paymentMethod?.toUpperCase() === "MIXTO" && factura.vrMixta?.transferencia) {
+          // Si es mixto, suma solo la parte en transferencia
+          return total + factura.vrMixta.transferencia;
+        }
+        return total;
+      }, 0) || 0;
+      
     setTotalVentasEfectivo(totalEfectivo);
     setTotalVentasTransferencia(totalTransferencia);
 
@@ -207,7 +214,7 @@ const Invoices = () => {
           editarlas y ver su estado.
         </Typography>
         <>
-        
+
           {
             <DashboardCards
               totalVentasHoy={totalVentasHoy}
