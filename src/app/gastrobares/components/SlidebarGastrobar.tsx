@@ -1,5 +1,3 @@
-import DatosVenta from "@/app/vender/SlidebarVender/DatosVenta";
-import Factura from "@/app/vender/Factura";
 import {
     Box,
     IconButton,
@@ -14,8 +12,7 @@ import React, { useEffect, useState, useCallback, useMemo } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Mark from "mark.js";
 import ProductList from "@/app/vender/SlidebarVender/ProductList";
-import { getAllInvoicesData } from "@/firebase";
-import SubtotalSection from "@/app/vender/SlidebarVender/SubtotalSection";
+import { createInvoice, getAllInvoicesData, getNextInvoiceNumber } from "@/firebase";
 import NoteSection from "@/app/vender/SlidebarVender/NoteSection";
 import SearchSection from "@/app/vender/SlidebarVender/SearchSection";
 import Header from "@/app/vender/SlidebarVender/Header";
@@ -55,11 +52,12 @@ const SlidebarGastrobar = ({
 
     const theme = useTheme();
     const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
-    console.log('mesa_slidebar', mesa)
     useEffect(() => {
         getAllInvoicesData(setDataInvoice);
         matchesSM ? setChecked(false) : setChecked(true);
     }, [matchesSM]);
+
+    console.log('getNextInvoiceNumber::>', getNextInvoiceNumber())
 
     useEffect(() => {
         const nuevoSubtotal = (selectedItems ?? []).reduce(
@@ -92,14 +90,6 @@ const SlidebarGastrobar = ({
         return String(maxInvoiceNumber + 1).padStart(7, "0");
     }, [dataInvoice]);
 
-    const handleVenderClick = useCallback(() => {
-        setContadorFactura((prevContador) => {
-            const newContador = prevContador + 1;
-            localStorage.setItem("contadorFactura", newContador.toString());
-            return newContador;
-        });
-        setNota("");
-    }, []);
 
     const storedContadorFactura = localStorage.getItem("contadorFactura");
     const initialContadorFactura = storedContadorFactura
@@ -121,6 +111,12 @@ const SlidebarGastrobar = ({
         });
         setSearch(keyword);
     };
+
+    useEffect(() => {
+        createInvoice(generarNumeroFactura(), { ...selectedItems, orden_preparada: false })
+    }, [reciboPago])
+
+
 
     return (
         <Box display={"flex"}>

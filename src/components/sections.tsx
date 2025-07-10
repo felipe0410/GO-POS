@@ -22,10 +22,10 @@ export const localSections = [
     icon2: "/images/venderSelected.svg",
     id: "/vender/Normal",
     submenus: [
-      // {
-      //  section: "DIAN",
-      //  id: "/vender/Dian",
-      //},
+      {
+        section: "DIAN",
+        id: "/vender/Dian",
+      },
       {
         section: "NORMAL",
         id: "/vender/Normal",

@@ -975,6 +975,42 @@ export const getAllClientsData = (callback: any) => {
   }
 };
 
+
+
+export const getNextInvoiceNumber = async (): Promise<string> => {
+    try {
+        const establecimientoDocRef = doc(
+            db,
+            "establecimientos",
+            `${user().decodedString}` // asegúrate que `user()` devuelve el ID correcto
+        );
+        const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+
+        // Query: Ordenar por fecha descendente y obtener solo la última factura
+        const lastInvoiceQuery = query(
+            invoiceCollectionRef,
+            orderBy("fechaCreacion", "desc"), // o usa "timestamp" si ese es más confiable
+            limit(1)
+        );
+
+        const querySnapshot = await getDocs(lastInvoiceQuery);
+
+        if (!querySnapshot.empty) {
+            const lastInvoice = querySnapshot.docs[0].data();
+            const lastNumber = parseInt(lastInvoice.uid, 10); // asumiendo que `uid` es el número
+            const nextNumber = String(lastNumber + 1).padStart(7, "0");
+            console.log("Última factura:", lastInvoice.uid, "Siguiente:", nextNumber);
+            return nextNumber;
+        } else {
+            // No hay facturas aún, empezamos en 0000001
+            return "0000001";
+        }
+    } catch (error) {
+        console.error("Error al obtener el siguiente número de factura: ", error);
+        return "0000001"; // fallback seguro
+    }
+};
+
 export const getAllInvoicesData = async (callback: any) => {
   try {
     const establecimientoDocRef = doc(
@@ -998,7 +1034,6 @@ export const getAllInvoicesData = async (callback: any) => {
         id: doc.id,
         ...doc.data(),
       }));
-
       callback(updatedInvoiceData);
     });
 
