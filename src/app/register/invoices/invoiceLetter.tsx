@@ -439,7 +439,7 @@ const InvoiceLetter = ({ data }: { data: any }) => {
                 sx={facturaStyles.typographyVenta}
                 style={{ fontSize: "0.8rem", marginRight: "1.5rem" }}
               >
-                {`$ ${data?.subtotal.toLocaleString("en-US")}`}
+                {`$ ${(data?.subtotal ?? 0).toLocaleString("en-US")}`}
               </Typography>
             </Box>
             <Box
@@ -551,7 +551,7 @@ const InvoiceLetter = ({ data }: { data: any }) => {
                 sx={facturaStyles.typographyVenta}
                 style={{ fontSize: "0.8rem" }}
               >
-                {`$ ${data?.total.toLocaleString("en-US")}`}
+                {`$ ${(data?.total ?? 0).toLocaleString("en-US")}`}
               </Typography>
             </Box>
             <Typography

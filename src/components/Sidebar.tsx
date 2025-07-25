@@ -49,7 +49,7 @@ export default function Sidebar({
   const dataUser = JSON.parse(localStorage?.getItem("dataUser") ?? "{}");
   const permissions =
     dataUser?.status === "admin"
-      ? ["Vender", "Inventario", "Caja", "Directorio", 'PEDIDOS', 'ZONAS', 'COCINA']
+      ? ["Vender", "Inventario", "Caja", "Directorio", 'PEDIDOS', 'ZONAS', 'COCINA', 'PAGAR']
       : dataUser?.jobs ?? [];
 
   const permissionMap: any = {
@@ -86,6 +86,9 @@ export default function Sidebar({
     COCINA: [
       "/gastrobares/cocina",
     ],
+    PAGAR: [
+      '/gastrobares/pagar'
+    ]
   };
 
   const filterSectionsByPermissions = (sections: any, permissions: any) => {

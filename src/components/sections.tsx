@@ -2,6 +2,7 @@ import BadgeIcon from '@mui/icons-material/Badge';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import StorefrontIcon from '@mui/icons-material/Storefront';
 import CountertopsIcon from '@mui/icons-material/Countertops';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 
 export const localSections = [
   {
@@ -135,6 +136,18 @@ export const gastrobarSections = [
     icon: "/images/profile.svg",
     icon2: "/images/profileSelected.svg",
     id: "/profile",
+  },
+  {
+    section: "PAGAR",
+    icon: (
+      <LocalAtmIcon
+        sx={{ color: "#69EAE2", fontSize: "24px", ml: "10px", margin: 0 }}
+      />
+    ),
+    icon2: (
+      <LocalAtmIcon sx={{ fontSize: "24px", ml: "10px", margin: 0 }} />
+    ),
+    id: "/gastrobares/pagar",
   },
   {
     section: "PEDIDOS",

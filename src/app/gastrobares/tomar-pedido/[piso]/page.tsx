@@ -1,12 +1,22 @@
 "use client";
 
 import { Box, Button, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SeleccionMesa from "../SeleccionMesa";
 import VenderGastrobar from "../../components/VenderGastrobar";
+import { getZonaConfig } from "@/firebase";
 
 export default function TomarPedidoGastrobar() {
     const [mesaSeleccionada, setMesaSeleccionada] = useState<any>(null);
+    const [mesasDisponibles, setMesasDisponibles] = useState<any[]>([])
+
+    useEffect(() => {
+        const fetchMesas = async () => {
+            const mesas: any = await getZonaConfig(1);
+            setMesasDisponibles(mesas);
+        };
+        fetchMesas();
+    }, []);
 
     return (
         <Box sx={{ p: 3 }}>
@@ -32,7 +42,11 @@ export default function TomarPedidoGastrobar() {
                         </Button>
                     </Box>
 
-                    <VenderGastrobar mesa={mesaSeleccionada} />
+                    <VenderGastrobar
+                        mesa={mesaSeleccionada}
+                        todasLasMesas={mesasDisponibles ?? []}
+                        onChangeMesa={(mesa: any) => setMesaSeleccionada(mesa)}
+                    />
                 </>
             )}
         </Box>

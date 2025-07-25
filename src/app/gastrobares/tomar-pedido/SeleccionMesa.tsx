@@ -17,22 +17,36 @@ export default function SeleccionMesa({
 
     useEffect(() => {
         const init = async () => {
-            const pisosConfig = await getPisosConfigurados();
+            let pisosConfig = JSON.parse(localStorage.getItem("pisosConfig") || "null");
+
+            if (!pisosConfig) {
+                pisosConfig = await getPisosConfigurados();
+                localStorage.setItem("pisosConfig", JSON.stringify(pisosConfig));
+            }
+
             setPisos(pisosConfig);
 
             if (!piso && pisosConfig.length === 1) {
-                // Solo un piso, redirigir automáticamente
                 router.push(`/gastrobares/tomar-pedido/${pisosConfig[0]}`);
             }
 
             if (piso) {
-                const mesasCargadas = await getZonaConfig(parseInt(piso as string));
-                if (mesasCargadas) setMesas(mesasCargadas);
+                const cacheKey = `mesas-piso-${piso}`;
+                let mesasCargadas = JSON.parse(localStorage.getItem(cacheKey) || "null");
+
+                if (!mesasCargadas) {
+                    mesasCargadas = await getZonaConfig(parseInt(piso as string));
+                    localStorage.setItem(cacheKey, JSON.stringify(mesasCargadas));
+                }
+
+                setMesas(mesasCargadas);
             }
         };
 
         init();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [piso]);
+
 
     return (
         <Box sx={{ p: 3 }}>

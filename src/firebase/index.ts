@@ -664,7 +664,7 @@ export const updateProductData = async (uid: any, newData: any) => {
     if (docSnapshot.exists()) {
       await updateDoc(productDocRef, newData);
     } else {
-      
+
     }
   } catch (error) {
     console.error("Error al actualizar el documento: ", error);
@@ -787,11 +787,13 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
       );
     }
     const timestampCreacion = Timestamp.fromDate(fechaCreacion);
+    const date = format(fechaCreacion, "yyyy-MM-dd HH:mm");
     await setDoc(invoiceDocRef, {
       uid: uid,
       user: `${user().decodedString}`,
       timestamp: timestampCreacion,
       fechaCreacion: fechaCreacion.toISOString(),
+      date: date,
       ...invoiceData,
     });
     return uid;
@@ -976,40 +978,120 @@ export const getAllClientsData = (callback: any) => {
 };
 
 
+export const InvoiceNumber = async (): Promise<{
+  lastNumber: string;
+  nextNumber: string;
+}> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      user().decodedString
+    );
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
 
-export const getNextInvoiceNumber = async (): Promise<string> => {
-    try {
-        const establecimientoDocRef = doc(
-            db,
-            "establecimientos",
-            `${user().decodedString}` // asegúrate que `user()` devuelve el ID correcto
-        );
-        const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+    // Query: obtener solo facturas finales (no órdenes de cocina)
+    const finalInvoicesQuery = query(
+      invoiceCollectionRef,
+      where("orden_preparada", "in", [null, false]), // 🔥 Solo facturas reales
+      orderBy("fechaCreacion", "desc"),
+      limit(1)
+    );
 
-        // Query: Ordenar por fecha descendente y obtener solo la última factura
-        const lastInvoiceQuery = query(
-            invoiceCollectionRef,
-            orderBy("fechaCreacion", "desc"), // o usa "timestamp" si ese es más confiable
-            limit(1)
-        );
+    const snapshot = await getDocs(finalInvoicesQuery);
 
-        const querySnapshot = await getDocs(lastInvoiceQuery);
+    if (!snapshot.empty) {
+      const lastInvoice = snapshot.docs[0].data();
+      const lastNumber = String(parseInt(lastInvoice.uid, 10)).padStart(7, "0");
+      const nextNumber = String(parseInt(lastNumber, 10) + 1).padStart(7, "0");
 
-        if (!querySnapshot.empty) {
-            const lastInvoice = querySnapshot.docs[0].data();
-            const lastNumber = parseInt(lastInvoice.uid, 10); // asumiendo que `uid` es el número
-            const nextNumber = String(lastNumber + 1).padStart(7, "0");
-            console.log("Última factura:", lastInvoice.uid, "Siguiente:", nextNumber);
-            return nextNumber;
-        } else {
-            // No hay facturas aún, empezamos en 0000001
-            return "0000001";
-        }
-    } catch (error) {
-        console.error("Error al obtener el siguiente número de factura: ", error);
-        return "0000001"; // fallback seguro
+      return { lastNumber, nextNumber };
     }
+
+    return { lastNumber: "0000000", nextNumber: "0000001" };
+  } catch (error) {
+    console.error("❌ Error obteniendo número de factura:", error);
+    return { lastNumber: "0000000", nextNumber: "0000001" };
+  }
 };
+
+
+export const getNextInvoiceNumber = async (): Promise<{
+  lastNumber: string;
+  nextNumber: string;
+}> => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}` // asegúrate que `user()` devuelve el ID correcto
+    );
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+
+    // Query: Obtener la última factura creada
+    const lastInvoiceQuery = query(
+      invoiceCollectionRef,
+      orderBy("fechaCreacion", "desc"), // o usa "timestamp" si es más confiable
+      limit(1)
+    );
+
+    const querySnapshot = await getDocs(lastInvoiceQuery);
+
+    if (!querySnapshot.empty) {
+      const lastInvoice = querySnapshot.docs[0].data();
+      const lastNumber = String(parseInt(lastInvoice.uid, 10)).padStart(7, "0");
+      const nextNumber = String(parseInt(lastNumber, 10) + 1).padStart(7, "0");
+
+      return {
+        lastNumber,
+        nextNumber,
+      };
+    } else {
+      // No hay facturas aún, empezamos en 0000001
+      return {
+        lastNumber: "0000000", // No existe anterior
+        nextNumber: "0000001",
+      };
+    }
+  } catch (error) {
+    console.error("Error al obtener números de factura: ", error);
+    return {
+      lastNumber: "0000000", // fallback seguro
+      nextNumber: "0000001",
+    };
+  }
+};
+
+
+
+export const fixInvoicesAddDate = async () => {
+  try {
+    const establecimientoDocRef = doc(db, "establecimientos", user().decodedString);
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+
+    const snapshot = await getDocs(invoiceCollectionRef);
+
+    for (const d of snapshot.docs) {
+      const data = d.data();
+      if (!data.invoice) {
+        const docRef = doc(db, "establecimientos", user().decodedString, "invoices", d.id);
+        const now = new Date();
+        const formattedDate = data.uid;
+
+        await updateDoc(docRef, {
+          invoice: formattedDate,
+        });
+
+        console.log(`✅ Documento ${d.id} actualizado con campo "date".`);
+      }
+    }
+
+    console.log("Todos los documentos han sido procesados.");
+  } catch (error) {
+    console.error("❌ Error al actualizar facturas:", error);
+  }
+};
+
 
 export const getAllInvoicesData = async (callback: any) => {
   try {
@@ -1029,11 +1111,12 @@ export const getAllInvoicesData = async (callback: any) => {
 
     callback(initialInvoiceData);
 
-    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot: any) => {
+    const unsubscribe = onSnapshot(orderedQuery, async (querySnapshot: any) => {
       const updatedInvoiceData = querySnapshot.docs.map((doc: any) => ({
         id: doc.id,
         ...doc.data(),
       }));
+      const snapshot = await getDocs(invoiceCollectionRef);
       callback(updatedInvoiceData);
     });
 

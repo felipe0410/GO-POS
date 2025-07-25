@@ -7,18 +7,21 @@ import {
     styled,
     useMediaQuery,
     useTheme,
+    Typography,
 } from "@mui/material";
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Mark from "mark.js";
 import ProductList from "@/app/vender/SlidebarVender/ProductList";
-import { createInvoice, getAllInvoicesData, getNextInvoiceNumber } from "@/firebase";
+import { createInvoice, getNextInvoiceNumber } from "@/firebase";
 import NoteSection from "@/app/vender/SlidebarVender/NoteSection";
 import SearchSection from "@/app/vender/SlidebarVender/SearchSection";
-import Header from "@/app/vender/SlidebarVender/Header";
+import Header from "./Header";
 import TotalSectionGastrobar from "./TotalSectionGastrobar";
 import Confirmar from "./confirmarpedido";
 import OrdenCocina from "./OrdenCocina";
+import LinearProgress from "@mui/material/LinearProgress";
+
 
 const SlidebarGastrobar = ({
     selectedItems,
@@ -44,20 +47,21 @@ const SlidebarGastrobar = ({
     const [nextStep, setNextStep] = useState(false);
     const [loading, setLoading] = useState(false);
     const [reciboPago, setReciboPago] = useState(false);
+    const [mostrarOrden, setMostrarOrden] = useState(false)
     const [descuento, setDescuento] = useState(0);
     const [subtotal, setSubtotal] = useState(0);
-    const [dataInvoice, setDataInvoice] = useState([]);
     const [nota, setNota] = useState("");
     const [checked, setChecked] = useState<boolean>(false);
-
+    const [nextInvoiceNumber, setNextInvoiceNumber] = useState({
+        lastNumber: "00001",
+        nextNumber: "00002"
+    })
+    const [numeroFacturaCreada, setNumeroFacturaCreada] = useState<string | null>(null);
     const theme = useTheme();
     const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
     useEffect(() => {
-        getAllInvoicesData(setDataInvoice);
         matchesSM ? setChecked(false) : setChecked(true);
     }, [matchesSM]);
-
-    console.log('getNextInvoiceNumber::>', getNextInvoiceNumber())
 
     useEffect(() => {
         const nuevoSubtotal = (selectedItems ?? []).reduce(
@@ -82,23 +86,8 @@ const SlidebarGastrobar = ({
         );
     }, [selectedItems]);
 
-    const generarNumeroFactura = useCallback((): string => {
-        const maxInvoiceNumber = dataInvoice.reduce((max: number, item: any) => {
-            const currentInvoiceNumber = parseInt(item.invoice, 10);
-            return currentInvoiceNumber > max ? currentInvoiceNumber : max;
-        }, 0);
-        return String(maxInvoiceNumber + 1).padStart(7, "0");
-    }, [dataInvoice]);
 
 
-    const storedContadorFactura = localStorage.getItem("contadorFactura");
-    const initialContadorFactura = storedContadorFactura
-        ? parseInt(storedContadorFactura, 10)
-        : 1;
-
-    const [contadorFactura, setContadorFactura] = useState(
-        Math.max(initialContadorFactura, dataInvoice.length + 1)
-    );
 
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         const keyword = event.target.value;
@@ -113,8 +102,51 @@ const SlidebarGastrobar = ({
     };
 
     useEffect(() => {
-        createInvoice(generarNumeroFactura(), { ...selectedItems, orden_preparada: false })
-    }, [reciboPago])
+        const createInvoiceLocal = async () => {
+            try {
+                setLoading(true); // 🔥 Activa el progress bar
+                if (nextInvoiceNumber?.nextNumber) {
+                    await createInvoice(nextInvoiceNumber.nextNumber, {
+                        compra: [...selectedItems],
+                        orden_preparada: false,
+                        mesa: facturaActiva,
+                        nota: nota,
+                        status: "PENDIENTE",
+                        invoice: nextInvoiceNumber.nextNumber,
+                        subtotal: subtotal,
+                        total: subtotal
+                    });
+                    setMostrarOrden(true);
+                    setSelectedItems([]);
+                    setNumeroFacturaCreada(nextInvoiceNumber.nextNumber);
+                    localStorage.setItem(`factura-${facturaActiva}`, JSON.stringify([]));
+                } else {
+                    console.warn("No hay número de factura disponible aún.");
+                }
+            } catch (error) {
+                console.error("Error al crear factura:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (reciboPago) {
+            createInvoiceLocal();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [reciboPago]);
+
+    const fetchNextInvoiceNumber = async () => {
+        try {
+            const data = await getNextInvoiceNumber();
+            setNextInvoiceNumber(data);
+        } catch (error) {
+            console.error("Error al obtener número de factura:", error);
+        }
+    };
+    useEffect(() => {
+        fetchNextInvoiceNumber();
+    }, [loading]);
 
 
 
@@ -171,7 +203,7 @@ const SlidebarGastrobar = ({
                 >
                     <Header
                         setOpen={setOpen}
-                        generarNumeroFactura={generarNumeroFactura}
+                        nuemro_factura={String(nextInvoiceNumber?.nextNumber || "0000000")}
                         totalUnidades={totalUnidades}
                     />
                     <Box
@@ -194,11 +226,34 @@ const SlidebarGastrobar = ({
                             },
                         }}
                     >
-                        {reciboPago ? (
+                        {loading && (
+                            <Box sx={{ width: "100%", p: 2 }}>
+                                <Typography
+                                    sx={{
+                                        textAlign: "center",
+                                        fontSize: "1.2rem",
+                                        fontWeight: 700,
+                                        mb: 1,
+                                        filter: 'invert(1)'
+                                    }}
+                                >
+                                    Generando factura...
+                                </Typography>
+                                <LinearProgress variant="buffer" />
+                            </Box>
+                        )}
+
+                        {mostrarOrden ? (
                             <OrdenCocina
-                                setNextStep={setNextStep}
+                                setNextStep={() => {
+                                    setNextStep(false)
+                                    setReciboPago(false)
+                                    setMostrarOrden(false)
+                                    setNumeroFacturaCreada(null);
+                                }}
                                 typeInvoice={typeInvoice}
                                 facturaActiva={facturaActiva}
+                                numeroFactura={(numeroFacturaCreada ?? '1')}
                             />
                         ) : (
                             <>

@@ -1,10 +1,11 @@
 // app/gastrobar/pedido/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import SeleccionMesa from "../tomar-pedido/SeleccionMesa";
 import VenderGastrobar from "../components/VenderGastrobar";
+import { getZonaConfig } from "@/firebase";
 
 export default function TomarPedidoGastrobar() {
     const [mesaSeleccionada, setMesaSeleccionada] = useState<any>(null);
@@ -14,7 +15,9 @@ export default function TomarPedidoGastrobar() {
                 <SeleccionMesa onMesaSeleccionada={setMesaSeleccionada} />
             ) : (
                 <>
-                    <VenderGastrobar mesa={mesaSeleccionada} />
+                    <VenderGastrobar
+                        mesa={mesaSeleccionada}
+                    />
                 </>
             )}
         </Box>

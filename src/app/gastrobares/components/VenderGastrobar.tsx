@@ -4,50 +4,47 @@ import {
     Autocomplete,
     Box,
     Button,
-    IconButton,
     Pagination,
     Paper,
     TextField,
     useMediaQuery,
     useTheme,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     getAllProductsDataonSnapshot,
 } from "@/firebase";
 import VenderCards from "@/components/VenderCards";
-import SearchInput from "@/app/vender/Normal/SearchInput";
 import SlidebarGastrobar from "./SlidebarGastrobar";
-import { agregarNuevaFactura, getDataFromLocalStorage, saveDataToLocalStorage, updateSelectedItems } from "./utils/facturaHelpers";
-import { isEqual } from "lodash";
+import { updateSelectedItems } from "./utils/facturaHelpers";
+import { useFacturas } from "./hooks/useFacturas";
+import SearchBar from "./SearchBar";
+import TransferirPedidoDialog from "./TransferirPedidoDialog";
 
 interface Props {
     mesa: any;
+    todasLasMesas: any[];
+    onChangeMesa: (nuevaMesa: any) => void;
 }
 
-const VenderGastrobar: any = ({ mesa }: Props) => {
-    const [data, setData] = useState<undefined | any[]>(undefined);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filter, setfilter] = useState<any>();
-    const [selectedItems, setSelectedItems] = useState<any>([]);
-    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [load, setLoad] = useState(0);
-    const [facturas, setFacturas] = useState<
-        { id: string; name: string; items: any[] }[]
-    >([{ id: mesa?.nombre || "mesa-desconocida", name: mesa?.nombre || "Mesa sin nombre", items: [] }]);
-    console.log('facturas:::>', facturas,)
-    const [facturaActiva, setFacturaActiva] = useState(mesa?.nombre || "mesa-desconocida");
+const VenderGastrobar: any = ({ mesa, todasLasMesas, onChangeMesa }: Props) => {
     const theme = useTheme();
     const matches = useMediaQuery(theme.breakpoints.up("sm"));
-    const facturaKey = `${mesa?.nombre}`;
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+    const [data, setData] = useState<any[]>([]);
+    const [filter, setFilter] = useState<any>();
+    const [currentPage, setCurrentPage] = useState(1);
+    const [dialogTransferOpen, setDialogTransferOpen] = useState(false);
+    const { facturas, setFacturas, facturaActiva, productosFacturaActiva, setFacturaActiva } = useFacturas(mesa);
+    const itemsPerPage = 12;
+    const totalPages = Math.ceil(filter?.length / itemsPerPage);
 
-
-    const categories = useMemo(() => {
-        const allCategories = data?.map((item) => item.category) || [];
-        const unique = [...new Set(allCategories)];
-        return unique;
-    }, [data]);
+    const handleResetFilter = () => {
+        setSelectedCategory(null);
+        setSearchTerm("");
+        filteredData("");
+    };
 
     const filteredData = async (
         event: any,
@@ -75,7 +72,7 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
                 }
             });
 
-            setfilter(filterSearch);
+            setFilter(filterSearch);
             const foundProducts = resolvedData?.filter(
                 (producto) => producto.barCode === value2
             );
@@ -90,7 +87,7 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
                     cantidad: 1,
                 };
 
-                setFacturas((prevFacturas) =>
+                setFacturas((prevFacturas: any[]) =>
                     prevFacturas.map((factura) =>
                         factura.id === facturaActiva
                             ? {
@@ -112,143 +109,74 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
             console.error("Error al obtener datos:", error);
         }
     };
-
-    const handleCategorySelect = (category: string) => {
-        setSelectedCategory(category);
-        filteredData("");
-    };
-
-    const handleResetFilter = () => {
-        setSelectedCategory(null);
-        setSearchTerm("");
-        filteredData("");
-    };
-
-    const itemsPerPage = 12;
-    const [currentPage, setCurrentPage] = useState(1);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentDataPage = filter?.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(filter?.length / itemsPerPage);
-
+    useEffect(() => {
+        getAllProductsDataonSnapshot(setData);
+    }, []);
 
     useEffect(() => {
-        filteredData("");
+        handleFilter("");
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [data, selectedCategory]);
-    useEffect(() => {
-        const getAllProducts = async () => {
-            try {
-                await getAllProductsDataonSnapshot(setData);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        getAllProducts();
-    }, []);
-    useEffect(() => {
-        if (selectedItems?.length > 0) {
-            saveDataToLocalStorage("selectedItems", selectedItems);
-        }
-    }, [selectedItems]);
 
-    useEffect(() => {
-        const localStorageSelectedItems = getDataFromLocalStorage("selectedItems");
-        if (localStorageSelectedItems?.length > 0) {
-            setSelectedItems(localStorageSelectedItems);
-        }
-    }, []);
+    const categories = useMemo(() => {
+        return [...new Set(data?.map((item) => item.category) || [])];
+    }, [data]);
 
-    useEffect(() => {
-        filteredData("");
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const handleFilter = async (term: string, removeCategory = false) => {
+        let clean = term.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-    useEffect(() => {
-        const getAllProducts = async () => {
-            try {
-                await getAllProductsDataonSnapshot(setData);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-        getAllProducts();
-    }, []);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const productosFacturaActiva =
-        facturas.find((factura) => factura.id === facturaActiva)?.items || [];
-
-
-    useEffect(() => {
-        setLoad((prev) => prev + 1);
-        //if (load > 0) {
-        //   localStorage.setItem("facturas", JSON.stringify(facturas));
-        //}
-        if (facturas.length === 0) {
-            agregarNuevaFactura(facturas);
-        }
-        const facturaExiste = facturas.some(
-            (factura) => factura.id === facturaActiva
+        if (removeCategory) setSelectedCategory(null);
+        const filtered = data.filter(item =>
+            !term
+                ? !selectedCategory || item.category === selectedCategory
+                : Object.values(item).some(value => String(value).toLowerCase().includes(clean.toLowerCase()))
         );
-        if (!facturaExiste) {
-            setFacturaActiva(facturas[0].id);
+
+        setFilter(filtered);
+
+        const exact = data.find(p => p.barCode === clean);
+        if (exact) {
+            const price = Number(exact.price.replace(/[$,]/g, ""));
+            const newItem = { ...exact, acc: price, cantidad: 1 };
+            setFacturas((prev: any) =>
+                prev.map((f: { id: any; items: any[]; }) =>
+                    f.id === facturaActiva
+                        ? { ...f, items: updateSelectedItems(f.items, newItem) }
+                        : f
+                )
+            );
+            setSearchTerm("");
+        }
+    };
+
+    const currentDataPage = useMemo(() => {
+        const start = (currentPage - 1) * 12;
+        return filter?.slice(start, start + 12);
+    }, [filter, currentPage]);
+
+
+    useEffect(() => {
+        const transferenciaStr = localStorage.getItem("transferencia_mesa");
+
+        if (transferenciaStr) {
+            const transferencia = JSON.parse(transferenciaStr);
+
+            // Solo acepta la transferencia si es para esta mesa
+            if (transferencia?.id === mesa.id || transferencia?.mesa === mesa.nombre) {
+                setFacturas((prev) => [...prev, transferencia]);
+                setFacturaActiva(transferencia.id);
+
+                // 🔁 Guarda correctamente en localStorage para persistencia
+                localStorage.setItem(`factura_mesa_${mesa.id}`, JSON.stringify(transferencia));
+
+                // ❌ Borra la transferencia temporal
+                localStorage.removeItem("transferencia_mesa");
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        const cachedFacturas = localStorage.getItem(facturaKey);
-        if (cachedFacturas) {
-            setFacturas(JSON.parse(cachedFacturas));
-        }
-    }, [facturaKey]);
-
-    const isFirstRender = useRef(true);
-
-    useEffect(() => {
-        const cachedFacturaStr = localStorage.getItem(`factura-${facturaActiva}`);
-        const facturaMesa = facturas.find(f => f.id === facturaActiva);
-
-        if (!facturaMesa) return;
-
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-
-            if (cachedFacturaStr) {
-                const cachedFactura = JSON.parse(cachedFacturaStr);
-
-                if (cachedFactura?.items && Array.isArray(cachedFactura.items)) {
-                    // En el primer render, si hay factura en cache, la usamos
-                    console.log("Seteando factura desde cache");
-                    setFacturas(prev =>
-                        prev.map(f =>
-                            f.id === facturaActiva ? { ...f, items: cachedFactura.items } : f
-                        )
-                    );
-                }
-            }
-
-            return;
-        }
-
-        // A partir del segundo render: si los items cambiaron, actualizamos el cache
-        const cachedFactura = cachedFacturaStr ? JSON.parse(cachedFacturaStr) : null;
-
-        if (!isEqual(facturaMesa.items, cachedFactura?.items)) {
-            console.log("Actualizando cache...");
-            localStorage.setItem(`factura-${facturaActiva}`, JSON.stringify(facturaMesa));
-        }
-    }, [facturas, facturaActiva]);
+    }, [mesa?.id, mesa?.nombre]);
 
 
-    useEffect(() => {
-        const cachedFacturas = localStorage.getItem(facturaKey);
-        if (cachedFacturas) {
-            setFacturas(JSON.parse(cachedFacturas));
-        }
-        setFacturaActiva(facturaKey);
-    }, [facturaKey, mesa?.nombre]);
 
     return (
         <Box
@@ -263,7 +191,64 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
                 id="conainer_vender"
                 sx={{ width: { xs: "100%", lg: "calc(100% - 23rem)" } }}
             >
-                <Header title={"TOMA DE PEDIDO" + ' ' + (mesa?.nombre ?? 'sin mesa')} />
+                <Header title={"PEDIDO" + ' ' + (mesa?.nombre ?? 'sin mesa')} txt={
+                    <Box sx={{display:'flex'}}>
+                        <Box >
+                            <Button
+                                onClick={() => setDialogTransferOpen(true)}
+                                sx={{
+                                    padding:'10px',
+                                    backgroundColor: "#69EAE2",
+                                    color: "#1F1D2B",
+                                    ml: 2,
+                                    height: "40px",
+                                    width:'200px',
+                                    borderRadius: "10px",
+                                    fontWeight: 700,
+                                    "&:hover": { opacity: 0.8, backgroundColor: "#69EAE2" },
+                                }}
+                            >
+                                Transferir pedido
+                            </Button>
+                        </Box>
+                        <Autocomplete
+                            options={todasLasMesas || []}
+                            getOptionLabel={(option) => option?.nombre || ""}
+                            value={mesa}
+                            onChange={(event, newValue) => {
+                                if (newValue) {
+                                    onChangeMesa(newValue);
+                                }
+                            }}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    label="Cambiar de mesa"
+                                    variant="outlined"
+                                    sx={{
+                                        marginBottom: 2,
+                                        width: '150px',
+                                        input: { color: "white" },
+                                        label: { color: "#69EAE2" },
+                                        "& .MuiOutlinedInput-root": {
+                                            "& fieldset": {
+                                                borderColor: "#69EAE2",
+                                            },
+                                            "&:hover fieldset": {
+                                                borderColor: "#69EAE2",
+                                            },
+                                            "&.Mui-focused fieldset": {
+                                                borderColor: "#69EAE2",
+                                            },
+                                        },
+                                    }}
+                                />
+                            )}
+                            sx={{ width: "100%", color: "white", marginLeft: '20px' }}
+                        />
+
+                    </Box>
+                } />
                 <Paper
                     id={"paper"}
                     sx={{ width: "95%", height: "100%", marginTop: "1rem" }}
@@ -292,44 +277,15 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
                                     width: "85%",
                                 }}
                             >
-                                <Paper
-                                    component="form"
+                                <SearchBar
+                                    searchTerm={searchTerm}
+                                    setSearchTerm={setSearchTerm}
                                     onSubmit={(e: any) => {
                                         e.preventDefault();
                                         filteredData(e.target[1].value);
                                     }}
-                                    sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        color: "#fff",
-                                        width: "25rem",
-                                        height: "2rem",
-                                        borderRadius: "0.3125rem",
-                                        background: "#2C3248",
-                                    }}
-                                >
-                                    <IconButton
-                                        type="button"
-                                        sx={{ p: "10px" }}
-                                        aria-label="search"
-                                    >
-                                        <SearchIcon sx={{ color: "#fff" }} />
-                                    </IconButton>
-                                    <SearchInput
-                                        searchTerm={searchTerm}
-                                        setSearchTerm={setSearchTerm}
-                                    />
-                                    <IconButton
-                                        sx={{
-                                            marginTop: "2px",
-                                            paddingTop: "0px",
-                                            marginBottom: "4px",
-                                            paddingBottom: "0px",
-                                        }}
-                                    >
-                                        <Box component={"img"} src={"/images/scan.svg"} />
-                                    </IconButton>
-                                </Paper>
+                                />
+
                             </Box>
                             <Box>
 
@@ -364,7 +320,8 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
                             options={categories}
                             value={selectedCategory}
                             onChange={(event, newValue) => {
-                                handleCategorySelect(newValue ?? "");
+                                setSelectedCategory(newValue ?? null);
+                                handleFilter(searchTerm);
                             }}
                             renderInput={(params) => (
                                 <TextField
@@ -434,8 +391,46 @@ const VenderGastrobar: any = ({ mesa }: Props) => {
                 facturaActiva={facturaActiva}
                 mesa={mesa?.nombre}
             />
+            <TransferirPedidoDialog
+                open={dialogTransferOpen}
+                onClose={(mesaDestino) => {
+                    setDialogTransferOpen(false);
+                    if (!mesaDestino || !facturaActiva) return;
+
+                    const facturaActualStr = localStorage.getItem(`factura-${mesa.nombre}`);
+                    const facturaActual = facturaActualStr ? JSON.parse(facturaActualStr) : null;
+
+                    if (!facturaActual) {
+                        return;
+                    }
+
+                    const nuevaFactura = {
+                        ...facturaActual,
+                        id: mesaDestino.id,
+                        name: mesaDestino.nombre,
+                    };
+
+                    // 🔄 Paso 1: Limpiar destino y guardar nueva factura
+                    localStorage.removeItem(`factura-${mesaDestino.nombre}`);
+                    setTimeout(() => {
+                        onChangeMesa(mesaDestino);
+                    }, 1000);
+                    localStorage.setItem(`factura-${mesaDestino.nombre}`, JSON.stringify(nuevaFactura));
+                    // 🔄 Paso 2: Eliminar factura anterior
+                    localStorage.removeItem(`factura-${mesa.nombre}`);
+                    // 🔄 Paso 3: Actualizar estado en memoria
+                    setFacturas((prev) =>
+                        [...prev.filter((f) => f.id !== facturaActual.id), nuevaFactura]
+                    );
+                    // ✅ Paso 4: Esperar antes de cambiar de mesa
+                }}
+                mesas={todasLasMesas}
+                mesaActual={mesa}
+            />
+
         </Box>
     );
 };
+
 
 export default VenderGastrobar;
