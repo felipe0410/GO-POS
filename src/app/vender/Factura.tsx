@@ -243,7 +243,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
               size: (`${paperSize} ${Math.ceil(heightMm)}mm`),
               margin: 0,
             },
-            width: "92mm",
+            width: "94mm",
           },
         }}
       >

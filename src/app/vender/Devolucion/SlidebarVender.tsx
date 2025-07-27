@@ -141,7 +141,7 @@ const SlidebarDevoluciones: React.FC<SlidebarDevolucionesProps> = ({
         >
           <Header
             setOpen={onClose}
-            generarNumeroFactura={() => ""}
+            generarNumeroFactura={""}
             totalUnidades={0}
           />
 
