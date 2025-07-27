@@ -10,6 +10,9 @@ import {
   Dialog,
   DialogContent,
   DialogActions,
+  Backdrop,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
@@ -25,11 +28,13 @@ const InvoiceTable = ({
   data: any[];
   isDarkMode?: boolean;
 }) => {
+  const [loading, setLoading] = useState(false);
   const [cookies, setCookie] = useCookies(["invoice_token"]);
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
 
   const handlePreviewPdf = async (url: string | undefined, qrDian: string) => {
     try {
+      setLoading(true)
       let trackId = "";
       const match = qrDian.match(/documentkey=([a-f0-9]+)/i);
       if (match && match[1]) {
@@ -39,10 +44,14 @@ const InvoiceTable = ({
       }
 
       if (url) {
-        const headResponse = await fetch(url, { method: "POST" });
-        if (headResponse.ok) {
-          setPdfPreviewUrl(url);
-          return;
+        try {
+          const response = await fetch(url, { method: "GET" });
+          if (response.ok) {
+            setPdfPreviewUrl(url);
+            return;
+          }
+        } catch (err) {
+          console.warn("El PDF original no está disponible. Se procederá a regenerarlo.");
         }
       }
 
@@ -90,11 +99,18 @@ const InvoiceTable = ({
         throw new Error("No se pudo regenerar el PDF");
       }
 
-      const blob = await pdfResponse.blob();
-      const objectUrl = URL.createObjectURL(blob);
-      setPdfPreviewUrl(objectUrl);
+      const data = await pdfResponse.json();
+
+      if (data?.pdf?.url) {
+        setPdfPreviewUrl(data.pdf.url);
+      } else {
+        throw new Error("No se recibió la URL del PDF");
+      }
+
     } catch (error) {
       console.error("Error en la previsualización del PDF:", error);
+    } finally {
+      setLoading(false)
     }
   };
 
@@ -247,6 +263,18 @@ const InvoiceTable = ({
           </DialogActions>
         </Dialog>
       )}
+      <Backdrop
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loading}
+      >
+        <Box textAlign="center">
+          <CircularProgress color="inherit" />
+          <Typography variant="body1" mt={2}>
+            Procesando solicitud, por favor espera...
+          </Typography>
+        </Box>
+      </Backdrop>
+
     </Box>
   );
 };
