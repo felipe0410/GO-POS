@@ -14,6 +14,9 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import DownloadIcon from "@mui/icons-material/Download";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { getDianRecord } from "@/firebase/dian";
+import { login } from "@/components/DIAN/loginToken";
+import { useCookies } from "react-cookie";
 
 const InvoiceTable = ({
   data,
@@ -22,11 +25,79 @@ const InvoiceTable = ({
   data: any[];
   isDarkMode?: boolean;
 }) => {
+  const [cookies, setCookie] = useCookies(["invoice_token"]);
   const [pdfPreviewUrl, setPdfPreviewUrl] = useState<string | null>(null);
 
-  const handlePreviewPdf = (url: string) => {
-    setPdfPreviewUrl(url);
+  const handlePreviewPdf = async (url: string | undefined, qrDian: string) => {
+    try {
+      let trackId = "";
+      const match = qrDian.match(/documentkey=([a-f0-9]+)/i);
+      if (match && match[1]) {
+        trackId = match[1];
+      } else {
+        throw new Error("No se pudo extraer el trackId del QR DIAN");
+      }
+
+      if (url) {
+        const headResponse = await fetch(url, { method: "POST" });
+        if (headResponse.ok) {
+          setPdfPreviewUrl(url);
+          return;
+        }
+      }
+
+      console.warn("PDF no disponible, se va a regenerar...");
+
+      // Obtener o generar token
+      let token = cookies.invoice_token;
+      if (!token) {
+        const dian = await getDianRecord();
+        const password =
+          dian?.email === "Sergiosua11@gmail.com" ? "Ab1007446687$" : "Ab1007446687";
+        const loginResponse = await login(
+          dian?.email ?? "demo@lopezsoft.net.co",
+          password
+        );
+
+        if (loginResponse?.access_token) {
+          token = loginResponse.access_token;
+          const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+          setCookie("invoice_token", token, {
+            path: "/",
+            expires: expirationDate,
+            secure: true,
+            sameSite: "strict",
+          });
+        } else {
+          throw new Error("No se pudo generar token.");
+        }
+      }
+
+      // Regenerar PDF con el trackId
+      const pdfResponse = await fetch(
+        `https://api-v2.matias-api.com/api/ubl2.1/documents/pdf/${trackId}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ regenerate: 1 }),
+        }
+      );
+
+      if (!pdfResponse.ok) {
+        throw new Error("No se pudo regenerar el PDF");
+      }
+
+      const blob = await pdfResponse.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      setPdfPreviewUrl(objectUrl);
+    } catch (error) {
+      console.error("Error en la previsualización del PDF:", error);
+    }
   };
+
 
   const handleClosePdfPreview = () => {
     setPdfPreviewUrl(null);
@@ -88,7 +159,7 @@ const InvoiceTable = ({
         <TableBody>
           {data.map((invoice, index) => {
             const zipUrl = `https://api-v2.matias-api.com/attachments/${invoice.attachedDocument?.pathZip}`;
-
+            console.log('invoice::>', invoice)
             return (
               <TableRow
                 key={invoice.id}
@@ -127,7 +198,7 @@ const InvoiceTable = ({
                   <Button
                     variant="text"
                     sx={{ color: isDarkMode ? "#69EAE2" : "#1E88E5" }}
-                    onClick={() => handlePreviewPdf(invoice.pdfUrl)}
+                    onClick={() => handlePreviewPdf(invoice.pdfUrl, invoice.qrDian)}
                   >
                     <VisibilityIcon />
                   </Button>
