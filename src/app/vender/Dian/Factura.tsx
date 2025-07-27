@@ -220,17 +220,17 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
       >
         <Box>
           <Box
+            id='FACTURA'
             ref={componentRef}
             sx={{
               filter: "brightness(1.2)",
-              maxWidth: "22.25rem",
+              maxWidth: "20.25rem",
               padding: "10px",
               background: "#fff",
               "@media print": {
                 "@page": {
-                  size: `${componentRef?.current?.clientWidth}px ${
-                    componentRef?.current?.clientHeight * 1.1
-                  }px`,
+                  size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
+                    }px`,
                 },
                 width: "100%",
               },
@@ -702,11 +702,10 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                     lineHeight: "140%",
                   }}
                 >
-                  {`$ ${
-                    facturaData?.cambio > 0
+                  {`$ ${facturaData?.cambio > 0
                       ? facturaData?.cambio?.toLocaleString("en-US")
                       : 0
-                  }`}
+                    }`}
                 </Typography>
               </Box>
               <Box

@@ -17,7 +17,7 @@ import Header from "../SlidebarVender/Header";
 import ProductList from "../SlidebarVender/ProductList";
 import DiscountSection from "../SlidebarVender/DiscountSection";
 import TotalSection from "../SlidebarVender/TotalSection";
-import { getAllInvoicesData } from "@/firebase";
+import { getAllInvoicesData, getNextInvoiceNumber } from "@/firebase";
 import SubtotalSection from "../SlidebarVender/SubtotalSection";
 import NoteSection from "../SlidebarVender/NoteSection";
 import SearchSection from "../SlidebarVender/SearchSection";
@@ -53,12 +53,14 @@ const SlidebarVender = ({
   const [dataInvoice, setDataInvoice] = useState([]);
   const [nota, setNota] = useState("");
   const [checked, setChecked] = useState<boolean>(false);
-
+  const [nextInvoiceNumber, setNextInvoiceNumber] = useState({
+    lastNumber: "00001",
+    nextNumber: "00002"
+  })
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
 
   useEffect(() => {
-    getAllInvoicesData(setDataInvoice);
     matchesSM ? setChecked(false) : setChecked(true);
   }, [matchesSM]);
 
@@ -85,13 +87,6 @@ const SlidebarVender = ({
     );
   }, [selectedItems]);
 
-  const generarNumeroFactura = useCallback((): string => {
-    const maxInvoiceNumber = dataInvoice.reduce((max: number, item: any) => {
-      const currentInvoiceNumber = parseInt(item.invoice, 10);
-      return currentInvoiceNumber > max ? currentInvoiceNumber : max;
-    }, 0);
-    return String(maxInvoiceNumber + 1).padStart(7, "0");
-  }, [dataInvoice]);
 
   const handleVenderClick = useCallback(() => {
     setContadorFactura((prevContador) => {
@@ -134,6 +129,21 @@ const SlidebarVender = ({
     });
     setSearch(keyword);
   };
+
+  const fetchNextInvoiceNumber = async () => {
+    try {
+      const data = await getNextInvoiceNumber();
+      setNextInvoiceNumber(data);
+    } catch (error) {
+      console.error("Error al obtener número de factura:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNextInvoiceNumber();
+  }, [loading]);
+
+
 
   return (
     <Box display={"flex"}>
@@ -188,7 +198,7 @@ const SlidebarVender = ({
         >
           <Header
             setOpen={setOpen}
-            generarNumeroFactura={generarNumeroFactura}
+            generarNumeroFactura={nextInvoiceNumber.nextNumber}
             totalUnidades={totalUnidades}
           />
           <Box sx={{ position: "absolute", top: { xs: 8, lg: 40 }, left: 12 }}>
@@ -234,7 +244,7 @@ const SlidebarVender = ({
                     loading={loading}
                     setReciboPago={setReciboPago}
                     reciboPago={reciboPago}
-                    numeroFactura={generarNumeroFactura}
+                    numeroFactura={nextInvoiceNumber.nextNumber}
                     handleVenderClick={handleVenderClick}
                     propsNota={nota}
                     typeInvoice={typeInvoice}

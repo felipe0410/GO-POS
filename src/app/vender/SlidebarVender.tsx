@@ -182,7 +182,7 @@ const SlidebarVender = ({
         >
           <Header
             setOpen={setOpen}
-            generarNumeroFactura={generarNumeroFactura}
+            generarNumeroFactura={''}
             totalUnidades={totalUnidades}
           />
           <Box

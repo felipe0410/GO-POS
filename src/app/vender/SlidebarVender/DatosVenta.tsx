@@ -156,7 +156,7 @@ const DatosVenta = (props: any) => {
 
     const datosCliente = JSON.stringify(dataWithDefaults);
     localStorage.setItem("cliente", datosCliente);
-    localStorage.setItem("invoice", numeroFactura());
+    localStorage.setItem("invoice", numeroFactura);
     setDatosGuardados(true);
     const userData = localStorage.getItem("dataUser");
     if (userData) {
@@ -166,7 +166,7 @@ const DatosVenta = (props: any) => {
         setFactura({
           ...factura,
           createBy: decodedUid,
-          invoice: numeroFactura(),
+          invoice: numeroFactura,
           total,
           subtotal,
           date: getCurrentDateTime(),

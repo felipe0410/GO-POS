@@ -1024,21 +1024,26 @@ export const getNextInvoiceNumber = async (): Promise<{
     const establecimientoDocRef = doc(
       db,
       "establecimientos",
-      `${user().decodedString}` // asegúrate que `user()` devuelve el ID correcto
+      `${user().decodedString}`
     );
     const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
 
-    // Query: Obtener la última factura creada
-    const lastInvoiceQuery = query(
+    // Paso 1: obtener las últimas N facturas (ej. 50)
+    const recentInvoicesQuery = query(
       invoiceCollectionRef,
-      orderBy("fechaCreacion", "desc"), // o usa "timestamp" si es más confiable
-      limit(1)
+      orderBy("fechaCreacion", "desc"),
+      limit(50)
     );
 
-    const querySnapshot = await getDocs(lastInvoiceQuery);
+    const snapshot = await getDocs(recentInvoicesQuery);
 
-    if (!querySnapshot.empty) {
-      const lastInvoice = querySnapshot.docs[0].data();
+    // Paso 2: filtrar excluyendo las que son "VENTA RAPIDA"
+    const filteredInvoices = snapshot.docs
+      .map(doc => doc.data())
+      .filter(invoice => invoice.typeInvoice !== "VENTA RAPIDA");
+
+    if (filteredInvoices.length > 0) {
+      const lastInvoice = filteredInvoices[0]; // la más reciente válida
       const lastNumber = String(parseInt(lastInvoice.uid, 10)).padStart(7, "0");
       const nextNumber = String(parseInt(lastNumber, 10) + 1).padStart(7, "0");
 
@@ -1047,21 +1052,20 @@ export const getNextInvoiceNumber = async (): Promise<{
         nextNumber,
       };
     } else {
-      // No hay facturas aún, empezamos en 0000001
+      // No hay facturas válidas aún
       return {
-        lastNumber: "0000000", // No existe anterior
+        lastNumber: "0000000",
         nextNumber: "0000001",
       };
     }
   } catch (error) {
     console.error("Error al obtener números de factura: ", error);
     return {
-      lastNumber: "0000000", // fallback seguro
+      lastNumber: "0000000",
       nextNumber: "0000001",
     };
   }
 };
-
 
 
 export const fixInvoicesAddDate = async () => {

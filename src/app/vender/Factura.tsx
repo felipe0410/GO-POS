@@ -1,10 +1,13 @@
-import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
+import { Box, Button, Divider, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import React, { useEffect, useRef, useState } from "react";
-import { getEstablishmentData, getInvoiceData } from "@/firebase";
+import { getEstablishmentData, getInvoiceData, handleGuardarDevolucion } from "@/firebase";
 import { DocumentData } from "firebase/firestore";
 import JsBarcode from "jsbarcode";
 import { useReactToPrint } from "react-to-print";
+import { SnackbarProvider, enqueueSnackbar } from "notistack";
+import { NumericFormat } from "react-number-format";
+import { facturaStyles } from "../register/invoices/styles";
 
 interface TuComponenteProps {
   setReciboPago: (arg0: boolean) => void;
@@ -17,6 +20,7 @@ interface TuComponenteProps {
 const Factura: React.FC<TuComponenteProps> = (props) => {
   const barCode = localStorage.getItem("uidInvoice");
   const numeroFactura = localStorage?.getItem("invoice") ?? "0000000";
+  const [paperSize, setPaperSize] = useState<"58mm" | "80mm">("58mm");
   const [facturaData, setFacturaData] = useState<null | DocumentData>(null);
   const {
     setReciboPago,
@@ -32,6 +36,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
     nameEstablishment: "",
     name: "",
     direction: "",
+    img: ''
   });
 
   const cleanfactura = () => {
@@ -110,12 +115,18 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
       console.error("Error saving data to localStorage:", error);
     }
   };
+  const formatCurrency = (value: number) => `${value?.toLocaleString("en-US")}`;
   useEffect(() => {
     typeInvoice === "quickSale" && setNuevaFactura();
     saveDataToLocalStorage("selectedItems", []);
     cleanfactura()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const heightPx = componentRef.current?.offsetHeight || 0;
+  const mmPerPx = 25.4 / 96; // 1in = 25.4mm, 1in = 96px
+  const heightMm = heightPx * mmPerPx;
+
 
   return (
     <>
@@ -155,20 +166,37 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           justifyContent: "space-around",
         }}
       >
-        <Button
+        <Box
           sx={{
-            width: "45%",
-            background: "#69EAE2",
-            color: "#1F1D2B",
-            fontFamily: "Nunito",
-            fontSize: "12px",
-            fontStyle: "normal",
-            fontWeight: 800,
-            lineHeight: "140%",
+            display: "flex",
+            justifyContent: "space-around",
+            mb: 1,
           }}
         >
-          TAMAÑO CARTA
-        </Button>
+          <Button
+            sx={{
+              width: "45%",
+              background: paperSize === "58mm" ? "#69EAE2" : "#ccc",
+              color: "#1F1D2B",
+              fontWeight: 800,
+            }}
+            onClick={() => setPaperSize("58mm")}
+          >
+            58 mm
+          </Button>
+          <Button
+            sx={{
+              width: "45%",
+              background: paperSize === "80mm" ? "#69EAE2" : "#ccc",
+              color: "#1F1D2B",
+              fontWeight: 800,
+            }}
+            onClick={() => setPaperSize("80mm")}
+          >
+            80 mm
+          </Button>
+        </Box>
+
         <Button
           onClick={handlePrint}
           sx={{
@@ -182,7 +210,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
             lineHeight: "140%",
           }}
         >
-          IMPRIMIRr
+          IMPRIMIR
         </Button>
       </Box>
       <Box
@@ -198,567 +226,580 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
         }}
       />
       <Box
+        ref={componentRef}
         id="factura"
         sx={{
-          margin: "0 auto",
-          width: "100%",
-          height: "100%",
-          backgroundImage: 'url("images/factura.svg")',
-          backgroundRepeat: "no-repeat",
-          backgroundSize: "cover",
-          backgroundPosition: "bootom",
-          filter: "brightness(1.2)",
+          transform:
+            paperSize === "58mm"
+              ? "scale(0.63)"
+              : paperSize === "80mm"
+                ? "scale(0.87)"
+                : "scale(1)",
+          transformOrigin: "top left", // importante para que no desplace
+          padding: "10px",
+          background: "#fff",
+          "@media print": {
+            "@page": {
+              size: (`${paperSize} ${Math.ceil(heightMm)}mm`),
+              margin: 0,
+            },
+            width: "92mm",
+          },
         }}
       >
-        <Box>
-          <Box
-            ref={componentRef}
-            sx={{
-              filter: "brightness(1.2)",
-              maxWidth: "22.25rem",
-              padding: "10px",
-              background: "#fff",
-              "@media print": {
-                "@page": {
-                  size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
-                    }px`,
-                },
-                width: "100%",
-              },
-            }}
-          >
-            <Box
-              sx={{
-                textAlign: "-webkit-center",
-                padding: "10px",
-                marginTop: "1rem",
-              }}
-            >
-              <Box sx={{ width: "16.1875rem" }}>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontFamily: "Nunito",
-                    fontSize: "1.5rem",
-                    fontStyle: "normal",
-                    fontWeight: 800,
-                    lineHeight: "110%",
-                  }}
-                >
-                  {establishmentData?.nameEstablishment?.toUpperCase() ?? ""}
-                </Typography>
-              </Box>
-              <Typography
-                sx={{
-                  color: "#000",
-                  fontSize: "0.8rem",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "140%",
-                }}
-              >
-                NIT:{establishmentData.NIT_CC}
+
+        <>
+          <Box sx={{ backgroundColor: "#fff", padding: "0px" }}>
+            <Box sx={{ textAlign: "center", mb: 2 }}>
+              {establishmentData.img && (
+                <Box
+                  component="img"
+                  src={establishmentData.img}
+                  sx={{ maxHeight: "120px", mb: 1 }}
+                />
+              )}
+              <Typography sx={facturaStyles.typographyTitle}>
+                {establishmentData.nameEstablishment}
               </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
-                  CELULAR:{establishmentData.phone}
-                </Typography>
-              </Box>
-              <Typography
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontSize: "0.8rem",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "140%",
-                }}
-              >
+              <Typography sx={facturaStyles.typographyNIT}>
+                NIT: {establishmentData.NIT_CC}
+              </Typography>
+              <Typography sx={facturaStyles.typographyNIT}>
+                CEL: {establishmentData.phone}
+              </Typography>
+              <Typography sx={facturaStyles.typographyNIT}>
                 {establishmentData.direction}
               </Typography>
             </Box>
-            <Box padding={1}>
-              <Typography
-                sx={{
-                  color: "#000",
-                  fontSize: "0.8rem",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "140%",
-                }}
-              >
-                Venta # {numeroFactura}
+
+            {/* Datos venta */}
+            <Box>
+              <Typography sx={facturaStyles.typographyVenta}>
+                Venta : {facturaData?.invoice ?? 'sin dato'}
               </Typography>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  borderTop: "solid",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
-                  {facturaData?.date}
-                </Typography>
-              </Box>
+              <Typography sx={facturaStyles.typographyVenta}>
+                {facturaData?.date}
+              </Typography>
               <Typography
                 sx={{
-                  width: "60%",
-                  color: "#000",
-                  fontSize: "0.85rem",
-                  fontStyle: "normal",
+                  ...facturaStyles.typographyVendedor,
                   fontWeight: 900,
-                  lineHeight: "140%",
+                  textTransform: "uppercase",
+                  fontSize: "1rem",
+                  color: "#000",
+                  fontFamily: "system-ui",
+                  letterSpacing: "0.00938em",
                 }}
               >
                 VENDEDOR:{" "}
-                <span
-                  style={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
+                <span style={facturaStyles.typographySpan}>
                   {establishmentData.name}
                 </span>
               </Typography>
-              <Divider sx={{ color: "#000" }} />
-              <Box>
-                <Box
-                  sx={{
-                    borderTop: "solid",
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#000",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      fontWeight: 800,
-                      lineHeight: "140%",
-                      marginTop: "8px",
-                    }}
-                  >
-                    CLIENTE:{" "}
-                    <span
-                      style={{
-                        color: "#000",
-                        fontSize: "0.8rem",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {facturaData?.cliente.name}
-                    </span>
-                  </Typography>
-                </Box>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 800,
-                    lineHeight: "140%",
-                    marginTop: "8px",
-                  }}
-                >
-                  CC/NIT:{" "}
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "140%",
-                    }}
-                  >
-                    {facturaData?.cliente.identificacion}
-                  </span>
-                </Typography>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      color: "#000",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      fontWeight: 800,
-                      lineHeight: "140%",
-                      marginTop: "3px",
-                    }}
-                  >
-                    DIRECCION:{" "}
-                    <span
-                      style={{
-                        color: "#000",
-                        fontSize: "0.8rem",
-                        fontStyle: "normal",
-                        fontWeight: 600,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {facturaData?.cliente.direccion}
-                    </span>
-                  </Typography>
-                </Box>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 800,
-                    lineHeight: "140%",
-                    marginTop: "3px",
-                  }}
-                >
-                  CELULAR:{" "}
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "140%",
-                    }}
-                  >
-                    {facturaData?.cliente.celular}
-                  </span>
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "0.8rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                    marginTop: "3px",
-                  }}
-                >
-                  EMAIL:{" "}
-                  <span
-                    style={{
-                      color: "#000",
-                      fontSize: "0.8rem",
-                      fontStyle: "normal",
-                      fontWeight: 700,
-                      lineHeight: "140%",
-                    }}
-                  >
-                    {facturaData?.cliente.email}
-                  </span>
-                </Typography>
-              </Box>
-              <Divider sx={{ color: "#000", marginTop: "8px" }} />
-              <Typography
-                sx={{
-                  color: "#000",
-                  textAlign: "center",
-                  fontSize: "0.8rem",
-                  fontStyle: "normal",
-                  fontWeight: 900,
-                  lineHeight: "140%",
-                  marginTop: "1rem",
-                }}
-              >
-                RESUMEN DE COMPRA
+              <Divider sx={{ my: 1 }} />
+              <Typography sx={facturaStyles.typographyVendedor}>
+                CLIENTE: {facturaData?.cliente?.name}
               </Typography>
-              <Box
-                mt={1}
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "0.7rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                  }}
-                >
-                  PRODUCTO
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "0.7rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                    marginLeft: "75px",
-                  }}
-                >
-                  UND
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "0.7rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                    marginRight: "5px",
-                  }}
-                >
-                  $VALOR
-                </Typography>
-              </Box>
-              <Box mt={1}>
-                {facturaData?.compra.map((product: any) => (
-                  <Box
-                    key={product.barCode}
-                    sx={{
-                      display: "flex",
-                      flexDirection: "row",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography
-                      sx={{
-                        color: "#000",
-                        fontSize: "0.8",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                        width: "10.2rem",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        textTransform: "uppercase",
-                      }}
-                    >
-                      {product.productName}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        color: "#000",
-                        textAlign: "center",
-                        fontSize: "0.8",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {product.cantidad}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        width: "70px",
-                        color: "#000",
-                        textAlign: "center",
-                        fontSize: "0.8",
-                        fontStyle: "normal",
-                        fontWeight: 700,
-                        lineHeight: "140%",
-                      }}
-                    >
-                      {`$ ${product.acc.toLocaleString("en-US")}`}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-              <Divider sx={{ color: "#000", marginTop: "8px" }} />
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: "8px",
-                  borderTop: "solid",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                  }}
-                >
-                  Sub Total
-                </Typography>
-
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
-                  {`$ ${facturaData?.subtotal.toLocaleString("en-US")}`}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: "3px",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                  }}
-                >
-                  Descuento
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
-                  {`$ ${facturaData?.descuento.toLocaleString("en-US")}`}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: "8px",
-                  borderBottom: "solid",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                  }}
-                >
-                  Cambio
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "1.1rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                  }}
-                >
-                  {`$ ${facturaData?.cambio > 0
-                    ? facturaData?.cambio?.toLocaleString("en-US")
-                    : 0
-                    }`}
-                </Typography>
-              </Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: "3px",
-                }}
-              >
-                <Typography
-                  sx={{
-                    color: "#000",
-                    textAlign: "center",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 900,
-                    lineHeight: "140%",
-                  }}
-                >
-                  Total
-                </Typography>
-                <Typography
-                  sx={{
-                    color: "#000",
-                    fontSize: "1rem",
-                    fontStyle: "normal",
-                    fontWeight: 700,
-                    lineHeight: "140%",
-                  }}
-                >
-                  {`$ ${facturaData?.total.toLocaleString("en-US")}`}
-                </Typography>
-              </Box>
-              <Typography
-                sx={{
-                  display: facturaData?.nota.length > 0 ? "flex" : "none",
-                  color: "#000",
-                  fontSize: "1rem",
-                  fontStyle: "normal",
-                  fontWeight: 700,
-                  lineHeight: "140%",
-                  justifyContent: "space-between",
-                }}
-              >
-                <span style={{ fontWeight: 900 }}>Nota:</span>{" "}
-                {`${facturaData?.nota ?? ""}`}
+              <Typography sx={facturaStyles.typographyVendedor}>
+                CC/NIT: {facturaData?.cliente?.identificacion}
               </Typography>
-              <Box sx={{ textAlign: "center", marginTop: "1.5rem" }}>
-                <svg id="barcode"></svg>
-              </Box>
-              <Divider sx={{ background: "#000", marginTop: "20px" }} />
-              <Typography sx={{ color: "#000", fontWeight: 700 }}>
-                Nombre:
+              <Typography sx={facturaStyles.typographyVendedor}>
+                DIRECCIÓN: {facturaData?.cliente?.direccion}
               </Typography>
-              <Typography sx={{ color: "#000", fontWeight: 700 }}>
-                Cedula:
+              <Typography sx={facturaStyles.typographyVendedor}>
+                CELULAR: {facturaData?.cliente?.celular}
+              </Typography>
+              <Typography sx={facturaStyles.typographyVendedor}>
+                EMAIL: {facturaData?.cliente?.email}
               </Typography>
             </Box>
+
+            {/* Tabla de productos */}
+            <Divider sx={{ my: 1 }} />
+            <Typography
+              sx={{ ...facturaStyles.typographyResumenCompra, textAlign: "center" }}
+            >
+              RESUMEN DE COMPRA
+            </Typography>
+
+            <TableContainer component={Paper} sx={{ boxShadow: "none" }}>
+              <Table size="small" sx={{ width: "98%", margin: " 0 auto" }}>
+                <TableHead>
+                  <TableRow>
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                    >
+                      <b>Detalle</b>
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                      align="right"
+                    >
+                      <b>V/Unit</b>
+                    </TableCell>
+                    <TableCell
+                      sx={{
+                        fontWeight: 900,
+                        textTransform: "uppercase",
+                        fontSize: "1rem",
+                        color: "#000",
+                        fontFamily: "system-ui",
+                        letterSpacing: "0.00938em",
+                      }}
+                      align="center"
+                    >
+                      <b>UND</b>
+                    </TableCell>
+                    {/* <TableCell align="right">
+                  <b>Descuento</b>
+                </TableCell> */}
+
+                    <TableCell
+                      sx={{
+                        color: "#000",
+                        fontSize: "1rem",
+                        fontWeight: 900,
+                      }}
+                      align="right"
+                    >
+                      <b>Total</b>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {facturaData?.compra?.map((item: any, index: number) => {
+                    const unit = item.acc / (item.cantidad > 0 ? item.cantidad : 1);
+                    return (
+                      <TableRow
+                        key={item.barCode}
+                        style={{
+                          background: index % 2 === 0 ? "#807e7e" : "#FFFFFF",
+                        }}
+                      >
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1.1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          padding={"none"}
+                          size={"small"}
+                        // variant={"head"}
+                        >
+                          {item.productName}
+                        </TableCell>
+                        <TableCell
+                          padding={"none"}
+                          size={"small"}
+                          // variant={"head"}
+                          align="right"
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1.1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                        >
+                          {item?.unitPrice ?? formatCurrency(unit)}
+                        </TableCell>
+                        <TableCell
+                          padding={"none"}
+                          size={"small"}
+                          // variant={"head"}
+                          align="center"
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1.1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                        >
+                          {item.cantidad}
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1.1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                            padding: '0 15px 0 0'
+                          }}
+                          padding={"none"}
+                          size={"small"}
+                          // variant={"head"}
+                          align="right"
+                        >
+                          {formatCurrency(item.acc)}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            {facturaData?.Devolucion?.length > 0 && (
+              <Box
+                sx={{
+                  background: "gray",
+                  padding: "2px",
+                }}
+              >
+                <Divider sx={{ my: 2 }} />
+                <Typography
+                  sx={{
+                    ...facturaStyles.typographyResumenCompra,
+                    textAlign: "center",
+                    color: "#000",
+                    fontWeight: 900,
+                    textTransform: "uppercase",
+                    fontSize: "1rem",
+                    fontFamily: "system-ui",
+                    letterSpacing: "0.00938em",
+                  }}
+                >
+                  DEVOLUCIÓN DE PRODUCTOS
+                </Typography>
+
+                <TableContainer
+                  component={Paper}
+                  sx={{ boxShadow: "none", background: "gray" }}
+                >
+                  <Table size="small" sx={{ width: "100%", fontWeight: 900 }}>
+                    <TableHead>
+                      <TableRow sx={{ fontWeight: 900 }}>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                        >
+                          <b>Detalle</b>
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          align="right"
+                        >
+                          <b>V/Unit</b>
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          align="center"
+                        >
+                          <b>UND</b>
+                        </TableCell>
+                        <TableCell
+                          sx={{
+                            fontWeight: 900,
+                            textTransform: "uppercase",
+                            fontSize: "1rem",
+                            color: "#000",
+                            fontFamily: "system-ui",
+                            letterSpacing: "0.00938em",
+                          }}
+                          align="right"
+                        >
+                          <b>Total</b>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {facturaData?.Devolucion.map((item: any, index: number) => {
+                        const unit = item.acc / item.cantidad;
+                        return (
+                          <TableRow
+                            sx={{
+                              fontWeight: 900,
+                              textTransform: "uppercase",
+                              fontSize: "1rem",
+                              color: "#000",
+                              fontFamily: "system-ui",
+                              letterSpacing: "0.00938em",
+                            }}
+                            key={item.barCode + "-devolucion-" + index}
+                          >
+                            <TableCell
+                              sx={{
+                                fontWeight: 900,
+                                textTransform: "uppercase",
+                                fontSize: "1rem",
+                                color: "#000",
+                                fontFamily: "system-ui",
+                                letterSpacing: "0.00938em",
+                              }}
+                            >
+                              {item.productName}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: 900,
+                                textTransform: "uppercase",
+                                fontSize: "1rem",
+                                color: "#000",
+                                fontFamily: "system-ui",
+                                letterSpacing: "0.00938em",
+                              }}
+                              align="right"
+                            >
+                              {formatCurrency(unit)}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: 900,
+                                textTransform: "uppercase",
+                                fontSize: "1rem",
+                                color: "#000",
+                                fontFamily: "system-ui",
+                                letterSpacing: "0.00938em",
+                              }}
+                              align="center"
+                            >
+                              {item.cantidad}
+                            </TableCell>
+                            <TableCell
+                              sx={{
+                                fontWeight: 900,
+                                textTransform: "uppercase",
+                                fontSize: "1rem",
+                                color: "#000",
+                                fontFamily: "system-ui",
+                                letterSpacing: "0.00938em",
+                              }}
+                              align="right"
+                            >
+                              {formatCurrency(item.acc)}
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+            )}
+
+            {/* Totales */}
+            <Divider sx={{ my: 1 }} />
+            <Box
+              sx={{
+                ...facturaStyles.typographyResumenCompra,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography>Subtotal:</Typography>
+              <Typography>{formatCurrency(facturaData?.subtotal ?? '0')}</Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginTop: "3px",
+              }}
+            >
+              <Typography
+                sx={{
+                  color: "#000",
+                  fontSize: "1rem",
+                  fontWeight: 900,
+                }}
+              >
+                DESCUENTO
+              </Typography>
+
+              <NumericFormat
+                value={facturaData?.descuento ?? 0}
+                onValueChange={(values) => {
+                  const { value } = values;
+
+                  if (setFacturaData) {
+                    const descuento = parseInt(value || "0", 10);
+                    const totalCalculado = Math.max(
+                      0,
+                      (facturaData?.subtotal ?? 0) - descuento
+                    );
+
+                    setFacturaData((prev: any) => ({
+                      ...prev,
+                      descuento,
+                      total: totalCalculado,
+                    }));
+                  }
+                }}
+                customInput={TextField}
+                thousandSeparator
+                prefix="$"
+                variant="standard"
+                sx={{
+                  width: 120,
+                  input: {
+                    textAlign: "right",
+                    fontWeight: 700,
+                    color: "#000",
+                  },
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                ...facturaStyles.typographyResumenCompra,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Typography>Cambio:</Typography>
+              <Typography>{formatCurrency(facturaData?.cambio ?? 0)}</Typography>
+            </Box>
+            {facturaData?.vrMixta && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <Box
+                  sx={{
+                    background: "#828181",
+                    borderRadius: "6px",
+                    padding: "6px",
+                    mb: 1,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontWeight: 800,
+                      color: "#69EAE2",
+                      textAlign: "center",
+                      fontSize: "0.95rem",
+                      mb: 0.5,
+                    }}
+                  >
+                    Detalle de pagos mixtos
+                  </Typography>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "0.85rem",
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 600 }}>Efectivo:</Typography>
+                    <Typography sx={{ fontWeight: 600 }}>
+                      $ {facturaData.vrMixta.efectivo?.toLocaleString("en-US")}
+                    </Typography>
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      fontSize: "0.85rem",
+                      mt: 0.5,
+                    }}
+                  >
+                    <Typography sx={{ fontWeight: 600 }}>Transferencia:</Typography>
+                    <Typography sx={{ fontWeight: 600 }}>
+                      $ {facturaData.vrMixta.transferencia?.toLocaleString("en-US")}
+                    </Typography>
+                  </Box>
+                </Box>
+              </>
+            )}
+
+            <Box
+              sx={{
+                ...facturaStyles.typographyResumenCompra,
+                display: "flex",
+                justifyContent: "space-between",
+                fontWeight: "bold",
+                mt: 1,
+              }}
+            >
+              <Typography>Total:</Typography>
+              <Typography
+                sx={{
+                  fontSize: "1rem",
+                  fontWeight: 900,
+                }}
+              >
+                {formatCurrency(facturaData?.total ?? '0')}
+              </Typography>
+            </Box>
+
+            {/* Nota */}
+            {facturaData?.nota?.length > 0 && (
+              <>
+                <Divider sx={{ my: 1 }} />
+                <Typography
+                  sx={{
+                    background: "#8080804d",
+                    marginTop: "#000 solid",
+                    display: facturaData?.nota?.length > 0 ? "flex" : "none",
+                    color: "#000",
+                    fontSize: "0.8rem",
+                    fontStyle: "normal",
+                    fontWeight: 700,
+                    lineHeight: "140%",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  Nota: <span style={{ fontWeight: 500 }}>{facturaData?.nota}</span>
+                </Typography>
+              </>
+            )}
+
+            {/* Código de barras */}
+            <Box sx={{ textAlign: "center", mt: 3 }}>
+              <svg id="barcode" style={{ width: "100%" }} />
+            </Box>
+
+            {/* Pie de página */}
+            <Divider sx={{ my: 2 }} />
+            <Typography align="center" sx={{ fontSize: "0.75rem", color: "#000" }}>
+              Generado con GO-POS - cel: 3144098591
+            </Typography>
           </Box>
-        </Box>
+        </>
       </Box>
     </>
   );

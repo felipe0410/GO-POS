@@ -4,7 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 interface HeaderProps {
   setOpen: (open: boolean) => void;
-  generarNumeroFactura: () => string;
+  generarNumeroFactura: string;
   totalUnidades: number;
 }
 
@@ -33,7 +33,7 @@ const Header: React.FC<HeaderProps> = ({
         lineHeight: "140%",
       }}
     >
-      VENTA # {generarNumeroFactura()}
+      VENTA # {generarNumeroFactura}
     </Typography>
     <Box
       sx={{
