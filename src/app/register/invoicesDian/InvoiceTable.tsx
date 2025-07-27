@@ -119,6 +119,13 @@ const InvoiceTable = ({
     setPdfPreviewUrl(null);
   };
 
+  const generarEnlaceWhatsApp = (urlPDF: string, mensaje?: string) => {
+    const texto = mensaje
+      ? `${mensaje}\n${urlPDF}`
+      : `Aquí tienes tu factura en PDF:\n${urlPDF}`;
+    return `https://wa.me/?text=${encodeURIComponent(texto)}`;
+  };
+
   return (
     <Box
       sx={{
@@ -257,9 +264,24 @@ const InvoiceTable = ({
             ></iframe>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClosePdfPreview} color="primary">
-              Cerrar
-            </Button>
+            <Box sx={{
+              display: 'flex',
+              justifyContent: 'space-around',
+              width:'100%'
+            }}>
+              <Button onClick={handleClosePdfPreview} color="primary">
+                Cerrar
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                href={generarEnlaceWhatsApp(pdfPreviewUrl)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Compartir por WhatsApp
+              </Button>
+            </Box>
           </DialogActions>
         </Dialog>
       )}
