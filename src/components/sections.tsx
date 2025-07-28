@@ -268,3 +268,42 @@ export const gastrobarSections = [
     ],
   },
 ];
+
+export const permissionMap: any = {
+  Vender: ["/vender", "/vender/Dian", "/vender/Normal", "/vender/Devolucion"],
+  Inventario: [
+    "/inventory/productos",
+    "/inventory/agregarProductos",
+    "inventory/stock",
+  ],
+  Caja: [
+    "/register/invoices",
+    "/register/dashboard",
+    "/register/invoicesDian",
+    '/register/dashboardProductos',
+  ],
+  Ajustes: [
+    //"/settings/user",
+    //"/settings/employees",
+    "/settings/establisment",
+    "/settings/dian",
+  ],
+  Directorio: ["/contacts/proveedores", "/contacts/clientes"],
+  Contacts: [
+    "/contacts/proveedores",
+    "/contacts/clientes",
+  ],
+  //__________________gastrobares______________________
+  PEDIDOS: [
+    "/gastrobares/pedido",
+  ],
+  ZONAS: [
+    "/gastrobares/zonas",
+  ],
+  COCINA: [
+    "/gastrobares/cocina",
+  ],
+  PAGAR: [
+    '/gastrobares/pagar'
+  ]
+};

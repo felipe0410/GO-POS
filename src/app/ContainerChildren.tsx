@@ -2,11 +2,11 @@
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "./globalContex";
 import { Box, Typography } from "@mui/material";
-import Sidebar from "@/components/Sidebar";
 import { keyframes } from "@emotion/react";
 import HeaderAppBar from "./AppBar";
 import { Amplify } from "aws-amplify";
 import awsconfig from "./aws-exports";
+import Sidebar from "@/components/slidebar_optimice";
 //import PrimarySearchAppBar from "./PrimarySearchAppBar";
 
 const ContainerChildren = ({
@@ -16,7 +16,11 @@ const ContainerChildren = ({
   childrenn: any;
   validationRoutes: any;
 }) => {
-  const { isOpen, setIsOpen, cookies } = useContext(GlobalContext) || {};
+  const { isOpen, setIsOpen, cookies } = useContext(GlobalContext) || {
+    isOpen: false,
+    setIsOpen: () => { },
+    cookies: {},
+  };
   const [validation, setValidation] = useState(false);
   const validationCookie = cookies?.user?.length > 0;
 

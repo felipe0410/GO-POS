@@ -37,6 +37,8 @@ export const GlobalContextProvider: React.FC<GlobalContextProviderProps> = ({
     localStorage.removeItem('products_cache')
     localStorage.removeItem('dianRecord')
     localStorage.removeItem('settingsData')
+    localStorage.removeItem('modulesCache')
+    localStorage.removeItem('modulesCacheTTL')
     window.location.href = "/sign_in";
   };
   useEffect(() => {
