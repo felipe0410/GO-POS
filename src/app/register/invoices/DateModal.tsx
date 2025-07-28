@@ -10,7 +10,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import ReactCalendar from "./ReactCalendar";
 
 const style = {
-  position: "absolute" as "absolute",
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
@@ -22,13 +22,13 @@ const style = {
   textAlign: "-webkit-center",
 };
 
-const DateModal = ({
-  setSearchTerm,
-  setSelectedDate,
-}: {
-  setSearchTerm: any;
-  setSelectedDate: any;
-}) => {
+type Props = {
+  setSearchTerm: (value: any) => void;
+  selectedDate: any;
+  setSelectedDate: (value: any) => void;
+};
+
+const DateModal = ({ setSearchTerm, selectedDate, setSelectedDate }: Props) => {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -39,19 +39,16 @@ const DateModal = ({
         <CalendarMonthIcon sx={{ color: "#69EAE2" }} />
       </Button>
       <Modal
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
         slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            timeout: 500,
-          },
-        }}
+        slotProps={{ backdrop: { timeout: 500 } }}
+        aria-labelledby="calendar-modal-title"
+        aria-describedby="calendar-modal-description"
       >
         <Fade
+          in={open}
           style={{
             borderRadius: "40px",
             background: "#1F1D2B",
@@ -59,39 +56,18 @@ const DateModal = ({
               "0px 1px 100px -50px #69EAE2, 0px 4px 250px -50px #69EAE2",
             borderColor: "transparent",
           }}
-          in={open}
         >
-          <Box
-            sx={{
-              ...style,
-              maxHeight: "90%",
-              overflowY: "auto",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                zIndex: 4,
-              }}
-            >
-              <Button
-                sx={{ padding: "8px 3px" }}
-                onClick={() => {
-                  handleClose();
-                }}
-              >
-                <CloseIcon
-                  fontSize="large"
-                  sx={{ color: "#F8F8F8", fontSize: "20px" }}
-                />
+          <Box sx={{ ...style, maxHeight: "90%", overflowY: "auto" }}>
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Button sx={{ p: "8px 3px" }} onClick={handleClose}>
+                <CloseIcon sx={{ color: "#F8F8F8", fontSize: "20px" }} />
               </Button>
             </Box>
             <ReactCalendar
               setSearchTerm={setSearchTerm}
               handleClose={handleClose}
               setSelectedDate={setSelectedDate}
-              selectedDate={undefined}
+              selectedDate={selectedDate}
             />
           </Box>
         </Fade>

@@ -18,7 +18,6 @@ export default function ReactCalendar({
   selectedDate: any;
 }) {
   const [dateTabs, setDateTabs] = React.useState<any>(null);
-  console.log("dateTabs::>", dateTabs);
   const [selectedDates, setSelectedDates] = React.useState<any>(null);
   const [buttonOn, setButtonOn] = React.useState<boolean>(false);
 
@@ -51,6 +50,7 @@ export default function ReactCalendar({
     if (selectedDate?.length > 0) {
       setDateTabs(selectedDate);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

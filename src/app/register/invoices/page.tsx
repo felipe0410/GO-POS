@@ -27,6 +27,7 @@ import { getAllInvoicesDataOptimice } from "@/firebase";
 import InvoicesTableResponsive from "./InvoicesTableResponsive";
 import DateModal from "./DateModal";
 import DashboardCards from "./DashboardCards";
+import { isInRange, matchesSearchTerm, matchesStatus, matchesType, getVentasDelDia, getPendientesDelDia, calcularTotalesMetodoPago } from "./invoiceUtils";
 
 const Invoices = () => {
   const [statusFilter, setStatusFilter] = useState<string>("Todos");
@@ -48,6 +49,8 @@ const Invoices = () => {
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
   const [totalVentasPendientesHoy, setTotalVentasPendientesHoy] = useState(0);
   const [totalVentasEfectivo, setTotalVentasEfectivo] = useState<number>(0);
+  const [selectedDates, setSelectedDates] = useState<any>(null);
+
   const [totalVentasTransferencia, setTotalVentasTransferencia] =
     useState<number>(0);
 
@@ -78,109 +81,35 @@ const Invoices = () => {
   };
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || data.length === 0) return;
 
-    let filteredData = [...data];
+    const currentDate = getCurrentDateTime();
 
-    // Filtrar por rango de fechas
-    if (Array.isArray(searchTerm) && searchTerm.length === 2) {
-      const [fechaInicio, fechaFin] = searchTerm;
-      filteredData = filteredData.filter((item) => {
-        const [fecha] = item.date.split(" ");
-        return fecha >= fechaInicio && fecha <= fechaFin;
-      });
-    }
-
-    // Filtro de búsqueda general
-    if (searchTerm && typeof searchTerm === "string") {
-      const lowerSearchTerm = searchTerm.toLowerCase();
-      filteredData = filteredData.filter(
-        (item) =>
-          item?.cliente?.name?.toLowerCase().includes(lowerSearchTerm) ||
-          String(item?.invoice).toLowerCase().includes(lowerSearchTerm) ||
-          String(item?.status).toLowerCase().includes(lowerSearchTerm)
-      );
-    }
-
-    // Filtro por estado
-    if (statusFilter && statusFilter !== "Todos") {
-      filteredData = filteredData.filter(
-        (item) => item.status.toUpperCase() === statusFilter.toUpperCase()
-      );
-    }
-
-    // Filtro por tipo de factura
-    if (typeFilter && typeFilter !== "Todos") {
-      filteredData = filteredData.filter(
-        (item) =>
-          (item.typeInvoice?.toUpperCase() || "FACTURA NORMAL") ===
-          typeFilter.toUpperCase()
-      );
-    }
-
-    setfilter(filteredData);
-
-    // Filtrar ventas del día que NO están pendientes
-    const ventasHoy = data.filter((item) => {
-      const [fecha] = item.date.split(" ");
+    const filtered = data.filter((factura) => {
+      const [fecha] = factura.date.split(" ");
       return (
-        fecha === getCurrentDateTime() &&
-        item.status.toUpperCase() !== "PENDIENTE"
+        isInRange(fecha, searchTerm) &&
+        matchesSearchTerm(factura, searchTerm) &&
+        matchesStatus(factura, statusFilter) &&
+        matchesType(factura, typeFilter)
       );
     });
 
-    // Calcular total de ventas de hoy
-    const totalVentas =
-      ventasHoy.reduce((total, factura) => total + factura.total, 0) || 0;
-    setTotalVentasHoy(totalVentas);
+    setfilter(filtered);
 
-    // Filtrar ventas del día que ESTÁN pendientes
-    const ventasPendientesHoy = data.filter((item) => {
-      const [fecha] = item.date.split(" ");
-      return (
-        fecha === getCurrentDateTime() &&
-        item.status.toUpperCase() === "PENDIENTE"
-      );
-    });
+    const ventasHoy = getVentasDelDia(data, currentDate);
+    setTotalVentasHoy(ventasHoy.reduce((acc, f) => acc + f.total, 0));
 
-    // Calcular total de ventas pendientes del día
-    const totalVentasPendientes =
-      ventasPendientesHoy.reduce(
-        (total, factura) => total + factura.total,
-        0
-      ) || 0;
-    setTotalVentasPendientesHoy(totalVentasPendientes);
+    const pendientesHoy = getPendientesDelDia(data, currentDate);
+    setTotalVentasPendientesHoy(
+      pendientesHoy.reduce((acc, f) => acc + f.total, 0)
+    );
 
-    // 🔹 **Cálculo de Ventas por Método de Pago**
-
-    const totalEfectivo =
-      ventasHoy.reduce((total, factura) => {
-        if (!factura.paymentMethod || factura.paymentMethod.toUpperCase() === "EFECTIVO") {
-          // Si no hay método o es EFECTIVO, suma todo
-          return total + factura.total;
-        } else if (factura.paymentMethod.toUpperCase() === "MIXTO" && factura.vrMixta?.efectivo) {
-          // Si es mixto, suma solo la parte en efectivo
-          return total + factura.vrMixta.efectivo;
-        }
-        return total;
-      }, 0) || 0;
-
-    const totalTransferencia =
-      ventasHoy.reduce((total, factura) => {
-        if (factura.paymentMethod?.toUpperCase() === "TRANSFERENCIA") {
-          // Si es solo transferencia, suma todo
-          return total + factura.total;
-        } else if (factura.paymentMethod?.toUpperCase() === "MIXTO" && factura.vrMixta?.transferencia) {
-          // Si es mixto, suma solo la parte en transferencia
-          return total + factura.vrMixta.transferencia;
-        }
-        return total;
-      }, 0) || 0;
-      
-    setTotalVentasEfectivo(totalEfectivo);
-    setTotalVentasTransferencia(totalTransferencia);
-
+    const { efectivo, transferencia } = calcularTotalesMetodoPago(ventasHoy);
+    setTotalVentasEfectivo(efectivo);
+    setTotalVentasTransferencia(transferencia);
   }, [data, searchTerm, statusFilter, typeFilter]);
+
 
   useEffect(() => {
     const [fechaInicio, fechaFin] = Array.isArray(selectedDate)
@@ -280,7 +209,7 @@ const Invoices = () => {
                 <DateModal
                   setSearchTerm={setSearchTerm}
                   setSelectedDate={setSelectedDate}
-                />
+                  selectedDate={setSelectedDates} />
               </Paper>
               {/* Filtro de Estado */}
               <FormControl
