@@ -5,7 +5,6 @@ import { getEstablishmentData, getInvoiceData, handleGuardarDevolucion } from "@
 import { DocumentData } from "firebase/firestore";
 import JsBarcode from "jsbarcode";
 import { useReactToPrint } from "react-to-print";
-import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import { NumericFormat } from "react-number-format";
 import { facturaStyles } from "../register/invoices/styles";
 
@@ -229,21 +228,14 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
         ref={componentRef}
         id="factura"
         sx={{
-          transform:
-            paperSize === "58mm"
-              ? "scale(0.63)"
-              : paperSize === "80mm"
-                ? "scale(0.87)"
-                : "scale(1)",
           transformOrigin: "top left", // importante para que no desplace
           padding: "10px",
           background: "#fff",
           "@media print": {
             "@page": {
-              size: (`${paperSize} ${Math.ceil(heightPx)}px`),
-              margin: 0,
+              size: (`92mm ${Math.ceil(heightPx)}px`),
+              margin: 2,
             },
-            width: "94mm",
           },
         }}
       >
@@ -349,7 +341,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                       }}
                       align="right"
                     >
-                      <b>V/Unit</b>
+                      <b>V/U</b>
                     </TableCell>
                     <TableCell
                       sx={{
@@ -514,7 +506,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
                           }}
                           align="right"
                         >
-                          <b>V/Unit</b>
+                          <b>V/U</b>
                         </TableCell>
                         <TableCell
                           sx={{
