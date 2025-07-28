@@ -240,7 +240,7 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
           background: "#fff",
           "@media print": {
             "@page": {
-              size: (`${paperSize} ${Math.ceil(heightMm)}mm`),
+              size: (`${paperSize} ${Math.ceil(heightPx)}px`),
               margin: 0,
             },
             width: "94mm",
