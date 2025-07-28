@@ -168,7 +168,6 @@ const Sidebar: React.FC<SidebarProps> = ({ open, setOpen }) => {
         if (userData) setDataUser(JSON.parse(userData));
     }, []);
 
-    if (!modulesLoaded) return;
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />

@@ -1097,6 +1097,32 @@ export const fixInvoicesAddDate = async () => {
 };
 
 
+export const getAllInvoicesDataOptimice = (callback: (data: any[]) => void) => {
+  try {
+    const establecimientoDocRef = doc(
+      db,
+      "establecimientos",
+      `${user().decodedString}`
+    );
+    const invoiceCollectionRef = collection(establecimientoDocRef, "invoices");
+    const orderedQuery = query(invoiceCollectionRef, orderBy("date", "desc"));
+
+    // Se establece una única escucha en tiempo real
+    const unsubscribe = onSnapshot(orderedQuery, (querySnapshot) => {
+      const invoiceData = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      callback(invoiceData);
+    });
+
+    return unsubscribe;
+  } catch (error) {
+    console.error("❌ Error al establecer el observer de facturas:", error);
+    return null;
+  }
+};
+
 export const getAllInvoicesData = async (callback: any) => {
   try {
     const establecimientoDocRef = doc(

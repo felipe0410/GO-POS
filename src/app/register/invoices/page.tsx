@@ -15,7 +15,6 @@ import {
   useTheme,
 } from "@mui/material";
 import {
-  BoxStyles,
   typographyPaperSearch,
   typographySubtitle,
   typographyTitle,
@@ -24,7 +23,7 @@ import debounce from "debounce";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import InvoicesTable from "./InvoicesTable";
-import { getAllInvoicesData } from "@/firebase";
+import { getAllInvoicesDataOptimice } from "@/firebase";
 import InvoicesTableResponsive from "./InvoicesTableResponsive";
 import DateModal from "./DateModal";
 import DashboardCards from "./DashboardCards";
@@ -63,7 +62,7 @@ const Invoices = () => {
   useEffect(() => {
     const getAllInvoices = async () => {
       try {
-        await getAllInvoicesData(setData);
+        await getAllInvoicesDataOptimice(setData);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -227,57 +226,6 @@ const Invoices = () => {
             />
           }
         </>
-        {/* <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: { md: "center", xs: "center" },
-            marginTop: { md: "10px", xs: "10px" },
-          }}
-        >
-          <Box sx={{ textAlign: "start", marginRight: "20px" }}>
-            <Typography
-              variant="caption"
-              sx={BoxStyles.typographyCaptionStyles}
-            >
-              {`Fecha: ${getCurrentDateTime()}`}
-            </Typography>
-            <Box sx={BoxStyles.boxGreen}>
-              <Typography sx={BoxStyles.typographyBoxStyles}>
-                {`$ ${totalVentasHoy.toLocaleString("en-US")}`}
-              </Typography>
-            </Box>
-          </Box>
-          <Box sx={{ textAlign: "start", marginRight: "20px" }}>
-            <Typography
-              variant="caption"
-              sx={BoxStyles.typographyCaptionStyles}
-            >
-              {`Pendiente hoy`}
-            </Typography>
-            <Box sx={BoxStyles.boxGreen}>
-              <Typography
-                sx={{ ...BoxStyles.typographyBoxStyles, paddingRight: "10px" }}
-              >
-                {`$ ${totalVentasPendientesHoy.toLocaleString("en-US")}`}
-              </Typography>
-            </Box>
-          </Box>
-
-          <Box sx={{ textAlign: "start", minWidth: "5rem" }}>
-            <Typography
-              variant="caption"
-              sx={BoxStyles.typographyCaptionStyles}
-            >
-              {`Fecha: ${selectedDate ? selectedDate : " "}`}
-            </Typography>
-            <Box sx={BoxStyles.boxOrange}>
-              <Typography sx={BoxStyles.typographyBoxStyles}>
-                {`$ ${totalVentasFecha.toLocaleString("en-US")}`}
-              </Typography>
-            </Box>
-          </Box>
-        </Box> */}
       </Box>
       <Paper
         id={"paper"}
