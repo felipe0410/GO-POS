@@ -12,6 +12,7 @@ import { Typography } from "@mui/material";
 import jsPDF from "jspdf";
 import InvoiceLetter from "./invoiceLetter";
 import html2canvas from "html2canvas";
+import { InvoiceHistory } from "./InvoiceHistory";
 
 const style = {
   position: "absolute" as "absolute",
@@ -51,7 +52,7 @@ const ModalInvoiceLetter = ({ data }: { data: any }) => {
     pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
 
     // Guardar el PDF con el nombre deseado
-    pdf.save(`${data?.cliente?.name??'venta-rapida'}_${date}.pdf`);
+    pdf.save(`${data?.cliente?.name ?? 'venta-rapida'}_${date}.pdf`);
   };
 
   const handlePrint = useReactToPrint({
@@ -109,14 +110,20 @@ const ModalInvoiceLetter = ({ data }: { data: any }) => {
                 />
               </Button>
             </Box>
+            <Box>
+              <InvoiceHistory
+                manifest={Array.isArray(data?.manifest) ? data.manifest : []}
+                modifiedAt={data?.modifiedAt}
+                lastModifiedBy={data?.lastModifiedBy}
+              />
+            </Box>
             <Box
               ref={componentRef}
               sx={{
                 "@media print": {
                   "@page": {
-                    size: `${componentRef?.current?.clientWidth}px ${
-                      componentRef?.current?.clientHeight * 1.1
-                    }px`,
+                    size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
+                      }px`,
                   },
                   width: "100%",
                 },

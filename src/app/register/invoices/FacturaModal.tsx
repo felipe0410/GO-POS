@@ -11,6 +11,7 @@ import Factura from "./Factura";
 import { useReactToPrint } from "react-to-print";
 import { Typography } from "@mui/material";
 import jsPDF from "jspdf";
+import { InvoiceHistory } from "./InvoiceHistory";
 
 const style = {
   position: "absolute" as "absolute",
@@ -101,21 +102,30 @@ const FacturaModal = ({ data }: { data: any }) => {
                 />
               </Button>
             </Box>
-            <Box
-              ref={componentRef}
-              sx={{
-                "@media print": {
-                  "@page": {
-                    size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
-                      }px`,
+            <Box >
+              <Box>
+                <InvoiceHistory
+                  manifest={Array.isArray(data?.manifest) ? data.manifest : []}
+                  modifiedAt={data?.modifiedAt}
+                  lastModifiedBy={data?.lastModifiedBy}
+                />
+              </Box>
+              <Box
+                ref={componentRef}
+                sx={{
+                  "@media print": {
+                    "@page": {
+                      size: `${componentRef?.current?.clientWidth}px ${componentRef?.current?.clientHeight * 1.1
+                        }px`,
+                    },
+                    width: "100%",
                   },
-                  width: "100%",
-                },
-              }}
-            >
-              <Factura data={data} setFacturaData={function (value: any): void {
-                throw new Error("Function not implemented.");
-              }} />
+                }}
+              >
+                <Factura data={data} setFacturaData={function (value: any): void {
+                  throw new Error("Function not implemented.");
+                }} />
+              </Box>
             </Box>
             <Box
               sx={{

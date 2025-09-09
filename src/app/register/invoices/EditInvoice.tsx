@@ -10,12 +10,34 @@ import {
   Typography,
 } from "@mui/material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { editStyles, selectStyle } from "./styles";
 import Factura from "./Factura";
 import { updateInvoice } from "@/firebase";
 import { SnackbarProvider, enqueueSnackbar } from "notistack";
 import EditProducts from "./EditProducts";
+import { getHoraColombia } from "@/components/Hooks/hooks";
+import { Timestamp } from "firebase/firestore";
+
+const setDeep = (obj: any, path: string, value: any) => {
+  const parts = path.split(".");
+  let cur = obj;
+  for (let i = 0; i < parts.length - 1; i++) {
+    const k = parts[i];
+    if (!cur[k] || typeof cur[k] !== "object") cur[k] = {};
+    cur = cur[k];
+  }
+  cur[parts[parts.length - 1]] = value;
+};
+const formatDateColString = (d: Date) => {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const y = d.getFullYear();
+  const m = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const h = pad(d.getHours());
+  const min = pad(d.getMinutes());
+  return `${y}-${m}-${day} ${h}:${min}`;
+};
 
 const EditInvoice = ({
   rowData,
@@ -45,9 +67,10 @@ const EditInvoice = ({
     cambio: 0,
     uid: "",
     paymentMethod: "",
+    lastModified: ""
   });
   const [editProducts, setEditProducts] = useState(false);
-
+  const originalRef = useRef<any>(null);
   type ClienteKeys = keyof typeof data.cliente;
 
   type InvoiceInput = {
@@ -96,7 +119,16 @@ const EditInvoice = ({
   };
 
   const handleSelectChange = (event: any) => {
-    setData({ ...data, status: event.target.value });
+    const newStatus = event.target.value;
+    setData((prev) => {
+      let next = { ...prev, status: newStatus };
+      // PENDIENTE -> CANCELADO: fecha actual
+      if (prev.status !== "CANCELADO" && newStatus === "CANCELADO") {
+        const now = getHoraColombia();
+        next.date = formatDateColString(now);
+      }
+      return next;
+    });
   };
 
   const inputOnChange = (field: ClienteKeys, value: string) => {
@@ -108,30 +140,110 @@ const EditInvoice = ({
       },
     }));
   };
+  useEffect(() => {
+    setData(rowData);
+    originalRef.current = rowData; // <-- snapshot original
+  }, [rowData]);
+
 
   const handleUpdateInvoice = async (uid: string, invoiceData: any) => {
     try {
-      await updateInvoice(uid, invoiceData);
+      const prev = originalRef.current ?? {};
+      const next = invoiceData;
+
+      // 1) Calcula diffs como ya lo haces
+      const changes: any[] = diffInvoice(prev, next);
+      if (changes.length === 0) {
+        enqueueSnackbar("Sin cambios por guardar", {
+          variant: "info",
+          anchorOrigin: { vertical: "bottom", horizontal: "right" },
+          onExited: handleBack,
+        });
+        return;
+      }
+
+      // 2) Hora local (tu util) y "quién" desde localStorage
+      const tsDate = getHoraColombia();
+      const ts = Timestamp.fromDate(tsDate);
+      const who =
+        JSON.parse(localStorage.getItem("dataUser") || "{}")?.name ?? "sistema";
+
+      // 3) Construye lastModified nuevo (respetando el existente si lo hay)
+      const lastModifiedNext = JSON.parse(
+        JSON.stringify(data?.lastModified || {})
+      );
+      for (const ch of changes) {
+        // Marca la última fecha por cada campo cambiado
+        setDeep(lastModifiedNext, ch.field, ts);
+      }
+
+      // 4) Construye el nuevo manifest (append)
+      const manifestPrev = Array.isArray((data as any).manifest)
+        ? (data as any).manifest
+        : [];
+      const manifestEntry = { by: who, at: ts, changes };
+      const manifestNext = [...manifestPrev, manifestEntry];
+
+      // 5) Arma el payload final SIN tocar tu lógica interna (tu updateInvoice lo envía tal cual)
+      const payload = {
+        ...next,
+        modifiedAt: ts,
+        lastModifiedBy: who,
+        lastModified: lastModifiedNext,
+        manifest: manifestNext,
+      };
+
+      // 6) Llama tu MISMA función (sin modificarla)
+      await updateInvoice(uid, payload);
+
+      // Actualiza el original para próximos diffs
+      originalRef.current = payload;
+
       enqueueSnackbar("Cambios guardados con éxito", {
         variant: "success",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
+        anchorOrigin: { vertical: "bottom", horizontal: "right" },
         onExited: handleBack,
       });
     } catch (error) {
+      console.error(error);
       enqueueSnackbar("Error al guardar cambios", {
         variant: "error",
-        anchorOrigin: {
-          vertical: "bottom",
-          horizontal: "right",
-        },
+        anchorOrigin: { vertical: "bottom", horizontal: "right" },
       });
-      console.error(error);
     }
   };
 
+
+  const get = (obj: any, path: string) =>
+    path.split(".").reduce((acc, k) => (acc ? acc[k] : undefined), obj);
+  const diffInvoice = (prev: any, next: any) => {
+    const FIELDS = [
+      "status",
+      "paymentMethod",
+      "cliente.name",
+      "cliente.direccion",
+      "cliente.email",
+      "cliente.identificacion",
+      "cliente.celular",
+      "subtotal",
+      "descuento",
+      "total",
+      "cambio",
+      // Si luego habilitas edición de productos, puedes registrar un resumen:
+      // "compra"  // y haces una comparación custom (ver tip abajo)
+    ];
+    const normalize = (v: any) => (typeof v === "string" ? v.trim() : v);
+    const changes: any[] = [];
+
+    for (const path of FIELDS) {
+      const before = get(prev ?? {}, path);
+      const after = get(next ?? {}, path);
+      if (JSON.stringify(normalize(before)) !== JSON.stringify(normalize(after))) {
+        changes.push({ field: path, from: before ?? null, to: after ?? null });
+      }
+    }
+    return changes;
+  };
   useEffect(() => {
     setData(rowData);
   }, [rowData]);
