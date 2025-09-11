@@ -44,11 +44,21 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
     setDialogOpen(true);
   };
 
-  const handleSaveQuantity = async (quantity: number) => {
+
+  type SavePayload = {
+    quantity: number;
+    category: string;
+    proveedoresNits: string[];
+  };
+
+  const handleSaveQuantity = async ({ quantity, category, proveedoresNits }: SavePayload) => {
     if (selectedProduct) {
       // Actualizar la cantidad óptima en la base de datos
       await updateProductData(selectedProduct.barCode, {
         optimice_cant: quantity,
+        category: category ?? selectedProduct.category,
+        proveedores: proveedoresNits ?? selectedProduct.proveedores
+
       });
       setDialogOpen(false);
     }
@@ -291,12 +301,17 @@ const ProductsTable: React.FC<ProductsTableProps> = ({
         />
       </Box>
       {selectedProduct && (
-        <OptimalQuantityDialog
-          open={dialogOpen}
-          onClose={() => setDialogOpen(false)}
-          onSave={handleSaveQuantity}
-          productName={selectedProduct.productName}
-        />
+        <>
+          <OptimalQuantityDialog
+            open={dialogOpen}
+            onClose={() => setDialogOpen(false)}
+            onSave={handleSaveQuantity}
+            productName={selectedProduct.productName}
+            initialQuantity={selectedProduct.optimice_cant}
+            initialCategory={selectedProduct.category}
+            initialProveedores={selectedProduct.proveedores}
+          />
+        </>
       )}
     </Box>
   );
