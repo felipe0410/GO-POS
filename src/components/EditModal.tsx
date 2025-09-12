@@ -100,14 +100,36 @@ const ModalContent = styled(Paper)(
     border-radius: 0.625rem;
     padding: 24px;
     width: 48.6875rem;
-    height: 45rem;
+    height: 55rem;
   `
 );
+
+
+const toNumber = (v: any) => Number(String(v ?? 0).replace(/[^\d.-]/g, "")) || 0;
+const round2 = (n: number) => Math.round(n * 100) / 100;
+const calcPorcentaje = (venta: number, compra: number) => {
+  if (compra <= 0) return 0;
+  return ((venta - compra) / compra) * 100;
+};
+// precio de venta sugerido con base en % ganancia
+const priceFromPercent = (cost: number, percent: number) => {
+  return cost * (1 + (percent || 0) / 100);
+};
+
+// Redondeo al múltiplo de 500 más cercano
+const roundToNearest500 = (n: number) => Math.round(n / 500) * 500;
+
+// Locale de formateo (por defecto en-US = "80,000").
+// Si prefieres puntos tipo "80.000", cambia a "es-CO".
+const LOCALE = "en-US"; // o "es-CO"
+const formatPrice = (n: number) => `$ ${new Intl.NumberFormat(LOCALE).format(n)}`;
+
 
 export default function EditModal(props: any) {
   const { data } = props;
   const [open, setOpen] = React.useState(false);
   const [product, setProduct] = React.useState(data);
+  const [useRound500, setUseRound500] = React.useState(false);
   const [upload, setUpload] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [imageBase64, setImageBase64] = React.useState("");
@@ -116,6 +138,15 @@ export default function EditModal(props: any) {
   const [productExist, setProductExist] = React.useState(false);
   const fileRef = React.useRef<HTMLInputElement>(null);
   const [abrirHistorial, setAbrirHistorial] = React.useState<any>(false);
+  // Inicializa tomando el guardado o calculándolo con los valores actuales
+  const [porcentajeGanancia, setPorcentajeGanancia] = React.useState<number>(() => {
+    const venta = toNumber(data?.price);
+    const compra = toNumber(data?.purchasePrice);
+    return data?.porcentajeGanancia ?? calcPorcentaje(venta, compra);
+  });
+
+  // Evita re-guardar en bucle
+  const autoSavedRef = React.useRef(false);
   const previousImageUrlRef = React.useRef<string | null>(null);
 
   const uploadImage = (fileRef: React.RefObject<HTMLInputElement>) => {
@@ -273,6 +304,27 @@ export default function EditModal(props: any) {
   const handleClose = () => {
     setOpen(false);
   };
+  React.useEffect(() => {
+    if (autoSavedRef.current) return;
+
+    const venta = toNumber(product?.price);
+    const compra = toNumber(product?.purchasePrice);
+    const yaExiste = product?.porcentajeGanancia !== undefined && product?.porcentajeGanancia !== null;
+
+    if (!yaExiste && compra > 0 && venta > 0) {
+      const pct = round2(calcPorcentaje(venta, compra));
+      const payload = { ...product, porcentajeGanancia: pct };
+
+      // Actualiza UI local
+      setProduct(payload);
+      setPorcentajeGanancia(pct);
+
+      // Guarda automáticamente en la DB una sola vez
+      updateProductData(product.uid, payload)
+        .then(() => { autoSavedRef.current = true; })
+        .catch((e) => { console.error("No se pudo auto-guardar porcentajeGanancia:", e); });
+    }
+  }, [product?.price, product?.purchasePrice, product?.porcentajeGanancia, product?.uid]);
 
   return (
     <Box>
@@ -598,7 +650,7 @@ export default function EditModal(props: any) {
                         }));
                       }}
                       placeholder="Precio"
-                      value={data.price}
+                      value={product.price ?? ""}
                       prefix='$ '
                       thousandSeparator
                       customInput={OutlinedInput}
@@ -634,7 +686,7 @@ export default function EditModal(props: any) {
                         }));
                       }}
                       placeholder="Precio de compra"
-                      value={data.purchasePrice}
+                      value={product.purchasePrice ?? ""}
                       prefix='$ '
                       thousandSeparator
                       customInput={OutlinedInput}
@@ -722,17 +774,120 @@ export default function EditModal(props: any) {
                 })}
               </Box>
             </Box>
+            <>
+              <Box
+                sx={{
+                  width: "100%",
+                  mt: 2,
+                  p: 1.5,
+                  borderRadius: "0.625rem",
+                  background: "#FFFFFF",
+                  boxShadow: "0px 4px 8px rgba(0,0,0,0.15)",
+                }}
+              >
+                <Typography sx={{ fontFamily: "Nunito", fontWeight: 800, mb: 1, color: "#1F1D2B" }}>
+                  % de ganancia y precio sugerido
+                </Typography>
+
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                  {/* % de ganancia (editable por si lo quieres ajustar manualmente) */}
+                  <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
+                    <Typography sx={{ fontFamily: "Nunito", fontWeight: 700, color: "#1F1D2B", mb: 0.5 }}>
+                      % de ganancia
+                    </Typography>
+                    <NumericFormat
+                      value={porcentajeGanancia}
+                      decimalScale={2}
+                      fixedDecimalScale
+                      suffix='%'
+                      allowNegative={false}
+                      onValueChange={(vals) => setPorcentajeGanancia(Number(vals.value || 0))}
+                      customInput={OutlinedInput}
+                      sx={{ height: "38px", borderRadius: "0.625rem", background: "#FFF", boxShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+                    />
+                  </FormControl>
+
+                  {/* Precio sugerido con base en % */}
+                  <FormControl sx={{ width: { xs: "100%", sm: "30%" } }}>
+                    <Typography sx={{ fontFamily: "Nunito", fontWeight: 700, color: "#1F1D2B", mb: 0.5 }}>
+                      Precio sugerido
+                    </Typography>
+                    <OutlinedInput
+                      value={(() => {
+                        const compra = toNumber(product?.purchasePrice);
+                        if (compra <= 0) return "";
+                        let sugerido = priceFromPercent(compra, porcentajeGanancia); // base
+                        if (useRound500) {
+                          sugerido = roundToNearest500(sugerido); // múltiplo de 500
+                        } else {
+                          sugerido = Math.round(sugerido);        // entero normal
+                        }
+                        return formatPrice(sugerido);
+                      })()}
+                      disabled
+                      sx={{ height: "38px", borderRadius: "0.625rem", background: "#EEE", boxShadow: "0px 4px 4px rgba(0,0,0,0.25)" }}
+                    />
+
+                  </FormControl>
+
+                  {/* Acciones */}
+                  <Box sx={{ display: "flex", gap: 1, alignItems: "flex-end" }}>
+                    <Button
+                      variant='contained'
+                      onClick={() => setUseRound500(prev => !prev)}
+                      sx={{
+                        height: "38px",
+                        borderRadius: "0.625rem",
+                        background: "#69eae2ab",
+                        color: "#1F1D2B",
+                        fontWeight: 800,
+                        "&:hover": { backgroundColor: "#69EAE2" },
+                      }}
+                    >
+                      {useRound500 ? "Quitar redondeo ×500" : "Redondear ×500"}
+                    </Button>
+
+                    <Button
+                      variant='contained'
+                      onClick={() => {
+                        const compra = toNumber(product?.purchasePrice);
+                        if (compra <= 0) return;
+                        let sugerido = priceFromPercent(compra, porcentajeGanancia);
+                        sugerido = useRound500 ? roundToNearest500(sugerido) : Math.round(sugerido);
+                        setProduct((prev: any) => ({ ...prev, price: formatPrice(sugerido) }));
+                      }}
+                      sx={{ height: "38px", borderRadius: "0.625rem", background: "#69eae2ab", color: "#1F1D2B", fontWeight: 800, "&:hover": { backgroundColor: "#69EAE2" } }}
+                    >
+                      Asignar a precio de venta
+                    </Button>
+                  </Box>
+                </Box>
+              </Box>
+
+            </>
             <Box
               sx={{
                 display: "flex",
                 justifyContent: { xs: "space-between", sm: "space-between" },
                 width: { sm: "53%" },
                 marginLeft: { xs: "0", sm: "auto" },
-                marginTop:'10px'
+                marginTop: '10px'
               }}
             >
               <Button
-                onClick={() => handleUpdateProduct(product.uid, product, data)}
+                onClick={() => {
+                  const payload: any = { ...product, porcentajeGanancia: round2(porcentajeGanancia ?? 0), };
+                  const currentCost = toNumber(payload.purchasePrice);
+                  const currentSale = toNumber(payload.price);
+                  // Si el producto no trae gainPercent guardado, lo calculamos y guardamos
+                  if (payload.gainPercent === undefined || payload.gainPercent === null) {
+                    //payload.gainPercent = round2(calcGainPercent(currentSale, currentCost));
+                  } else {
+                    // Si el usuario lo editó, guardamos el del estado
+                    //payload.gainPercent = round2(gainPercent);
+                  }
+                  handleUpdateProduct(product.uid, payload, data);
+                }}
                 sx={{
                   width: "8.75rem",
                   height: "2rem",
