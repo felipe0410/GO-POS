@@ -172,7 +172,9 @@ const DatosVentaImproved = (props: any) => {
         saleData,
         selectedItems,
         establishmentId,
-        () => processOnlineSale(saleData)
+        async () => {
+          await processOnlineSale(saleData);
+        }
       );
 
       if (!success) {
