@@ -30,7 +30,7 @@ import {
 import { ColabData } from "@/app/profile/page";
 import { format } from "date-fns";
 import { getHoraColombia } from "@/components/Hooks/hooks";
-import { computeGeneralMetrics, computeProductMetrics } from "@/app/inventory/reporte/page";
+import { computeGeneralMetrics, computeProductMetrics } from "@/app/inventory/reporte/utils";
 
 interface User {
   decodedString: string;
@@ -764,6 +764,30 @@ export const deleteProduct = async (uid: any, img: string) => {
   }
 };
 
+// Función para obtener la sesión de caja activa
+export const getActiveCashSession = async () => {
+  try {
+    const establecimientoDocRef = doc(db, "establecimientos", user().decodedString);
+    const cashSessionsRef = collection(establecimientoDocRef, "cashSessions");
+    const q = query(
+      cashSessionsRef,
+      where("estado", "==", "abierta"),
+      orderBy("fechaApertura", "desc"),
+      limit(1)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const sessionDoc = querySnapshot.docs[0];
+      return { id: sessionDoc.id, ...sessionDoc.data() };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error obteniendo sesión activa:", error);
+    return null;
+  }
+};
+
 export const createInvoice = async (uid: string, invoiceData: any) => {
   try {
     const establecimientoDocRef: DocumentReference = doc(
@@ -778,6 +802,10 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     if (!establecimientoSnapshot.exists()) {
       await setDoc(establecimientoDocRef, {});
     }
+    
+    // Obtener la sesión de caja activa
+    const activeSession = await getActiveCashSession();
+    
     const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
     const invoiceDocRef = doc(invoicesCollectionRef, uid);
     const fechaCreacion = await getHoraColombia();
@@ -789,14 +817,49 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     }
     const timestampCreacion = Timestamp.fromDate(fechaCreacion);
     const date = format(fechaCreacion, "yyyy-MM-dd HH:mm");
-    await setDoc(invoiceDocRef, {
+    
+    // Preparar datos de la factura con asociación a sesión de caja
+    const enhancedInvoiceData = {
       uid: uid,
       user: `${user().decodedString}`,
       timestamp: timestampCreacion,
       fechaCreacion: fechaCreacion.toISOString(),
       date: date,
+      // Asociar con sesión de caja activa si existe
+      cashSessionId: activeSession?.id || null,
+      cashSessionUid: (activeSession as any)?.uid || null,
+      // Agregar timestamp de creación
+      createdAt: new Date().toISOString(),
       ...invoiceData,
+    };
+    
+    console.log('💰 Asociando factura a sesión de caja:', {
+      facturaId: uid,
+      sessionId: activeSession?.id,
+      sessionUid: (activeSession as any)?.uid,
+      total: invoiceData.total,
+      paymentMethod: invoiceData.paymentMethod
     });
+    
+    await setDoc(invoiceDocRef, enhancedInvoiceData);
+    
+    // Si hay sesión activa, actualizar el contador de facturas
+    if (activeSession) {
+      try {
+        const sessionRef = doc(db, "establecimientos", user().decodedString, "cashSessions", activeSession.id);
+        const currentCount = (activeSession as any).numeroFacturas || 0;
+        await updateDoc(sessionRef, {
+          numeroFacturas: currentCount + 1,
+          ultimaFactura: new Date().toISOString()
+        });
+        console.log('📊 Contador de facturas actualizado en sesión');
+      } catch (updateError) {
+        console.warn('⚠️ Error actualizando contador de sesión:', updateError);
+      }
+    } else {
+      console.warn('⚠️ No hay sesión de caja activa. Factura guardada sin asociación.');
+    }
+    
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /invoices: ", error);

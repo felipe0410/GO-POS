@@ -133,11 +133,18 @@ export default function ReactCalendar({
             fontSize: "0.875rem",
             fontWeight: 800,
           }}
-          onClick={() => setSelectedDate(null)}
+          onClick={() => {
+            setSelectedDate(null);
+            setSearchTerm(null);
+            setDateTabs(null);
+            setSelectedDates(null);
+            setButtonOn(false);
+            handleClose();
+          }}
         >
           LIMPIAR
-          <IconButton disabled={selectedDate !== null}>
-            <ClearIcon />
+          <IconButton>
+            <ClearIcon sx={{ color: "#1F1D2B" }} />
           </IconButton>
         </Button>
       </Box>
