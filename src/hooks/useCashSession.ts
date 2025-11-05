@@ -173,7 +173,7 @@ export function useCashSession(invoices: any[] = []): UseCashSessionReturn {
   // Función para actualizar sesión actual
   const refreshCurrentSession = useCallback(async () => {
     try {
-      const session = await getUltimaCaja();
+      const session:any = await getUltimaCaja();
       setCurrentSession(session);
     } catch (error) {
       console.error('Error obteniendo sesión actual:', error);
@@ -183,7 +183,7 @@ export function useCashSession(invoices: any[] = []): UseCashSessionReturn {
   // Función para actualizar datos completos
   const refreshData = useCallback(async () => {
     try {
-      const [session, closed] = await Promise.all([
+      const [session, closed]:any = await Promise.all([
         getUltimaCaja(),
         getAllCierresCaja()
       ]);

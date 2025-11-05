@@ -149,7 +149,7 @@ function NewProductForm() {
     
     setLoadingProduct(true);
     try {
-      const productData = await getProductData(formData.barCode);
+      const productData:any = await getProductData(formData.barCode);
       
       if (productData) {
         setFormData(productData);

@@ -23,7 +23,7 @@ export function useOfflineInit() {
           return new Promise<void>((resolve) => {
             const checkProducts = async () => {
               try {
-                const { useProducts } = await import('@/store/useAppStore');
+                const { useProducts }:any = await import('@/store/useAppStore');
                 const { products } = useProducts.getState();
                 
                 if (products.length > 0) {

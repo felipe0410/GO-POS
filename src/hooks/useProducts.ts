@@ -43,7 +43,7 @@ export function useProducts() {
 
     setProductsLoading(true);
 
-    const unsubscribe = getAllProductsDataonSnapshot((data: any[] | null) => {
+    const unsubscribe:any = getAllProductsDataonSnapshot((data: any[] | null) => {
       if (data === null) {
         notifyError('Error al cargar productos');
         setProductsLoading(false);
@@ -76,7 +76,7 @@ export function useProducts() {
   }, []);
 
   // Crear producto
-  const createProduct = useCallback(async (productData: unknown) => {
+  const createProduct = useCallback(async (productData: any) => {
     try {
       const uid = await createOperation.execute(productData);
       success('Producto creado exitosamente');
@@ -151,7 +151,7 @@ export function useProducts() {
   // Forzar actualización del caché
   const refreshProducts = useCallback(() => {
     setProductsLoading(true);
-    const unsubscribe = getAllProductsDataonSnapshot((data: any[] | null) => {
+    const unsubscribe:any = getAllProductsDataonSnapshot((data: any[] | null) => {
       if (data !== null) {
         setProducts(data);
       }

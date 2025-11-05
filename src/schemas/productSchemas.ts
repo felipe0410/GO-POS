@@ -66,7 +66,7 @@ export function validateData<T>(schema: z.ZodSchema<T>, data: unknown): T {
     return schema.parse(data);
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const messages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`);
+      const messages = error.issues.map((err: z.ZodIssue) => `${err.path.join('.')}: ${err.message}`);
       throw new Error(`Errores de validación:\n${messages.join('\n')}`);
     }
     throw error;
