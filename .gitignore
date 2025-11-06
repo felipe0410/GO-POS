@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# IDE and development tools
+.kiro/
+.vscode/
+
+# Documentation (generated)
+docs/
