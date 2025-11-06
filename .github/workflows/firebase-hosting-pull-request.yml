@@ -5,6 +5,12 @@ on:
       - opened
       - synchronize
 
+# Permisos necesarios para el workflow
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
 env:
   NEXT_PUBLIC_FIREBASE_APIKEY: ${{secrets.NEXT_PUBLIC_FIREBASE_APIKEY}}
   NEXT_PUBLIC_FIREBASE_AUTHDOMAIN: ${{secrets.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN}}
