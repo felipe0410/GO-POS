@@ -4,7 +4,7 @@ import React from 'react';
 import { Box, Divider, Typography } from '@mui/material';
 
 // Componentes
-import OfflineIndicator from './OfflineIndicator';
+// import OfflineIndicator from './OfflineIndicator'; // DESHABILITADO: Sistema offline para revisión posterior
 
 // Configuración
 import { UI_CONFIG } from '@/config/constants';
@@ -47,7 +47,8 @@ const HeaderImproved: React.FC<HeaderImprovedProps> = ({
 
         {/* Indicadores del lado derecho */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {showOfflineIndicator && <OfflineIndicator />}
+          {/* DESHABILITADO: Sistema offline para revisión posterior */}
+          {/* {showOfflineIndicator && <OfflineIndicator />} */}
         </Box>
       </Box>
       

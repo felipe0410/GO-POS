@@ -68,26 +68,27 @@ export class InventoryService {
           const saleQuantity = item.quantity;
           const newStock = currentStock - saleQuantity;
 
-          // Verificar stock suficiente
+          // Verificar stock suficiente (solo para warning, no bloquear)
           if (newStock < 0) {
             result.insufficientStock.push(
               `${item.productName}: Stock actual ${currentStock}, se requiere ${saleQuantity}`
             );
-            continue;
+            // Continuar con la actualización aunque el stock sea negativo
           }
 
           productUpdates.push({
             docRef: productDocRef,
             currentStock,
-            newStock,
+            newStock, // Permitir stock negativo
             productName: item.productName,
             saleQuantity
           });
         }
 
-        // Si hay productos con stock insuficiente, cancelar toda la transacción
+        // Si hay productos con stock insuficiente, solo hacer warning
         if (result.insufficientStock.length > 0) {
-          throw new Error(`Stock insuficiente: ${result.insufficientStock.join(', ')}`);
+          console.warn(`⚠️ Stock insuficiente: ${result.insufficientStock.join(', ')}`);
+          console.warn('⚠️ La venta continuará y algunos productos quedarán con stock negativo');
         }
 
         // 2. Actualizar todos los productos en la transacción

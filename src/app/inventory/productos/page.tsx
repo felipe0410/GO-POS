@@ -31,7 +31,7 @@ const Page = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentDataPage = filter?.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filter?.length / itemsPerPage);
+  const totalPages = Math.ceil((filter?.length || 0) / itemsPerPage) || 1;
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
 

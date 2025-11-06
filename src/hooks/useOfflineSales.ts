@@ -238,7 +238,7 @@ export function useOfflineIntegration() {
   const offlineSales = useOfflineSales();
   const { success, warning } = useNotification();
 
-  // Procesar venta con fallback offline automático
+  // Procesar venta con fallback offline inteligente
   const processSaleWithOfflineSupport = useCallback(async (
     invoiceData: any,
     saleItems: any[],
@@ -247,23 +247,20 @@ export function useOfflineIntegration() {
   ): Promise<boolean> => {
     try {
       if (offlineSales.isOnline) {
-        // Intentar procesamiento online primero
-        try {
-          await onlineProcessor();
-          success('Venta procesada online exitosamente');
-          return true;
-        } catch (onlineError) {
-          console.warn('Fallo procesamiento online, intentando offline:', onlineError);
-          warning('Problema de conexión - procesando offline');
-        }
+        // Si hay conexión, procesar online directamente
+        await onlineProcessor();
+        success('Venta procesada online exitosamente');
+        return true;
+      } else {
+        // Solo usar offline si realmente no hay conexión
+        console.log('🔄 Sin conexión - procesando offline');
+        warning('Sin conexión - venta guardada offline para sincronizar después');
+        await offlineSales.processOfflineSale(invoiceData, saleItems, establishmentId);
+        return true;
       }
 
-      // Procesar offline como fallback
-      await offlineSales.processOfflineSale(invoiceData, saleItems, establishmentId);
-      return true;
-
     } catch (error) {
-      console.error('Error en procesamiento offline:', error);
+      console.error('Error en procesamiento de venta:', error);
       return false;
     }
   }, [offlineSales, success, warning]);

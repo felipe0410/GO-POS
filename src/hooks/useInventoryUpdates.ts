@@ -146,13 +146,14 @@ export function useCartInventoryIntegration() {
   ): Promise<boolean> => {
     const saleItems = convertCartItemsToSaleItems(cartItems);
     
-    // 1. Verificar stock antes de procesar
+    // 1. Verificar stock antes de procesar (solo warning, no bloquear)
     const stockAvailable = await inventoryUpdates.checkStockBeforeSale(establishmentId, saleItems);
     if (!stockAvailable) {
-      return false;
+      console.warn('⚠️ Venta procesada con stock insuficiente en algunos productos');
+      // No retornar false, continuar con la venta
     }
     
-    // 2. Actualizar inventario después de venta exitosa
+    // 2. Actualizar inventario después de venta (permitir stock negativo)
     return await inventoryUpdates.updateInventoryAfterSale(establishmentId, saleItems);
   }, [inventoryUpdates, convertCartItemsToSaleItems]);
 

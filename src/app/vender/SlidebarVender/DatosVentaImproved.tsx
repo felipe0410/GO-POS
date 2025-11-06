@@ -36,7 +36,7 @@ import { useCookies } from "react-cookie";
 import { useCartInventoryIntegration } from "@/hooks/useInventoryUpdates";
 import { useNotification } from "@/hooks/useNotification";
 import { useAsyncOperation } from "@/hooks/useAsyncOperation";
-import { useOfflineIntegration } from "@/hooks/useOfflineSales";
+// import { useOfflineIntegration } from "@/hooks/useOfflineSales"; // DESHABILITADO: Sistema offline para revisión posterior
 
 interface UserData {
   name: string;
@@ -75,7 +75,8 @@ const DatosVentaImproved = (props: any) => {
   // Hooks mejorados
   const { processSaleWithInventoryUpdate, loading: inventoryLoading } = useCartInventoryIntegration();
   const { success, error: notifyError } = useNotification();
-  const { processSaleWithOfflineSupport, isOnline } = useOfflineIntegration();
+  // const { processSaleWithOfflineSupport, isOnline } = useOfflineIntegration(); // DESHABILITADO: Sistema offline
+  const isOnline = true; // Forzar modo online
 
   const [options, setOptions] = useState([""]);
   const [valueClient, setValueClient] = React.useState<string | null>(options[0]);
@@ -134,7 +135,8 @@ const DatosVentaImproved = (props: any) => {
     );
 
     if (!inventoryUpdated) {
-      throw new Error("Error actualizando inventario");
+      console.warn("⚠️ Hubo problemas actualizando el inventario, pero la venta continuará");
+      // No lanzar error, permitir que la venta continúe
     }
 
     // 3. Crear factura
@@ -167,19 +169,38 @@ const DatosVentaImproved = (props: any) => {
       const parsedData = JSON.parse(userData);
       const establishmentId = decodeBase64(parsedData.uid);
 
-      // Usar el sistema offline que incluye fallback automático
-      const success = await processSaleWithOfflineSupport(
-        saleData,
-        selectedItems,
-        establishmentId,
-        async () => {
+      // SISTEMA OFFLINE DESHABILITADO - Solo procesamiento online normal
+      await processOnlineSale(saleData);
+      
+      /* 
+      TODO: REVISAR SISTEMA OFFLINE
+      // Procesar venta con sistema inteligente online/offline
+      if (isOnline) {
+        try {
+          // Intentar procesamiento online primero
           await processOnlineSale(saleData);
+        } catch (onlineError) {
+          console.warn('⚠️ Error en procesamiento online, pero no por conectividad:', onlineError);
+          // Si el error no es de conectividad, no usar offline como fallback
+          throw onlineError;
         }
-      );
+      } else {
+        // Solo usar offline si realmente no hay conexión
+        console.log('🔄 Sin conexión detectada, procesando venta offline');
+        const success = await processSaleWithOfflineSupport(
+          saleData,
+          selectedItems,
+          establishmentId,
+          async () => {
+            await processOnlineSale(saleData);
+          }
+        );
 
-      if (!success) {
-        throw new Error("Error procesando la venta");
+        if (!success) {
+          throw new Error("Error procesando la venta offline");
+        }
       }
+      */
 
       return { success };
     }
