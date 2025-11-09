@@ -182,7 +182,7 @@ const InvoiceTable = ({
         <TableBody>
           {data.map((invoice, index) => {
             const zipUrl = `https://api-v2.matias-api.com/attachments/${invoice.attachedDocument?.pathZip}`;
-            console.log('invoice::>', invoice)
+
             return (
               <TableRow
                 key={invoice.id}

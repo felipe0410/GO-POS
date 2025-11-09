@@ -34,11 +34,16 @@ const Factura: React.FC<TuComponenteProps> = (props) => {
 
   useEffect(() => {
     const getInvoiceDataFull = async () => {
+      if (!barCode || barCode.trim() === '') {
+        console.warn('No hay UID de factura disponible');
+        return;
+      }
+      
       try {
         const data = await getInvoiceData(barCode);
         setFacturaData(data);
       } catch (error) {
-        console.error("error", error);
+        console.error("Error al obtener información del documento: ", error);
       }
     };
     getInvoiceDataFull();

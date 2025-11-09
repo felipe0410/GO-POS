@@ -30,6 +30,7 @@ import {
 import { ColabData } from "@/app/profile/page";
 import { format } from "date-fns";
 import { getHoraColombia } from "@/components/Hooks/hooks";
+import { computeGeneralMetrics, computeProductMetrics } from "@/app/inventory/reporte/utils";
 
 interface User {
   decodedString: string;
@@ -763,6 +764,30 @@ export const deleteProduct = async (uid: any, img: string) => {
   }
 };
 
+// Función para obtener la sesión de caja activa
+export const getActiveCashSession = async () => {
+  try {
+    const establecimientoDocRef = doc(db, "establecimientos", user().decodedString);
+    const cashSessionsRef = collection(establecimientoDocRef, "cashSessions");
+    const q = query(
+      cashSessionsRef,
+      where("estado", "==", "abierta"),
+      orderBy("fechaApertura", "desc"),
+      limit(1)
+    );
+    
+    const querySnapshot = await getDocs(q);
+    if (!querySnapshot.empty) {
+      const sessionDoc = querySnapshot.docs[0];
+      return { id: sessionDoc.id, ...sessionDoc.data() };
+    }
+    return null;
+  } catch (error) {
+    console.error("Error obteniendo sesión activa:", error);
+    return null;
+  }
+};
+
 export const createInvoice = async (uid: string, invoiceData: any) => {
   try {
     const establecimientoDocRef: DocumentReference = doc(
@@ -777,6 +802,10 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     if (!establecimientoSnapshot.exists()) {
       await setDoc(establecimientoDocRef, {});
     }
+    
+    // Obtener la sesión de caja activa
+    const activeSession = await getActiveCashSession();
+    
     const invoicesCollectionRef = collection(establecimientoDocRef, "invoices");
     const invoiceDocRef = doc(invoicesCollectionRef, uid);
     const fechaCreacion = await getHoraColombia();
@@ -788,14 +817,49 @@ export const createInvoice = async (uid: string, invoiceData: any) => {
     }
     const timestampCreacion = Timestamp.fromDate(fechaCreacion);
     const date = format(fechaCreacion, "yyyy-MM-dd HH:mm");
-    await setDoc(invoiceDocRef, {
+    
+    // Preparar datos de la factura con asociación a sesión de caja
+    const enhancedInvoiceData = {
       uid: uid,
       user: `${user().decodedString}`,
       timestamp: timestampCreacion,
       fechaCreacion: fechaCreacion.toISOString(),
       date: date,
+      // Asociar con sesión de caja activa si existe
+      cashSessionId: activeSession?.id || null,
+      cashSessionUid: (activeSession as any)?.uid || null,
+      // Agregar timestamp de creación
+      createdAt: new Date().toISOString(),
       ...invoiceData,
+    };
+    
+    console.log('💰 Asociando factura a sesión de caja:', {
+      facturaId: uid,
+      sessionId: activeSession?.id,
+      sessionUid: (activeSession as any)?.uid,
+      total: invoiceData.total,
+      paymentMethod: invoiceData.paymentMethod
     });
+    
+    await setDoc(invoiceDocRef, enhancedInvoiceData);
+    
+    // Si hay sesión activa, actualizar el contador de facturas
+    if (activeSession) {
+      try {
+        const sessionRef = doc(db, "establecimientos", user().decodedString, "cashSessions", activeSession.id);
+        const currentCount = (activeSession as any).numeroFacturas || 0;
+        await updateDoc(sessionRef, {
+          numeroFacturas: currentCount + 1,
+          ultimaFactura: new Date().toISOString()
+        });
+        console.log('📊 Contador de facturas actualizado en sesión');
+      } catch (updateError) {
+        console.warn('⚠️ Error actualizando contador de sesión:', updateError);
+      }
+    } else {
+      console.warn('⚠️ No hay sesión de caja activa. Factura guardada sin asociación.');
+    }
+    
     return uid;
   } catch (error) {
     console.error("Error al guardar información en /invoices: ", error);
@@ -2014,3 +2078,199 @@ export const handleGuardarDevolucion = async (facturaData: any) => {
     console.error("❌ Error al guardar la devolución:", error);
   }
 };
+
+
+export type FireTs = { seconds: number; nanoseconds?: number };
+export type CompraItem = { barCode?: string; productName?: string; cantidad?: number; acc?: number; };
+export type Invoice = {
+  id: string; invoice: string; timestamp?: FireTs; date?: string; fechaCreacion?: string;
+  subtotal?: number; descuento?: number; total?: number; status?: string;
+  name?: string; paymentMethod?: string; compra?: CompraItem[];
+};
+
+function toYYYYMMDDHHmm(d: Date) {
+  const pad = (n: number) => `${n}`.padStart(2, "0");
+  const y = d.getFullYear(), m = pad(d.getMonth() + 1), day = pad(d.getDate());
+  const hh = pad(d.getHours()), mm = pad(d.getMinutes());
+  return `${y}-${m}-${day} ${hh}:${mm}`;
+}
+function toISO(d: Date) {
+  // Si tu backend corre fuera de Colombia y te importa TZ exacta de Bogotá, ajusta aquí.
+  return d.toISOString();
+}
+
+export async function getInvoicesByDateRange(start: Date, end: Date): Promise<Invoice[]> {
+  const establecimientoDocRef = doc(db, "establecimientos", `${user().decodedString}`);
+  const invoiceCol = collection(establecimientoDocRef, "invoices");
+
+  // 1) Por timestamp
+  const q1 = query(
+    invoiceCol,
+    where("timestamp", ">=", Timestamp.fromDate(start)),
+    where("timestamp", "<=", Timestamp.fromDate(end)),
+    orderBy("timestamp", "asc")
+  );
+
+  // 2) Por date "YYYY-MM-DD HH:mm"
+  const q2 = query(
+    invoiceCol,
+    where("date", ">=", toYYYYMMDDHHmm(start)),
+    where("date", "<=", toYYYYMMDDHHmm(end)),
+    orderBy("date", "asc")
+  );
+
+  // 3) Por fechaCreacion ISO
+  const q3 = query(
+    invoiceCol,
+    where("fechaCreacion", ">=", toISO(start)),
+    where("fechaCreacion", "<=", toISO(end)),
+    orderBy("fechaCreacion", "asc")
+  );
+
+  const [d1, d2, d3] = await Promise.all([getDocs(q1), getDocs(q2), getDocs(q3)]);
+
+  // Merge + dedupe por id
+  const map = new Map<string, Invoice>();
+  [d1, d2, d3].forEach(snap => {
+    snap.docs.forEach(docSnap => {
+      const inv = { id: docSnap.id, ...(docSnap.data() as any) } as Invoice;
+      map.set(inv.id, inv);
+    });
+  });
+
+  // Orden por “fecha efectiva”
+  const result = Array.from(map.values()).sort((a, b) => epochMs(b) - epochMs(a));
+  return result;
+}
+
+// Misma epochMs que ya usas en tu Page
+export function epochMs(i: Invoice): number {
+  if (i.timestamp && typeof (i.timestamp as any).seconds === "number") {
+    const t = (i.timestamp as any).seconds * 1000 + Math.floor(((i.timestamp as any).nanoseconds ?? 0) / 1e6);
+    return t;
+  }
+  if (i.fechaCreacion) {
+    const t = Date.parse(i.fechaCreacion);
+    if (!Number.isNaN(t)) return t;
+  }
+  if (i.date) {
+    const t = Date.parse(i.date.replace(" ", "T") + ":00");
+    if (!Number.isNaN(t)) return t;
+  }
+  return 0;
+}
+
+
+
+
+// Si cambias el formato del reporte en el futuro, sube esta versión para invalidar caches antiguos:
+const REPORT_VERSION = 1;
+
+type GeneralMetrics = ReturnType<typeof computeGeneralMetrics>;
+type ProductRow = ReturnType<typeof computeProductMetrics>[number];
+
+export type CachedReport = {
+  rangeStartISO: string;
+  rangeEndISO: string;
+  generatedAt: string;
+  version: number;
+  source: "cache";
+  general: GeneralMetrics;
+  productos: ProductRow[];
+  invoiceIds?: string[];
+};
+
+export type ReportResult =
+  | {
+      source: "cache";
+      general: GeneralMetrics;
+      productos: ProductRow[];
+      // Puede venir sin detalle de facturas para hacerlo liviano
+      invoices?: undefined;
+      docId: string;
+    }
+  | {
+      source: "live";
+      general: GeneralMetrics;
+      productos: ProductRow[];
+      invoices: any[]; // tus Invoice[]
+      docId?: undefined;
+    };
+
+function daysBetween(a: Date, b: Date) {
+  const MS = 24 * 60 * 60 * 1000;
+  // truncamos horas para que sea exacto a días calendario
+  const aa = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+  const bb = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.floor((bb.getTime() - aa.getTime()) / MS);
+}
+
+function ymd(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}${m}${day}`;
+}
+
+function buildDocId(start: Date, end: Date) {
+  return `range_${ymd(start)}_${ymd(end)}_v${REPORT_VERSION}`;
+}
+
+/**
+ * Si el tiempo consultado termina hace 30+ días:
+ *  - Busca el reporte en cache; si no existe, lo crea y lo guarda.
+ * Si el tiempo consultado es más reciente:
+ *  - Calcula en vivo y NO guarda.
+ */
+export async function saveReportIfOlderThan30Days(
+  start: Date,
+  end: Date
+): Promise<ReportResult> {
+  const today = new Date();
+  const isOlderThan30 = daysBetween(end, today) >= 30;
+
+  // Live (no guardar)
+  if (!isOlderThan30) {
+    const invoices = await getInvoicesByDateRange(start, end);
+    const general = computeGeneralMetrics(invoices as any);
+    const productos = computeProductMetrics(invoices as any);
+    return { source: "live", general, productos, invoices };
+  }
+
+  // Cache (leer/crear en Firestore)
+  const estId = `${user().decodedString}`;
+  const reportsCol = collection(doc(db, "establecimientos", estId), "reports");
+  const docId = buildDocId(start, end);
+  const ref = doc(reportsCol, docId);
+
+  const snap = await getDoc(ref);
+  if (snap.exists()) {
+    const data = snap.data() as CachedReport;
+    return {
+      source: "cache",
+      general: data.general,
+      productos: data.productos,
+      docId,
+    };
+  }
+
+  // Cache miss → generar y guardar
+  const invoices = await getInvoicesByDateRange(start, end);
+  const general = computeGeneralMetrics(invoices as any);
+  const productos = computeProductMetrics(invoices as any);
+
+  const payload: CachedReport = {
+    rangeStartISO: start.toISOString(),
+    rangeEndISO: end.toISOString(),
+    generatedAt: new Date().toISOString(),
+    version: REPORT_VERSION,
+    source: "cache",
+    general,
+    productos,
+    invoiceIds: invoices.map((i: any) => i.id),
+  };
+
+  await setDoc(ref, payload, { merge: false });
+
+  return { source: "cache", general, productos, docId };
+}

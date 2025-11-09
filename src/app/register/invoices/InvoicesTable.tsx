@@ -140,7 +140,7 @@ export default function InvoicesTable({
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredData?.map((row: any) => {
+                {filteredData?.map((row: any, index: number) => {
                   const [date, hora] = row.date.split(" ");
                   const newDate = date.replaceAll("-", "/");
 
@@ -159,7 +159,7 @@ export default function InvoicesTable({
                       hover
                       role="checkbox"
                       tabIndex={-1}
-                      key={row?.uid ?? "xxxx"}
+                      key={row?.uid ?? `invoice-${index}`}
                     >
                       <TableCell align="center" sx={{ borderColor: "#69EAE2" }}>
                         <Box sx={{ display: "flex", flexDirection: "row" }}>

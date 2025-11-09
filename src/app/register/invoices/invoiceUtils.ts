@@ -9,12 +9,18 @@ export const isInRange = (fecha: string, searchTerm: any): boolean => {
 };
 
 export const matchesSearchTerm = (factura: any, searchTerm: any): boolean => {
-  if (typeof searchTerm !== "string") return true;
-  const term = searchTerm.toLowerCase();
+  if (typeof searchTerm !== "string" || searchTerm.trim() === "") return true;
+  const term = searchTerm.toLowerCase().trim();
+  
+  // Buscar en diferentes campos de la factura
+  const clientName = factura?.name || factura?.cliente?.name || "";
+  const invoiceNumber = String(factura?.uid || factura?.invoice || "");
+  const status = String(factura?.status || "");
+  
   return (
-    factura?.cliente?.name?.toLowerCase().includes(term) ||
-    String(factura?.invoice).toLowerCase().includes(term) ||
-    String(factura?.status).toLowerCase().includes(term)
+    clientName.toLowerCase().includes(term) ||
+    invoiceNumber.toLowerCase().includes(term) ||
+    status.toLowerCase().includes(term)
   );
 };
 

@@ -12,19 +12,44 @@ import {
 import JsBarcode from "jsbarcode";
 
 interface TicketCierreCajaProps {
-  establecimiento: string;
-  fecha: string;
-  montoInicial: number;
-  efectivo: number;
-  transferencias: number;
-  pendientes: number;
-  devoluciones: number;
-  totalCerrado: number;
-  producido: number;
-  montoFinal: number;
-  notasCierre: string;
+  // Datos del establecimiento
+  establecimiento?: string;
+  fecha?: string;
+  consecutivo?: number;
+  
+  // Datos de la sesión de caja (nueva estructura)
+  cajaData?: {
+    uid?: string;
+    montoInicial?: string | number;
+    fechaApertura?: string;
+    notasApertura?: string;
+    estado?: string;
+  };
+  
+  // Resumen de caja (nueva estructura)
+  resumenCaja?: {
+    efectivo: number;
+    transferencias: number;
+    total: number;
+    facturas: number;
+  };
+  
+  // Totales calculados
+  producido?: number;
+  totalEnCaja?: number;
+  
+  // Notas de cierre
+  notasCierre?: string;
+  
+  // Props opcionales para compatibilidad
+  montoInicial?: number;
+  efectivo?: number;
+  transferencias?: number;
+  pendientes?: number;
+  devoluciones?: number;
+  totalCerrado?: number;
+  montoFinal?: number;
   onImprimir?: () => void;
-  consecutivo: number;
 }
 
 const format = (val: number | string) =>
@@ -35,24 +60,48 @@ const format = (val: number | string) =>
   }).format(Number(val));
 
 const TicketCierreCaja = forwardRef<HTMLDivElement, TicketCierreCajaProps>(
-  (
-    {
-      establecimiento,
+  (props, ref) => {
+    // Extraer props con valores por defecto
+    const {
+      establecimiento = "Establecimiento",
       fecha,
+      consecutivo,
+      cajaData,
+      resumenCaja,
+      producido,
+      totalEnCaja,
+      notasCierre = "",
+      // Props de compatibilidad
       montoInicial,
       efectivo,
       transferencias,
       pendientes,
       devoluciones,
       totalCerrado,
-      producido,
       montoFinal,
-      notasCierre,
       onImprimir,
-      consecutivo,
-    },
-    ref
-  ) => {
+    } = props;
+
+    // Calcular valores usando la nueva estructura o fallback a la antigua
+    const montoInicialFinal = cajaData?.montoInicial 
+      ? Number(cajaData.montoInicial) 
+      : (montoInicial || 0);
+    
+    const efectivoFinal = resumenCaja?.efectivo || efectivo || 0;
+    const transferenciasFinal = resumenCaja?.transferencias || transferencias || 0;
+    const producidoFinal = producido || (efectivoFinal + transferenciasFinal);
+    const totalEnCajaFinal = totalEnCaja || (efectivoFinal + montoInicialFinal);
+    const fechaFinal = fecha || new Date().toLocaleString("es-CO", {
+      timeZone: "America/Bogota",
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+    const numeroFacturas = resumenCaja?.facturas || 0;
     // en SidebarBox.tsx
     const ticketRef = useRef<HTMLDivElement>(null);
 
@@ -118,87 +167,90 @@ const TicketCierreCaja = forwardRef<HTMLDivElement, TicketCierreCajaProps>(
             sx={{ textTransform: "uppercase", fontWeight: 700 }}
             variant="subtitle1"
           >
-            📅 {fecha}
+            📅 {fechaFinal}
           </Typography>
+          
+          {cajaData?.uid && (
+            <Typography
+              align="center"
+              sx={{ fontWeight: 600, color: "#666" }}
+              variant="body2"
+            >
+              🏦 Sesión: {cajaData.uid}
+            </Typography>
+          )}
 
           <Divider sx={{ my: 2 }} />
 
           <Table size="small">
             <TableBody>
               <TableRow>
-                <TableCell>Monto Inicial</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>💰 Monto Inicial</TableCell>
                 <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
+                  sx={{ fontSize: "1rem", fontWeight: 600 }}
                   align="right"
                 >
-                  {format(montoInicial)}
+                  {format(montoInicialFinal)}
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell>Efectivo</TableCell>
-                <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
-                  align="right"
-                >
-                  {format(efectivo)}
+              
+              <TableRow sx={{ backgroundColor: "#f5f5f5" }}>
+                <TableCell colSpan={2} sx={{ fontWeight: 700, textAlign: "center" }}>
+                  📊 VENTAS DEL DÍA
                 </TableCell>
               </TableRow>
+              
               <TableRow>
-                <TableCell>Transferencias</TableCell>
+                <TableCell>💵 Ventas en Efectivo</TableCell>
                 <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
+                  sx={{ fontSize: "1rem" }}
                   align="right"
                 >
-                  {format(transferencias)}
+                  {format(efectivoFinal)}
                 </TableCell>
               </TableRow>
+              
               <TableRow>
-                <TableCell>Devoluciones</TableCell>
+                <TableCell>💳 Ventas en Transferencia</TableCell>
                 <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
+                  sx={{ fontSize: "1rem" }}
                   align="right"
                 >
-                  {format(devoluciones)}
+                  {format(transferenciasFinal)}
                 </TableCell>
               </TableRow>
+              
               <TableRow>
-                <TableCell>Pendientes</TableCell>
+                <TableCell>📄 Número de Facturas</TableCell>
                 <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
+                  sx={{ fontSize: "1rem" }}
                   align="right"
                 >
-                  {format(pendientes)}
+                  {numeroFacturas}
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell>Total Vendido</TableCell>
+              
+              <TableRow sx={{ backgroundColor: "#e8f5e8" }}>
+                <TableCell sx={{ fontWeight: 700 }}>
+                  📈 TOTAL PRODUCIDO
+                </TableCell>
                 <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
+                  sx={{ fontSize: "1.1rem", fontWeight: 700 }}
                   align="right"
                 >
-                  {format(totalCerrado)}
+                  {format(producidoFinal)}
                 </TableCell>
               </TableRow>
-              <TableRow>
-                <TableCell>
-                  <strong>Producido</strong>
+              
+              <TableRow sx={{ backgroundColor: "#e8f4fd" }}>
+                <TableCell sx={{ fontWeight: 700 }}>
+                  🏦 TOTAL EN CAJA
                 </TableCell>
                 <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
+                  sx={{ fontSize: "1.1rem", fontWeight: 700 }}
                   align="right"
                 >
-                  {format(producido)}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <strong>Monto Final</strong>
-                </TableCell>
-                <TableCell
-                  sx={{ fontSize: "1rem", textTransform: "uppercase" }}
-                  align="right"
-                >
-                  {format(montoFinal)}
+                  {format(totalEnCajaFinal)}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -206,11 +258,19 @@ const TicketCierreCaja = forwardRef<HTMLDivElement, TicketCierreCajaProps>(
 
           <Divider sx={{ my: 2 }} />
 
-          <Typography variant="subtitle2" fontWeight="bold">
-            📝 Notas de Cierre:
-          </Typography>
-          <Typography variant="body2" mb={2}>
-            {notasCierre || "N/A"}
+          {notasCierre && (
+            <>
+              <Typography variant="subtitle2" fontWeight="bold">
+                📝 Notas de Cierre:
+              </Typography>
+              <Typography variant="body2" mb={2} sx={{ fontStyle: "italic" }}>
+                {notasCierre}
+              </Typography>
+            </>
+          )}
+          
+          <Typography variant="caption" sx={{ textAlign: "center", display: "block", mt: 2, color: "#666" }}>
+            🕒 Generado: {new Date().toLocaleString("es-CO", { timeZone: "America/Bogota" })}
           </Typography>
           {consecutivo !== undefined && (
             <Box sx={{ textAlign: "center", mt: 3 }}>

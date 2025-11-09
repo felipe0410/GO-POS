@@ -185,10 +185,8 @@ const SidebarBox: React.FC<SidebarProps> = ({
     }
   };
 
-  const producido =
-    Number(totalEfectivo) +
-    Number(totalTransferencias) -
-    Number(cajaData?.montoInicial || 0);
+  // Producido = Efectivo + Transferencias (total de ventas)
+  const producido = Number(totalEfectivo) + Number(totalTransferencias);
   useEffect(() => {
     const fetchUltimaCaja = async () => {
       const data = await getUltimaCaja();
@@ -261,36 +259,24 @@ const SidebarBox: React.FC<SidebarProps> = ({
 
       {mostrarTicket ? (
         <TicketCierreCaja
-          establecimiento={
-            establecimiento?.nameEstablishment || "Establecimiento"
-          }
-          fecha={new Date().toLocaleString("es-CO", {
-            timeZone: "America/Bogota",
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-          })}
-          montoInicial={Number(cajaData?.montoInicial)}
-          efectivo={resumenCaja?.efectivo}
-          transferencias={resumenCaja?.transferencias}
-          pendientes={resumenCaja?.pendientes}
-          devoluciones={resumenCaja?.devoluciones}
-          totalCerrado={resumenCaja?.totalCerrado}
-          producido={
-            resumenCaja
-              ? resumenCaja.efectivo +
-                resumenCaja.transferencias -
-                Number(cajaData?.montoInicial)
-              : 0
-          }
-          montoFinal={Number(finalAmount)}
+          establecimiento={establecimiento?.nameEstablishment || "Establecimiento"}
+          cajaData={{
+            uid: cajaData?.uid,
+            montoInicial: cajaData?.montoInicial,
+            fechaApertura: cajaData?.fechaApertura,
+            notasApertura: cajaData?.notasApertura,
+            estado: cajaData?.estado
+          }}
+          resumenCaja={{
+            efectivo: Number(totalEfectivo),
+            transferencias: Number(totalTransferencias),
+            total: Number(totalEfectivo) + Number(totalTransferencias),
+            facturas: invoicesClose.length
+          }}
+          producido={Number(totalEfectivo) + Number(totalTransferencias)}
+          totalEnCaja={Number(totalEfectivo) + Number(baseCajaFinal)}
           notasCierre={notasCierre}
-          onImprimir={() => window.print()}
-          consecutivo={consecutivo ?? "error"}
+          consecutivo={consecutivo}
         />
       ) : isOpeningCaja ? (
         // 🟢 Formulario para abrir caja dentro del Sidebar
@@ -502,10 +488,36 @@ const SidebarBox: React.FC<SidebarProps> = ({
               // variant="outlined"
               color="primary"
               label={formatCurrency(
-                Number(totalEfectivo) + Number(initialAmount)
+                Number(totalEfectivo) + Number(baseCajaFinal)
               )}
             />
           </Typography>
+
+          <Divider sx={{ backgroundColor: "white", marginY: 1 }} />
+
+          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#69EAE2", mb: 1 }}>
+            📋 Resumen de la Sesión:
+          </Typography>
+          
+          <Box sx={{ backgroundColor: "#2C3248", p: 2, borderRadius: 1, mb: 2 }}>
+            <Typography variant="body2" sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+              <span>Monto Inicial:</span>
+              <span>{formatCurrency(cajaData?.montoInicial || 0)}</span>
+            </Typography>
+            <Typography variant="body2" sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+              <span>Ventas en Efectivo:</span>
+              <span>{formatCurrency(totalEfectivo)}</span>
+            </Typography>
+            <Typography variant="body2" sx={{ display: "flex", justifyContent: "space-between", mb: 0.5 }}>
+              <span>Ventas en Transferencia:</span>
+              <span>{formatCurrency(totalTransferencias)}</span>
+            </Typography>
+            <Divider sx={{ backgroundColor: "#69EAE2", my: 1 }} />
+            <Typography variant="body2" sx={{ display: "flex", justifyContent: "space-between", fontWeight: "bold" }}>
+              <span>Esperado en Caja:</span>
+              <span>{formatCurrency(Number(totalEfectivo) + Number(baseCajaFinal))}</span>
+            </Typography>
+          </Box>
 
           <Typography variant="subtitle1">📝 Notas de Cierre</Typography>
           <OutlinedInput
