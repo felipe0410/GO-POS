@@ -49,14 +49,16 @@ Guías y documentación de referencia:
 3. [Corrección de Conectividad](./correcciones/CORRECCION_CONECTIVIDAD_IMPLEMENTADA.md)
 
 ### ⚡ Implementaciones Destacadas
-1. [Modal de Facturas Pendientes](./implementaciones/MODAL_FACTURAS_PENDIENTES_IMPLEMENTADO.md)
-2. [Actualización de Inventario](./implementaciones/ACTUALIZACION_INVENTARIO_IMPLEMENTADA.md)
-3. [Migración de Ventas](./implementaciones/MIGRACION_VENTAS_COMPLETADA.md)
+1. [Optimización de Performance en Ventas](./implementaciones/OPTIMIZACION_PERFORMANCE_VENTAS.md) ⭐ **NUEVO**
+2. [Modal de Facturas Pendientes](./implementaciones/MODAL_FACTURAS_PENDIENTES_IMPLEMENTADO.md)
+3. [Actualización de Inventario](./implementaciones/ACTUALIZACION_INVENTARIO_IMPLEMENTADA.md)
+4. [Migración de Ventas](./implementaciones/MIGRACION_VENTAS_COMPLETADA.md)
 
 ### 📖 Guías de Referencia
-1. [Mejores Prácticas](./guias/MEJORES_PRACTICAS.md)
-2. [Guía de Migración](./guias/GUIA_MIGRACION.md)
-3. [Documentación API](./guias/DOCUMENTACION_API.md)
+1. [Cómo Activar Logs de Debug](./guias/ACTIVAR_LOGS_DEBUG.md) ⭐ **NUEVO**
+2. [Mejores Prácticas](./guias/MEJORES_PRACTICAS.md)
+3. [Guía de Migración](./guias/GUIA_MIGRACION.md)
+4. [Documentación API](./guias/DOCUMENTACION_API.md)
 
 ## 🔍 Cómo Navegar
 

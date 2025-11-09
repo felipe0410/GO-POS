@@ -36,6 +36,8 @@ import { useCookies } from "react-cookie";
 import { useCartInventoryIntegration } from "@/hooks/useInventoryUpdates";
 import { useNotification } from "@/hooks/useNotification";
 import { useAsyncOperation } from "@/hooks/useAsyncOperation";
+import { performanceLogger } from "@/utils/performanceLogger";
+import { quickSaleCache } from "@/utils/quickSaleCache";
 // import { useOfflineIntegration } from "@/hooks/useOfflineSales"; // DESHABILITADO: Sistema offline para revisión posterior
 
 interface UserData {
@@ -117,45 +119,134 @@ const DatosVentaImproved = (props: any) => {
   });
   const [cookies, setCookie] = useCookies(["invoice_token"]);
 
-  // Operación asíncrona para procesar venta (online)
+  // Operación asíncrona para procesar venta (online) - PARALELIZADA
   const processOnlineSale = async (saleData: any) => {
-    // 1. Obtener ID del establecimiento
-    const userData = localStorage.getItem("dataUser");
-    if (!userData) {
-      throw new Error("No se encontró información del usuario");
+    const operationId = `sale-${Date.now()}`;
+    performanceLogger.start(operationId, 'Proceso Completo de Venta (Paralelo)', {
+      items: selectedItems.length,
+      total: saleData.total,
+      typeInvoice
+    });
+
+    try {
+      // 1. Obtener ID del establecimiento
+      performanceLogger.checkpoint(operationId, 'Inicio - Obtener datos usuario');
+      const userData = localStorage.getItem("dataUser");
+      if (!userData) {
+        throw new Error("No se encontró información del usuario");
+      }
+
+      const parsedData = JSON.parse(userData);
+      const establishmentId = decodeBase64(parsedData.uid);
+      performanceLogger.checkpoint(operationId, 'Usuario obtenido', { establishmentId });
+
+      // 2. PARALELIZACIÓN: Ejecutar factura e inventario simultáneamente
+      performanceLogger.checkpoint(operationId, '🚀 Iniciando procesos en paralelo');
+      const parallelStartTime = performance.now();
+
+      // Preparar datos de factura
+      const valueUuid = uuidv4();
+      const bloques = valueUuid.split("-");
+      const result = bloques.slice(0, 2).join("-");
+      const invoiceId = `${saleData.invoice}-${result}`;
+      localStorage.setItem("uidInvoice", invoiceId);
+
+      // Ejecutar en paralelo con Promise.allSettled
+      const [invoiceResult, inventoryResult] = await Promise.allSettled([
+        // Proceso 1: Crear factura (PRIORITARIO)
+        (async () => {
+          performanceLogger.checkpoint(operationId, '📄 Iniciando creación de factura');
+          const invoiceStartTime = performance.now();
+          
+          if (saleData.descuento > 0) {
+            await createInvoice(invoiceId, saleData);
+          } else if (typeInvoice === "quickSale") {
+            await handleQuickSaleFinal(saleData.compra);
+          } else {
+            await createInvoice(invoiceId, { ...saleData, vrMixta });
+          }
+
+          const invoiceDuration = performance.now() - invoiceStartTime;
+          performanceLogger.checkpoint(operationId, '✅ Factura creada', { 
+            duration: invoiceDuration.toFixed(2) + 'ms',
+            invoiceId 
+          });
+
+          return { invoiceId, duration: invoiceDuration };
+        })(),
+
+        // Proceso 2: Actualizar inventario (EN BACKGROUND)
+        (async () => {
+          performanceLogger.checkpoint(operationId, '📦 Iniciando actualización de inventario (background)');
+          const inventoryStartTime = performance.now();
+          
+          const inventoryUpdated = await processSaleWithInventoryUpdate(
+            establishmentId,
+            selectedItems
+          );
+          
+          const inventoryDuration = performance.now() - inventoryStartTime;
+          performanceLogger.checkpoint(operationId, inventoryUpdated ? '✅ Inventario actualizado' : '⚠️ Inventario con errores', { 
+            duration: inventoryDuration.toFixed(2) + 'ms',
+            success: inventoryUpdated 
+          });
+
+          if (!inventoryUpdated) {
+            console.warn("⚠️ Hubo problemas actualizando el inventario, pero la venta se completó");
+          }
+
+          return { inventoryUpdated, duration: inventoryDuration };
+        })()
+      ]);
+
+      const parallelDuration = performance.now() - parallelStartTime;
+
+      // Analizar resultados
+      const invoiceSuccess = invoiceResult.status === 'fulfilled';
+      const inventorySuccess = inventoryResult.status === 'fulfilled';
+
+      const invoiceData = invoiceSuccess ? invoiceResult.value : null;
+      const inventoryData = inventorySuccess ? inventoryResult.value : null;
+
+      performanceLogger.checkpoint(operationId, '🏁 Procesos paralelos completados', {
+        parallelDuration: parallelDuration.toFixed(2) + 'ms',
+        invoiceSuccess,
+        inventorySuccess,
+        invoiceTime: invoiceData?.duration.toFixed(2) + 'ms',
+        inventoryTime: inventoryData?.duration.toFixed(2) + 'ms'
+      });
+
+      // La factura es crítica, si falla lanzamos error
+      if (!invoiceSuccess) {
+        throw new Error('Error crítico creando factura: ' + (invoiceResult.reason?.message || 'Unknown error'));
+      }
+
+      // El inventario no es crítico, solo advertimos
+      if (!inventorySuccess) {
+        console.error('⚠️ Error actualizando inventario (no crítico):', inventoryResult.reason);
+        // TODO: Agregar a cola de retry
+      }
+
+      performanceLogger.end(operationId, { 
+        invoiceId: invoiceData?.invoiceId, 
+        inventoryUpdated: inventoryData?.inventoryUpdated || false,
+        parallelTime: parallelDuration.toFixed(2) + 'ms',
+        invoiceTime: invoiceData?.duration.toFixed(2) + 'ms',
+        inventoryTime: inventoryData?.duration.toFixed(2) + 'ms',
+        strategy: 'parallel'
+      });
+
+      return { 
+        invoiceId: invoiceData?.invoiceId, 
+        inventoryUpdated: inventoryData?.inventoryUpdated || false 
+      };
+    } catch (error) {
+      performanceLogger.end(operationId, { 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        strategy: 'parallel'
+      });
+      throw error;
     }
-
-    const parsedData = JSON.parse(userData);
-    const establishmentId = decodeBase64(parsedData.uid);
-
-    // 2. Procesar venta con actualización de inventario
-    const inventoryUpdated = await processSaleWithInventoryUpdate(
-      establishmentId,
-      selectedItems
-    );
-
-    if (!inventoryUpdated) {
-      console.warn("⚠️ Hubo problemas actualizando el inventario, pero la venta continuará");
-      // No lanzar error, permitir que la venta continúe
-    }
-
-    // 3. Crear factura
-    const valueUuid = uuidv4();
-    const bloques = valueUuid.split("-");
-    const result = bloques.slice(0, 2).join("-");
-    const invoiceId = `${saleData.invoice}-${result}`;
-    
-    localStorage.setItem("uidInvoice", invoiceId);
-
-    if (saleData.descuento > 0) {
-      await createInvoice(invoiceId, saleData);
-    } else if (typeInvoice === "quickSale") {
-      await handleQuickSaleFinal(saleData.compra);
-    } else {
-      await createInvoice(invoiceId, { ...saleData, vrMixta });
-    }
-
-    return { invoiceId, inventoryUpdated };
   };
 
   // Operación asíncrona para procesar venta (con soporte offline)
@@ -220,7 +311,7 @@ const DatosVentaImproved = (props: any) => {
     try {
       setLoading(true);
       
-      // Usar la nueva función que incluye actualización de inventario
+      // Usar la nueva función que incluye actualización de inventario (PARALELA)
       await processSale(factura);
       
       setLoading(false);
@@ -228,10 +319,8 @@ const DatosVentaImproved = (props: any) => {
       setDatosGuardados(false);
       handleVenderClick();
       
-      const statusMessage = isOnline 
-        ? "Venta procesada e inventario actualizado exitosamente"
-        : "Venta guardada offline - se sincronizará automáticamente";
-      success(statusMessage);
+      // Mensaje de éxito - la venta siempre se completa
+      success("✅ Venta completada exitosamente");
       
     } catch (error) {
       console.error("Error procesando venta:", error);
@@ -301,86 +390,160 @@ const DatosVentaImproved = (props: any) => {
   };
 
   const handleQuickSaleFinal = async (newItems: any[]) => {
-    const quickSaleId = `${metodoPago?.toUpperCase() === "MIXTO"
-      ? "vr-mixta"
-      : metodoPago?.toUpperCase() === "TRANSFERENCIA"
-        ? "vr-transferencia"
-        : "venta-rapida"
-      }-${new Date().toLocaleDateString("en-GB").replace(/\//g, "-")}`;
-    
-    const existingInvoice = await getInvoiceData(quickSaleId);
-    let updatedItems = [...newItems];
-    let newTotal = 0;
-    
-    if (existingInvoice) {
-      updatedItems = existingInvoice.compra.map(
-        (item: { barCode: any; cantidad: any; acc: any }) => {
-          const foundItem = newItems.find(
-            (newItem) => newItem.barCode === item.barCode
-          );
-          if (foundItem) {
-            item.cantidad += foundItem.cantidad;
-            item.acc += foundItem.acc;
+    const quickSaleOperationId = `quick-sale-${Date.now()}`;
+    performanceLogger.start(quickSaleOperationId, 'Quick Sale Final', {
+      itemCount: newItems.length,
+      paymentMethod: metodoPago
+    });
+
+    try {
+      performanceLogger.checkpoint(quickSaleOperationId, 'Generando ID de factura rápida');
+      const quickSaleId = `${metodoPago?.toUpperCase() === "MIXTO"
+        ? "vr-mixta"
+        : metodoPago?.toUpperCase() === "TRANSFERENCIA"
+          ? "vr-transferencia"
+          : "venta-rapida"
+        }-${new Date().toLocaleDateString("en-GB").replace(/\//g, "-")}`;
+      
+      performanceLogger.checkpoint(quickSaleOperationId, 'Obteniendo factura existente (con caché)', { quickSaleId });
+      const getInvoiceStart = performance.now();
+      
+      // Usar caché para obtener la factura
+      const existingInvoice = await quickSaleCache.getOrFetch(
+        quickSaleId,
+        () => getInvoiceData(quickSaleId)
+      );
+      
+      const getInvoiceDuration = performance.now() - getInvoiceStart;
+      performanceLogger.checkpoint(quickSaleOperationId, 'Factura obtenida', { 
+        duration: getInvoiceDuration.toFixed(2) + 'ms',
+        exists: !!existingInvoice,
+        fromCache: getInvoiceDuration < 10 // Si es < 10ms, probablemente vino del caché
+      });
+      
+      let updatedItems = [...newItems];
+      let newTotal = 0;
+      
+      if (existingInvoice) {
+        performanceLogger.checkpoint(quickSaleOperationId, 'Procesando factura existente - merge de items');
+        const mergeStart = performance.now();
+        
+        updatedItems = existingInvoice.compra.map(
+          (item: { barCode: any; cantidad: any; acc: any }) => {
+            const foundItem = newItems.find(
+              (newItem) => newItem.barCode === item.barCode
+            );
+            if (foundItem) {
+              item.cantidad += foundItem.cantidad;
+              item.acc += foundItem.acc;
+              return item;
+            }
             return item;
           }
-          return item;
-        }
-      );
-
-      newItems.forEach((newItem) => {
-        const existingProduct = existingInvoice.compra.find(
-          (item: { barCode: any }) => item.barCode === newItem.barCode
         );
 
-        if (!existingProduct) {
-          updatedItems.push(newItem);
-        }
-      });
+        newItems.forEach((newItem) => {
+          const existingProduct = existingInvoice.compra.find(
+            (item: { barCode: any }) => item.barCode === newItem.barCode
+          );
 
-      const updatedVrMixta = existingInvoice.vrMixta
-        ? {
-          efectivo: (existingInvoice.vrMixta.efectivo || 0) + vrMixta.efectivo,
-          transferencia: (existingInvoice.vrMixta.transferencia || 0) + vrMixta.transferencia,
-        }
-        : vrMixta;
+          if (!existingProduct) {
+            updatedItems.push(newItem);
+          }
+        });
 
-      newTotal = updatedItems.reduce((total, item) => total + item.acc, 0);
-      
-      await updateInvoice(quickSaleId, {
-        compra: updatedItems,
-        subtotal: newTotal,
-        total: newTotal,
-        date: getCurrentDateTime(),
-        vrMixta: updatedVrMixta
+        const updatedVrMixta = existingInvoice.vrMixta
+          ? {
+            efectivo: (existingInvoice.vrMixta.efectivo || 0) + vrMixta.efectivo,
+            transferencia: (existingInvoice.vrMixta.transferencia || 0) + vrMixta.transferencia,
+          }
+          : vrMixta;
+
+        newTotal = updatedItems.reduce((total, item) => total + item.acc, 0);
+        
+        const mergeDuration = performance.now() - mergeStart;
+        performanceLogger.checkpoint(quickSaleOperationId, 'Items mergeados', {
+          duration: mergeDuration.toFixed(2) + 'ms',
+          totalItems: updatedItems.length
+        });
+        
+        performanceLogger.checkpoint(quickSaleOperationId, 'Actualizando factura existente');
+        const updateStart = performance.now();
+        
+        const updatedInvoiceData = {
+          compra: updatedItems,
+          subtotal: newTotal,
+          total: newTotal,
+          date: getCurrentDateTime(),
+          vrMixta: updatedVrMixta
+        };
+        
+        await updateInvoice(quickSaleId, updatedInvoiceData);
+        
+        // Actualizar caché con los nuevos datos
+        quickSaleCache.update(quickSaleId, {
+          ...existingInvoice,
+          ...updatedInvoiceData
+        });
+        
+        const updateDuration = performance.now() - updateStart;
+        performanceLogger.checkpoint(quickSaleOperationId, 'Factura actualizada y caché sincronizado', {
+          duration: updateDuration.toFixed(2) + 'ms'
+        });
+      } else {
+        performanceLogger.checkpoint(quickSaleOperationId, 'Creando nueva factura rápida');
+        const createStart = performance.now();
+        
+        const now = new Date();
+        const colombiaDate = new Intl.DateTimeFormat("es-CO", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+          timeZone: "America/Bogota",
+        }).format(now);
+        const formattedDate = colombiaDate.replace(
+          /(\d+)\/(\d+)\/(\d+), (\d+):(\d+)/,
+          "$3-$2-$1 $4:$5"
+        );
+        newTotal = newItems.reduce((total, item) => total + item.acc, 0);
+        
+        const newInvoiceData = {
+          typeInvoice: "VENTA RAPIDA",
+          compra: newItems,
+          subtotal: newTotal,
+          total: newTotal,
+          date: formattedDate,
+          invoice: quickSaleId,
+          status: "CANCELADO",
+          paymentMethod: metodoPago,
+          vrMixta
+        };
+        
+        await createInvoice(quickSaleId, newInvoiceData);
+        
+        // Guardar en caché la nueva factura
+        quickSaleCache.update(quickSaleId, newInvoiceData);
+        
+        const createDuration = performance.now() - createStart;
+        performanceLogger.checkpoint(quickSaleOperationId, 'Factura creada y guardada en caché', {
+          duration: createDuration.toFixed(2) + 'ms'
+        });
+      }
+
+      performanceLogger.end(quickSaleOperationId, {
+        success: true,
+        quickSaleId,
+        total: newTotal
       });
-    } else {
-      const now = new Date();
-      const colombiaDate = new Intl.DateTimeFormat("es-CO", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-        timeZone: "America/Bogota",
-      }).format(now);
-      const formattedDate = colombiaDate.replace(
-        /(\d+)\/(\d+)\/(\d+), (\d+):(\d+)/,
-        "$3-$2-$1 $4:$5"
-      );
-      newTotal = newItems.reduce((total, item) => total + item.acc, 0);
-      
-      await createInvoice(quickSaleId, {
-        typeInvoice: "VENTA RAPIDA",
-        compra: newItems,
-        subtotal: newTotal,
-        total: newTotal,
-        date: formattedDate,
-        invoice: quickSaleId,
-        status: "CANCELADO",
-        paymentMethod: metodoPago,
-        vrMixta
+    } catch (error) {
+      performanceLogger.end(quickSaleOperationId, {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       });
+      throw error;
     }
   };
 
