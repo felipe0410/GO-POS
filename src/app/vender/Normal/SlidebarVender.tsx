@@ -1,4 +1,4 @@
-import DatosVenta from "@/app/vender/SlidebarVender/DatosVenta";
+import DatosVentaImproved from "@/app/vender/SlidebarVender/DatosVentaImproved";
 import Factura from "@/app/vender/Factura";
 import {
   Box,
@@ -235,7 +235,7 @@ const SlidebarVender = ({
                   subtotal={subtotal}
                 />
                 {nextStep ? (
-                  <DatosVenta
+                  <DatosVentaImproved
                     total={subtotal - descuento}
                     selectedItems={selectedItems}
                     subtotal={subtotal}

@@ -5,6 +5,22 @@ on:
       - opened
       - synchronize
 
+# Permisos necesarios para el workflow
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+env:
+  NEXT_PUBLIC_FIREBASE_APIKEY: ${{secrets.NEXT_PUBLIC_FIREBASE_APIKEY}}
+  NEXT_PUBLIC_FIREBASE_AUTHDOMAIN: ${{secrets.NEXT_PUBLIC_FIREBASE_AUTHDOMAIN}}
+  NEXT_PUBLIC_FIREBASE_PROJECTID: ${{secrets.NEXT_PUBLIC_FIREBASE_PROJECTID}}
+  NEXT_PUBLIC_FIREBASE_STORAGEBUCKET: ${{secrets.NEXT_PUBLIC_FIREBASE_STORAGEBUCKET}}
+  NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID: ${{secrets.NEXT_PUBLIC_FIREBASE_MESSAGINGSENDERID}}
+  NEXT_PUBLIC_FIREBASE_APPID: ${{secrets.NEXT_PUBLIC_FIREBASE_APPID}}
+  NEXT_PUBLIC_FIREBASE_MEASUREMENTID: ${{secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENTID}}
+  NEXT_PUBLIC_BASE_URL_MATIAS_API: ${{secrets.NEXT_PUBLIC_BASE_URL_MATIAS_API}}
+
 jobs:
   build_and_preview:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
@@ -13,20 +29,26 @@ jobs:
       - name: Checkout the repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Clean cache
+        run: npm cache clear --force
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build
-        run: npm run build --profile
+        run: npm run build
 
-      - name: Deploy
+      - name: Deploy to Firebase Hosting Preview
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.HOSTING_DEPLOYMENT }}"
-          projectId: verifik-b217c
+          projectId: go-pos-add98
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks

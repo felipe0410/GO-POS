@@ -16,7 +16,8 @@ const Header: React.FC<HeaderProps> = ({ title, txt }) => {
           justifyContent: "space-between",
         }}
       >
-        <Typography
+        <Box 
+          display="flex"
           sx={{
             color: "#69EAE2",
             fontFamily: "Nunito",
@@ -26,11 +27,9 @@ const Header: React.FC<HeaderProps> = ({ title, txt }) => {
             lineHeight: "normal",
           }}
         >
-          <Box display={"flex"}>
-            {title}
-            {txt && <Box>{txt}</Box>}
-          </Box>
-        </Typography>
+          {title}
+          {txt && <Box>{txt}</Box>}
+        </Box>
       </Box>
       <Divider sx={{ background: "#69EAE2", width: "95%" }} />
     </Box>

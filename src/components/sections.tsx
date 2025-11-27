@@ -79,6 +79,10 @@ export const localSections = [
         section: "RESUMEN",
         id: "/inventory/historial",
       },
+      {
+        section: "REPORTE",
+        id: "/inventory/reporte",
+      },
     ],
   },
   {
