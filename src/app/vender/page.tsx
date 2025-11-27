@@ -17,6 +17,8 @@ import VenderCards from "@/components/VenderCards";
 import SlidebarVender from "./SlidebarVender";
 import CarouselCategorias from "@/components/CarouselCategorias";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { FavoritesFilterButton } from "@/components/FavoritesFilterButton";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const themee = createTheme({
   palette: {
@@ -47,9 +49,33 @@ const Page: any = () => {
   const [selectedItems, setSelectedItems] = useState<any>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [typeInvoice, setTypeInvoice] = useState<string>("quickSale");
+  const [favoritesCount, setFavoritesCount] = useState(0);
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up("sm"));
+
+  // Obtener establishmentId (solo en cliente)
+  const [establishmentId, setEstablishmentId] = useState("");
+
+  useEffect(() => {
+    try {
+      const userData = localStorage.getItem("dataUser");
+      if (userData) {
+        const parsedData = JSON.parse(userData);
+        setEstablishmentId(atob(parsedData.uid));
+      }
+    } catch (error) {
+      console.error("Error getting establishment ID:", error);
+    }
+  }, []);
+
+  const {
+    showOnlyFavorites,
+    toggleShowOnlyFavorites,
+    filterProducts,
+    sortProducts,
+    getFavoritesCount,
+  } = useFavorites(establishmentId);
 
   const filteredData = async (
     event: any,
@@ -64,7 +90,7 @@ const Page: any = () => {
         setSelectedCategory(null);
       }
 
-      const filterSearch: any = resolvedData?.filter((item) => {
+      let filterSearch: any = resolvedData?.filter((item) => {
         if (searchTerm === "") {
           if (!selectedCategory) {
             return true;
@@ -76,6 +102,12 @@ const Page: any = () => {
           );
         }
       });
+
+      // Aplicar filtro de favoritos
+      filterSearch = filterProducts(filterSearch);
+
+      // Ordenar poniendo favoritos primero
+      filterSearch = sortProducts(filterSearch);
 
       setfilter(filterSearch);
 
@@ -161,7 +193,16 @@ const Page: any = () => {
   useEffect(() => {
     filteredData("");
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, selectedCategory]);
+  }, [data, selectedCategory, showOnlyFavorites]);
+
+  // Actualizar conteo de favoritos
+  useEffect(() => {
+    const updateFavoritesCount = async () => {
+      const count = await getFavoritesCount();
+      setFavoritesCount(count);
+    };
+    updateFavoritesCount();
+  }, [data, getFavoritesCount]);
   useEffect(() => {
     const getAllProducts = async () => {
       try {
@@ -341,6 +382,11 @@ const Page: any = () => {
                   </IconButton>
                 </Paper>
               </Box>
+              <FavoritesFilterButton
+                showOnlyFavorites={showOnlyFavorites}
+                onClick={toggleShowOnlyFavorites}
+                favoritesCount={favoritesCount}
+              />
               <Button
                 onClick={handleResetFilter}
                 sx={{

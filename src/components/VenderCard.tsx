@@ -5,6 +5,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import { Box, Button } from "@mui/material";
+import { FavoriteButton } from "./FavoriteButton";
+import { useFavorites } from "@/hooks/useFavorites";
 
 const StyledCardContent = styled(CardContent)(({ theme }) => ({
   "&:last-child": {
@@ -24,6 +26,36 @@ const VenderCard = React.memo(
     selectedItems: any;
     facturaActiva: any;
   }) => {
+    // Obtener establishmentId del usuario (solo en cliente)
+    const [establishmentId, setEstablishmentId] = React.useState("");
+
+    React.useEffect(() => {
+      try {
+        const userData = localStorage.getItem("dataUser");
+        if (userData) {
+          const parsedData = JSON.parse(userData);
+          setEstablishmentId(atob(parsedData.uid));
+        }
+      } catch (error) {
+        console.error("Error getting establishment ID:", error);
+      }
+    }, []);
+
+    const { toggleFavorite, isTogglingFavorite } = useFavorites(establishmentId);
+
+    const handleToggleFavorite = async (product: any) => {
+      try {
+        await toggleFavorite(
+          product.uid,
+          product.isFavorite || false,
+          product.productName
+        );
+        // Aquí podrías actualizar el estado local si es necesario
+      } catch (error) {
+        console.error("Error toggling favorite:", error);
+      }
+    };
+
     const actualizarProductosFactura = (id: string, nuevosProducto: any) => {
       setSelectedItems((prev: any[]) =>
         prev.map((f) =>
@@ -113,11 +145,29 @@ const VenderCard = React.memo(
             overflow: "visible",
             textAlign: "-webkit-center",
             marginTop: "50px",
+            position: "relative",
             "&:hover": {
               border: "1px solid #69EAE2",
             },
           }}
         >
+          {/* Botón de favorito en la esquina superior derecha */}
+          <Box
+            sx={{
+              position: "absolute",
+              top: 5,
+              right: 5,
+              zIndex: 10,
+            }}
+          >
+            <FavoriteButton
+              isFavorite={product.isFavorite || false}
+              loading={isTogglingFavorite}
+              onClick={() => handleToggleFavorite(product)}
+              size="small"
+            />
+          </Box>
+
           <Box
             sx={{
               display: "flex",

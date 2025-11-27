@@ -102,3 +102,107 @@
 [debug] [2025-11-06T22:18:31.468Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
 [debug] [2025-11-06T22:18:31.756Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
 [debug] [2025-11-06T22:18:31.762Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.313Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.320Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.408Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.409Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.409Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.409Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.410Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.410Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.410Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.410Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.410Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.410Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.411Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.411Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.411Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.411Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.411Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.411Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.411Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.411Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.418Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.418Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.418Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.419Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.419Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.419Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.420Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.420Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.420Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.420Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.420Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.420Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.421Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.421Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.421Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.421Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.422Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.422Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.427Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.427Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.427Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.427Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.427Z] No OAuth tokens found
+[debug] [2025-11-25T00:54:08.427Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.529Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-25T00:54:08.531Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.735Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.741Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.863Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.866Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.867Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.869Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.870Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.870Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.879Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.880Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.880Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.884Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.885Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.885Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.888Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.888Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.889Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.894Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.894Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.894Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.913Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.913Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.913Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.917Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.917Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.917Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.918Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.918Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.918Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.918Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.918Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.918Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.919Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.919Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.919Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.919Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.919Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.919Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.919Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.919Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.919Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.920Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.920Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.920Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.924Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.925Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.925Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:42.930Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.930Z] No OAuth tokens found
+[debug] [2025-11-27T15:10:42.930Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:43.075Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-27T15:10:43.076Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
